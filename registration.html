@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -91,14 +91,16 @@
           <li><a id="swatch-link" href="#">Streaming</a></li>
           <li><a id="swatch-link" href="#">Contact</a></li>
         </ul>
+           <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank"><img src="img/steamicon.png" style="margin-top:1.5%;" /></a>
+           <a href="https://www.facebook.com/gtgamefest" target="_blank"><img src="img/faceicon.png" style="margin-top:1.5%;" /></a>
         <ul class="nav pull-right" id="main-menu-right">
           <!-- <li><a rel="tooltip" href="#">Register/Login<i class="icon-share-alt"></i></a></li> -->
 
 
         <!-- <li><a href="#" id="registration-popover" rel="popover" data-toggle="popover" data-content="It's so simple to create a tooltop for my website!" data-placement="bottom" data-original-title="Twitter Bootstrap Popover">Register/Login<i class="icon-share-alt"></i></a></li> -->
 
-        <!-- Button to trigger modal -->
-        <li><a href="#myModal" data-toggle="modal">Register/Login<i class="icon-share-alt"></i></a></li>
+        <!--<li><a href="#myModal" data-toggle="modal">Register/Login<i class="icon-share-alt"></i></a></li>-->
+            <li><a href="registration.html">Register<i class="icon-share-alt"></i></a></li>
 
         </ul>
        </div>
@@ -111,14 +113,14 @@
       <!-- Form -->
       <legend>New User Registration</legend>
       <div class="well">
-            <form id="signup" class="form-horizontal" method="post" action="success.php">
+            <form id="signup" class="form-horizontal" method="post" action="php/register.php">
           <legend>New User Registration</legend>
           <div class="control-group">
                 <label class="control-label">Alias</label>
             <div class="controls">
                 <div class="input-prepend">
               <span class="add-on"><i class="icon-user"></i></span>
-                <input type="text" class="input-xlarge" id="fname" name="fname" placeholder="Alias">
+                <input type="text" required class="input-xlarge" id="alias" name="alias" placeholder="Alias">
               </div>
             </div>
           </div>
@@ -127,7 +129,7 @@
             <div class="controls">
                 <div class="input-prepend">
               <span class="add-on"><i class="icon-envelope"></i></span>
-                <input type="text" class="input-xlarge" id="email" name="email" placeholder="Email">
+                <input type="email" class="input-xlarge" id="email" name="email" required placeholder="Email">
               </div>
             </div>
           </div>
@@ -136,7 +138,7 @@
             <div class="controls">
                 <div class="input-prepend">
               <span class="add-on"><i class="icon-lock"></i></span>
-                <input type="Password" id="passwd" class="input-xlarge" name="passwd" placeholder="Password">
+                <input type="Password" required id="password" class="input-xlarge" name="password" placeholder="Password">
               </div>
             </div>
           </div>
@@ -145,7 +147,7 @@
             <div class="controls">
                 <div class="input-prepend">
               <span class="add-on"><i class="icon-lock"></i></span>
-                <input type="Password" id="conpasswd" class="input-xlarge" name="conpasswd" placeholder="Re-enter Password">
+                <input type="Password" required id="conpassword" class="input-xlarge" name="conpassword" placeholder="Re-enter Password">
               </div>
             </div>
           </div>
@@ -206,50 +208,34 @@
           </div>
         </div>
 
+
+          <div id="formPostModal" class="modal hide fade" tabindex="-1" role="dialog">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
+              <!-- Modal body -->
+              <div class="modal-body">
+              </div>
+              <div class="modal-footer">
+                  <center>
+                      <button class="btn btn-primary">Ok</button><br>
+                  </center>
+              </div>
+          </div>
+
          </div>
-      
-
 
       <hr>
 
-      <!-- Example row of columns -->
-      <div class="row-fluid">
-        <div class="span4">
-          <h2>What</h2>
-          <p>Georgia Tech Gamefest is a 700+ person gaming event where college students come together to play PC and console games all night long. We have a slew of awesome sponsors, prizes, food and drinks. It is free to come hang out for free play and $10 to particpate in a competitive tournament.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-          
+        <div class="footer">
+            <p style="float:left;">&copy; 2013 Georgia Tech Gamefest. All rights reserved.</p>
+            <div style="float:right;">
+                <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank"><img src="img/steamicon.png" /></a> <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank">GT Gamefest Steam Group</a>
+                <br />
+                <a href="https://www.facebook.com/gtgamefest" target="_blank"><img src="img/faceicon.png" /></a> <a href="https://www.facebook.com/gtgamefest" target="_blank">GT Gamefest Facebook Group</a>
+            </div>
+
         </div>
-        <div class="span4">
-          <h2>Where</h2>
-          <p>Klaus Advanced Computing Building<br>
-            266 Ferst Drive<br>
-            Atlanta, GA 30332-0765<br>
-
-            <iframe src="http://www.map-generator.org/e1939fb8-7c98-43be-b742-6f1c1453282e/iframe-map.aspx" scrolling="no" height="125px" width="200px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><br><small><a href="https://maps.google.com/maps?q=Klaus+Advanced+Computing+Building+(KACB)+266+Ferst+Drive+Atlanta,+GA+30332-0765&hl=en&ll=33.783214,-84.400063&spn=0.04694,0.076218&sll=47.613028,-122.342064&sspn=0.304582,0.609741&t=h&hq=Klaus+Advanced+Computing+Building+(KACB)+266+Ferst+Drive+Atlanta,+GA+30332-0765&radius=15000&z=14&iwloc=A" target="_blank">Open large map<a/></small>
-
-
-
-          </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-       </div>
-        <div class="span4">
-          <h2>Social Media</h2>
-          <p>
-
-            <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank"><img src="img/steamicon.png" /></a> <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank">GT Gamefest Steam Group</a>
-            <br />
-            <span class="tabbed"><a href="https://www.facebook.com/gtgamefest" target="_blank"><img src="img/faceicon.png" /></a> <a href="https://www.facebook.com/gtgamefest" target="_blank">GT Gamefest Facebook Group</a><br>
-          </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
-        </div>
-      </div>
-
-      <hr>
-
-      <div class="footer">
-        <p>&copy; 2013 Georgia Tech Gamefest. All rights reserved.</p>
-      </div>
 
     </div> <!-- /container -->
 
@@ -264,6 +250,8 @@
     <script src="js/bootstrap.js"></script>
     <script src="js/bootstrap-tooltip.js"></script>
     <script src="js/bootstrap-popover.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/register.js"></script>
     <script>
     $(function ()
     { $("#registration-popover").popover();
