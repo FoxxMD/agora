@@ -11,6 +11,8 @@
         $param2 = $_POST["param2"];
         $param3 = $_POST["param3"];
         $result = setUsers($param1, $param2, $param3);
+    } else if($mode == "verify") {
+        $result = verifyUser($_POST["param1"],$_POST["param2"]);
     }
 
     echo $result;

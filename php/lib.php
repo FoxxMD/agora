@@ -47,6 +47,15 @@
         }
     }
 
+    function verifyUser($param1, $param2) {
+        $db = getDB();
+        $sql = "select * from users where email='".$param1."' or alias='".$param1."'";
+        $result = mysql_fetch_array(mysql_query($sql));
+        if($result == null || $result["password"] != $param2)
+            return "0";
+        return "1";
+    }
+
     function createTeam($name, $captain, $password, $game) {
         $db = getDB();
         if($password == null)
@@ -95,6 +104,28 @@
             $sql = "update teams set ".$key."='".$value."' where captain='".$captain."'";
             mysql_query($sql);
             return "1";
+        }
+    }
+
+    function addTeamMember($name, $member, $password) {
+        $db = getDB();
+        $sql = "select * from teams where name='".$name."'";
+        $result = mysql_fetch_array(mysql_query($sql));
+        if($result["password"]== "" || $result["password"]==$password) {
+            $currSlot = 0;
+            for($i = 1; $i <= 4; $i++) {
+                if($result["member".$i] == "") {
+                    $currSlot = $i;
+                    break;
+                }
+            }
+            if($currSlot == 0)
+                return "-1";
+            $sql = "update teams set member".$currSlot."='".$member."' where name='".$name."'";
+            mysql_query($sql);
+            return "1";
+        } else {
+            return "0";
         }
     }
 ?>
