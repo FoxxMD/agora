@@ -46,4 +46,55 @@
             return "1";
         }
     }
+
+    function createTeam($name, $captain, $password, $game) {
+        $db = getDB();
+        if($password == null)
+            $password = "";
+        $sql = "insert into teams values (NULL, '".$name."','".$captain."','".$password."','','','".$game."','','','','')";
+        mysql_query($sql, $db);
+        return "1";
+    }
+
+    function getTeams($name, $captain) {
+        $db = getdb();
+        if($name != null) {
+            $sql = "select * from teams where name = '".$name."'";
+            $result = mysql_fetch_array(mysql_query($sql));
+            return json_encode($result);
+        } else if($captain != null) {
+            $result = array();
+            $count = 0;
+            $sql = "select * from teams where captain='".$captain."'";
+            $raw = mysql_query($sql);
+            while($curr = mysql_fetch_array($raw)) {
+                $result[$count] = $curr;
+                $count++;
+            }
+            return json_encode($result);
+        } else {
+            $result = array();
+            $count = 0;
+            $sql = "select * from teams";
+            $raw = mysql_query($sql);
+            while($curr = mysql_fetch_array($raw)) {
+                $result[$count] = $curr;
+                $count++;
+            }
+            return json_encode($result);
+        }
+    }
+
+    function setTeams($name, $captain, $key, $value) {
+        $db = getDB();
+        if($name != null) {
+            $sql = "update teams set ".$key."='".$value."' where name='".$name."'";
+            mysql_query($sql);
+            return "1";
+        } else if($captain != null) {
+            $sql = "update teams set ".$key."='".$value."' where captain='".$captain."'";
+            mysql_query($sql);
+            return "1";
+        }
+    }
 ?>
