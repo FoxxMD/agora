@@ -213,7 +213,13 @@ border-left: 1px solid #818181;
 }
 
 #gameslogo img {
-    padding-bottom:1em; 
-    padding-right:1em;
+    height: 80px;
     max-height: 80px;
+    /*display: inline;*/
 }
+
+/*.imgcenter {
+    display: inline-block;
+    margin: 5px 20px;
+    padding: 5px;
+}*/
