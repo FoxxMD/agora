@@ -107,9 +107,7 @@
 #tblMain
 
 {
-
     border-color: #818181;
-
 }
 
 #tblMain.table-bordered th, #tblMain.table-bordered td {
@@ -123,7 +121,9 @@ border-left: 1px solid #818181;
 #tblMain.table th, #tblMain.table td
 
 {
-
+    text-align: center;
+    vertical-align: middle;
+    min-width: 4em;
     border-top: 1px solid #818181;
 
 }
@@ -202,8 +202,4 @@ border-left: 1px solid #818181;
 
     display:block;
 
-}
-
-.contentContainer {
-    height: 100%;
 }
