@@ -53,6 +53,7 @@
         $result = mysql_fetch_array(mysql_query($sql));
         if($result == null || $result["password"] != $param2)
             return "0";
+        setcookie("currentUser",$param1,7200);
         return "1";
     }
 

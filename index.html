@@ -27,7 +27,7 @@
 
       /* Main marketing message and sign up button */
       .jumbotron {
-        margin: 80px 0;
+        margin: 6em 0 2em;
         text-align: center;
       }
       .jumbotron h1 {
@@ -86,101 +86,206 @@
        <a class="brand" href="index.html">GT Gamefest</a>
        <div class="nav-collapse collapse" id="main-menu">
         <ul class="nav" id="main-menu-left">
-          <li><a id="swatch-link" data-link="events.html" href="#">Schedule</a></li>
+          <li><a id="swatch-link" data-link="schedule.html" href="#">Schedule</a></li>
+            <li><a id="swatch-link" data-link="tournaments.html" href="#">Tournaments</a></li>
+            <li><a id="swatch-link" data-link="rules.html" href="#">Rules</a></li>
           <li><a id="swatch-link" data-link="servers.html" href="#">Servers</a></li>
-          <li><a id="swatch-link" data-link="rules.html" href="#">Rules</a></li>
           <li><a id="swatch-link" data-link="streaming.html" href="#">Streaming</a></li>
-          <li><a id="swatch-link" data-link="contact.html" href="#">About Us</a></li>
+          <li><a id="swatch-link" data-link="about.html" href="#">About Us</a></li>
         </ul>
-               <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank"><img src="img/steamicon.png" style="margin-top:1.5%;" /></a>
-               <a href="https://www.facebook.com/gtgamefest" target="_blank"><img src="img/faceicon.png" style="margin-top:1.5%;" /></a>
+        
+
         <ul class="nav pull-right" id="main-menu-right">
-          <li><a href="registration.html">Register<i class="icon-share-alt"></i></a></li>
-            <!--For use once logging in is useable-->
-            <!--<a href="#myModal" data-toggle="modal">Register/Login<i class="icon-share-alt"></i></a>-->
+          <li><a id="swatch-link" data-link="registration.html" href="#">Register<i class="icon-share-alt"></i></a></li>
+          <li><a id="swatch-link" data-link="login.html" href="#">Login<i class="icon-share-alt"></i></a></li>
+        </ul>
+        <ul class="nav pull-right" id="main-menu-right-login">
+            <li><a id="userManagement" data-link="users.html" href="#">Account Management</a></li>
+            <li><a id="logoff">Log Off</a></li>
         </ul>
        </div>
      </div>
    </div>
- </div>
-      <div class="contentPane">
-          <div class="container contentContainer">
-              <!-- Jumbotron -->
-              <div class="jumbotron">
-                  <h1>GT Gamefest Is Here.</h1>
-                  <p class="lead">Georgia Tech Gamefest is the largest LAN gaming event in the south eastern USA! Each semester GT Gamefest hosts a 700+ person event in the Klaus College of Computing building playing PC and console games.</p>
-                  <p class="lead">It is free to come hang out for free play and $10 to particpate in a competitive tournament.</p>
-                  <a class="btn btn-large btn-success" href="registration.html">Register today</a>
-              </div>
-              <hr>
-              <!-- Example row of columns -->
-              <div class="row-fluid">
-                  <div class="span8 offset4" style="padding-left:5%">
-                      <p>
-                          Klaus Advanced Computing Building<br>
-                          266 Ferst Drive<br>
-                          Atlanta, GA 30332-0765<br>
-                          <iframe src="http://www.map-generator.org/e1939fb8-7c98-43be-b742-6f1c1453282e/iframe-map.aspx" scrolling="no" height="125px" width="200px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><br>
+ </div> 
+ <!-- /navbar -->
+      <div class="contentPane" style="padding-bottom:2em">
 
-                      </p>
-                      <p><a class="btn" href="https://maps.google.com/maps?q=Klaus+Advanced+Computing+Building+(KACB)+266+Ferst+Drive+Atlanta,+GA+30332-0765&hl=en&ll=33.783214,-84.400063&spn=0.04694,0.076218&sll=47.613028,-122.342064&sspn=0.304582,0.609741&t=h&hq=Klaus+Advanced+Computing+Building+(KACB)+266+Ferst+Drive+Atlanta,+GA+30332-0765&radius=15000&z=14&iwloc=A" target="_blank">Open Map &raquo;</a></p>
-                  </div>
+          <div id="mainContent" class="container contentContainer">
+
+              <!-- Jumbotron -->
+
+              <div class="jumbotron" style="">
+
+                  <h1>GT Gamefest Is Here.</h1>
+
+                  <p class="lead">GT Gamefest brings together the Tech, Atlanta, and Southeast gaming and eSports communities for a semesterly  LAN event of epic proportions. With over 800 attendees from all over the region, Gamefest represents one of the largest gaming experiences in the Southeast. <br><br>
+
+                  Free to attend and play, $15 to compete. <br>
+                    <h4 style="color:#999">You do not need to be a member of the Georgia Tech community to attend, but you must be physically present to participate.  This is a bring-your-own-computer (and Ethernet cable!) event.</h4></p>
+
+                  <!-- <a class="btn btn-large btn-success" href="registration.html">Register today</a> -->
+
               </div>
+
+              
+
+              <!-- Example row of columns -->
+
+              <div class="row-fluid" style="padding-bottom:2em">
+                <hr>
+                <div class="row-fluid">
+                  <div class="row-fluid">
+                    <div class="span3" id="gameslogo"><img src="img/game_logos/lol-trans.png" alt="LoL"></div>
+                    <div class="span2" id="gameslogo"><img src="img/game_logos/gow3-trans.png" alt="GoW3"></div>
+                    <div class="span3" id="gameslogo"><img src="img/game_logos/sc2hots-trans.png" alt="SC2HoTS"></div>
+                    <div class="span2" id="gameslogo"><img src="img/game_logos/dota2-trans.png" alt="DotA2"></div>
+                    <div class="span2" id="gameslogo"><img src="img/game_logos/ssbbrawl-trans.png" alt="SSB:Brawl"></div>
+                  </div>
+                  <div class="row-fluid" style="padding-top:1em">
+                    <div class="span4 offset1" id="gameslogo"><img src="img/game_logos/halo4-trans.png" alt="Halo4"></div>
+                    <div class="span3" id="gameslogo"><img src="img/game_logos/smite-trans.png" alt="SMITE2"></div>
+                    <div class="span3" id="gameslogo"><img src="img/game_logos/codghosts-trans.png" alt="CoD:G"></div>
+                  </div>
+
+
+                </div>
+
+                <hr>
+
+                <div class="row-fluid" style="padding-bottom:2em">
+                  <div class="span3 offset2" style="text-align:center padding-left:5%">
+
+                    Klaus Advanced Computing Building<br>
+
+                    266 Ferst Drive<br>
+
+                    Atlanta, GA 30332-0765<br>
+
+                  </div>
+                  <div class="span5 offset2" style="margin-left:5em padding-right:5%">
+                    Clough Undergraduate Learning Commons<br>
+                    266 Fourth St. NW<br>
+                    Atlanta, GA 30332-0001<br>
+
+                  </div>
+                </div>
+                <div class="row-fluid" style="">
+
+                  <div class="span6" style="padding-left:5%">
+
+                    <iframe width="100%" height="400em" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps/ms?msa=0&amp;msid=214928445888742675726.0004eade95b8d1a08e15f&amp;ie=UTF8&amp;t=p&amp;ll=33.776008,-84.397273&amp;spn=0.014269,0.018282&amp;z=15&amp;output=embed"></iframe><br />
+
+
+                  </div>
+
+                  <div class="span6" style="padding-right:5%"?>
+                    <img src="img/campusmap.png" alt="Campus Map" style="max-height: 400px">
+                  </div>
+                </div>
+              </div>
+
               <!-- Modal -->
+
               <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
                   <div class="modal-header">
+
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
                       <center>
+
                           <h3 id="myModalLabel">Login</h3>
+
                       </center>
+
                   </div>
+
                   <!-- Modal body -->
+
                   <div class="modal-body">
+
                       <center>
+
                           <div class="control-group">
+
                               <label class="control-label"><!-- email label --></label>
+
                               <div class="controls">
+
                                   <div class="input-prepend">
+
                                       <span class="add-on"><i class="icon-envelope"></i></span>
+
                                       <input type="text" class="input-xlarge" id="email" name="email" placeholder="Email">
+
                                   </div>
+
                               </div>
+
                           </div>
+
                           <div class="control-group">
+
                               <label class="control-label"><!--Password Label--></label>
+
                               <div class="controls">
+
                                   <div class="input-prepend">
+
                                       <span class="add-on"><i class="icon-lock"></i></span>
+
                                       <input type="Password" id="passwd" class="input-xlarge" name="passwd" placeholder="Password">
+
                                   </div>
+
                               </div>
+
                           </div>
+
                       </center>
+
                   </div>
+
+
 
                   <div class="modal-footer">
+
                       <center>
+
                           <button class="btn btn-primary">Login</button><br>
+
                           <a href="#">Forgot your password?</a><br><br>
+
                           Don't have an account? <a href="registration.html">Sign up</a>
+
                       </center>
+
                   </div>
+
               </div>
+
+
+
+
+
+          <!-- /container -->
+
+      </div> 
+    </div>
+<!-- /contentPane -->
+
+          
+              <div class="footer" style="padding-top:2em">
+                <div class="container">
+                  <p style="text-align:center">&copy; 2013 Georgia Tech eSports. All rights reserved. All trademarks are property of their respective owners in the US and other countries. <br>
+                    <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank"><img src="img/steamicon.png" /></a> 
+                    <a href="https://www.facebook.com/gtgamefest" target="_blank"><img src="img/faceicon.png" /></a> 
+
+                  </p>
+              </div>
+
           </div>
 
-          <hr>
-
-          <div class="footer">
-              <p style="float:left;">&copy; 2013 Georgia Tech Gamefest. All rights reserved.</p>
-              <div style="float:right;">
-                  <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank"><img src="img/steamicon.png" /></a> <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank">GT Gamefest Steam Group</a>
-                  <br />
-                 <a href="https://www.facebook.com/gtgamefest" target="_blank"><img src="img/faceicon.png" /></a> <a href="https://www.facebook.com/gtgamefest" target="_blank">GT Gamefest Facebook Group</a>
-</div>
-              
-</div>
-          <!-- /container -->
-      </div> 
 
 
 
