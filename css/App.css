@@ -1,103 +1,227 @@
 ﻿
+
 .content {
+
     margin-top: 80px;
+
 }
+
+
 
 .smallTopMargin {
+
     margin-top:15px;
+
 }
+
 .largeTopMargin {
+
     margin-top:25px;
+
 }
+
 .textAlignLeft {
+
     text-align:left;
+
 }
+
+
 
 .rounded {
+
     border-radius: 10px;
+
 }
+
+
 
 .roundedTop{
+
     border-top-left-radius:10px;
+
     border-top-right-radius:10px;
+
 }
+
 .noRoundedTop {
+
     border-top-left-radius:0px;
+
     border-top-right-radius:0px;
+
 }
+
+
 
 .coolHeader {
+
     font-size: 30px;
+
     padding: 5px 10px 5px 10px;
+
 }
+
 .chillHeader {
+
     background-color: #999;
+
     color:white;
+
     padding: 3px 5px 3px 5px;
+
     xwidth:25%
+
 }
+
 .HeaderWidthHalf {
+
     xwidth:50%
+
 }
+
+
 
 .padded {
+
     padding: 10px;
+
 }
+
 .noPaddingTop {
+
     padding-top: 0px;
+
 }
+
+
 
 .darkGreyText {
+
    color: rgb(63, 63, 63);
+
 }
 
+
+
 #tblMain
+
 {
     border-color: #818181;
 }
+
 #tblMain.table-bordered th, #tblMain.table-bordered td {
 
+
+
 border-left: 1px solid #818181;
+
 }
+
 #tblMain.table th, #tblMain.table td
+
 {
+    text-align: center;
+    vertical-align: middle;
+    min-width: 4.5em;
     border-top: 1px solid #818181;
+
 }
+
+#tblMain.table td.header {
+
+    font-weight: bold;
+}
+
+
 
 .greenBackground {
+
     background-color: rgb(116, 174, 0);
+
 }
+
 .greenBorder {
+
     border: 1px solid rgb(116, 174, 0);
+
 }
+
 .orangeBackground {
+
     background-color: rgb(255, 160, 45);
+
 }
+
 .orangeBorder {
+
     border: 1px solid rgb(255, 160, 45);
+
 }
+
 .lightGreyBackground {
+
     background-color: lightslategrey;
+
 }
+
 .darkGreyBackground {
+
     background-color: rgb(40, 40, 40);
+
 }
+
 .lightGreyBorder {
+
     border: 1px solid lightslategrey;
+
 }
+
+
 
 .whiteBackground {
+
     background-color: white;
-}
-.whiteBorder {
-    border: 1px solid white;
+
 }
 
+.whiteBorder {
+
+    border: 1px solid white;
+
+}
+
+
+
 .streamPane {
+
     display:none;
+
     height:400px;
+
     width:650px;
+
 }
+
 .showPane {
+
     display:block;
+
 }
+
+.footer {
+    padding-top: 1em;
+}
+
+#gameslogo img {
+
+    height: 80px;
+    max-height: 80px;
+    /*display: inline;*/
+}
+
+/*.imgcenter {
+    display: inline-block;
+    margin: 5px 20px;
+    padding: 5px;
+}*/
