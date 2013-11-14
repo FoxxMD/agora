@@ -215,8 +215,8 @@ border-left: 1px solid #818181;
 
 #gameslogo img {
 
-    height: 80px;
-    max-height: 80px;
+    height: 6em;
+    /*max-height: 5em;*/
     /*display: inline;*/
 }
 
