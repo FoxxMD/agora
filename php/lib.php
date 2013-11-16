@@ -53,7 +53,39 @@
         $result = mysql_fetch_array(mysql_query($sql));
         if($result == null || $result["password"] != $param2)
             return "0";
-        setcookie("currentUser",$param1,7200);
+        setcookie("currentUser",$param1,time() + 7200);
+        if($result["role"] == "1") {
+            setcookie("currentAdmin",$param1, time() + 7200);
+            return "2";
+        }
+        return "1";
+    }
+
+
+    function ifAlreadyLogged() {
+        $result = array();
+        if($_COOKIE["currentUser"] != null) {
+            $result["user"] = $_COOKIE["currentUser"];
+            if($_COOKIE["currentAdmin"] != null) {
+                $result["code"] = 2;
+            } else {
+                $result["code"] = 1;
+            }
+        } else {
+            $result["code"] = 0;
+        }
+        return json_encode($result);
+    }
+
+    function logoff() {
+        setcookie("currentUser","",time() - 3600);
+        setcookie("currentAdmin","",time() - 3600);
+    }
+
+    function deleteUser($user) {
+        $db = getDB();
+        $sql = "delete from users where email='".$user."'";
+        mysql_query($sql, $db);
         return "1";
     }
 

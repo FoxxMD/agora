@@ -9,7 +9,7 @@
     $db = getDB();
 
     if(!checkDuplicate("email", $email) && !checkDuplicate("alias",$alias)) {
-        $sql = "insert into users values (NULL, '".$email."','".$pw."','".$alias."','0','0','','','')";
+        $sql = "insert into users values (NULL, '".$email."','".$pw."','".$alias."','0','0','','','','','','0')";
         $result = mysql_query($sql, $db);
         echo "1";
     } else
