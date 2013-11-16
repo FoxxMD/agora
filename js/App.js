@@ -202,7 +202,6 @@ function initUser() {
 
             $("#userinfo #email").html(datax["email"]);
             $("#userinfo #alias").html(datax["alias"]);
-            $("#userinfo #password").html(datax["password"]);
             if(datax["paid"]==1) {
                 $("#userinfo #paid").html("Paid");
 
@@ -221,12 +220,14 @@ function initUser() {
        $("#changeForm").modal('hide');
     });
 
+    /*
     $("#userinfo #password").on('dblclick',function(e){
         $("#changeForm").modal('show');
         $("#changeForm input").attr("placeholder",'New Password');
         $("#confirmPassword").hide();
         changeUserPassword();
     })
+    */
 
     $("#userinfo #steam").on('dblclick',function(e){
         $("#changeForm").modal('show');
@@ -267,6 +268,7 @@ function initUser() {
 function changeUserValue(key) {
 
     $("#changeForm input").val("");
+    $("#changeForm input").show();
     $("#changeForm #confirm").off('click');
     $("#changeForm #confirm").on('click',function(){
         var value = $("#changeForm #value").val();
@@ -283,6 +285,7 @@ function changeUserValue(key) {
 
 function changeUserPassword() {
     $("#changeForm input").val("");
+    $("#changeForm input").show();
     $("#changeForm #confirm").off('click');
     $("#changeForm #confirm").on('click', function(){
         $("#confirmPassword").show();
@@ -353,7 +356,7 @@ function initAdmin() {
                     enter = "Not Entered";
                 html = html + "<tr><td>" + c["email"] + "</td>" +
                     "<td class='change' id='alias_" + i + "'>" + c["alias"] + "</td>" +
-                    "<td class='change' id='password_" + i + "'>" + c["password"] + "</td>";
+                    "<td class='change' id='password_" + i + "'>" + "&#42;&#42;&#42;&#42;&#42;&#42;&#42;&#42;" + "</td>";
 
                 if(c["paid"] == 1)
                     html = html + "<td style='color: #00ff00;'>" + pay + "</td>";
@@ -385,6 +388,8 @@ function initAdmin() {
                 var index = id.substring(idx + 1);
 
                 $('#confirmDelete').hide();
+                $('#adminForm input').show();
+                $("#adminConfirm").html("Change");
                 $('#adminForm').modal('show');
                 $('#adminConfirm').off('click');
                 $('#adminConfirm').on('click',function(e) {
@@ -455,6 +460,7 @@ function initAdmin() {
                 var id = $(e.currentTarget).attr('id');
                 var index = parseInt(id.substr(6));
 
+                $("#adminConfirm").html("Delete");
                 $("#adminForm").modal('show');
                 $("#adminForm input").hide();
                 $("#confirmDelete").show();

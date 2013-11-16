@@ -20,6 +20,7 @@
         if($param != null) {
             $sql = "select * from users where alias='".$param."' or email='".$param."'";
             $result = mysql_fetch_array(mysql_query($sql, $db));
+            unset($result["password"]);
             return json_encode($result);
         } else {
             $result = array();
@@ -27,6 +28,7 @@
             $count = 0;
             $raw = mysql_query($sql, $db);
             while($curr = mysql_fetch_array($raw))  {
+                unset($curr["password"]);
                 $result[$count] = $curr;
                 $count++;
             }
