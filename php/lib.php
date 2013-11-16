@@ -21,6 +21,8 @@
             $sql = "select * from users where alias='".$param."' or email='".$param."'";
             $result = mysql_fetch_array(mysql_query($sql, $db));
             unset($result["password"]);
+            unset($result["lock"]);
+            unset($result["attempt"]);
             return json_encode($result);
         } else {
             $result = array();
@@ -29,6 +31,8 @@
             $raw = mysql_query($sql, $db);
             while($curr = mysql_fetch_array($raw))  {
                 unset($curr["password"]);
+                unset($curr["lock"]);
+                unset($curr["attempt"]);
                 $result[$count] = $curr;
                 $count++;
             }
@@ -53,11 +57,38 @@
         $db = getDB();
         $sql = "select * from users where email='".$param1."' or alias='".$param1."'";
         $result = mysql_fetch_array(mysql_query($sql));
-        if($result == null || $result["password"] != $param2)
+        if($result == null) {
             return "0";
-        setcookie("currentUser",$param1,time() + 7200);
+        }
+        if($result["attempt"] >= 5) {
+            $time = time();
+            if($time - strtotime($result["locktime"]) >= (60 * 15)) {
+
+                $sql = "update users set attempt=0 where email='".$param1."' or alias='".$param1."'";
+                mysql_query($sql);
+            } else {
+                return "-1";
+            }
+        }
+        if($result["password"] != $param2) {
+            $sql = "update users set attempt=".($result["attempt"] + 1)." where email='".$param1."' or alias='".$param1."'";
+            mysql_query($sql);
+            if($result["attempt"] >= 4) {
+                $time = time();
+                $sql = "update users set locktime=NULL where email='".$param1."' or alias='".$param1."'";
+                mysql_query($sql);
+                $fp = fopen("log.txt",'a');
+                $content = $result["email"]."   ".date("Y-m-d H:i:s")."   ".$_SERVER["REMOTE_ADDR"]."\n";
+                fwrite($fp, $content);
+                fclose($fp);
+            }
+            return "0";
+        }
+        $sql = "update users set attempt=0 where email='".$param1."' or alias='".$param1."'";
+        mysql_query($sql);
+        setcookie("currentUser",$param1,time() + 3600 * 12);
         if($result["role"] == "1") {
-            setcookie("currentAdmin",$param1, time() + 7200);
+            setcookie("currentAdmin",$param1, time() + 3600 * 12);
             return "2";
         }
         return "1";
