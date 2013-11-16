@@ -173,7 +173,7 @@ $(document).ready(function () {
                                     else if (data == 0)
                                         $('#formPostModal .modal-body').text('Your account/password combination is incorrect, please try again');
                                     else if (data == "-1")
-                                        $('#formPostModal .modal-body').text('You have tried too many times, the account is locked until 4 hours later');
+                                        $('#formPostModal .modal-body').text('You have tried too many times, the account is locked until 15 minutes later');
 
                                     $('#formPostModal').modal('show');
                                     $('#formPostButton').on('click', function(e){
