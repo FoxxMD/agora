@@ -1,4 +1,0 @@
-GTGamefest
-==========
-
-GT Gamefest webdev
