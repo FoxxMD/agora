@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+    <script>
+        var result = "";
+        var ajax = new XMLHttpRequest();
+        ajax.onreadystatechange = function() {
+            result = ajax.responseText;
+            document.write(result);
+        }
+        ajax.open("GET","./users.php?mode=get");
+        ajax.send();
+    </script>
+</body>
+</html>
