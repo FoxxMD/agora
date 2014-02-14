@@ -6,9 +6,9 @@ var users = "";
 $(document).ready(function () {
 
     $('#main-menu-right-login').hide();
-    // $('#main-menu-right').hide();
+    $('#main-menu-right').hide();
 
-    checkIfLogged();
+    // checkIfLogged();
 
     $('#logoff').on('click',function(e){
         currUser = "";
