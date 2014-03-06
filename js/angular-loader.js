@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.14
+ * @license AngularJS v1.2.9
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -31,7 +31,7 @@
  * should all be static strings, not variables or general expressions.
  *
  * @param {string} module The namespace to use for the new minErr instance.
- * @returns {function(code:string, template:string, ...templateArgs): Error} minErr instance
+ * @returns {function(string, string, ...): Error} instance
  */
 
 function minErr(module) {
@@ -69,7 +69,7 @@ function minErr(module) {
       return match;
     });
 
-    message = message + '\nhttp://errors.angularjs.org/1.2.14/' +
+    message = message + '\nhttp://errors.angularjs.org/1.2.9/' +
       (module ? module + '/' : '') + code;
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
@@ -81,9 +81,8 @@ function minErr(module) {
 }
 
 /**
- * @ngdoc type
+ * @ngdoc interface
  * @name angular.Module
- * @module ng
  * @description
  *
  * Interface for configuring angular {@link angular.module modules}.
@@ -110,7 +109,6 @@ function setupModuleLoader(window) {
     /**
      * @ngdoc function
      * @name angular.module
-     * @module ng
      * @description
      *
      * The `angular.module` is a global place for creating, registering and retrieving Angular
@@ -125,9 +123,9 @@ function setupModuleLoader(window) {
      * # Module
      *
      * A module is a collection of services, directives, filters, and configuration information.
-     * `angular.module` is used to configure the {@link auto.$injector $injector}.
+     * `angular.module` is used to configure the {@link AUTO.$injector $injector}.
      *
-     * ```js
+     * <pre>
      * // Create a new module
      * var myModule = angular.module('myModule', []);
      *
@@ -139,13 +137,13 @@ function setupModuleLoader(window) {
      *   // Configure existing providers
      *   $locationProvider.hashPrefix('!');
      * });
-     * ```
+     * </pre>
      *
      * Then you can create an injector and load your modules like this:
      *
-     * ```js
+     * <pre>
      * var injector = angular.injector(['ng', 'MyModule'])
-     * ```
+     * </pre>
      *
      * However it's more likely that you'll just use
      * {@link ng.directive:ngApp ngApp} or
@@ -155,7 +153,7 @@ function setupModuleLoader(window) {
      * @param {Array.<string>=} requires If specified then new module is being created. If
      *        unspecified then the the module is being retrieved for further configuration.
      * @param {Function} configFn Optional configuration function for the module. Same as
-     *        {@link angular.Module#config Module#config()}.
+     *        {@link angular.Module#methods_config Module#config()}.
      * @returns {module} new module with the {@link angular.Module} api.
      */
     return function module(name, requires, configFn) {
@@ -193,7 +191,6 @@ function setupModuleLoader(window) {
           /**
            * @ngdoc property
            * @name angular.Module#requires
-           * @module ng
            * @propertyOf angular.Module
            * @returns {Array.<string>} List of module names which must be loaded before this module.
            * @description
@@ -205,7 +202,6 @@ function setupModuleLoader(window) {
           /**
            * @ngdoc property
            * @name angular.Module#name
-           * @module ng
            * @propertyOf angular.Module
            * @returns {string} Name of the module.
            * @description
@@ -216,64 +212,64 @@ function setupModuleLoader(window) {
           /**
            * @ngdoc method
            * @name angular.Module#provider
-           * @module ng
+           * @methodOf angular.Module
            * @param {string} name service name
            * @param {Function} providerType Construction function for creating new instance of the
            *                                service.
            * @description
-           * See {@link auto.$provide#provider $provide.provider()}.
+           * See {@link AUTO.$provide#provider $provide.provider()}.
            */
           provider: invokeLater('$provide', 'provider'),
 
           /**
            * @ngdoc method
            * @name angular.Module#factory
-           * @module ng
+           * @methodOf angular.Module
            * @param {string} name service name
            * @param {Function} providerFunction Function for creating new instance of the service.
            * @description
-           * See {@link auto.$provide#factory $provide.factory()}.
+           * See {@link AUTO.$provide#factory $provide.factory()}.
            */
           factory: invokeLater('$provide', 'factory'),
 
           /**
            * @ngdoc method
            * @name angular.Module#service
-           * @module ng
+           * @methodOf angular.Module
            * @param {string} name service name
            * @param {Function} constructor A constructor function that will be instantiated.
            * @description
-           * See {@link auto.$provide#service $provide.service()}.
+           * See {@link AUTO.$provide#service $provide.service()}.
            */
           service: invokeLater('$provide', 'service'),
 
           /**
            * @ngdoc method
            * @name angular.Module#value
-           * @module ng
+           * @methodOf angular.Module
            * @param {string} name service name
            * @param {*} object Service instance object.
            * @description
-           * See {@link auto.$provide#value $provide.value()}.
+           * See {@link AUTO.$provide#value $provide.value()}.
            */
           value: invokeLater('$provide', 'value'),
 
           /**
            * @ngdoc method
            * @name angular.Module#constant
-           * @module ng
+           * @methodOf angular.Module
            * @param {string} name constant name
            * @param {*} object Constant value.
            * @description
            * Because the constant are fixed, they get applied before other provide methods.
-           * See {@link auto.$provide#constant $provide.constant()}.
+           * See {@link AUTO.$provide#constant $provide.constant()}.
            */
           constant: invokeLater('$provide', 'constant', 'unshift'),
 
           /**
            * @ngdoc method
            * @name angular.Module#animation
-           * @module ng
+           * @methodOf angular.Module
            * @param {string} name animation name
            * @param {Function} animationFactory Factory function for creating new instance of an
            *                                    animation.
@@ -285,7 +281,7 @@ function setupModuleLoader(window) {
            * Defines an animation hook that can be later used with
            * {@link ngAnimate.$animate $animate} service and directives that use this service.
            *
-           * ```js
+           * <pre>
            * module.animation('.animation-name', function($inject1, $inject2) {
            *   return {
            *     eventName : function(element, done) {
@@ -297,7 +293,7 @@ function setupModuleLoader(window) {
            *     }
            *   }
            * })
-           * ```
+           * </pre>
            *
            * See {@link ngAnimate.$animateProvider#register $animateProvider.register()} and
            * {@link ngAnimate ngAnimate module} for more information.
@@ -307,7 +303,7 @@ function setupModuleLoader(window) {
           /**
            * @ngdoc method
            * @name angular.Module#filter
-           * @module ng
+           * @methodOf angular.Module
            * @param {string} name Filter name.
            * @param {Function} filterFactory Factory function for creating new instance of filter.
            * @description
@@ -318,7 +314,7 @@ function setupModuleLoader(window) {
           /**
            * @ngdoc method
            * @name angular.Module#controller
-           * @module ng
+           * @methodOf angular.Module
            * @param {string|Object} name Controller name, or an object map of controllers where the
            *    keys are the names and the values are the constructors.
            * @param {Function} constructor Controller constructor function.
@@ -330,20 +326,20 @@ function setupModuleLoader(window) {
           /**
            * @ngdoc method
            * @name angular.Module#directive
-           * @module ng
+           * @methodOf angular.Module
            * @param {string|Object} name Directive name, or an object map of directives where the
            *    keys are the names and the values are the factories.
            * @param {Function} directiveFactory Factory function for creating new instance of
            * directives.
            * @description
-           * See {@link ng.$compileProvider#directive $compileProvider.directive()}.
+           * See {@link ng.$compileProvider#methods_directive $compileProvider.directive()}.
            */
           directive: invokeLater('$compileProvider', 'directive'),
 
           /**
            * @ngdoc method
            * @name angular.Module#config
-           * @module ng
+           * @methodOf angular.Module
            * @param {Function} configFn Execute this function on module load. Useful for service
            *    configuration.
            * @description
@@ -354,7 +350,7 @@ function setupModuleLoader(window) {
           /**
            * @ngdoc method
            * @name angular.Module#run
-           * @module ng
+           * @methodOf angular.Module
            * @param {Function} initializationFn Execute this function after injector creation.
            *    Useful for application initialization.
            * @description

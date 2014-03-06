@@ -1,0 +1,50 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div>
+            <a type="btn" class="navbar-toggle" data-toggle="collapse" data-target="main-menu">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="navbar-brand" ui-sref="home">Gamefest</a>
+            </div>
+            <div class="navbar-collapse collapse" id="main-menu">
+                <ul class="nav navbar-nav" id="main-menu-left">
+                    <li><a href="#">Schedule</a></li> <!-- These will eventually be ui-srefs -->
+                    <li><a href="#">Tournaments</a></li>
+                    <li><a href="#">Rules</a></li>
+                    <li><a href="#">Servers</a></li>
+                    <li><a href="#">Streaming</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                            Archive<b class="caret"></b>
+                            </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li role="presentation"> <a href="archive/2013fa/index.html">2013 Fall</a> </li>
+                        </ul>
+                    </li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right" id="main-menu-right">
+                    <li><a ng-click="openRegistration()" href="#">Register</a></li>
+                    <li><a ng-click="openLogin()" href="#">Login</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right ng-hide" id="main-menu-right-login">
+                    <li><a id="userManagement" data-link="users.html" href="#">Account Management</a></li>
+                    <li><a id="logoff" href="#">Log Off</a></li>
+                </ul>
+            </div>
+        </div>
+</div>
+        <div ui-view class="contentPane container"></div>
+
+<div class="footer" style="padding-top:2em">
+    <div class="container">
+        <p class="text-center">&copy; 2013 Georgia Tech eSports. All rights reserved. All trademarks are property of their respective owners in the US and other countries. <br>
+            <a href="http://steamcommunity.com/groups/gtgamefest" target="_blank"><img src="img/icons/steamicon.png" /></a>
+            <a href="https://www.facebook.com/gtgamefest" target="_blank"><img src="img/icons/faceicon.png" /></a>
+
+        </p>
+    </div>
+
+</div>

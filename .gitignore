@@ -1,2 +1,4 @@
 img/
 sftp-config.json
+/less/.csslintrc
+/less/.csscomb.json
