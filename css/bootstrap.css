@@ -1634,7 +1634,7 @@ legend {
   margin-bottom: 20px;
   font-size: 21px;
   line-height: inherit;
-  color: #333333;
+  color: #eeeeee;
   border: 0;
   border-bottom: 1px solid #e5e5e5;
 }
@@ -1688,7 +1688,7 @@ output {
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.428571429;
-  color: #555555;
+  color: #d5d5d5;
   background-color: #555555;
   background-image: none;
   border: 1px solid #cccccc;
