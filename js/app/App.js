@@ -1,5 +1,5 @@
 //initialize app
-var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'angularPayments']);
+var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'angularPayments']);
 
 //configure routing
 //hydrate all states for application in order to setup site structure
@@ -22,10 +22,26 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 url: '/schedule',
                 parent: 'index'
             })
+            .state('servers', {
+                templateUrl:'templates/servers.html',
+                url:'/servers',
+                parent:'index'
+            })
             .state('pay', {
                 template: '<div stripe-dir></div>',
                 url: '/pay',
                 parent: 'index'
+            })
+            .state('games', {
+              template:'<div gamesection-dir></div>',
+                url:'/games',
+                parent:'index'
+            })
+            .state('sc2', {
+                template:'<div game-dir></div>',
+                url:'/sc2',
+                data: '/content/games/sc2.json',
+                parent:'games'
             })
             .state('404', {
                 templateUrl: 'templates/shared/404.html',

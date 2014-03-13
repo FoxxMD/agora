@@ -1,5 +1,7 @@
 @import "variables.less";
 @import "gtvariables.less";
+@import "panels.less";
+@import "theme.less";
 
 .gtgamefest {
   .contentPane {
@@ -8,6 +10,42 @@
       background-color: inherit;
     }
 
+  }
+  .noborder {
+    border: none;
+    .panel-heading {
+      border: 1px solid #e8e8e8;
+    }
+  }
+  .panel {
+    background-color: transparent;
+    .nav-tabs li a {
+      color: @text-color;
+      &:hover {
+        background-color: @gray-dark;
+      }
+    }
+    &.panel-default {
+      &.consecutive-panel {
+        border-radius: 0px;
+
+        &:not(:first-child) {
+          margin-top: 0px;
+          border-top: none;
+        }
+      }
+      .panel-heading {
+        color: @text-color;
+        background-color: @gray-darker;
+        background-image: none;
+      }
+      .panel-body {
+        background-color: #303030;
+      }
+    }
+  }
+  .list-group-item {
+    background-color:transparent;
   }
 }
 
@@ -22,9 +60,11 @@
   margin-top: 15px;
 
 }
+
 .smallBottomMargin {
-  margin-bttom:15px;
+  margin-bttom: 15px;
 }
+
 .largeBottomMargin {
   margin-bottom: 25px;
 }
@@ -219,9 +259,11 @@
 .left-inner-addon {
   position: relative;
 }
+
 .left-inner-addon input {
   padding-left: 30px;
 }
+
 .left-inner-addon i {
   position: absolute;
   padding: 10px 12px;
@@ -231,9 +273,11 @@
 .right-inner-addon {
   position: relative;
 }
+
 .right-inner-addon input {
   padding-right: 30px;
 }
+
 .right-inner-addon i {
   position: absolute;
   right: 0px;
@@ -242,16 +286,16 @@
 }
 
 #calendar .row {
-  margin-left:0px;
-  margin-right:0px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
 a {
-  cursor:pointer;
+  cursor: pointer;
 }
 
 input.ng-invalid.ng-dirty,
-input.ng-dirty.ng-valid.ng-invalid-email{
+input.ng-dirty.ng-valid.ng-invalid-email {
   background-color: @darkRed;
 
 }
@@ -292,29 +336,41 @@ input.ng-valid.ng-dirty {
   background-position-y: 50%;
 }
 
-.form-group{
-  &.inline{
-    float:left;
-    &:not(:last-child){
-      margin-right:10px;
+.form-group {
+  &.inline {
+    float: left;
+    &:not(:last-child) {
+      margin-right: 10px;
     }
   }
-  max-width:250px;
+  max-width: 250px;
 
-  &.large{
-    max-width:400px;
+  &.large {
+    max-width: 400px;
   }
-  &.small{
-    max-width:70px;
+  &.small {
+    max-width: 70px;
   }
   &.medium {
-    max-width:120px;
+    max-width: 120px;
   }
 }
-form[name="paymentForm"]{
-  background-color:#282828;
+
+form[name="paymentForm"] {
+  background-color: #282828;
   margin: auto;
-  border-radius:5px;
-  max-width:900px;
+  border-radius: 5px;
+  max-width: 900px;
   padding: 15px;
 }
+
+a.thumbnail {
+  &:hover{
+    border-color: @orange;
+  }
+  &.active.orange {
+    border-color: @orange;
+  }
+}
+
+@orange: rgb(255, 160, 45);

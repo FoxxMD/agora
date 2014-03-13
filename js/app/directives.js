@@ -61,7 +61,7 @@ angular.module('app.directives', [])
             }
         };
     }])
-    .directive('stripeDir', ['$rootScope',function($rootScope){
+    .directive('stripeDir', ['$rootScope', function($rootScope){
         return {
             restrict:'A',
             templateUrl:'/templates/pay.html',
@@ -80,4 +80,30 @@ angular.module('app.directives', [])
             }
 
         };
+    }])
+    .directive('gamesectionDir', [function(){
+        return {
+            restrict:'A',
+            templateUrl:'templates/games.html',
+            link: function(scope, element, attrs){
+                $(element).find('.thumbnail').on('click', function(ev, target){
+                    $(element).find('.thumbnail').removeClass('active orange');
+                    $(this).addClass('active orange');
+                });
+            }
+        }
+    }])
+    .directive('gameDir', ['$http','$state', function($http, $state){
+       return {
+            restrict:'A',
+           templateUrl:'templates/gameDirective.html',
+            controller: function($scope, $element){
+                $http.get($state.current.data).success(function(data){
+                    $scope.gameInfo = data;
+                });
+            },
+            link: function(scope, element, attrs){
+
+            }
+        }
     }]);
