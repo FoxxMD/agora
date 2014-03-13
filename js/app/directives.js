@@ -106,4 +106,25 @@ angular.module('app.directives', [])
 
             }
         }
+    }])
+    .directive('aboutDir', ['$http', function($http){
+        return {
+            restrict:'A',
+            templateUrl:'templates/about.html',
+            controller:function($scope){
+                $http.get('content/credits.json').success(function(data)
+                {
+                    $scope.credits = data;
+                });
+            },
+            link: function(scope, element, attrs)
+            {
+                $(element).find('#regCredits').on('click',function(){
+                    $(element).find('#start').remove();
+                    $(element).find('#titles').attr('id','boringtitle');
+                    $(element).find('#titlecontent').attr('id','boringtitlecontent');
+                    $(element).closest('html').css('overflow','auto');
+                });
+            }
+        }
     }]);

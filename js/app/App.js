@@ -27,6 +27,11 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 url:'/servers',
                 parent:'index'
             })
+            .state('about', {
+                template:'<div about-dir></div>',
+                url:'/about',
+                parent:'index'
+            })
             .state('pay', {
                 template: '<div stripe-dir></div>',
                 url: '/pay',
