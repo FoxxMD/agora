@@ -108,7 +108,13 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
     var ModalLoginCtrl = function ($scope, $modalInstance) {
         $scope.loginSubmit = function () {
-            alert("you're logging in!");
+            var that = this;
+            userService.login(this.loginData).promise.then(function (response) {
+                console.log(response);
+            }, function (response) {
+                alert('login failed');
+                console.log(response);
+            });
         }
         $scope.close = function () {
             $modalInstance.dismiss('canceled');
@@ -131,13 +137,14 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
     var ModalRegisterCtrl = function ($scope, $modalInstance) {
         $scope.submitRegistration = function () {
-            userService.register(this.formData).then(function () {
-                if (this.payNow) {
-                    $rootScope.$emit('broadcast', {say: 'enableStripe', with: this.email});
+            var that = this;
+            userService.register(this.formData).promise.then(function () {
+                if (that.payNow) {
+                    $state.go('pay');
                 }
                 $modalInstance.close('registered');
-            }, function () {
-                alert("Registration failed, check console for error output.");
+            }, function (response) {
+                alert("Registration failed: " + response.message);
             });
         };
         $scope.close = function () {

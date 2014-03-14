@@ -1,10 +1,11 @@
 <?php
 
+require_once("./crypto.php");
 include 'ChromePhp.php'; //using for logging into chrome dev console because setting up an IDE would make too much sense
 
 
     function getDB() {
-        $db = mysql_connect("localhost:3306","matt","preparis");
+        $db = mysql_connect("localhost:3306","matt","preparis"); //this will need to be changed obv
         mysql_select_db("gtgamefest_db",$db);
         return $db;
     }
@@ -68,8 +69,13 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         $db = getDB();
         $sql = "select * from users where email='".$param1."' or alias='".$param1."'";
         $result = mysql_fetch_array(mysql_query($sql));
+
+        $response = new stdClass();
+
         if($result == null) {
-            return "0";
+            $response -> success = false;
+            $response -> message = "Username or Password incorrect";
+            return $response;
         }
         if($result["attempt"] >= 5) {
             $time = time();
@@ -78,31 +84,41 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 $sql = "update users set attempt=0 where email='".$param1."' or alias='".$param1."'";
                 mysql_query($sql);
             } else {
-                return "-1";
+               $response -> success = false;
+               $response -> msg = "You have tried to login too many times.";
+               return $response;
             }
         }
-        if($result["password"] != $param2) {
+        if(!password_verify($param2,$result["password"])) {
             $sql = "update users set attempt=".($result["attempt"] + 1)." where email='".$param1."' or alias='".$param1."'";
             mysql_query($sql);
             if($result["attempt"] >= 4) {
                 $time = time();
-                $sql = "update users set locktime=NULL where email='".$param1."' or alias='".$param1."'";
+                $sql = "update users set locktime=DATE_ADD(NOW(), INTERVAL 15 MINUTE) where email='".$param1."' or alias='".$param1."'";
                 mysql_query($sql);
                 $fp = fopen("log.txt",'a');
                 $content = $result["email"]."   ".date("Y-m-d H:i:s")."   ".$_SERVER["REMOTE_ADDR"]."\n";
                 fwrite($fp, $content);
                 fclose($fp);
             }
-            return "0";
+            $response -> success = false;
+            $response -> message = "Username or Password incorrect";
+            return $response;
         }
-        $sql = "update users set attempt=0 where email='".$param1."' or alias='".$param1."'";
+        $authToken = getToken(40);
+        $sql = "update users set attempt=0,authtoken='".$authToken."',authExpire=DATE_ADD(NOW(),INTERVAL 1 DAY) where email='".$param1."' or alias='".$param1."'";
         mysql_query($sql);
+
         setcookie("currentUser",$param1,time() + 3600 * 12);
+        $response -> success = true;
+        $response -> authtoken = $authToken;
+
         if($result["role"] == "1") {
-            setcookie("currentAdmin",$param1, time() + 3600 * 12);
-            return "2";
+            $response -> role = "admin";
+            //setcookie("currentAdmin",$param1, time() + 3600 * 12);
+            //return "2";
         }
-        return "1";
+        return $response;
     }
 
 
