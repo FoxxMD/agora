@@ -1,17 +1,30 @@
 <?php
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
     require_once("./lib.php");
 
-    $alias = $_POST["alias"];
-    $email = $_POST["email"];
-    $pw    = $_POST["password"];
+    $data = file_get_contents('php://input');
+    $user = json_decode($data);
 
     $db = getDB();
 
-    if(!checkDuplicate("email", $email) && !checkDuplicate("alias",$alias)) {
-        $sql = "insert into users values (NULL, '".$email."','".$pw."','".$alias."','0','0','','','','','','0',NULL,0)";
+    if(!checkDuplicate("email", $user -> email) && !checkDuplicate("alias",$user -> alias)) {
+
+        ChromePhp::log('going to create user');
+
+        $sql = "insert into users values (NULL, '".$user -> email."','".$user -> password."','','".$user -> alias."','0','0','','','','','','0',NULL,0)";
         $result = mysql_query($sql, $db);
-        echo "1";
+
+        if(!$result){
+                ChromePhp::log('did not create user');
+                error_log(mysql_error());
+                echo "0";
+        }
+        else{
+                echo "1";
+        }
     } else
         echo "0";
 ?>

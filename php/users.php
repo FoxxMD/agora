@@ -2,6 +2,7 @@
 
     require_once("./lib.php");
 
+
     $mode = $_POST["mode"];
     $param1 = $_POST["param1"];
 

@@ -1,15 +1,26 @@
 <?php
 
+include 'ChromePhp.php'; //using for logging into chrome dev console because setting up an IDE would make too much sense
+
+
     function getDB() {
-        $db = mysql_connect("localhost","gtgamefe_beta","G=C?r.%Kd0np");
-        mysql_select_db("gtgamefe_beta",$db);
+        $db = mysql_connect("localhost:3306","matt","preparis");
+        mysql_select_db("gtgamefest_db",$db);
         return $db;
     }
 
     function checkDuplicate($field, $value) {
+    ChromePhp::log($field);
+    ChromePhp::log($value);
+
         $db = getDB();
         $sql = "select * from users where ".$field."='".$value."'";
-        $result = mysql_fetch_array(mysql_query($sql, $db));
+        $query = mysql_query($sql, $db);
+        if(!$query)
+        {
+        ChromePhp::log('query failed');
+        }
+        $result = mysql_fetch_array($query);
         if($result != null)
             return true;
         return false;

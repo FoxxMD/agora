@@ -1,5 +1,5 @@
 //initialize app
-var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'angularPayments']);
+var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments']);
 
 //configure routing
 //hydrate all states for application in order to setup site structure
@@ -23,14 +23,14 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 parent: 'index'
             })
             .state('servers', {
-                templateUrl:'templates/servers.html',
-                url:'/servers',
-                parent:'index'
+                templateUrl: 'templates/servers.html',
+                url: '/servers',
+                parent: 'index'
             })
             .state('about', {
-                template:'<div about-dir></div>',
-                url:'/about',
-                parent:'index'
+                template: '<div about-dir></div>',
+                url: '/about',
+                parent: 'index'
             })
             .state('pay', {
                 template: '<div stripe-dir></div>',
@@ -38,15 +38,15 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 parent: 'index'
             })
             .state('games', {
-              template:'<div gamesection-dir></div>',
-                url:'/games',
-                parent:'index'
+                template: '<div gamesection-dir></div>',
+                url: '/games',
+                parent: 'index'
             })
             .state('sc2', {
-                template:'<div game-dir></div>',
-                url:'/sc2',
+                template: '<div game-dir></div>',
+                url: '/sc2',
                 data: '/content/games/sc2.json',
-                parent:'games'
+                parent: 'games'
             })
             .state('404', {
                 templateUrl: 'templates/shared/404.html',
@@ -89,7 +89,7 @@ app.run(function ($rootScope) {
  Basically everything on the menu bar.
 
  */
-app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', function ($scope, $state, $modal, $rootScope) {
+app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService', function ($scope, $state, $modal, $rootScope, userService) {
 
     $scope.openLogin = function () {
 
@@ -98,8 +98,8 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', function ($sc
             controller: ModalLoginCtrl
         });
 
-        modalInstance.result.then(function(action){
-            if(action == 'register'){
+        modalInstance.result.then(function (action) {
+            if (action == 'register') {
                 $scope.openRegistration();
             }
         })
@@ -113,7 +113,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', function ($sc
         $scope.close = function () {
             $modalInstance.dismiss('canceled');
         }
-        $scope.closeToRegister = function (){
+        $scope.closeToRegister = function () {
             $modalInstance.close('register');
         }
     };
@@ -125,29 +125,20 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', function ($sc
         });
     }
 
-    $rootScope.$on('openRegistration', function(){
+    $rootScope.$on('openRegistration', function () {
         $scope.openRegistration();
     });
 
     var ModalRegisterCtrl = function ($scope, $modalInstance) {
         $scope.submitRegistration = function () {
-            $.ajax({
-                url: 'php/register.php',
-                data: JSON.stringify(this.formData),
-                type: 'POST'
-            }).done(function (data) {
-                    if (data == 1) {
-
-                        if (this.payNow) {
-                            $rootScope.$emit('broadcast', {say: 'enableStripe', with: this.email});
-                        }
-                        $modalInstance.close('registered');
-                    }
-                    else {
-                        alert("Registration failed, check console for error output.");
-                        console.log(data);
-                    }
-                });
+            userService.register(this.formData).then(function () {
+                if (this.payNow) {
+                    $rootScope.$emit('broadcast', {say: 'enableStripe', with: this.email});
+                }
+                $modalInstance.close('registered');
+            }, function () {
+                alert("Registration failed, check console for error output.");
+            });
         };
         $scope.close = function () {
             $modalInstance.dismiss('canceled');
