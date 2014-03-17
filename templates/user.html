@@ -1,0 +1,57 @@
+<div nf-if="!user.paid" class="alert alert-warning alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <strong>Yo!</strong> Your entry fee has not been paid yet. Complete registration by paying now.
+</div>
+<h1>{{user.alias}}<br/>
+    <small>User Profile</small>
+</h1>
+<div class="row">
+    <div class="col-md-8 col-sm-12">
+        <div class="lead">
+            <fieldset>
+                <legend>User Information</legend>
+                <div class="form-group">
+                    <label class="control-label">Alias:</label>
+                    <a editable-text="user.alias" onbeforesave="updateUser('alias',$data)">{{user.alias || 'Not Set'
+                        }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">LoL Tag:</label>
+                    <a editable-text="user.lol" onbeforesave="updateUser('lol',$data)">{{user.lol || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">BN:</label>
+                    <a editable-text="user.bn" onbeforesave="updateUser('bn',$data)">{{user.bn || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Xbox Tag:</label>
+                    <a editable-text="user.xbox" onbeforesave="updateUser('xbox',$data)">{{user.xbox || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">IGN Tag:</label>
+                    <a editable-text="user.ign" onbeforesave="updateUser('ign',$data)">{{user.ign || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Steam Id:</label>
+                    <a editable-text="user.steam" onbeforesave="updateUser('steam',$data)">{{user.steam || 'Not Set'
+                        }}</a>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div ng-if="ownProfile" class="col-md-4 col-sm-12">
+        <div class="lead">
+            <fieldset>
+                <legend>Account Information</legend>
+                <div class="form-group">
+                    <label class="control-label">Email:</label>
+                    <a>{{user.email}}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Paid :</label>
+                    <a>{{user.paid ? 'Yes' : 'No' }}</a>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

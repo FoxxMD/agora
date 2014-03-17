@@ -1,5 +1,5 @@
 <?php
-
+ini_set('display_errors', 0);
 require_once("./crypto.php");
 include 'ChromePhp.php'; //using for logging into chrome dev console because setting up an IDE would make too much sense
 
@@ -27,41 +27,77 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         return false;
     }
 
-    function getUsers($param) {
+    function getUser($param, $showAllData) {
         $db = getDB();
-        if($param != null) {
-            $sql = "select * from users where alias='".$param."' or email='".$param."'";
+            $sql = "select * from users where id='".$param."'";
             $result = mysql_fetch_array(mysql_query($sql, $db));
-            unset($result["password"]);
-            unset($result["lock"]);
-            unset($result["attempt"]);
-            return json_encode($result);
-        } else {
-            $result = array();
-            $sql = "select * from users";
-            $count = 0;
-            $raw = mysql_query($sql, $db);
-            while($curr = mysql_fetch_array($raw))  {
-                unset($curr["password"]);
-                unset($curr["lock"]);
-                unset($curr["attempt"]);
-                $result[$count] = $curr;
-                $count++;
+            if(!$showAllData)
+            {
+                unset($result["password"]);
+                unset($result["lock"]);
+                unset($result["attempt"]);
+                unset($result["salt"]);
+                unset($result["email"]);
+                unset($result["paid"]);
             }
             return json_encode($result);
-        }
+    }
+    function getUsers($showAllData)
+    {
+        $db = getDB();
+        $result = array();
+        $sql = "select * from users";
+        $count = 0;
+        $raw = mysql_query($sql, $db);
+        while($curr = mysql_fetch_array($raw))  {
+            if(!$showAllData)
+            {
+                unset($result["password"]);
+                unset($result["lock"]);
+                unset($result["attempt"]);
+                unset($result["salt"]);
+                unset($result["email"]);
+                unset($result["paid"]);
+            }
+            $result[$count] = $curr;
+            $count++;
+            }
+        return json_encode($result);
     }
 
     function setUsers($param1, $param2, $param3) {
         $db = getDB();
+        $response = new stdClass();
         if($param1 != null) {
-            $sql = "update users set ".$param2."='".$param3."' where alias='".$param1."' or email='".$param1."'";
+            $sql = "update users set ".$param2."='".$param3."' where id='".$param1."'";
             $result = mysql_query($sql);
-            return "1";
-        } else {
+            $response -> success = true;
+            return $response;
+        } /*else {
             $sql = "update users set ".$param2."='".$param3."'";
             $result = mysql_query($sql);
             return "1";
+        }*/ //seriously wut?
+    }
+
+    function authenticateRequest($authToken)
+    {
+         $db = getDB();
+         $sql = "select * from users where authtoken='".$authToken."'";
+         $result = mysql_fetch_array(mysql_query($sql));
+
+         if($result != null)
+         {
+            $user = new stdClass();
+
+            $user -> email = $result["email"];
+            $user -> id = $result["id"];
+            $user -> authtoken = $authToken;
+            $user -> role = $result["role"];
+            return $user;
+         }
+        else{
+            return null;
         }
     }
 
@@ -111,13 +147,11 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
         setcookie("currentUser",$param1,time() + 3600 * 12);
         $response -> success = true;
+        $response -> alias = $result["alias"];
+        $response -> id = $result["id"];
         $response -> authtoken = $authToken;
+        $response -> role = $result["role"];
 
-        if($result["role"] == "1") {
-            $response -> role = "admin";
-            //setcookie("currentAdmin",$param1, time() + 3600 * 12);
-            //return "2";
-        }
         return $response;
     }
 
@@ -144,7 +178,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
     function deleteUser($user) {
         $db = getDB();
-        $sql = "delete from users where email='".$user."'";
+        $sql = "delete from users where id='".$user."'";
         mysql_query($sql, $db);
         return "1";
     }

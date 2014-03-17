@@ -2,29 +2,42 @@
 
     require_once("./lib.php");
 
+    $postData = file_get_contents('php://input');
+    $data = json_decode($postData);
 
-    $mode = $_POST["mode"];
+    parse_str($_SERVER['QUERY_STRING'], $params);
+    $mode = $params["mode"];
+    $headers = getallheaders();
 
-    $data = file_get_contents('php://input');
-
-
-    //$param1 = $_POST["param1"];
-
-    if($mode == "get")  {
-        $result = getUsers($param1);
-    } else if($mode == "set") {
-        $param2 = $_POST["param2"];
-        $param3 = $_POST["param3"];
-        $result = setUsers($param1, $param2, $param3);
-    } else if($mode == "verify") {
+    if($mode == "verify") {
         $result = verifyUser($data -> email,$data -> password);
-    } else if($mode == "check") {
-        $result = ifAlreadyLogged();
-    } else if($mode == "logoff") {
-        $result = logoff();
-    } else if($mode == "delete") {
-        $result = deleteUser($_POST["param1"]);
     }
+    else {
+        $authUser = authenticateRequest($headers["Authentication"]);
+        if($authUser != null)
+        {
+        ChromePhp::log(var_dump($authUser));
+        ChromePhp::log(var_dump($data));
+            $isOwnData = ($authUser -> id == $data -> id);
+            $isAdmin = ($authUser -> role == 1);
+            $fullAccess = ($isOwnData || $isAdmin);
 
+            if($mode == "get")  {
+                $result = getUser($params["id"], $fullAccess);
+            } else if($mode == "set" && $fullAccess) {
+                $result = setUsers($data -> id, $data -> param, $data -> updatevalue);
+            } else if($mode == "delete" && $fullAccess) {
+                $result = deleteUser($data -> id);
+            } else if($mode == "getAll") {
+                $result = getUsers($isAdmin);
+            } else if($mode == "logoff") {
+                $result = logoff();
+            }
+        }
+        else {
+            $result -> success = false;
+            $result -> message = "Not Authorized";
+        }
+    }
     echo json_encode($result);
 ?>

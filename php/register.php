@@ -1,6 +1,6 @@
 <?php
 
-ini_set('display_errors', 0);
+
 //error_reporting(E_ALL);
 
     require_once("./lib.php");
@@ -32,7 +32,6 @@ ini_set('display_errors', 0);
         else{
                 $response -> success = true;
                 $response -> authtoken = $authToken;
-                //echo "1";
         }
     } else
     {
@@ -40,5 +39,4 @@ ini_set('display_errors', 0);
         $response -> message = "Duplicate Email or Alias";
     }
         echo json_encode($response);
-        //echo "0";
 ?>

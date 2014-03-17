@@ -1,5 +1,5 @@
 //initialize app
-var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments']);
+var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments','xeditable']);
 
 //configure routing
 //hydrate all states for application in order to setup site structure
@@ -48,6 +48,17 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 data: '/content/games/sc2.json',
                 parent: 'games'
             })
+            .state('profile', {
+                templateUrl:'templates/user.html',
+                url:'/profile',
+                parent:'index',
+                controller:'userctrl'
+            })
+            .state('user',{
+                templateUrl:'templates/user.html',
+                url:'/user/:userId',
+                controller: 'userctrl'
+            })
             .state('404', {
                 templateUrl: 'templates/shared/404.html',
                 url: '/404',
@@ -64,7 +75,7 @@ app.config(['RestangularProvider', '$httpProvider', function (RestangularProvide
     RestangularProvider.setBaseUrl('/');
 }]);
 
-app.run(function ($rootScope) {
+app.run(function ($rootScope, userService, editableOptions) {
     $rootScope.$on('broadcast', function (e, data) {
         if (undefined == data.with) {
             $rootScope.$broadcast(data.say);
@@ -73,6 +84,8 @@ app.run(function ($rootScope) {
             $rootScope.$broadcast(data.say, data.with);
         }
     });
+    editableOptions.theme = 'bs3';
+    userService.initUser();
 });
 
 
@@ -91,65 +104,91 @@ app.run(function ($rootScope) {
  */
 app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService', function ($scope, $state, $modal, $rootScope, userService) {
 
-    $scope.openLogin = function () {
+        $scope.isLoggedIn = userService.isLoggedIn();
+        $scope.alias = userService.getProfile().alias;
 
-        var modalInstance = $modal.open({
-            templateUrl: '/templates/shared/login.html',
-            controller: ModalLoginCtrl
+        $rootScope.$on('loginChange', function () {
+            $scope.isLoggedIn = userService.isLoggedIn();
         });
 
-        modalInstance.result.then(function (action) {
-            if (action == 'register') {
-                $scope.openRegistration();
-            }
-        })
+        $scope.openLogin = function () {
 
-    }
-
-    var ModalLoginCtrl = function ($scope, $modalInstance) {
-        $scope.loginSubmit = function () {
-            var that = this;
-            userService.login(this.loginData).promise.then(function (response) {
-                console.log(response);
-            }, function (response) {
-                alert('login failed');
-                console.log(response);
+            var modalInstance = $modal.open({
+                templateUrl: '/templates/shared/login.html',
+                controller: ModalLoginCtrl
             });
-        }
-        $scope.close = function () {
-            $modalInstance.dismiss('canceled');
-        }
-        $scope.closeToRegister = function () {
-            $modalInstance.close('register');
-        }
-    };
 
-    $scope.openRegistration = function () {
-        var modalInstance = $modal.open({
-            templateUrl: '/templates/shared/register.html',
-            controller: ModalRegisterCtrl
-        });
-    }
-
-    $rootScope.$on('openRegistration', function () {
-        $scope.openRegistration();
-    });
-
-    var ModalRegisterCtrl = function ($scope, $modalInstance) {
-        $scope.submitRegistration = function () {
-            var that = this;
-            userService.register(this.formData).promise.then(function () {
-                if (that.payNow) {
-                    $state.go('pay');
+            modalInstance.result.then(function (action) {
+                if (action == 'register') {
+                    $scope.openRegistration();
                 }
-                $modalInstance.close('registered');
-            }, function (response) {
-                alert("Registration failed: " + response.message);
-            });
-        };
-        $scope.close = function () {
-            $modalInstance.dismiss('canceled');
+            })
+
+        }
+
+        var ModalLoginCtrl = function ($scope, $modalInstance) {
+            $scope.loginSubmit = function () {
+                var that = this;
+                userService.login(this.loginData).promise.then(function (response) {
+                    $modalInstance.close('logged in');
+                }, function (response) {
+                    alert('login failed');
+                });
+            }
+            $scope.close = function () {
+                $modalInstance.dismiss('canceled');
+            }
+            $scope.closeToRegister = function () {
+                $modalInstance.close('register');
+            }
         };
 
-    };
-}]);
+        $scope.logoff = function(){
+          userService.logoff();
+        };
+
+        $scope.openRegistration = function () {
+            var modalInstance = $modal.open({
+                templateUrl: '/templates/shared/register.html',
+                controller: ModalRegisterCtrl
+            });
+        }
+
+        $rootScope.$on('openRegistration', function () {
+            $scope.openRegistration();
+        });
+
+        var ModalRegisterCtrl = function ($scope, $modalInstance) {
+            $scope.submitRegistration = function () {
+                var that = this;
+                userService.register(this.formData).promise.then(function () {
+                    if (that.payNow) {
+                        $state.go('pay');
+                    }
+                    $modalInstance.close('registered');
+                }, function (response) {
+                    alert("Registration failed: " + response.message);
+                });
+            };
+            $scope.close = function () {
+                $modalInstance.dismiss('canceled');
+            };
+
+        };
+    }])
+    .controller('userctrl', ['$scope', 'userService', '$stateParams', function ($scope, userService, $stateParams) {
+
+        if($stateParams.userId != null)
+        {
+            $scope.user = userService.getUser($stateParams.userId);
+            $scope.ownProfile = false;
+        }
+        else{
+            $scope.user = userService.getUser(userService.getProfile().id);
+            $scope.ownProfile = true;
+        }
+
+        $scope.updateUser = function (element, updateVal) {
+         return userService.updateUser(element, updateVal);
+        }
+    }]);

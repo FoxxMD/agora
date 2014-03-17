@@ -23,13 +23,13 @@
                     </li>
                     <li><a ui-sref="about">About Us</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right" id="main-menu-right">
+                <ul ng-if="!isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right">
                     <li><a ng-click="openRegistration()">Register</a></li>
                     <li><a ng-click="openLogin()">Login</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right ng-hide" id="main-menu-right-login">
-                    <li><a id="userManagement" data-link="users.html" href="#">Account Management</a></li>
-                    <li><a id="logoff" href="#">Log Off</a></li>
+                <ul ng-if="isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right-login">
+                    <li><a ui-sref="profile">{{alias}}</a></li>
+                    <li><a ng-click="logoff()">Log Off</a></li>
                 </ul>
             </div>
         </div>
