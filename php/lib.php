@@ -211,17 +211,27 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         return $response;
     }
 
-    function createTeam($name, $captain, $password, $game) {
+    function createTeam($data, $user) {
         $db = getDB();
-        if($password == null)
-            $password = "";
-        $sql = "insert into teams values (NULL, '".$name."','".$captain."','".$password."','','','".$game."','','','','')";
-        mysql_query($sql, $db);
-        return "1";
+        $response = new stdClass();
+
+        $sql = "insert into teams values (NULL, '".$data -> name."','".$user -> id."','".$data -> password."','','','".$data -> game."','','','','')";
+        if($result = $db -> query($sql))
+        {
+            $response -> success = true;
+        }
+        else{
+            $response -> success = false;
+            $response -> message = $db -> error();
+        }
+        return $response;
     }
 
-    function getTeams($name, $captain) {
+    function getTeam($id) {
         $db = getdb();
+
+
+
         if($name != null) {
             $sql = "select * from teams where name = '".$name."'";
             $result = mysql_fetch_array(mysql_query($sql));

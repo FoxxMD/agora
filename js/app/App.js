@@ -69,6 +69,20 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 controller:'usersctrl',
                 authenticated:true
             })
+            .state('team', {
+                templateUrl:'/templates/team.html',
+                url:'/team/:teamId',
+                parent:'index',
+                controller:'teamctrl',
+                authenticated:true
+            })
+            .state('teams',{
+                templateUrl:'/templates/teams.html',
+                url:'/teams',
+                parent:'index',
+                controller:'teamsctrl',
+                authenticated:true
+            })
             .state('404', {
                 templateUrl: 'templates/shared/404.html',
                 url: '/404',
