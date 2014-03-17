@@ -1,12 +1,12 @@
-<div nf-if="!user.paid" class="alert alert-warning alert-dismissable">
+<div nf-if="user.paid == 1 && ownProfile" class="alert alert-warning alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <strong>Yo!</strong> Your entry fee has not been paid yet. Complete registration by paying now.
+    <strong>Yo!</strong> Your entry fee has not been paid yet. Complete registration by paying now. <button ng-if="user.paid == 0" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
 </div>
 <h1>{{user.alias}}<br/>
     <small>User Profile</small>
 </h1>
 <div class="row">
-    <div class="col-md-8 col-sm-12">
+    <div class="col-md-8 col-sm-12" ng-if="ownProfile">
         <div class="lead">
             <fieldset>
                 <legend>User Information</legend>
@@ -39,7 +39,38 @@
             </fieldset>
         </div>
     </div>
-    <div ng-if="ownProfile" class="col-md-4 col-sm-12">
+    <div class="col-md-8 col-sm-12" ng-if="!ownProfile">
+        <div class="lead">
+            <fieldset>
+                <legend>User Information</legend>
+                <div class="form-group">
+                    <label class="control-label">Alias:</label>
+                    <a>{{user.alias || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">LoL Tag:</label>
+                    <a>{{user.lol || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">BN:</label>
+                    <a>{{user.bn || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Xbox Tag:</label>
+                    <a>{{user.xbox || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">IGN Tag:</label>
+                    <a>{{user.ign || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Steam Id:</label>
+                    <a>{{user.steam || 'Not Set' }}</a>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div ng-if="ownProfile" class="col-md-4 col-sm-12" ng-if="ownProfile">
         <div class="lead">
             <fieldset>
                 <legend>Account Information</legend>
@@ -49,7 +80,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">Paid :</label>
-                    <a>{{user.paid ? 'Yes' : 'No' }}</a>
+                    <a>{{user.paid == 1 ? 'Yes' : 'No' }}</a> <button ng-if="user.paid == 0" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
                 </div>
             </fieldset>
         </div>

@@ -45,7 +45,17 @@
     }
   }
   .list-group-item {
-    background-color:transparent;
+    background-color: transparent;
+  }
+  .table-hover {
+    tbody {
+      tr:hover {
+        td, th {
+          background-color: @gray-dark;
+        }
+
+      }
+    }
   }
 }
 
@@ -365,7 +375,7 @@ form[name="paymentForm"] {
 }
 
 a.thumbnail {
-  &:hover{
+  &:hover {
     border-color: @orange;
   }
   &.active.orange {

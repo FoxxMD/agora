@@ -52,12 +52,22 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 templateUrl:'templates/user.html',
                 url:'/profile',
                 parent:'index',
-                controller:'userctrl'
+                controller:'userctrl',
+                authenticated: true
             })
             .state('user',{
                 templateUrl:'templates/user.html',
                 url:'/user/:userId',
-                controller: 'userctrl'
+                parent:'index',
+                controller: 'userctrl',
+                authenticated: true
+            })
+            .state('users', {
+                templateUrl:'templates/users.html',
+                url:'/users',
+                parent:'index',
+                controller:'usersctrl',
+                authenticated:true
             })
             .state('404', {
                 templateUrl: 'templates/shared/404.html',
@@ -86,6 +96,18 @@ app.run(function ($rootScope, userService, editableOptions) {
     });
     editableOptions.theme = 'bs3';
     userService.initUser();
+
+    $rootScope.$on('$stateChangeStart',
+        function(event, toState, toParams, fromState, fromParams){
+            if(toState.authenticated)
+            {
+                if(!userService.isLoggedIn())
+                {
+                    event.preventDefault();
+                }
+            }
+        })
+
 });
 
 
@@ -176,19 +198,38 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         };
     }])
-    .controller('userctrl', ['$scope', 'userService', '$stateParams', function ($scope, userService, $stateParams) {
+    .controller('userctrl', ['$scope', 'userService', '$stateParams','$state', function ($scope, userService, $stateParams, $state) {
+
+        $scope.paid = false;
 
         if($stateParams.userId != null)
         {
-            $scope.user = userService.getUser($stateParams.userId);
+            userService.getUser($stateParams.userId).promise.then(function(userData){
+                $scope.user = userData;
+            });
             $scope.ownProfile = false;
         }
         else{
-            $scope.user = userService.getUser(userService.getProfile().id);
+            userService.getUser().promise.then(function(userData){
+               $scope.user = userData;
+            });
             $scope.ownProfile = true;
         }
 
+        $scope.openPay = function(){
+            $state.go('pay');
+        };
+
         $scope.updateUser = function (element, updateVal) {
          return userService.updateUser(element, updateVal);
+        }
+    }])
+    .controller('usersctrl', ['$scope','userService','$state', function($scope, userService, $state){
+        userService.getUsers().promise.then(function(userArray){
+           $scope.users = userArray;
+        });
+        $scope.goToUser = function(id)
+        {
+            $state.go('user',{userId:id});
         }
     }]);

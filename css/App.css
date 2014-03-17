@@ -655,6 +655,10 @@
 .gtgamefest .list-group-item {
   background-color: transparent;
 }
+.gtgamefest .table-hover tbody tr:hover td,
+.gtgamefest .table-hover tbody tr:hover th {
+  background-color: #333333;
+}
 .contentPane {
   margin-top: 80px;
 }

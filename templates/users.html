@@ -1,0 +1,23 @@
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Alias</th>
+        <th>Steam</th>
+        <th>Xbox</th>
+        <th>IGN</th>
+        <th>Lol</th>
+        <th>BN</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="user in users" ng-click="goToUser(user.id)" style="cursor:pointer">
+        <td>{{user.alias}}</td>
+        <td>{{user.steam}}</td>
+        <td>{{user.xbox}}</td>
+        <td>{{user.ign}}</td>
+        <td>{{user.lol}}</td>
+        <td>{{user.bn}}</td>
+    </tr>
+    </tbody>
+</table>

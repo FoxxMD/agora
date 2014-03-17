@@ -13,24 +13,32 @@ angular.module('app.services', [])
             ign: null,
             token: null,
             tokenExpire: null
-        };
+            },
+            isInit = false;
 
-        this.getProfile = function(){
-          return user;
+        this.getProfile = function () {
+            return user;
         };
 
         this.getUser = function (id) {
             var deferred = $q.defer();
-
             $http({method: 'GET', url: 'php/users.php', params: {mode: 'get', id: id}}).success(function (response) {
-
+                deferred.resolve(response);
             }).error(function (response) {
-
+                    deferred.reject();
                 });
-
+            return deferred;
         };
 
-        var isInit = false;
+        this.getUsers = function () {
+            var deferred = $q.defer();
+            $http({method: 'GET', url: 'php/users.php', params: {mode: 'getAll'}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                    deferred.reject(response);
+                });
+            return deferred;
+        };
 
         this.initUser = function () {
             if ($localStorage.token != undefined || $localStorage.token != null) {
@@ -126,9 +134,9 @@ angular.module('app.services', [])
             return deferred;
         };
 
-        this.logoff = function() {
-           $localStorage.$reset();
-            user =  {
+        this.logoff = function () {
+            $localStorage.$reset();
+            user = {
                 id: 0,
                 alias: '',
                 email: '',

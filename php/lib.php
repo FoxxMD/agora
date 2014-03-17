@@ -5,182 +5,210 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        $db = mysql_connect("localhost:3306","matt","preparis"); //this will need to be changed obv
-        mysql_select_db("gtgamefest_db",$db);
+        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //change to local environment's variables
         return $db;
     }
 
     function checkDuplicate($field, $value) {
-    ChromePhp::log($field);
-    ChromePhp::log($value);
-
         $db = getDB();
         $sql = "select * from users where ".$field."='".$value."'";
-        $query = mysql_query($sql, $db);
-        if(!$query)
+        if($result = $db -> query($sql))
         {
-        ChromePhp::log('query failed');
+            if($result -> num_rows == 0)
+            {
+                return true;
+            }
+            else{
+                return false;
+            }
         }
-        $result = mysql_fetch_array($query);
-        if($result != null)
-            return true;
-        return false;
     }
 
     function getUser($param, $showAllData) {
         $db = getDB();
-            $sql = "select * from users where id='".$param."'";
-            $result = mysql_fetch_array(mysql_query($sql, $db));
-            if(!$showAllData)
+        $sql = "select * from users where id='".$param."'";
+        if($result = $db -> query($sql))
+        {
+            if($result -> num_rows > 0)
             {
-                unset($result["password"]);
-                unset($result["lock"]);
-                unset($result["attempt"]);
-                unset($result["salt"]);
-                unset($result["email"]);
-                unset($result["paid"]);
+            $userObj = $result -> fetch_object();
+                if(!$showAllData)
+                {
+                    $userObj -> password = null;
+                    $userObj -> lock = null;
+                    $userObj -> attempt = null;
+                    $userObj -> salt = null;
+                    $userObj -> email = null;
+                    $userObj -> paid = null;
+                    $userObj -> authtoken = null;
+                    $userObj -> authExpire = null;
+                }
+                return $userObj;
             }
-            return json_encode($result);
+            else{
+                return null;
+            }
+        }
     }
     function getUsers($showAllData)
     {
         $db = getDB();
-        $result = array();
+        $userArray = array();
+        $userObj = new stdClass();
         $sql = "select * from users";
         $count = 0;
-        $raw = mysql_query($sql, $db);
-        while($curr = mysql_fetch_array($raw))  {
-            if(!$showAllData)
+        if($result = $db -> query($sql))
+        {
+            while($userObj = $result -> fetch_object())
             {
-                unset($result["password"]);
-                unset($result["lock"]);
-                unset($result["attempt"]);
-                unset($result["salt"]);
-                unset($result["email"]);
-                unset($result["paid"]);
+                if(!$showAllData)
+                {
+                    $userObj -> password = null;
+                    $userObj -> lock = null;
+                    $userObj -> attempt = null;
+                    $userObj -> salt = null;
+                    $userObj -> email = null;
+                    $userObj -> paid = null;
+                }
+                $userArray[$count] = $userObj;
+                $count++;
             }
-            $result[$count] = $curr;
-            $count++;
-            }
-        return json_encode($result);
+        }
+        return $userArray;
     }
 
-    function setUsers($param1, $param2, $param3) {
+    function setUsers($param1, $param2, $param3, $isAdmin) {
         $db = getDB();
         $response = new stdClass();
-        if($param1 != null) {
+        if(($param2 != "paid" && param2 != "email") || $isAdmin) {
             $sql = "update users set ".$param2."='".$param3."' where id='".$param1."'";
-            $result = mysql_query($sql);
-            $response -> success = true;
-            return $response;
-        } /*else {
-            $sql = "update users set ".$param2."='".$param3."'";
-            $result = mysql_query($sql);
-            return "1";
-        }*/ //seriously wut?
+            if($result = $db -> query($sql))
+            {
+               $response -> success = true;
+            }
+            else{
+                $response -> success = false;
+                $response -> message = $db -> error;
+            }
+        } else {
+            $response -> success = false;
+            $response -> message = "Unauthorized";
+        }
+        return $response;
     }
 
     function authenticateRequest($authToken)
     {
          $db = getDB();
          $sql = "select * from users where authtoken='".$authToken."'";
-         $result = mysql_fetch_array(mysql_query($sql));
-
-         if($result != null)
+         $user = new stdClass();
+         if($result = $db -> query($sql))
          {
-            $user = new stdClass();
-
-            $user -> email = $result["email"];
-            $user -> id = $result["id"];
-            $user -> authtoken = $authToken;
-            $user -> role = $result["role"];
-            return $user;
+             if($result -> num_rows > 0)
+            {
+                 $userObj = $result -> fetch_object();
+                 $user -> email = $userObj -> email;
+                 $user -> id = $userObj -> id;
+                 $user -> authtoken = $authToken;
+                 $user -> role =  $userObj -> role;
+                 $result -> close();
+                 return $user;
+            }
+            else{
+                return null;
+            }
          }
-        else{
+         else{
             return null;
-        }
+         }
     }
 
     function verifyUser($param1, $param2) {
         $db = getDB();
-        $sql = "select * from users where email='".$param1."' or alias='".$param1."'";
-        $result = mysql_fetch_array(mysql_query($sql));
+        $sqlTop = "select * from users where email='".$param1."' or alias='".$param1."'";
 
         $response = new stdClass();
+        $response -> success = false;
+        if($result = $db -> query($sqlTop))
+        {
+            if($result -> num_rows > 0)
+            {
+                $userObj = $result -> fetch_object();
+                $result -> close();
+                if($userObj -> attempt >= 5) {
+                    $time = time();
+                    if($time - strtotime($userObj -> locktime >= (60 * 15))) {
 
-        if($result == null) {
-            $response -> success = false;
-            $response -> message = "Username or Password incorrect";
-            return $response;
-        }
-        if($result["attempt"] >= 5) {
-            $time = time();
-            if($time - strtotime($result["locktime"]) >= (60 * 15)) {
+                        $sql = "update users set attempt=0 where email='".$param1."' or alias='".$param1."'";
+                        $db -> query($sql);
+                    } else {
+                       $response -> success = false;
+                       $response -> msg = "You have tried to login too many times.";
+                       return $response;
+                    }
+                }
+                if(!password_verify($param2, $userObj -> password)) {
+                    $result = $db -> query($sqlTop);
+                    $userObj = $result -> fetch_object();
+                    $result -> close();
 
-                $sql = "update users set attempt=0 where email='".$param1."' or alias='".$param1."'";
-                mysql_query($sql);
-            } else {
-               $response -> success = false;
-               $response -> msg = "You have tried to login too many times.";
-               return $response;
+                    $sql = "update users set attempt=".($userObj -> attempt + 1)." where email='".$param1."' or alias='".$param1."'";
+                    $db -> query($sql);
+                    $result = $db -> query($sqlTop);
+                    $userObj = $result -> fetch_object();
+                    $result -> close();
+
+                    if($userObj -> attempt >= 4) {
+                        $time = time();
+                        $sql = "update users set locktime=DATE_ADD(NOW(), INTERVAL 15 MINUTE) where email='".$param1."' or alias='".$param1."'";
+                        $db -> query($sql);
+                        $fp = fopen("log.txt",'a');
+                        $content = $userObj -> email."   ".date("Y-m-d H:i:s")."   ".$_SERVER["REMOTE_ADDR"]."\n";
+                        fwrite($fp, $content);
+                        fclose($fp);
+                    }
+                    $response -> success = false;
+                    $response -> message = "Username or Password incorrect";
+                    return $response;
+                }
+                $authToken = getToken(40);
+                        $sql = "update users set attempt=0,authtoken='".$authToken."',authExpire=DATE_ADD(NOW(),INTERVAL 1 DAY) where email='".$param1."' or alias='".$param1."'";
+                        $db -> query($sql);
+                        $result = $db -> query($sqlTop);
+                        $userObj = $result -> fetch_object();
+                        $result -> close();
+
+                        $response -> success = true;
+                        $response -> alias = $userObj -> alias;
+                        $response -> id = $userObj -> id;
+                        $response -> authtoken = $authToken;
+                        $response -> role = $userObj -> role;
+            }
+            else{
+                $response -> success = false;
+                $response -> message = "Username or Password incorrect";
             }
         }
-        if(!password_verify($param2,$result["password"])) {
-            $sql = "update users set attempt=".($result["attempt"] + 1)." where email='".$param1."' or alias='".$param1."'";
-            mysql_query($sql);
-            if($result["attempt"] >= 4) {
-                $time = time();
-                $sql = "update users set locktime=DATE_ADD(NOW(), INTERVAL 15 MINUTE) where email='".$param1."' or alias='".$param1."'";
-                mysql_query($sql);
-                $fp = fopen("log.txt",'a');
-                $content = $result["email"]."   ".date("Y-m-d H:i:s")."   ".$_SERVER["REMOTE_ADDR"]."\n";
-                fwrite($fp, $content);
-                fclose($fp);
-            }
-            $response -> success = false;
-            $response -> message = "Username or Password incorrect";
-            return $response;
+        else{
+            $response -> message = "Could not perform query";
         }
-        $authToken = getToken(40);
-        $sql = "update users set attempt=0,authtoken='".$authToken."',authExpire=DATE_ADD(NOW(),INTERVAL 1 DAY) where email='".$param1."' or alias='".$param1."'";
-        mysql_query($sql);
-
-        setcookie("currentUser",$param1,time() + 3600 * 12);
-        $response -> success = true;
-        $response -> alias = $result["alias"];
-        $response -> id = $result["id"];
-        $response -> authtoken = $authToken;
-        $response -> role = $result["role"];
-
-        return $response;
-    }
-
-
-    function ifAlreadyLogged() {
-        $result = array();
-        if($_COOKIE["currentUser"] != null) {
-            $result["user"] = $_COOKIE["currentUser"];
-            if($_COOKIE["currentAdmin"] != null) {
-                $result["code"] = 2;
-            } else {
-                $result["code"] = 1;
-            }
-        } else {
-            $result["code"] = 0;
-        }
-        return json_encode($result);
-    }
-
-    function logoff() {
-        setcookie("currentUser","",time() - 3600);
-        setcookie("currentAdmin","",time() - 3600);
+          $db -> close();
+          return $response;
     }
 
     function deleteUser($user) {
         $db = getDB();
+        $response = new stdClass();
         $sql = "delete from users where id='".$user."'";
-        mysql_query($sql, $db);
-        return "1";
+        if($result = $db -> query(sql))
+        {
+            $response -> success = true;
+        }
+        else{
+            $response -> success = false;
+            $response -> message = $db -> error;
+        }
+        return $response;
     }
 
     function createTeam($name, $captain, $password, $game) {
