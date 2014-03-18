@@ -8,6 +8,7 @@
     parse_str($_SERVER['QUERY_STRING'], $params);
     $mode = $params["mode"];
     $headers = getallheaders();
+    $id = new stdClass();
     $authUser = authenticateRequest($headers["Authentication"]);
 
         if($authUser != null)
@@ -29,7 +30,7 @@
             $result = getTeam($params["id"]);
             break;
         case "getAll":
-            $result = getTeams();
+            $result = getTeams($isAdmin);
             break;
         case "set":
             $result = setTeam($data);

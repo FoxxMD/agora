@@ -1,18 +1,18 @@
 angular.module('app.services', [])
     .service('userService', ['Restangular', '$http', '$localStorage', '$q', '$rootScope', function (Restangular, $http, $localStorage, $q, $rootScope) {
         var user = {
-            id: 0,
-            alias: '',
-            email: '',
-            paid: false,
-            entered: false,
-            steam: null,
-            bn: null,
-            lol: null,
-            xbox: null,
-            ign: null,
-            token: null,
-            tokenExpire: null
+                id: 0,
+                alias: '',
+                email: '',
+                paid: false,
+                entered: false,
+                steam: null,
+                bn: null,
+                lol: null,
+                xbox: null,
+                ign: null,
+                token: null,
+                tokenExpire: null
             },
             isInit = false;
 
@@ -97,14 +97,14 @@ angular.module('app.services', [])
 
             $http.post('php/register.php', data).success(function (response) {
                 if (response.success) {
-                    login(user.email, data.password);
+                    this.login(user.email, data.password);
                     deferred.resolve();
                 }
                 else {
                     deferred.reject(response.message);
                 }
             }).error(function (response) {
-                    deferred.reject();
+                    deferred.reject(response);
                 });
             return deferred;
         };
@@ -151,6 +151,81 @@ angular.module('app.services', [])
                 tokenExpire: null
             };
             $rootScope.$broadcast('loginChange');
+        };
+
+    }])
+    .service('teamService', ['$http', '$q', function ($http, $q) {
+
+        this.getTeams = function () {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: 'php/teams.php', params: {mode: 'getAll'}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                    deferred.reject('Error getting teams');
+                });
+            return deferred;
+        };
+
+        this.getTeam = function (id) {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: 'php/teams.php', params: {mode: 'get', id: id}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                    deferred.reject('Error getting team');
+                });
+            return deferred;
+        }
+
+        this.createTeam = function (postData) {
+            var deferred = $q.defer();
+
+            $http({method: 'POST', url: 'php/teams.php', data: postData, params: {mode: 'create'}}).success(function (response) {
+                if (response.success)
+                    deferred.resolve();
+                else
+                    deferred.reject(response);
+            }).error(function (response) {
+                    deferred.reject('Error creating team');
+                });
+            return deferred;
+        }
+
+        this.updateTeam = function (param, paramValue, teamId) {
+
+            var deferred = $q.defer();
+
+            var postData = {
+                id: teamId,
+                param: param,
+                updatevalue: paramValue
+            };
+            $http({method: 'POST', url: 'php/teams.php', data: postData, params: {mode: 'set'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject("Error updating");
+                }
+            }).error(function (response) {
+                    deferred.reject("Error updating");
+                });
+            return deferred;
+        };
+
+        this.addMember = function (teamId, id, password) {
+            var data = {teamId: teamId, id: id, password: password},
+                deferred = $q.defer();
+            $http({method: 'POST', url: 'php/teams.php', data: data, params: {mode: 'add'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            });
+            return deferred;
         };
 
     }]);

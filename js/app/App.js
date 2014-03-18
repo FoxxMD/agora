@@ -1,5 +1,5 @@
 //initialize app
-var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments','xeditable']);
+var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments', 'xeditable']);
 
 //configure routing
 //hydrate all states for application in order to setup site structure
@@ -49,39 +49,39 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 parent: 'games'
             })
             .state('profile', {
-                templateUrl:'templates/user.html',
-                url:'/profile',
-                parent:'index',
-                controller:'userctrl',
+                templateUrl: 'templates/user.html',
+                url: '/profile',
+                parent: 'index',
+                controller: 'userctrl',
                 authenticated: true
             })
-            .state('user',{
-                templateUrl:'templates/user.html',
-                url:'/user/:userId',
-                parent:'index',
+            .state('user', {
+                templateUrl: 'templates/user.html',
+                url: '/user/:userId',
+                parent: 'index',
                 controller: 'userctrl',
                 authenticated: true
             })
             .state('users', {
-                templateUrl:'templates/users.html',
-                url:'/users',
-                parent:'index',
-                controller:'usersctrl',
-                authenticated:true
+                templateUrl: 'templates/users.html',
+                url: '/users',
+                parent: 'index',
+                controller: 'usersctrl',
+                authenticated: true
             })
             .state('team', {
-                templateUrl:'/templates/team.html',
-                url:'/team/:teamId',
-                parent:'index',
-                controller:'teamctrl',
-                authenticated:true
+                templateUrl: '/templates/team.html',
+                url: '/team/:teamId',
+                parent: 'index',
+                controller: 'teamctrl',
+                authenticated: true
             })
-            .state('teams',{
-                templateUrl:'/templates/teams.html',
-                url:'/teams',
-                parent:'index',
-                controller:'teamsctrl',
-                authenticated:true
+            .state('teams', {
+                templateUrl: '/templates/teams.html',
+                url: '/teams',
+                parent: 'index',
+                controller: 'teamsctrl',
+                authenticated: true
             })
             .state('404', {
                 templateUrl: 'templates/shared/404.html',
@@ -112,11 +112,9 @@ app.run(function ($rootScope, userService, editableOptions) {
     userService.initUser();
 
     $rootScope.$on('$stateChangeStart',
-        function(event, toState, toParams, fromState, fromParams){
-            if(toState.authenticated)
-            {
-                if(!userService.isLoggedIn())
-                {
+        function (event, toState, toParams, fromState, fromParams) {
+            if (toState.authenticated) {
+                if (!userService.isLoggedIn()) {
                     event.preventDefault();
                 }
             }
@@ -179,8 +177,9 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             }
         };
 
-        $scope.logoff = function(){
-          userService.logoff();
+        $scope.logoff = function () {
+            userService.logoff();
+            $state.go('home');
         };
 
         $scope.openRegistration = function () {
@@ -203,7 +202,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                     }
                     $modalInstance.close('registered');
                 }, function (response) {
-                    alert("Registration failed: " + response.message);
+                    alert("Registration failed: " + response);
                 });
             };
             $scope.close = function () {
@@ -212,38 +211,120 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         };
     }])
-    .controller('userctrl', ['$scope', 'userService', '$stateParams','$state', function ($scope, userService, $stateParams, $state) {
+    .controller('userctrl', ['$scope', 'userService', '$stateParams', '$state', function ($scope, userService, $stateParams, $state) {
 
         $scope.paid = false;
 
-        if($stateParams.userId != null)
-        {
-            userService.getUser($stateParams.userId).promise.then(function(userData){
+        if ($stateParams.userId != null && $stateParams.userId !== userService.getProfile().id) {
+            userService.getUser($stateParams.userId).promise.then(function (userData) {
                 $scope.user = userData;
             });
             $scope.ownProfile = false;
         }
-        else{
-            userService.getUser().promise.then(function(userData){
-               $scope.user = userData;
+        else {
+            userService.getUser().promise.then(function (userData) {
+                $scope.user = userData;
             });
             $scope.ownProfile = true;
         }
 
-        $scope.openPay = function(){
+        $scope.openPay = function () {
             $state.go('pay');
         };
 
         $scope.updateUser = function (element, updateVal) {
-         return userService.updateUser(element, updateVal);
+            return userService.updateUser(element, updateVal);
         }
     }])
-    .controller('usersctrl', ['$scope','userService','$state', function($scope, userService, $state){
-        userService.getUsers().promise.then(function(userArray){
-           $scope.users = userArray;
+    .controller('usersctrl', ['$scope', 'userService', '$state', function ($scope, userService, $state) {
+        userService.getUsers().promise.then(function (userArray) {
+            $scope.users = userArray;
         });
-        $scope.goToUser = function(id)
-        {
-            $state.go('user',{userId:id});
+        $scope.goToUser = function (id) {
+            $state.go('user', {userId: id});
+        }
+    }])
+    .controller('teamsctrl', ['$scope', 'teamService', '$state', '$modal', function ($scope, teamService, $state, $modal) {
+
+        $scope.goToTeam = function (id) {
+            $state.go('team', {teamId: id});
+        }
+
+        teamService.getTeams().promise.then(function (response) {
+            $scope.teams = response;
+        }, function (response) {
+            alert(response);
+        });
+
+        $scope.openCreateTeam = function () {
+            var modalInstance = $modal.open({
+                templateUrl: '/templates/shared/createTeam.html',
+                controller: modalCreateTeamCtrl
+            });
+        };
+
+
+        var modalCreateTeamCtrl = function ($scope, $modalInstance) {
+
+            $scope.games = ['Starcraft II', 'League of Legends', 'CS:GO', 'Halo 3', 'SSB:Brawl'];
+
+            $scope.submitTeam = function () {
+                var that = this;
+                teamService.createTeam(this.formData).promise.then(function () {
+                    $modalInstance.close('created');
+                }, function (response) {
+                    alert("Team creation failed: " + response.message);
+                });
+            };
+            $scope.close = function () {
+                $modalInstance.dismiss('canceled');
+            };
+
+        };
+    }]).controller('teamctrl', ['$scope', 'userService', 'teamService', '$stateParams', '$filter', '$state', function ($scope, userService, teamService, $stateParams, $filter, $state) {
+
+        //TODO Behavior for leaving a team
+        //TODO Allow captains to add/remove members at will
+
+        if ($stateParams.teamId != null) {
+            teamService.getTeam($stateParams.teamId).promise.then(function (teamData) {
+                $scope.team = teamData;
+                var yourid = userService.getProfile().id; //Oy this is shoddy
+                if (yourid == teamData.captain)
+                {
+                    $scope.ownTeam = true;
+                    $scope.onTeam = true;
+                }
+                if(teamData.member1 == yourid || teamData.member2 == yourid || teamData.member3 == yourid || teamData.member4 == yourid)
+                {
+                    $scope.onTeam = true;
+                }
+            });
+        }
+        $scope.games = [
+            {value: 'Starcraft II', text: 'Starcraft II'},
+            {value: 'League of Legends', text: 'League of Legends'},
+            {value: 'CS:GO', text: 'CS:GO'},
+            {value: 'Halo 3', text: 'Halo 3'},
+            {value: 'SSB:Brawl', text: 'SSB:Brawl'}
+        ];
+
+        $scope.showJoin = false;
+
+        $scope.tryJoin = function () {
+            teamService.addMember($stateParams.teamId, userService.getProfile().id, $scope.joinPassword).promise.then(function (response) {
+                $state.reload();
+            }, function (response) {
+                alert("Couldn't join team: " + response);
+            })
+        };
+
+        $scope.showGames = function () {
+            var selected = $filter('filter')($scope.games, {value: $scope.team.game});
+            return ($scope.team.game && selected.length) ? selected[0].text : 'Not set';
+        };
+
+        $scope.updateTeam = function (element, updateVal) {
+            return teamService.updateTeam(element, updateVal, $stateParams.teamId);
         }
     }]);
