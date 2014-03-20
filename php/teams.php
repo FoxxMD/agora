@@ -7,7 +7,20 @@
 
     parse_str($_SERVER['QUERY_STRING'], $params);
     $mode = $params["mode"];
-    $headers = getallheaders();
+
+    $headers = array();
+    foreach ($_SERVER as $key => $value) {
+        if (strpos($key, 'HTTP_') === 0) {
+            $chunks = explode('_', $key);
+            $header = '';
+            for ($i = 1; $y = sizeof($chunks) - 1, $i < $y; $i++) {
+                $header = ucfirst(strtolower($chunks[$i]));
+            }
+            $header = ucfirst(strtolower($chunks[$i]));
+            $headers[$header] = $value;
+        }
+    }
+
     $id = new stdClass();
     $authUser = authenticateRequest($headers["Authentication"]);
 
