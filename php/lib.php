@@ -1,11 +1,15 @@
 <?php
 ini_set('display_errors', 0);
-require_once("./crypto.php");
+
+require_once("./crypto.php"); //for token authentication
+require_once("./Phpass.php"); //for password hashing/verification
+
 include 'ChromePhp.php'; //using for logging into chrome dev console because setting up an IDE would make too much sense
 
 
     function getDB() {
-        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //change to local environment's variables
+        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
         return $db;
     }
 
@@ -17,8 +21,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
         if($statement -> execute())
         {
-            $result = $statement -> get_result();
-            if($result -> num_rows == 0)
+            $statement -> store_result();
+            if($statement -> num_rows == 0)
             {
                 return false;
             }
@@ -30,13 +34,34 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
     function getUser($param, $showAllData) {
         $db = getDB();
-        $sql = "select * from users where id='".$param."'";
-        if($result = $db -> query($sql))
+        if(!$showAllData)
         {
-            if($result -> num_rows > 0)
+            $sql = "select id,alias,steam,bn,lol,xbox,ign from users where id=?";
+        }
+        else{
+            $sql = "select id,email,alias,paid,entered,steam,bn,lol,xbox,ign,role,locktime,attempt from users where id=?";
+        }
+
+        $statement = $db -> prepare($sql);
+        $statement -> bind_param('i',$param);
+
+        if($statement -> execute())
+        {
+        $statement -> store_result();
+            if($statement -> num_rows > 0)
             {
-            $userObj = $result -> fetch_object();
+                $userObj = new stdClass();
                 if(!$showAllData)
+                {
+                    $statement -> bind_result($userObj -> id, $userObj -> alias, $userObj -> steam, $userObj -> bn, $userObj -> lol, $userObj -> xbox, $userObj -> ign);
+                }
+                else{
+                    $statement -> bind_result($userObj -> id, $userObj -> email, $userObj -> alias, $userObj -> paid, $userObj -> entered, $userObj -> steam, $userObj -> bn, $userObj -> lol, $userObj -> xbox, $userObj -> ign, $userObj -> role, $userObj -> locktime, $userObj -> attempt);
+                }
+
+                $statement -> fetch();
+
+               /* if(!$showAllData)
                 {
                     $userObj -> password = null;
                     $userObj -> lock = null;
@@ -46,7 +71,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $userObj -> paid = null;
                     $userObj -> authtoken = null;
                     $userObj -> authExpire = null;
-                }
+                } */
                 return $userObj;
             }
             else{
@@ -85,8 +110,12 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         $db = getDB();
         $response = new stdClass();
         if(($param2 != "paid" && param2 != "email") || $isAdmin) {
-            $sql = "update users set ".$param2."='".$param3."' where id='".$param1."'";
-            if($result = $db -> query($sql))
+            $sql = "update users set ?=? where id=?";
+
+            $statement = $db -> prepare($sql);
+            $statement -> bind_param('ssi', $param1, $param2, $param1);
+
+            if($statement -> execute())
             {
                $response -> success = true;
             }
@@ -104,68 +133,89 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     function authenticateRequest($authToken)
     {
          $db = getDB();
-         $sql = "select * from users where authtoken='".$authToken."'";
+         $sql = "select email,id,role from users where authtoken=?";
+         $statement = $db -> prepare($sql);
+         $statement -> bind_param('s',$authToken);
+
          $user = new stdClass();
-         if($result = $db -> query($sql))
+         if($statement -> execute())
          {
-             if($result -> num_rows > 0)
+            $statement -> store_result();
+            if($statement -> num_rows > 0)
             {
-                 $userObj = $result -> fetch_object();
-                 $user -> email = $userObj -> email;
+                 $userObj = new stdClass();
+                 $statement -> bind_result($userObj -> email,$userObj -> id, $userObj -> role);
+                 $statement -> fetch();
+                /* $user -> email = $userObj -> email;
                  $user -> id = $userObj -> id;
                  $user -> authtoken = $authToken;
-                 $user -> role =  $userObj -> role;
-                 $result -> close();
-                 return $user;
+                 $user -> role =  $userObj -> role; */
+                 return $userObj;
             }
             else{
                 return null;
             }
          }
          else{
+         ChromePhp::log($db -> error);
             return null;
          }
     }
 
     function verifyUser($param1, $param2) {
         $db = getDB();
-        $sqlTop = "select * from users where email='".$param1."' or alias='".$param1."'";
+
+        $sqlTop = "select id,email,password,alias,role,locktime,attempt from users where email=? ";
+
+        $statement = $db -> prepare($sqlTop);
+        $statement -> bind_param('s', $param1);
 
         $response = new stdClass();
         $response -> success = false;
-        if($result = $db -> query($sqlTop))
+        if($statement -> execute())
         {
-            if($result -> num_rows > 0)
+            $statement -> store_result();
+            if($statement -> num_rows > 0)
             {
-                $userObj = $result -> fetch_object();
-                $result -> close();
+                $userObj = new stdClass();
+
+                $statement -> bind_result($userObj -> id, $userObj -> email, $userObj -> password, $userObj -> alias,$userObj -> role, $userObj -> locktime, $userObj -> attempt);
+                $statement -> fetch();
+                $statement -> close();
                 if($userObj -> attempt >= 5) {
                     $time = time();
                     if($time - strtotime($userObj -> locktime >= (60 * 15))) {
-
-                        $sql = "update users set attempt=0 where email='".$param1."' or alias='".$param1."'";
-                        $db -> query($sql);
+                        $sql = "update users set attempt=0 where email=?";
+                        $statement1 = $db -> query($sql);
+                        $statement1 -> bind_param('s', $param1);
+                        $db -> execute();
+                        $statement1 -> close();
                     } else {
                        $response -> success = false;
                        $response -> msg = "You have tried to login too many times.";
                        return $response;
                     }
                 }
-                if(!password_verify($param2, $userObj -> password)) {
-                    $result = $db -> query($sqlTop);
-                    $userObj = $result -> fetch_object();
-                    $result -> close();
 
-                    $sql = "update users set attempt=".($userObj -> attempt + 1)." where email='".$param1."' or alias='".$param1."'";
-                    $db -> query($sql);
-                    $result = $db -> query($sqlTop);
-                    $userObj = $result -> fetch_object();
-                    $result -> close();
+                $phpassHash = new \Phpass\Hash;
 
-                    if($userObj -> attempt >= 4) {
+                if(!$phpassHash->checkPassword($param2, $userObj -> password))
+                {
+                    $sql = "update users set attempt=".($userObj -> attempt + 1)." where email=?";
+
+                    $statement2 = $db -> prepare($sql);
+                    $statement2 -> bind_param($param1);
+                    $statement2 -> execute();
+                    $statement2 -> close();
+                    if(($userObj -> attempt +1 ) >= 4) {
                         $time = time();
-                        $sql = "update users set locktime=DATE_ADD(NOW(), INTERVAL 15 MINUTE) where email='".$param1."' or alias='".$param1."'";
-                        $db -> query($sql);
+                        $sql = "update users set locktime=DATE_ADD(NOW(), INTERVAL 15 MINUTE) where email=?";
+
+                        $statement3 = $db -> prepare($sql);
+                        $statement3 -> bind_param('s', $param1);
+                        $statement3 -> execute();
+                        $statement3 -> close();
+
                         $fp = fopen("log.txt",'a');
                         $content = $userObj -> email."   ".date("Y-m-d H:i:s")."   ".$_SERVER["REMOTE_ADDR"]."\n";
                         fwrite($fp, $content);
@@ -175,18 +225,20 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $response -> message = "Username or Password incorrect";
                     return $response;
                 }
-                $authToken = getToken(40);
-                        $sql = "update users set attempt=0,authtoken='".$authToken."',authExpire=DATE_ADD(NOW(),INTERVAL 1 DAY) where email='".$param1."' or alias='".$param1."'";
-                        $db -> query($sql);
-                        $result = $db -> query($sqlTop);
-                        $userObj = $result -> fetch_object();
-                        $result -> close();
+                else{
+                    $authToken = getToken(40);
+                    $sql = "update users set attempt=0,authtoken=?,authExpire=DATE_ADD(NOW(),INTERVAL 1 DAY) where email=?";
+                    $statement4 = $db -> prepare($sql);
+                    $statement4 -> bind_param('ss', $authToken, $param1);
+                    $statement4 -> execute();
+                    $statement4 -> close();
 
-                        $response -> success = true;
-                        $response -> alias = $userObj -> alias;
-                        $response -> id = $userObj -> id;
-                        $response -> authtoken = $authToken;
-                        $response -> role = $userObj -> role;
+                    $response -> success = true;
+                    $response -> alias = $userObj -> alias;
+                    $response -> id = $userObj -> id;
+                    $response -> authtoken = $authToken;
+                    $response -> role = $userObj -> role;
+                }
             }
             else{
                 $response -> success = false;
@@ -239,40 +291,33 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
     function getTeam($id) {
         $db = getdb();
-        $sql = "select * from teams where id = ?";
+        $sql = "select * from teams where ID=?";
 
         $statement = $db -> prepare($sql);
         $statement -> bind_param('i',$id);
-
+        $teamObj = new stdClass();
 
         if($statement -> execute())
         {
-            $result = $statement -> get_result();
-            $teamObj = new stdClass();
-            $teamObj = $result -> fetch_object();
+            //TODO check for captain/admin to include password
+            $statement -> bind_result($teamObj -> ID, $teamObj -> name, $teamObj -> captain, $teamObj -> password, $teamObj -> des, $teamObj -> logo, $teamObj -> game, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4);
+            $statement -> fetch();
+            $statement -> close();
 
-         /*   $statement1 = $db -> prepare("CALL getTeamMemberNames(?)");
-              $statement1 -> bind_param('i',$id); */
-
-             $statement1 = $db -> prepare("CALL getTeamByIds(?,?,?,?,?)");
-             $statement1 -> bind_param('iiiii',$teamObj -> captain ,$teamObj -> member1,$teamObj -> member2,$teamObj -> member3, $teamObj -> member4);
+            $statement1 = $db -> prepare("CALL getTeamByIds(?,?,?,?,?)");
+            $statement1 -> bind_param('iiiii',$teamObj -> captain ,$teamObj -> member1,$teamObj -> member2,$teamObj -> member3, $teamObj -> member4);
 
             if($statement1 -> execute())
             {
-                $result = $statement1 -> get_result();
-                $result = $result -> fetch_row();
-                $teamObj -> captainName = $result[0];
-                $teamObj -> member1Name = $result[1];
-                $teamObj -> member2Name = $result[2];
-                $teamObj -> member3Name = $result[3];
-                $teamObj -> member4Name = $result[4];
+                $statement1 -> bind_result($teamObj -> captainName, $teamObj -> member1Name, $teamObj -> member2Name, $teamObj -> member3Name, $teamObj -> member4Name);
+                $statement1 -> fetch();
             }
             else{
             ChromePhp::log($db -> error);
             }
-
-
-
+        }
+        else{
+            ChromePhp::error($db -> error);
         }
         return $teamObj;
     }
@@ -320,21 +365,23 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     function addTeamMember($data) {
         $db = getDB();
         $response = new stdClass();
-        $sql = "select * from teams where id=?";
+        $sql = "select password,member1,member2,member3,member4 from teams where id=?";
 
         $statement = $db -> prepare($sql);
         $statement -> bind_param('i',$data -> teamId);
 
         if($statement ->  execute())
         {
-            $result = $statement -> get_result();
-            $result = $result -> fetch_object();
-            if($result -> password == "" || $result -> password == $data -> password) {
+            $teamObj = new stdClass();
+            $statement -> bind_result($teamObj -> password, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4);
+            $statement -> fetch();
+
+            if($teamObj -> password == "" || $teamObj -> password == $data -> password) {
                 $currSlot = 0;
                 $memberProp = "";
                 for($i = 1; $i <= 4; $i++) {
                 $memberProp = "member".$i;
-                    if($result -> $memberProp == 0) {
+                    if($teamObj -> $memberProp == 0) {
                         $currSlot = $i;
                         break;
                     }

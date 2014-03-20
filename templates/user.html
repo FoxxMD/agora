@@ -1,4 +1,4 @@
-<div nf-if="user.paid == 1 && ownProfile" class="alert alert-warning alert-dismissable">
+<div ng-if="ownProfile && (user.paid == 0)" class="alert alert-warning alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <strong>Yo!</strong> Your entry fee has not been paid yet. Complete registration by paying now. <button ng-if="user.paid == 0" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
 </div>
@@ -70,7 +70,7 @@
             </fieldset>
         </div>
     </div>
-    <div ng-if="ownProfile" class="col-md-4 col-sm-12" ng-if="ownProfile">
+    <div ng-if="ownProfile" class="col-md-4 col-sm-12">
         <div class="lead">
             <fieldset>
                 <legend>Account Information</legend>

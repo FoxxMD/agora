@@ -12,7 +12,8 @@
 
     if(!checkDuplicate("email", $user -> email) && !checkDuplicate("alias",$user -> alias)) {
 
-        $pwHash = password_hash($user -> password, PASSWORD_DEFAULT);
+        $phpassHash = new \Phpass\Hash;
+        $pwHash = $phpassHash -> hashPassword($user -> password);
         $authToken = getToken(40);
 
         $sql = "insert into users values (NULL, ?,?,'',?,0,0,'','','','','',0,NULL,0,?,DATE_ADD(NOW(),INTERVAL 1 DAY))";

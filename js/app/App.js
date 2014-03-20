@@ -215,18 +215,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         $scope.paid = false;
 
-        if ($stateParams.userId != null && $stateParams.userId !== userService.getProfile().id) {
-            userService.getUser($stateParams.userId).promise.then(function (userData) {
+        userService.getUser($stateParams.userId).promise.then(function (userData) {
                 $scope.user = userData;
             });
-            $scope.ownProfile = false;
-        }
-        else {
-            userService.getUser().promise.then(function (userData) {
-                $scope.user = userData;
-            });
-            $scope.ownProfile = true;
-        }
+        $scope.ownProfile = ($stateParams.userId == userService.getProfile().id) || $state.current.name == "profile";
 
         $scope.openPay = function () {
             $state.go('pay');

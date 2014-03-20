@@ -69,6 +69,8 @@ angular.module('app.services', [])
                     if (response.authtoken != undefined) {
                         user.token = response.authtoken;
                         user.id = response.id;
+                        user.alias = response.alias;
+                        user.email = data.email;
                         $http.defaults.headers.common.Authentication = response.authtoken;
                         $localStorage.token = response.authtoken;
                         $localStorage.alias = response.alias;
@@ -89,7 +91,7 @@ angular.module('app.services', [])
         };
 
         this.register = function (data) {
-
+            var that = this;
             var deferred = $q.defer();
 
             user.email = data.email;
@@ -97,7 +99,8 @@ angular.module('app.services', [])
 
             $http.post('php/register.php', data).success(function (response) {
                 if (response.success) {
-                    this.login(user.email, data.password);
+                    var loginData = {email:user.email,password: data.password};
+                    that.login(loginData);
                     deferred.resolve();
                 }
                 else {
