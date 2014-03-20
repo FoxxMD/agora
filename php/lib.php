@@ -110,10 +110,33 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         $db = getDB();
         $response = new stdClass();
         if(($param2 != "paid" && param2 != "email") || $isAdmin) {
-            $sql = "update users set ?=? where id=?";
+        $fixedParam = "";
+            switch($param2)
+            {
+            case "alias":
+                $fixedParam = "alias";
+                break;
+            case "lol":
+                $fixedParam = "lol";
+                break;
+            case "bn":
+                $fixedParam = "bn";
+                break;
+            case "xbox":
+                $fixedParam = "xbox";
+                break;
+            case "ign":
+                $fixedParam = "ign";
+                break;
+            case "steam":
+                $fixedParam = "steam";
+                break;
+            }
+            $sql = "update users set ".$fixedParam."=? where id=?";
+            //$sql = "update users set ?=? where id=?";
 
             $statement = $db -> prepare($sql);
-            $statement -> bind_param('ssi', $param1, $param2, $param1);
+            $statement -> bind_param('si', $param3, $param1);
 
             if($statement -> execute())
             {
@@ -275,7 +298,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
         try {
             $charge = Stripe_Charge::create(array(
-                "amount" => 2 * 100,
+                "amount" => 15 * 100,
                 "currency" => "usd",
                 "card" => $token,
                 "description" => $authUser -> email,
@@ -384,10 +407,28 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     function setTeams($data) {
         $db = getDB();
         $response = new stdClass();
-        $sql = "update teams set ?=? where id=?";
+
+        $fixedParam = "";
+        switch($data -> param)
+        {
+        case "name":
+            $fixedParam = "name";
+            break;
+        case "password":
+            $fixedParam = "password";
+            break;
+        case "des":
+            $fixedParam = "des";
+            break;
+        case "game":
+            $fixedParam = "game";
+            break;
+        }
+
+        $sql = "update teams set ".$fixedParam."=? where id=?";
 
         $statement = $db -> prepare($sql);
-        $statement -> bind_param('ssi',$data -> param, $data -> paramValue, $data -> id);
+        $statement -> bind_param('si', $data -> paramValue, $data -> id);
 
         if($statement -> execute())
         {
