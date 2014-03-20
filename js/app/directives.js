@@ -61,20 +61,35 @@ angular.module('app.directives', [])
             }
         };
     }])
-    .directive('stripeDir', ['$rootScope', function($rootScope){
+    .directive('stripeDir', ['$rootScope','userService','$state', function($rootScope, userService, $state){
         return {
             restrict:'A',
             templateUrl:'/templates/pay.html',
             link: function(scope, elem, attrs) {
-                Stripe.setPublishableKey('pk_test_6pRNASCoBOKtIshFeQd4XMUh'); //test key
+                Stripe.setPublishableKey('pk_test_C5kuVaBMR3FiCbMYfxS9mxpq'); //test key
             },
             controller: function($scope){
+                if(userService.getProfile().paid == 1)
+                {
+                    userService.alreadyPaid(true);
+                    $state.go('profile');
+                }
+
                 $scope.handleStripe = function(status, response){
                     if(response.error) {
                         // there was an error. Fix it.
+                        console.log(response.error);
                     } else {
                         // got stripe token, send
-                        token = response.id
+                        var data = { token: response.id};
+
+                        userService.payRegistration(data).promise.then(function(){
+                            userService.justPaid(true);
+                            $state.go('profile');
+                        }, function(response){
+                            //rejected
+                            alert(response);
+                        });
                     }
                 }
             }

@@ -146,10 +146,6 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                  $userObj = new stdClass();
                  $statement -> bind_result($userObj -> email,$userObj -> id, $userObj -> role);
                  $statement -> fetch();
-                /* $user -> email = $userObj -> email;
-                 $user -> id = $userObj -> id;
-                 $user -> authtoken = $authToken;
-                 $user -> role =  $userObj -> role; */
                  return $userObj;
             }
             else{
@@ -266,6 +262,48 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         else{
             $response -> success = false;
             $response -> message = $db -> error;
+        }
+        return $response;
+    }
+
+    function payRegistration($token, $authUser)
+    {
+        require_once("./Stripe.php");
+
+        Stripe::setApiKey("sk_test_MEx8F6JQpTjOfy67AOICA3xf");
+        $response = new stdClass();
+
+        try {
+            $charge = Stripe_Charge::create(array(
+                "amount" => 2 * 100,
+                "currency" => "usd",
+                "card" => $token,
+                "description" => $authUser -> email,
+                "statement_description" => "GT Gamefest"
+            ));
+
+            $response -> success = true;
+            $db = getDB();
+            $sql = "update users set paid=1 where id=?";
+
+            $statement = $db -> prepare($sql);
+            $statement -> bind_param('i', $authUser -> id);
+
+            if($statement -> execute())
+            {
+               $response -> success = true;
+            }
+            else{
+                $response -> success = false;
+                $response -> message = "Your card has been charged successfully, however there was a problem updating your account. Please contact an admin. Error: ".$db -> error;
+            }
+
+
+        } catch(Stripe_CardError $e) {
+            $response -> success = false;
+            $body = $e -> getJsonBody();
+            $err = $body['error'];
+            $response -> message = $err['code']." -- ".$err['message'];
         }
         return $response;
     }

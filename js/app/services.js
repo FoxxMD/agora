@@ -12,7 +12,9 @@ angular.module('app.services', [])
                 xbox: null,
                 ign: null,
                 token: null,
-                tokenExpire: null
+                tokenExpire: null,
+                justPaid: false,
+                alreadyPaid: false
             },
             isInit = false;
 
@@ -49,7 +51,20 @@ angular.module('app.services', [])
                 user.tokenExpire = $localStorage.tokenExpire;
                 $http.defaults.headers.common.Authentication = $localStorage.token;
             }
+            this.getUser(user.id).promise.then(function(response){
+               user = response;
+                user.paid = (response.paid == 1);
+            });
             isInit = true;
+        };
+
+        this.alreadyPaid = function(action)
+        {
+            user.alreadyPaid = action;
+        };
+        this.justPaid = function(action)
+        {
+            user.justPaid = action;
         };
 
 
@@ -99,7 +114,7 @@ angular.module('app.services', [])
 
             $http.post('php/register.php', data).success(function (response) {
                 if (response.success) {
-                    var loginData = {email:user.email,password: data.password};
+                    var loginData = {email: user.email, password: data.password};
                     that.login(loginData);
                     deferred.resolve();
                 }
@@ -107,7 +122,23 @@ angular.module('app.services', [])
                     deferred.reject(response.message);
                 }
             }).error(function (response) {
-                    deferred.reject(response);
+                    deferred.reject(response.message);
+                });
+            return deferred;
+        };
+
+        this.payRegistration = function (data) {
+            var deferred = $q.defer();
+            $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'pay'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    user.paid = true;
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            }).error(function (response) {
+                    deferred.reject(response.message);
                 });
             return deferred;
         };

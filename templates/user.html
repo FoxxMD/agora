@@ -2,6 +2,14 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <strong>Yo!</strong> Your entry fee has not been paid yet. Complete registration by paying now. <button ng-if="user.paid == 0" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
 </div>
+<div ng-if="ownProfile && justPaid" class="alert alert-success alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <strong>Thanks!</strong> You have successfully paid for registration.
+</div>
+<div ng-if="ownProfile && alreadyPaid" class="alert alert-success alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <strong>You've already paid for registration!</strong> No need to give us more money!
+</div>
 <h1>{{user.alias}}<br/>
     <small>User Profile</small>
 </h1>

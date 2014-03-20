@@ -49,6 +49,8 @@
                 $result = deleteUser($id);
             } else if($mode == "getAll") {
                 $result = getUsers($isAdmin);
+            } else if($mode == "pay") {
+                $result = payRegistration($data -> token, $authUser);
             }
         }
         else {

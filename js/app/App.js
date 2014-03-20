@@ -213,7 +213,16 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
     }])
     .controller('userctrl', ['$scope', 'userService', '$stateParams', '$state', function ($scope, userService, $stateParams, $state) {
 
-        $scope.paid = false;
+        if(userService.getProfile().justPaid)
+        {
+            $scope.justPaid = true;
+            userService.justPaid(false);
+        }
+        if(userService.getProfile().alreadyPaid)
+        {
+            $scope.alreadyPaid = true;
+            userService.alreadyPaid(false);
+        }
 
         userService.getUser($stateParams.userId).promise.then(function (userData) {
                 $scope.user = userData;
