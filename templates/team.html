@@ -1,3 +1,7 @@
+<div ng-if="teamErrorMessage != undefined" class="alert alert-warning alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span ng-bind-html="teamErrorMessage"></span>
+</div>
 <h1>{{team.name}}<br/>
     <small>Team Profile</small>
 </h1>
@@ -13,12 +17,16 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">Captain:</label>
-                    <a editable-select="team.lol" onbeforesave="updateTeam('captain',$data)">{{team.captainName || 'Not
-                        Set' }}</a>
+<!--                    <a editable-select="team.captain" onbeforesave="updateTeam('captain',$data)">{{team.captainName || 'Not
+                        Set' }}</a>-->
+                    <a editable-select="team.captain" e-ng-options="s.value as s.text for s in teamMembers"
+                       onbeforesave="updateTeam('captain',$data)">
+                        {{ showTeamMembers() }}
+                    </a>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Description:</label>
-                    <a editable-text="team.bn" onbeforesave="updateTeam('des',$data)">{{team.des || 'Not Set' }}</a>
+                    <a editable-text="team.des" onbeforesave="updateTeam('des',$data)">{{team.des || 'Not Set' }}</a>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Game:</label>
@@ -32,7 +40,7 @@
                     <a editable-text="team.ign" onbeforesave="updateTeam('logo',$data)">{{team.logo || 'Not Set' }}</a>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Password:</label>
+                    <label class="control-label">Password:</label> <!-- TODO Restrict to 5 character to respect DB rules -->
                     <a editable-text="team.steam" onbeforesave="updateTeam('password',$data)">{{team.password || 'Not
                         Set'
                         }}</a>
@@ -73,14 +81,14 @@
             <fieldset>
                 <legend>Team Members
                     <button ng-if="!onTeam" type="button" class="btn btn-info pull-right" style="margin-right:10px;"
-                            ng-click="showJoin = true;">Join
+                            ng-click="clickJoin()">Join
                     </button>
                 </legend>
                 <a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a>
                 <a ui-sref="user({userId: team.member2})">{{team.member2Name}}</a>
                 <a ui-sref="user({userId: team.member3})">{{team.member3Name}}</a>
                 <a ui-sref="user({userId: team.member4})">{{team.member4Name}}</a>
-            <div class="form-group" style="margin-top:20px;" ng-show="showJoin">
+            <div class="form-group" style="margin-top:20px;" ng-show="showJoin && !onTeam">
            <label class="control-label">Password:</label>
            <input type="text" class="form-control" ng-model="joinPassword"/>
                 <button type="button" class="btn btn-primary" ng-click="tryJoin()">Join Team</button>

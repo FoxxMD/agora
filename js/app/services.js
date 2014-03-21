@@ -50,11 +50,12 @@ angular.module('app.services', [])
                 user.id = $localStorage.id;
                 user.tokenExpire = $localStorage.tokenExpire;
                 $http.defaults.headers.common.Authentication = $localStorage.token;
+
+                this.getUser(user.id).promise.then(function(response){
+                    user = response;
+                    user.paid = (response.paid == 1);
+                });
             }
-            this.getUser(user.id).promise.then(function(response){
-               user = response;
-                user.paid = (response.paid == 1);
-            });
             isInit = true;
         };
 
@@ -98,6 +99,9 @@ angular.module('app.services', [])
                     }
                     $rootScope.$broadcast('loginChange');
                     deferred.resolve();
+                }
+                else{
+                    deferred.reject(response.message);
                 }
             }).error(function (response) {
                     deferred.reject(response);
@@ -240,10 +244,10 @@ angular.module('app.services', [])
                     deferred.resolve();
                 }
                 else {
-                    deferred.reject("Error updating");
+                    deferred.reject(response);
                 }
             }).error(function (response) {
-                    deferred.reject("Error updating");
+                    deferred.reject(response);
                 });
             return deferred;
         };

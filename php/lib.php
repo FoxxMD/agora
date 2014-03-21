@@ -223,7 +223,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $sql = "update users set attempt=".($userObj -> attempt + 1)." where email=?";
 
                     $statement2 = $db -> prepare($sql);
-                    $statement2 -> bind_param($param1);
+                    $statement2 -> bind_param('s',$param1);
                     $statement2 -> execute();
                     $statement2 -> close();
                     if(($userObj -> attempt +1 ) >= 4) {
@@ -409,7 +409,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         }
     }
 
-    function setTeams($data) {
+    function setTeam($data) {
         $db = getDB();
         $response = new stdClass();
 
@@ -432,17 +432,24 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
         $sql = "update teams set ".$fixedParam."=? where id=?";
 
-        $statement = $db -> prepare($sql);
-        $statement -> bind_param('si', $data -> paramValue, $data -> id);
-
-        if($statement -> execute())
+        if($statement = $db -> prepare($sql))
         {
-            $response -> success = true;
+            $statement -> bind_param('si', $data -> paramValue, $data -> id);
+
+            if($statement -> execute())
+            {
+                $response -> success = true;
+            }
+            else{
+                $response -> success = false;
+                $response -> message = $db -> error;
+            }
         }
         else{
             $response -> success = false;
             $response -> message = $db -> error;
-        }
+        };
+
         return $response;
     }
 
@@ -459,6 +466,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             $teamObj = new stdClass();
             $statement -> bind_result($teamObj -> password, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4);
             $statement -> fetch();
+            $statement -> close();
 
             if($teamObj -> password == "" || $teamObj -> password == $data -> password) {
                 $currSlot = 0;
@@ -484,9 +492,14 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     {
                         $response -> success = true;
                     }
+                    else{
+                        $response -> success = false;
+                        $response -> message = $db -> error;
+                    }
                 }
                 else{
-                ChromePhp::log($db -> error);
+                    $response -> success = false;
+                    $response -> message = $db -> error;
                 }
             }
             else{
