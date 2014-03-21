@@ -75,20 +75,28 @@ angular.module('app.directives', [])
                     $state.go('profile');
                 }
 
-                $scope.handleStripe = function(status, response){
+                $scope.handleStripe = function(status, response) {
                     if(response.error) {
                         // there was an error. Fix it.
-                        console.log(response.error);
+                        $scope.formErrorMessage = '<strong>There was an error submitting your information.</strong> Please ensure that you have input all of your information correctly and try again.';
+                        $scope.formErrorTechMessage = response.error;
                     } else {
                         // got stripe token, send
                         var data = { token: response.id};
+                        userService.payRegistration(data).promise.then(function(response) {
+                            //payment success
+                            if(response != null)
+                            {
+                                userService.justPaid(true);
+                                $state.go('profile');
+                            } else {
+                                $scope.formErrorMessage = '<strong>Your payment was submitted successfully! But there was a problem recording your payment.</strong> Please contant an admin to fix this issue. <strong>Do not resubmit your payment!</strong>';
+                                $scope.formErrorTechMessage = response;
+                            }
 
-                        userService.payRegistration(data).promise.then(function(){
-                            userService.justPaid(true);
-                            $state.go('profile');
                         }, function(response){
-                            //rejected
-                            alert(response);
+                            $scope.formErrorMessage = '<strong>There was an error processing your payment, you have not been charged.</strong> Please ensure your card and billing information is correct before trying again.';
+                            $scope.formErrorTechMessage = response;
                         });
                     }
                 }

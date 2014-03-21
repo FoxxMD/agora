@@ -1,3 +1,8 @@
+<div ng-if="formErrorMessage != undefined" class="alert alert-danger alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span ng-bind-html="formErrorMessage"></span>
+    <p><strong>Technical error:</strong> {{formErrorTechMessage}}</p>
+</div>
 <form stripe-form="handleStripe" name="paymentForm">
     <div class="row">
         <div class="col-md-5 col-sm-6 col-xs-12">

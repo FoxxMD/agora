@@ -8,8 +8,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
-        $db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
         return $db;
     }
 
@@ -295,7 +295,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
         Stripe::setApiKey("sk_test_MEx8F6JQpTjOfy67AOICA3xf");
         $response = new stdClass();
-
+        $response -> success = false;
         try {
             $charge = Stripe_Charge::create(array(
                 "amount" => 15 * 100,
@@ -314,20 +314,25 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             if($statement -> execute())
             {
-               $response -> success = true;
+            //uhh
             }
             else{
-                $response -> success = false;
                 $response -> message = "Your card has been charged successfully, however there was a problem updating your account. Please contact an admin. Error: ".$db -> error;
             }
 
-
         } catch(Stripe_CardError $e) {
-            $response -> success = false;
             $body = $e -> getJsonBody();
             $err = $body['error'];
             $response -> message = $err['code']." -- ".$err['message'];
-        }
+        } catch (Stripe_ApiConnectionError $e) {
+            error_log($e);
+            $response -> message = "A problem occurred within the Stripe API. Possibly a certificate or network issue.";
+         } catch (Stripe_Error $e) {
+            error_log($e);
+            $response -> message = "A general error occurred with Stripe.";
+         } catch (Exception $e) {
+           $response -> message = $e -> getMessage();
+         }
         return $response;
     }
 
