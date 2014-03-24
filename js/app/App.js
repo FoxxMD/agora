@@ -82,6 +82,18 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 controller: 'teamsctrl',
                 authenticated: true
             })
+            .state('resetPW', {
+                templateUrl:'/templates/resetpw.html',
+                url:'/resetpw',
+                parent:'index',
+                controller:'resetctrl'
+            })
+            .state('forgotPW', {
+                templateUrl:'/templates/forgotpw.html',
+                url:'/forgotpw/:resetToken',
+                parent: 'index',
+                controller:'forgotctrl'
+            })
             .state('404', {
                 templateUrl: 'templates/shared/404.html',
                 url: '/404',
@@ -175,10 +187,14 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 }, function (response) {
                     $scope.formErrorMessage = response;
                 });
-            }
+            };
+            $scope.goToForgot = function(){
+                $state.go('resetPW');
+                $modalInstance.dismiss('canceled');
+            };
             $scope.close = function () {
                 $modalInstance.dismiss('canceled');
-            }
+            };
             $scope.closeToRegister = function () {
                 $modalInstance.close('register');
             }
@@ -232,8 +248,8 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         }
 
         userService.getUser($stateParams.userId).promise.then(function (userData) {
-                $scope.user = userData;
-            });
+            $scope.user = userData;
+        });
         $scope.ownProfile = ($stateParams.userId == userService.getProfile().id) || $state.current.name == "profile";
         $scope.showPassword = false;
 
@@ -354,10 +370,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                         $scope.teamMembers.push({value:teamData["member"+i],text:teamData["member"+i+"Name"]});
                     }
                 }
-/*                    {value:teamData.member1, text:teamData.member1Name},
-                    {value:teamData.member2, text:teamData.member2Name},
-                    {value:teamData.member3, text:teamData.member3Name},
-                    {value:teamData.member4, text:teamData.member4Name}];*/
+                /*                    {value:teamData.member1, text:teamData.member1Name},
+                 {value:teamData.member2, text:teamData.member2Name},
+                 {value:teamData.member3, text:teamData.member3Name},
+                 {value:teamData.member4, text:teamData.member4Name}];*/
 
                 $scope.showTeamMembers = function () {
                     var selected = $filter('filter')($scope.teamMembers, {value: $scope.team.captain});
@@ -374,6 +390,30 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 {
                     $scope.onTeam = true;
                 }
+            });
+        }
+    }])
+    .controller('resetctrl', ['$scope','userService', function($scope,userService){
+       $scope.tryResetPassword = function(){
+           userService.resetPassword(this.formData).promise.then(function(response){
+              $scope.passwordSuccess = true;
+           }, function(response){
+               alert(response);
+           });
+       }
+    }])
+    .controller('forgotctrl', ['$scope','$state','userService','$stateParams','$timeout', function($scope, $state, userService, $stateParams, $timeout){
+        $scope.formData = {
+            resetToken: $stateParams.resetToken
+        };
+        $scope.tryForgotPassword = function(){
+            userService.changePassword(this.formData).promise.then(function(response){
+                $scope.passwordSuccess = true;
+                $timeout(function(){
+                    $state.go('home');
+                },1500);
+            }, function(response){
+                alert(response);
             });
         }
     }]);

@@ -8,8 +8,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
-        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        $db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
         return $db;
     }
 
@@ -285,24 +285,52 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     }
 
     function resetPassword($data){
+        ChromePhp::log($data -> email);
         $db = getDB();
         $response = new stdClass();
         $response -> success = false;
         $sql = "select * from users where email=?";
         $statement = $db -> prepare($sql);
-        $statement -> bind_param($data -> email);
+        $statement -> bind_param('s', $data -> email);
         if($statement -> execute())
         {
             $statement -> store_result();
             if($statement -> num_rows > 0)
             {
+                $statement -> close();
                 $authToken = getToken(40);
-                if(mail($data -> email, "Forgotten password reset from GT Gamefest", "Enter this token[".$authToken."] to reset your password"))
+                $sql = "update users set resetToken=? where email=?";
+                if($statement1 = $db -> prepare($sql))
                 {
-                    $response -> success = true;
+
+
+                $statement1 -> bind_param('ss', $authToken, $data -> email);
+                if($statement1 -> execute())
+                {
+                $subject = "Forgotten password reset from GT Gamefest";
+                $headers   = array();
+                $headers[] = 'MIME-Version: 1.0'."\r\n";
+                $headers[] = "Content-type: text/html; charset=iso-8859-1". "\r\n";
+                $headers[] = "From: GT Gamefest <sender@domain.com>". "\r\n";
+                $headers[] = "Subject: {$subject}". "\r\n";
+                $headers[] = "X-Mailer: PHP/".phpversion()."\r\n";
+                $headers.="Return-Path:<noreply@gtgamefest.com>". "\r\n";
+
+                $body = "Hello User,\r\n\r\nTo reset your password visit http://beta.gtgamefest.com/#/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit http://beta.gtgamefest.com/#/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\n -Gt Gamefest Staff";
+
+                    if(mail($data -> email, $subject, $body, $headers))
+                    {
+                        $response -> success = true;
+                    }
+                    else{
+                        $response -> message = "Mail delivery was unsuccessful.";
+                    }
                 }
                 else{
-                    $response -> message = "Mail delivery was unsuccessful.";
+                    $response -> message = "Could not set resetToken: ".$db -> error;
+                }
+                } else{
+                    $response -> message = "SQL preparation error: ".$db -> error;
                 }
             }
             else{

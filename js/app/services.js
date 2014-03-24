@@ -147,11 +147,26 @@ angular.module('app.services', [])
             return deferred;
         };
 
+        this.resetPassword = function(data){
+            var deferred = $q.defer();
+            $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'resetPassword'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            }).error(function (response) {
+                    deferred.reject(response.message);
+                });
+            return deferred;
+        };
+
         this.changePassword = function(data) {
             var deferred = $q.defer();
             $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'changePassword'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
-                   deferred.resolve();
+                    deferred.resolve();
                 }
                 else {
                     deferred.reject(response);

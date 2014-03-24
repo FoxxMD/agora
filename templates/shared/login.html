@@ -27,7 +27,7 @@
                 </div>
         </div>
         <div class="modal-footer">
-            <p style="float:left; clear:right;"><a href="#">Forgot your password?</a></p>
+            <p style="float:left; clear:right;"><a ng-click="this.goToForgot()">Forgot your password?</a></p>
 
             <p style="float:left; clear:both;">Don't have an account? <a ng-click="this.closeToRegister();">Sign up</a></p>
             <button style="float:right;" type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid">Login</button>

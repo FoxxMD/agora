@@ -28,9 +28,9 @@
     {
         $result = changePassword($data);
     }
-    else if($mode == "restPassword")
+    else if($mode == "resetPassword")
     {
-        resetPassword($data);
+        $result = resetPassword($data);
     }
     else {
         $authUser = authenticateRequest($headers["Authentication"]);
