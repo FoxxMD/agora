@@ -33,6 +33,7 @@
             }
             $isOwnData = ($authUser -> id == $id);
             $isAdmin = ($authUser -> role == 1);
+            $isGameAdmin = ($authUser -> role == 2);
             $fullAccess = ($isOwnData || $isAdmin);
 
     switch($mode) {
@@ -46,7 +47,7 @@
             $result = getTeams($isAdmin);
             break;
         case "set":
-            $result = setTeam($data);
+            $result = setTeam($data, $authUser, $isAdmin, $isGameAdmin);
             break;
         case "add":
             $result = addTeamMember($data);

@@ -659,6 +659,13 @@
 .gtgamefest .table-hover tbody tr:hover th {
   background-color: #333333;
 }
+.gtgamefest .teamList .glyphicon {
+  float: right;
+  cursor: pointer;
+}
+.gtgamefest .teamList .glyphicon:hover {
+  color: #e6e6e6;
+}
 .imageFit {
   max-width: 300px;
   width: 100%;
@@ -879,4 +886,8 @@ a.thumbnail:hover {
 }
 a.thumbnail.active.orange {
   border-color: #ffa02d;
+}
+.ng-animate.shake-add {
+  -webkit-animation-name: shake;
+  animation-name: shake;
 }

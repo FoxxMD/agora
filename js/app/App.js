@@ -70,10 +70,9 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 authenticated: true
             })
             .state('team', {
-                templateUrl: '/templates/team.html',
+                template: '<div team-dir></div>',
                 url: '/team/:teamId',
                 parent: 'index',
-                controller: 'teamctrl',
                 authenticated: true
             })
             .state('teams', {

@@ -109,7 +109,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     function setUsers($param1, $param2, $param3, $isAdmin) {
         $db = getDB();
         $response = new stdClass();
-        if(($param2 != "paid" && param2 != "email") || $isAdmin) {
+        if(($param2 != "paid" && $param2 != "email") || $isAdmin) {
         $fixedParam = "";
             switch($param2)
             {
@@ -409,36 +409,105 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         }
     }
 
-    function setTeam($data) {
+    function setTeam($data, $authUser, $isAdmin, $isGameAdmin) {
         $db = getDB();
         $response = new stdClass();
 
-        $fixedParam = "";
-        switch($data -> param)
+        $sql = "select captain, member1, member2, member3, member4 from teams where id=?";
+        if($statement1 = $db -> prepare($sql))
         {
-        case "name":
-            $fixedParam = "name";
-            break;
-        case "password":
-            $fixedParam = "password";
-            break;
-        case "des":
-            $fixedParam = "des";
-            break;
-        case "game":
-            $fixedParam = "game";
-            break;
-        }
-
-        $sql = "update teams set ".$fixedParam."=? where id=?";
-
-        if($statement = $db -> prepare($sql))
-        {
-            $statement -> bind_param('si', $data -> paramValue, $data -> id);
-
-            if($statement -> execute())
+            $statement1 -> bind_param('i', $data -> teamId);
+            if($statement1 -> execute())
             {
-                $response -> success = true;
+                $statement1 -> bind_result($captainId, $member1Id, $member2Id, $member3Id, $member4Id);
+                $statement1 -> fetch();
+                $statement1 -> close();
+                $fixedParam = "";
+
+                if($authUser -> id == $captainId || $isAdmin || $isGameAdmin)
+                {
+                    switch($data -> param)
+                    {
+                    case "name":
+                        $fixedParam = "name";
+                        break;
+                    case "password":
+                        $fixedParam = "password";
+                        break;
+                    case "des":
+                        $fixedParam = "des";
+                        break;
+                    case "game":
+                        $fixedParam = "game";
+                        break;
+                    }
+                }
+                switch($data -> param)
+                {
+                    //THIS IS CRAP
+                    //needs a more elegant solution ;__;
+
+                    case "member1":
+                        if($authUser -> id == $captainId || $authUser -> id == $member1Id || $isAdmin || $isGameAdmin)
+                        {
+                            $fixedParam = "member1";
+                        }else{
+                            $response -> success = false;
+                            $response -> message = "Not authorized to make this change";
+                            return $response;
+                        }
+                        break;
+                    case "member2":
+                        if($authUser -> id == $captainId || $authUser -> id == $member2Id || $isAdmin || $isGameAdmin)
+                        {
+                            $fixedParam = "member2";
+                        }else{
+                            $response -> success = false;
+                            $response -> message = "Not authorized to make this change";
+                            return $response;
+                        }
+                        break;
+                    case "member3":
+                        if($authUser -> id == $captainId || $authUser -> id == $member3Id || $isAdmin || $isGameAdmin)
+                        {
+                            $fixedParam = "member3";
+                        }else{
+                            $response -> success = false;
+                            $response -> message = "Not authorized to make this change";
+                            return $response;
+                        }
+                        break;
+                    case "member4":
+                        if($authUser -> id == $captainId || $authUser -> id == $member4Id || $isAdmin || $isGameAdmin)
+                        {
+                            $fixedParam = "member4";
+                        }else{
+                            $response -> success = false;
+                            $response -> message = "Not authorized to make this change";
+                            return $response;
+                        }
+                        break;
+                }
+
+                $sql = "update teams set ".$fixedParam."=? where id=?";
+
+                if($statement = $db -> prepare($sql))
+                {
+                    $statement -> bind_param('si', $data -> updatevalue, $data -> teamId);
+
+                    if($statement -> execute())
+                    {
+                        $response -> success = true;
+                    }
+                    else{
+                        $response -> success = false;
+                        $response -> message = $db -> error;
+                    }
+                }
+                else{
+                    $response -> success = false;
+                    $response -> message = $db -> error;
+                };
             }
             else{
                 $response -> success = false;
@@ -448,8 +517,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         else{
             $response -> success = false;
             $response -> message = $db -> error;
-        };
-
+        }
         return $response;
     }
 

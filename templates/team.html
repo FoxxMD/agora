@@ -17,8 +17,6 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">Captain:</label>
-<!--                    <a editable-select="team.captain" onbeforesave="updateTeam('captain',$data)">{{team.captainName || 'Not
-                        Set' }}</a>-->
                     <a editable-select="team.captain" e-ng-options="s.value as s.text for s in teamMembers"
                        onbeforesave="updateTeam('captain',$data)">
                         {{ showTeamMembers() }}
@@ -40,7 +38,8 @@
                     <a editable-text="team.ign" onbeforesave="updateTeam('logo',$data)">{{team.logo || 'Not Set' }}</a>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Password:</label> <!-- TODO Restrict to 5 character to respect DB rules -->
+                    <label class="control-label">Password:</label>
+                    <!-- TODO Restrict to 5 character to respect DB rules -->
                     <a editable-text="team.steam" onbeforesave="updateTeam('password',$data)">{{team.password || 'Not
                         Set'
                         }}</a>
@@ -83,16 +82,29 @@
                     <button ng-if="!onTeam" type="button" class="btn btn-info pull-right" style="margin-right:10px;"
                             ng-click="clickJoin()">Join
                     </button>
+                    <button ng-if="onTeam && !ownTeam" type="button" class="btn btn-danger pull-right" style="margin-right:10px;"
+                            ng-click="tryLeave()">Leave
+                    </button>
                 </legend>
-                <a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a>
-                <a ui-sref="user({userId: team.member2})">{{team.member2Name}}</a>
-                <a ui-sref="user({userId: team.member3})">{{team.member3Name}}</a>
-                <a ui-sref="user({userId: team.member4})">{{team.member4Name}}</a>
-            <div class="form-group" style="margin-top:20px;" ng-show="showJoin && !onTeam">
-           <label class="control-label">Password:</label>
-           <input type="text" class="form-control" ng-model="joinPassword"/>
-                <button type="button" class="btn btn-primary" ng-click="tryJoin()">Join Team</button>
-            </div>
+                <div class="teamList">
+                    <span ng-if="team.member1 != 0">
+                        <a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member1',0)" class="glyphicon glyphicon-remove-circle"></span>
+                    </span>
+                     <span ng-if="team.member2 != 0">
+                    <a ui-sref="user({userId: team.member2})">{{team.member2Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member2',0)" class="glyphicon glyphicon-remove-circle"></span>
+                         </span>
+                    <span ng-if="team.member3 != 0">
+                    <a ui-sref="user({userId: team.member3})">{{team.member3Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member3',0)" class="glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    <span ng-if="team.member4 != 0">
+                    <a ui-sref="user({userId: team.member4})">{{team.member4Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member4',0)" class="glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                </div>
+                <div class="form-group" style="margin-top:20px;" ng-show="showJoin && !onTeam">
+                    <label class="control-label">Password:</label>
+                    <input type="text" class="form-control" ng-model="joinPassword"/>
+                    <button type="button" class="btn btn-primary" ng-click="tryJoin()">Join Team</button>
+                </div>
             </fieldset>
         </div>
     </div>

@@ -235,7 +235,7 @@ angular.module('app.services', [])
             var deferred = $q.defer();
 
             var postData = {
-                id: teamId,
+                teamId: teamId,
                 param: param,
                 updatevalue: paramValue
             };
@@ -244,7 +244,7 @@ angular.module('app.services', [])
                     deferred.resolve();
                 }
                 else {
-                    deferred.reject(response);
+                    deferred.reject(response.message);
                 }
             }).error(function (response) {
                     deferred.reject(response);
