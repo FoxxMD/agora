@@ -78,19 +78,45 @@
             </fieldset>
         </div>
     </div>
-    <div ng-if="ownProfile" class="col-md-4 col-sm-12">
-        <div class="lead">
-            <fieldset>
-                <legend>Account Information</legend>
-                <div class="form-group">
-                    <label class="control-label">Email:</label>
-                    <a>{{user.email}}</a>
+    <div class="col-md-4 col-sm-12">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="lead">
+                    <fieldset>
+                        <legend>Team Membership</legend>
+                        <p style="font-size:14px;" ng-if="user.captainList.length == 0 && user.memberList.length == 0  && ownProfile">
+                            You have not joined any teams! You can browse <a ui-sref="teams">Teams</a> to find friends to play with.
+                        </p>
+                        <h3 ng-if="user.captainList.length != 0">Captain</h3>
+                        <ul>
+                            <li ng-repeat="membership in user.captainList">
+                                <a ui-sref="team({teamId: membership.ID})">{{membership.name}}</a>
+                            </li>
+                        </ul>
+                        <h3 ng-if="user.memberList.length != 0">Member</h3>
+                        <ul>
+                            <li ng-repeat="membership in user.memberList">
+                                <a ui-sref="team({teamId: membership.ID})">{{membership.name}}</a>
+                            </li>
+                        </ul>
+                    </fieldset>
                 </div>
-                <div class="form-group">
-                    <label class="control-label">Paid :</label>
-                    <a>{{user.paid == 1 ? 'Yes' : 'No' }}</a> <button ng-if="user.paid == 0" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
+            </div>
+            <div ng-if="ownProfile"  class="col-md-12 col-sm-12 col-xs-12">
+                <div class="lead">
+                    <fieldset>
+                        <legend>Account Information</legend>
+                        <div class="form-group">
+                            <label class="control-label">Email:</label>
+                            <a>{{user.email}}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Paid :</label>
+                            <a>{{user.paid == 1 ? 'Yes' : 'No' }}</a> <button ng-if="user.paid == 0" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
+                        </div>
+                    </fieldset>
                 </div>
-            </fieldset>
+            </div>
         </div>
     </div>
 </div>

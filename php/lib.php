@@ -60,18 +60,30 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 }
 
                 $statement -> fetch();
+                $statement -> close();
 
-               /* if(!$showAllData)
+                $sql = "select ID, name from teams where captain=".$userObj -> id;
+                if($result = $db -> query($sql))
                 {
-                    $userObj -> password = null;
-                    $userObj -> lock = null;
-                    $userObj -> attempt = null;
-                    $userObj -> salt = null;
-                    $userObj -> email = null;
-                    $userObj -> paid = null;
-                    $userObj -> authtoken = null;
-                    $userObj -> authExpire = null;
-                } */
+                    $captainInfo = new stdClass();
+                    $count = 0;
+                    $userObj -> captainList = array();
+                    while($captainInfo = $result -> fetch_object())
+                    {
+                        $userObj -> captainList[$count] = $captainInfo;
+                    }
+                }
+                $sql = "select ID, name from teams where member1=".$userObj -> id." or member2=".$userObj -> id." or member3=".$userObj -> id." or member4=".$userObj -> id;
+                if($result = $db -> query($sql))
+                {
+                    $memberInfo = new stdClass();
+                    $count = 0;
+                    $userObj -> memberList = array();
+                    while($memberInfo = $result -> fetch_object())
+                    {
+                        $userObj -> memberList[$count] = $memberInfo;
+                    }
+                }
                 return $userObj;
             }
             else{
