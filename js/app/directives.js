@@ -85,12 +85,12 @@ angular.module('app.directives', [])
                         var data = { token: response.id};
                         userService.payRegistration(data).promise.then(function(response) {
                             //payment success
-                            if(response != null)
+                            if(response == undefined || response == null)
                             {
                                 userService.justPaid(true);
                                 $state.go('profile');
                             } else {
-                                $scope.formErrorMessage = '<strong>Your payment was submitted successfully! But there was a problem recording your payment.</strong> Please contant an admin to fix this issue. <strong>Do not resubmit your payment!</strong>';
+                                $scope.formErrorMessage = '<strong>Your payment was submitted successfully! But there was a problem recording your payment.</strong> Please contact an admin to fix this issue. <strong>Do not resubmit your payment!</strong>';
                                 $scope.formErrorTechMessage = response;
                             }
 

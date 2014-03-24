@@ -136,13 +136,13 @@ angular.module('app.services', [])
             $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'pay'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     user.paid = true;
-                    deferred.resolve(response.message);
+                    deferred.resolve();
                 }
                 else {
                     deferred.reject(response.message);
                 }
             }).error(function (response) {
-                    deferred.reject(response.message);
+                    deferred.reject(response);
                 });
             return deferred;
         };

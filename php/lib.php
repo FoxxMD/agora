@@ -15,9 +15,9 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
     function checkDuplicate($field, $value) {
         $db = getDB();
-        $sql = "select * from users where ?=?";
+        $sql = "select * from users where email=?";
         $statement = $db -> prepare($sql);
-        $statement -> bind_param('ss',$field,$value);
+        $statement -> bind_param('ss',$value);
 
         if($statement -> execute())
         {
@@ -443,7 +443,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             if($statement -> execute())
             {
-            //uhh
+            $response -> success = true;
             }
             else{
                 $response -> message = "Your card has been charged successfully, however there was a problem updating your account. Please contact an admin. Error: ".$db -> error;

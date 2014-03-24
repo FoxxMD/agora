@@ -10,13 +10,13 @@
     $response = new stdClass();
     $db = getDB();
 
-    if(!checkDuplicate("email", $user -> email) && !checkDuplicate("alias",$user -> alias)) {
+    if(!checkDuplicate("email", $user -> email)) {
 
         $phpassHash = new \Phpass\Hash;
         $pwHash = $phpassHash -> hashPassword($user -> password);
         $authToken = getToken(40);
 
-        $sql = "insert into users values (NULL, ?,?,'',?,0,0,'','','','','',0,NULL,0,?,DATE_ADD(NOW(),INTERVAL 1 DAY))";
+        $sql = "insert into users values (NULL, ?,?,'',?,0,0,'','','','','',0,NULL,0,?,DATE_ADD(NOW(),INTERVAL 1 DAY),NULL)";
 
         $statement = $db -> prepare($sql);
         $statement -> bind_param('ssss',$user -> email, $pwHash, $user -> alias, $authToken);
