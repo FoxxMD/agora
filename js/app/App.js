@@ -139,11 +139,17 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         $scope.isLoggedIn = userService.isLoggedIn();
         $scope.alias = userService.getProfile().alias;
+        $scope.paid = userService.getProfile().paid;
 
         $rootScope.$on('loginChange', function () {
             $scope.alias = userService.getProfile().alias;
             $scope.isLoggedIn = userService.isLoggedIn();
+            $scope.paid = userService.getProfile().paid;
         });
+
+        $scope.openPay = function () {
+            $state.go('pay');
+        };
 
         $scope.openLogin = function () {
 

@@ -408,3 +408,27 @@ a.thumbnail {
   -webkit-animation-name: shake;
   animation-name: shake;
 }
+
+.payReminder{
+  transition: 0.5s all;
+  width:10%;
+  max-width:800px;
+  min-width:180px;
+  position:fixed;
+  right:0;
+  top:80px;
+  -webkit-transition: 0.5s all;
+  -moz-transition: 0.5s all;
+
+  &:hover{
+    width:80%;
+    .fulltext {
+      display:block;
+    }
+  }
+
+  .fulltext{
+    margin-top:10px;
+    display:none;
+  }
+}
