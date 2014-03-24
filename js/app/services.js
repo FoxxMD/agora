@@ -147,6 +147,21 @@ angular.module('app.services', [])
             return deferred;
         };
 
+        this.changePassword = function(data) {
+            var deferred = $q.defer();
+            $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'changePassword'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                   deferred.resolve();
+                }
+                else {
+                    deferred.reject(response);
+                }
+            }).error(function (response) {
+                    deferred.reject(response);
+                });
+            return deferred;
+        };
+
         this.updateUser = function (param, paramValue) {
 
             var deferred = $q.defer();

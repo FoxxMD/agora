@@ -8,8 +8,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
-        $db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
         return $db;
     }
 
@@ -31,6 +31,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             }
         }
     }
+
 
     function getUser($param, $showAllData) {
         $db = getDB();
@@ -281,6 +282,94 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         }
           $db -> close();
           return $response;
+    }
+
+    function resetPassword($data){
+        $db = getDB();
+        $response = new stdClass();
+        $response -> success = false;
+        $sql = "select * from users where email=?";
+        $statement = $db -> prepare($sql);
+        $statement -> bind_param($data -> email);
+        if($statement -> execute())
+        {
+            $statement -> store_result();
+            if($statement -> num_rows > 0)
+            {
+                $authToken = getToken(40);
+                if(mail($data -> email, "Forgotten password reset from GT Gamefest", "Enter this token[".$authToken."] to reset your password"))
+                {
+                    $response -> success = true;
+                }
+                else{
+                    $response -> message = "Mail delivery was unsuccessful.";
+                }
+            }
+            else{
+                $response -> message = "Email address not found.";
+            }
+        }
+        else{
+            $response -> message = "DB error: ".$db -> error;
+        }
+        return $response;
+    }
+
+    function changePassword($data){
+        $response = new stdClass();
+        $response -> success = false;
+        $db = getDB();
+
+        if($data -> resetToken != null)
+        {
+            $phpassHash = new \Phpass\Hash;
+            $pwHash = $phpassHash -> hashPassword($data -> newPassword);
+            $sql = "update users set password=? where resetToken=?";
+            $statement = $db -> prepare($sql);
+            $statement -> bind_param('ss', $pwHash, $data -> resetToken);
+            if($statement -> execute())
+            {
+                $response -> success = true;
+            }
+            else {
+                $response -> message = "Could not change password: ".$db -> error;
+            }
+        }
+        else if($data -> oldPassword != null)
+        {
+            $sql = "select password from users where email=?";
+            $statement1 = $db -> prepare($sql);
+            $statement1 -> bind_param('s',$data -> email);
+            if($statement1 -> execute())
+            {
+                $statement1 -> store_result();
+                if($statement1 -> num_rows > 0)
+                {
+                    $statement1 -> bind_result($passwordHash);
+                    $statement1 -> fetch();
+                    $statement1 -> close();
+                    $phpassHash = new \Phpass\Hash;
+                    if($phpassHash->checkPassword($data -> oldPassword, $passwordHash))
+                    {
+                        $pwHash = $phpassHash -> hashPassword($data -> newPassword);
+                        $sql = "update users set password=? where email=?";
+                        $statement = $db -> prepare($sql);
+                        $statement -> bind_param('ss', $pwHash, $data -> email);
+                        if($statement -> execute())
+                        {
+                            $response -> success = true;
+                        }
+                        else{
+                            $response -> message = "Could not change password: ".$db -> error;
+                        }
+                    }
+                    else{
+                        $response -> message = "Current password verification failed.";
+                    }
+                }
+            }
+        }
+        return $response;
     }
 
     function deleteUser($user) {

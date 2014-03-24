@@ -24,6 +24,14 @@
     if($mode == "verify") {
         $result = verifyUser($data -> email,$data -> password);
     }
+    else if($mode == "changePassword" && $data -> resetToken != null)
+    {
+        $result = changePassword($data);
+    }
+    else if($mode == "restPassword")
+    {
+        resetPassword($data);
+    }
     else {
         $authUser = authenticateRequest($headers["Authentication"]);
         if($authUser != null)
@@ -51,6 +59,10 @@
                 $result = getUsers($isAdmin);
             } else if($mode == "pay") {
                 $result = payRegistration($data -> token, $authUser);
+            } else if($mode == "changePassword")
+            {
+                $data -> email = $authUser -> email;
+                $result = changePassword($data);
             }
         }
         else {

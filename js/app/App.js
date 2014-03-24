@@ -235,6 +235,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 $scope.user = userData;
             });
         $scope.ownProfile = ($stateParams.userId == userService.getProfile().id) || $state.current.name == "profile";
+        $scope.showPassword = false;
 
         $scope.openPay = function () {
             $state.go('pay');
@@ -242,6 +243,14 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         $scope.updateUser = function (element, updateVal) {
             return userService.updateUser(element, updateVal);
+        }
+        $scope.submitPasswordChange = function(){
+            this.formData.resetToken = null;
+            userService.changePassword(this.formData).promise.then(function(response){
+                $scope.passwordSuccess = true;
+            }, function(response){
+                $scope.userErrorMessage = "Password change failed: " + response;
+            });
         }
     }])
     .controller('usersctrl', ['$scope', 'userService', '$state', function ($scope, userService, $state) {
