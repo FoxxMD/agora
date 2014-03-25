@@ -427,11 +427,17 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         if(property_exists($authUser,"email"))
         {
             try {
+                $customer = Stripe_Customer::create(array(
+                              "description" => "User for ".$authUser -> email,
+                              "email" => $authUser -> email,
+                              "card" => $token
+                            ));
+
                 $charge = Stripe_Charge::create(array(
                     "amount" => 15 * 100,
                     "currency" => "usd",
-                    "card" => $token,
-                    "description" => $authUser -> email,
+                    "customer" => $customer -> id,
+                    "description" => "Charge for registration for ".$authUser -> email,
                     "statement_description" => "GT Gamefest"
                 ));
 
