@@ -19,8 +19,18 @@ angular.module('app.services', [])
             isInit = false;
 
         this.getProfile = function () {
-            return user;
+            if(isInit)
+            {
+                return user;
+            }
+            else
+            {
+                this.initUser().promise.then(function(){
+                    return user;
+                });
+            }
         };
+
 
         this.getUser = function (id) {
             var deferred = $q.defer();
@@ -43,6 +53,8 @@ angular.module('app.services', [])
         };
 
         this.initUser = function () {
+            var deferred = $q.defer();
+
             if ($localStorage.token != undefined || $localStorage.token != null) {
                 user.alias = $localStorage.alias;
                 user.email = $localStorage.email;
@@ -57,9 +69,14 @@ angular.module('app.services', [])
                     user.steam = response.steam;
                     user.bn = response.bn;
                     user.paid = (response.paid == 1);
+                    deferred.resolve();
                 });
             }
+            else {
+                deferred.resolve();
+            }
             isInit = true;
+            return deferred;
         };
 
         this.alreadyPaid = function (action) {
