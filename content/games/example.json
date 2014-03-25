@@ -1,0 +1,64 @@
+{
+    "title": "Your Game",
+    "overview": "content/games/yourGameOverview.html", //An html fragment that is an overview for this game
+    "rules": ["Each entry in this array is one rule.",
+        "They will appear as an ordered list in the actual HTML.",
+        "Add as many as needed for the specific rules for THE GENERAL GAME.(Rules for tournaments are farther down."],
+    "tourney": [ //for each tournament add a tournament object to this array
+        {
+            "title": "The type of tournament(1v1)",
+            "prizes": [ //For each prize add a prize object to this array
+                {
+                    "place": "1st",
+                    "href": "http://www.google.com/nexus/7/",
+                    "title": "Nexus 7"
+                },
+                { //the beginning of the second prize
+                    "place": "2nd",
+                    "href": "http://www.razerzone.com/gaming-audio/razer-carcharias-for-xbox-pc/",
+                    "title": "Razer Carcharias"
+                }
+            ],
+            "rules": ["This is where you put the specific rules for a tournament",
+                    "Double Elimination Bracket, first 2 rounds are Bo1, everything after that until finals are Bo3. Finals are Bo5."],
+            "maps": [ //for each map add a map object to this array
+                {
+                    "href": "http://wiki.teamliquid.net/starcraft2/Akilon_Wastes",
+                    "title": "Akilon Wastes"
+                },
+                { //the beginning of the second map
+                    "href": "http://wiki.teamliquid.net/starcraft2/Bel%27Shir_Vestige",
+                    "title": "Bel'Shir Village LE"
+                }
+            ]
+        },
+        { //this is the beginning of the second tournament
+            "title": "2v2",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "http://gaming.logitech.com/en-us/product/g510s-lcd-gaming-keyboard",
+                    "title": "G510s keyboard"
+                },
+                {
+                    "place": "2nd",
+                    "href": "http://www.razerzone.com/gaming-accessories/razer-mouse-bungee/",
+                    "title": "Mouse Bungee"
+                }
+            ],
+            "rules": ["Single Elimination Bracket, all Bo3"],
+            "maps": [
+                {
+                    "href": "http://wiki.teamliquid.net/starcraft2/Geosync_Quarry",
+                    "title": "Geosync Quarry"
+                },
+                {
+                    "href": "http://wiki.teamliquid.net/starcraft2/Graystone_Ravine",
+                    "title": "Graystone Ravine"
+                }
+            ]
+        }
+    ],
+    "streaming":"/streams/sc2Stream.html" //if there is a streaming channel for this game already on the site just include the local path to the html file
+
+}

@@ -1,0 +1,38 @@
+<div ng-if="passwordSuccess" class="alert alert-success alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    Password successfully changed. Redirecting to home page...
+</div>
+<div class="row">
+    <div class="col-md-offset-3 col-md-5 col-sm-6 col-xs-12">
+        <form class="for" name="forgotPasswordForm" ng-submit="forgotPasswordForm.$valid && tryForgotPassword()">
+            <fieldset>
+                <legend>Password Reset</legend>
+                <div class="form-group">
+                    <label class="control-label">Reset Token</label>
+                    <input type="text" ng-model="formData.resetToken" class="form-control" placeholder="Reset Token"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="password">New Password</label>
+
+                    <div class="left-inner-addon">
+                        <input type="Password" id="password" ng-model="formData.newPassword" class="form-control"
+                               placeholder="New Password" required/>
+                        <i class="glyphicon glyphicon-lock"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="passwordConfirm">Confirm New Password</label>
+
+                    <div class="left-inner-addon">
+                        <input type="Password" id="passwordConfirm" ng-model="passwordConfirm"
+                               password-match="formData.newPassword" class="form-control"
+                               placeholder="Confirm New Password" required/>
+                        <i class="glyphicon glyphicon-lock"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Reset Password</button>
+            </fieldset>
+        </form>
+    </div>
+</div>

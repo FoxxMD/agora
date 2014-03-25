@@ -2,24 +2,73 @@
 
     require_once("./lib.php");
 
-    $mode = $_POST["mode"];
-    $param1 = $_POST["param1"];
+    $postData = file_get_contents('php://input');
+    $data = json_decode($postData);
 
-    if($mode == "get")  {
-        $result = getUsers($param1);
-    } else if($mode == "set") {
-        $param2 = $_POST["param2"];
-        $param3 = $_POST["param3"];
-        $result = setUsers($param1, $param2, $param3);
-    } else if($mode == "verify") {
-        $result = verifyUser($_POST["param1"],$_POST["param2"]);
-    } else if($mode == "check") {
-        $result = ifAlreadyLogged();
-    } else if($mode == "logoff") {
-        $result = logoff();
-    } else if($mode == "delete") {
-        $result = deleteUser($_POST["param1"]);
+    parse_str($_SERVER['QUERY_STRING'], $params);
+    $mode = $params["mode"];
+
+    $headers = array();
+    foreach ($_SERVER as $key => $value) {
+        if (strpos($key, 'HTTP_') === 0) {
+            $chunks = explode('_', $key);
+            $header = '';
+            for ($i = 1; $y = sizeof($chunks) - 1, $i < $y; $i++) {
+                $header = ucfirst(strtolower($chunks[$i]));
+            }
+            $header = ucfirst(strtolower($chunks[$i]));
+            $headers[$header] = $value;
+        }
     }
 
-    echo $result;
+    if($mode == "verify") {
+        $result = verifyUser($data -> email,$data -> password);
+    }
+    else if($mode == "changePassword" && $data -> resetToken != null)
+    {
+        $result = changePassword($data);
+    }
+    else if($mode == "resetPassword")
+    {
+        $result = resetPassword($data);
+    }
+    else {
+        $authUser = authenticateRequest($headers["Authentication"]);
+        if($authUser != null)
+        {
+            $id = $authUser -> id;
+            if($data != null)
+            {
+             $id = $data -> id;
+            }
+            $isOwnData = ($authUser -> id == $id);
+            $isAdmin = ($authUser -> role == 1);
+            $fullAccess = ($isOwnData || $isAdmin);
+
+            if($mode == "get")  {
+                if(array_key_exists("id", $params))
+                {
+                    $id = $params["id"];
+                }
+                $result = getUser($id, $fullAccess);
+            } else if($mode == "set" && $fullAccess) {
+                $result = setUsers($data -> id, $data -> param, $data -> updatevalue, $isAdmin);
+            } else if($mode == "delete" && $fullAccess) {
+                $result = deleteUser($id);
+            } else if($mode == "getAll") {
+                $result = getUsers($isAdmin);
+            } else if($mode == "pay") {
+                $result = payRegistration($data -> token, $authUser);
+            } else if($mode == "changePassword")
+            {
+                $data -> email = $authUser -> email;
+                $result = changePassword($data);
+            }
+        }
+        else {
+            $result -> success = false;
+            $result -> message = "Not Authorized";
+        }
+    }
+    echo json_encode($result);
 ?>

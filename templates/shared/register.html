@@ -1,0 +1,49 @@
+<div>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                ng-click="close()">&times;</button>
+        <h4 class="modal-title">Register</h4>
+    </div>
+    <form role="form" name="registerForm" novalidate ng-submit="registerForm.$valid && submitRegistration()">
+    <div class="modal-body">
+        <div ng-if="formErrorMessage != undefined" class="alert alert-warning">
+            <strong>{{formErrorMessage}}</strong>
+        </div>
+            <div class="form-group">
+                <label class="control-label" for="alias">Alias</label>
+                <div class="left-inner-addon">
+                    <input type="text" class="form-control"  ng-model="formData.alias"  id="alias" placeholder="Alias" required/>
+                    <i class="glyphicon glyphicon-eye-open"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="email">Email</label>
+                <div class="left-inner-addon">
+                    <input type="email" class="form-control"  ng-model="formData.email"  id="email" placeholder="Email" required/>
+                    <i class="glyphicon glyphicon-envelope"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="password">Password</label>
+                <div class="left-inner-addon">
+                    <input type="Password" id="password" ng-model="formData.password" class="form-control" placeholder="Password" required/>
+                    <i class="glyphicon glyphicon-lock"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="passwordConfirm">Confirm Password</label>
+                <div class="left-inner-addon">
+                    <input type="Password" id="passwordConfirm" ng-model="passwordConfirm" password-match="formData.password" class="form-control" placeholder="Password" required/>
+                    <i class="glyphicon glyphicon-lock"></i>
+                </div>
+            </div>
+        <div class="form-group">
+            <label class="control-label" for="payOption">Pay After Registration?</label>
+            <input type="checkbox" id="payOption" ng-model="payNow"/>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" style="float:right;" class="btn btn-primary">Register</button>
+    </div>
+    </form>
+</div>

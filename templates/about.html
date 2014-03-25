@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-md-12">
+        <h2>GT Gamefest</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-7">
+        <p class="lead">Proudly brought to you by eSports @ GT</p>
+
+        <p>Georgia Tech Gamefest is the Southeast's premier video gaming event, featuring hundreds of students competing
+            in tournaments.
+            In 2007, the Tech tradition of semesterly LAN events was resurrected. With the help of other organizations,
+            the first Gamefest had over 300 attendees.
+        </p>
+
+        <p>
+            Since then, Gamefest has evolved into the largest LAN event in the southeastern United States. In 2012,
+            Gamefest surpassed 700 attendees.
+            Gamefest has become a collaboration of gaming organizations — near and far — to bring the best LAN events to
+            Atlanta, Georgia.</p>
+    </div>
+    <div class="col-md-3">
+        <h3>Henry "Hanky" Mei</h3>
+
+        <p>Co-Chair</p>
+
+        <h3>Joseph Benamy</h3>
+
+        <p>Co-Chair</p>
+    </div>
+</div>
+        <button id="regCredits" class="btn btn-sm btn-info">Regular Credits...</button>
+<div class="row" style="position:relative;">
+    <div class="col-md-12">
+    <p class="text-center" id="start">Thanks to those that made gamefest possible...</p>
+    <div id="titles">
+        <div id="titlecontent">
+            <div class="row" ng-repeat="section in credits">
+                <div class="col-md-12">
+                    <h1 class="text-center">{{section.title}}</h1>
+                </div>
+                <div class="col-md-4" ng-repeat="person in section.people">
+                    <address class="text-center">
+                        <b>{{person.name}}</b><br/>
+                        <i>{{person.title}}</i>
+                    </address>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>

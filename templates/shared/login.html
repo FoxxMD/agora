@@ -1,0 +1,36 @@
+<div>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    ng-click="close()">&times;</button>
+            <h4 class="modal-title">Login</h4>
+        </div>
+    <form name="loginForm" novalidate ng-submit="loginForm.$valid && loginSubmit()">
+        <div class="modal-body">
+            <div ng-if="formErrorMessage != undefined" class="alert alert-warning"> <!--alert-dismissable-->
+                <!--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
+                <strong>Login Failed!</strong> {{formErrorMessage}}
+            </div>
+                <div class="form-group">
+                    <label class="control-label" for="email">Email</label>
+                    <div class="left-inner-addon">
+                        <input type="email" class="form-control" id="email" ng-model="loginData.email" required placeholder="Email"/>
+                        <i class="glyphicon glyphicon-envelope"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="password">Password</label>
+
+                    <div class="left-inner-addon">
+                        <input type="Password" id="password" class="form-control" ng-model="loginData.password" required placeholder="Password"/>
+                        <i class="glyphicon glyphicon-lock"></i>
+                    </div>
+                </div>
+        </div>
+        <div class="modal-footer">
+            <p style="float:left; clear:right;"><a ng-click="this.goToForgot()">Forgot your password?</a></p>
+
+            <p style="float:left; clear:both;">Don't have an account? <a ng-click="this.closeToRegister();">Sign up</a></p>
+            <button style="float:right;" type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid">Login</button>
+        </div>
+    </form>
+</div>

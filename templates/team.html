@@ -1,0 +1,111 @@
+<div ng-if="teamErrorMessage != undefined" class="alert alert-warning alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span ng-bind-html="teamErrorMessage"></span>
+</div>
+<h1>{{team.name}}<br/>
+    <small>Team Profile</small>
+</h1>
+<div class="row">
+    <div class="col-md-8 col-sm-12" ng-if="ownTeam">
+        <div class="lead">
+            <fieldset>
+                <legend>Team Information</legend>
+                <div class="form-group">
+                    <label class="control-label">Name:</label>
+                    <a editable-text="name.alias" onbeforesave="updateTeam('name',$data)">{{team.name || 'Not Set'
+                        }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Captain:</label>
+                    <a editable-select="team.captain" e-ng-options="s.value as s.text for s in teamMembers"
+                       onbeforesave="updateTeam('captain',$data)">
+                        {{ showTeamMembers() }}
+                    </a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Description:</label>
+                    <a editable-text="team.des" onbeforesave="updateTeam('des',$data)">{{team.des || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Game:</label>
+                    <a editable-select="team.game" e-ng-options="s.value as s.text for s in games"
+                       onbeforesave="updateTeam('game',$data)">
+                        {{ showGames() }}
+                    </a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Logo:</label>
+                    <a editable-text="team.ign" onbeforesave="updateTeam('logo',$data)">{{team.logo || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Password:</label>
+                    <!-- TODO Restrict to 5 character to respect DB rules -->
+                    <a editable-text="team.steam" onbeforesave="updateTeam('password',$data)">{{team.password || 'Not
+                        Set'
+                        }}</a>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="col-md-8 col-sm-12" ng-if="!ownTeam">
+        <div class="lead">
+            <fieldset>
+                <legend>Team Information</legend>
+                <div class="form-group">
+                    <label class="control-label">Name:</label>
+                    {{team.name || 'Not Set'
+                    }}
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Captain:</label>
+                    <a ui-sref="user({userId: team.captain})">{{team.captainName || 'Not Set' }}</a>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Description:</label>
+                    {{team.des || 'Not Set' }}
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Game:</label>
+                    {{team.game || 'Not Set' }}
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Logo:</label>
+                    {{team.logo || 'Not Set' }}
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+        <div class="lead">
+            <fieldset>
+                <legend>Team Members
+                    <button ng-if="!onTeam" type="button" class="btn btn-info pull-right" style="margin-right:10px;"
+                            ng-click="clickJoin()">Join
+                    </button>
+                    <button ng-if="onTeam && !ownTeam" type="button" class="btn btn-danger pull-right" style="margin-right:10px;"
+                            ng-click="tryLeave()">Leave
+                    </button>
+                </legend>
+                <div class="teamList">
+                    <span ng-if="team.member1 != 0">
+                        <a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member1',0)" class="glyphicon glyphicon-remove-circle"></span>
+                    </span>
+                     <span ng-if="team.member2 != 0">
+                    <a ui-sref="user({userId: team.member2})">{{team.member2Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member2',0)" class="glyphicon glyphicon-remove-circle"></span>
+                         </span>
+                    <span ng-if="team.member3 != 0">
+                    <a ui-sref="user({userId: team.member3})">{{team.member3Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member3',0)" class="glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    <span ng-if="team.member4 != 0">
+                    <a ui-sref="user({userId: team.member4})">{{team.member4Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member4',0)" class="glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                </div>
+                <div class="form-group" style="margin-top:20px;" ng-show="showJoin && !onTeam">
+                    <label class="control-label">Password:</label>
+                    <input type="text" class="form-control" ng-model="joinPassword"/>
+                    <button type="button" class="btn btn-primary" ng-click="tryJoin()">Join Team</button>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

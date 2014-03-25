@@ -1,17 +1,39 @@
 <?php
 
+
+//error_reporting(E_ALL);
+
     require_once("./lib.php");
 
-    $alias = $_POST["alias"];
-    $email = $_POST["email"];
-    $pw    = $_POST["password"];
-
+    $data = file_get_contents('php://input');
+    $user = json_decode($data);
+    $response = new stdClass();
     $db = getDB();
 
-    if(!checkDuplicate("email", $email) && !checkDuplicate("alias",$alias)) {
-        $sql = "insert into users values (NULL, '".$email."','".$pw."','".$alias."','0','0','','','','','','0',NULL,0)";
-        $result = mysql_query($sql, $db);
-        echo "1";
+    if(!checkDuplicate($user -> email)) {
+
+        $phpassHash = new \Phpass\Hash;
+        $pwHash = $phpassHash -> hashPassword($user -> password);
+        $authToken = getToken(40);
+
+        $sql = "insert into users values (NULL, ?,?,'',?,0,0,'','','','','',0,NULL,0,?,DATE_ADD(NOW(),INTERVAL 1 DAY),NULL)";
+
+        $statement = $db -> prepare($sql);
+        $statement -> bind_param('ssss',$user -> email, $pwHash, $user -> alias, $authToken);
+
+        if($statement -> execute())
+        {
+            $response -> success = true;
+            $response -> authtoken = $authToken;
+        }
+        else{
+            $response -> success = false;
+            $response -> message = $db -> error;
+        }
     } else
-        echo "0";
+    {
+        $response -> success = false;
+        $response -> message = "Duplicate email detected.";
+    }
+        echo json_encode($response);
 ?>
