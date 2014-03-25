@@ -8,6 +8,11 @@
         <th>IGN</th>
         <th>Lol</th>
         <th>BN</th>
+        <th ng-if="admin">Email</th>
+        <th ng-if="admin">Attempt</th>
+        <th ng-if="admin">Locktime</th>
+        <th ng-if="admin">Auth Expire</th>
+        <th ng-if="admin">Role</th>
     </tr>
     </thead>
     <tbody>
@@ -18,6 +23,11 @@
         <td>{{user.ign}}</td>
         <td>{{user.lol}}</td>
         <td>{{user.bn}}</td>
+        <td ng-if="admin">{{user.email}}</td>
+        <td ng-if="admin">{{user.attempt}}</td>
+        <td ng-if="admin">{{user.locktime}}</td>
+        <td ng-if="admin">{{user.authExpire}}</td>
+        <td ng-if="admin">{{(user.role == 0) ? "Standard" : (user.role == 1) ? "System Admin" : "Game Admin"}}</td>
     </tr>
     </tbody>
 </table>

@@ -112,6 +112,9 @@ app.config(['RestangularProvider', '$httpProvider', function (RestangularProvide
 }]);
 
 app.run(function ($rootScope, userService, editableOptions, $state) {
+
+    userService.initUser();
+
     $rootScope.$on('broadcast', function (e, data) {
         if (undefined == data.with) {
             $rootScope.$broadcast(data.say);
@@ -121,7 +124,6 @@ app.run(function ($rootScope, userService, editableOptions, $state) {
         }
     });
     editableOptions.theme = 'bs3';
-    userService.initUser();
 
     $rootScope.$on('$stateChangeStart',
         function (event, toState, toParams, fromState, fromParams) {
@@ -178,7 +180,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 }
             })
 
-        }
+        };
 
         var ModalLoginCtrl = function ($scope, $modalInstance) {
             $scope.loginSubmit = function () {
@@ -252,6 +254,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         userService.getUser($stateParams.userId).promise.then(function (userData) {
             $scope.user = userData;
         });
+        $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
         $scope.ownProfile = ($stateParams.userId == userService.getProfile().id) || $state.current.name == "profile";
         $scope.showPassword = false;
 
@@ -260,7 +263,14 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
 
         $scope.updateUser = function (element, updateVal) {
-            return userService.updateUser(element, updateVal);
+            if($stateParams.userId != undefined)
+            {
+                return userService.updateUser($stateParams.userId, element, updateVal);
+            }
+            else{
+                return userService.updateUser(userService.getProfile().id , element, updateVal);
+            }
+
         }
         $scope.submitPasswordChange = function(){
             this.formData.resetToken = null;
@@ -272,6 +282,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         }
     }])
     .controller('usersctrl', ['$scope', 'userService', '$state', function ($scope, userService, $state) {
+        $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
         userService.getUsers().promise.then(function (userArray) {
             $scope.users = userArray;
         });

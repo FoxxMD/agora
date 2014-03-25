@@ -23,6 +23,7 @@
                     <li><a ng-click="openLogin()">Login</a></li>
                 </ul>
                 <ul ng-if="isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right-login">
+                    <li><button style="padding:5px; margin:10px;" type="button" class="btn btn-sm btn-danger" ng-if="userService.getProfile().role != 0" ng-click="userService.adminMode(!userService.adminMode());">{{userService.adminMode() ? "Admin Mode ON" : "Admin Mode OFF"}}</button></li>
                     <li><a ui-sref="profile">{{alias}}</a></li>
                     <li><a ng-click="logoff()">Log Off</a></li>
                 </ul>

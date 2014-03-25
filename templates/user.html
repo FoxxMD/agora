@@ -18,68 +18,72 @@
     <small>User Profile</small>
 </h1>
 <div class="row">
-    <div class="col-md-8 col-sm-12" ng-if="ownProfile">
-        <div class="lead">
-            <fieldset>
-                <legend>User Information</legend>
-                <div class="form-group">
-                    <label class="control-label">Alias:</label>
-                    <a editable-text="user.alias" onbeforesave="updateUser('alias',$data)">{{user.alias || 'Not Set'
-                        }}</a>
+    <div class="col-md-8 col-sm-12">
+        <div class="row">
+            <div class="col-md-12 col-sm-12" ng-if="!ownProfile && !admin">
+                <div class="lead">
+                    <fieldset>
+                        <legend>User Information</legend>
+                        <div class="form-group">
+                            <label class="control-label">Alias:</label>
+                            <a>{{user.alias || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">LoL Tag:</label>
+                            <a>{{user.lol || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">BN:</label>
+                            <a>{{user.bn || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Xbox Tag:</label>
+                            <a>{{user.xbox || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">IGN Tag:</label>
+                            <a>{{user.ign || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Steam Id:</label>
+                            <a>{{user.steam || 'Not Set' }}</a>
+                        </div>
+                    </fieldset>
                 </div>
-                <div class="form-group">
-                    <label class="control-label">LoL Tag:</label>
-                    <a editable-text="user.lol" onbeforesave="updateUser('lol',$data)">{{user.lol || 'Not Set' }}</a>
+            </div>
+            <div class="col-md-12 col-sm-12" ng-if="ownProfile || admin">
+                <div class="lead">
+                    <fieldset>
+                        <legend>User Information</legend>
+                        <div class="form-group">
+                            <label class="control-label">Alias:</label>
+                            <a editable-text="user.alias" onbeforesave="updateUser('alias',$data)">{{user.alias || 'Not Set'
+                                }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">LoL Tag:</label>
+                            <a editable-text="user.lol" onbeforesave="updateUser('lol',$data)">{{user.lol || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">BN:</label>
+                            <a editable-text="user.bn" onbeforesave="updateUser('bn',$data)">{{user.bn || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Xbox Tag:</label>
+                            <a editable-text="user.xbox" onbeforesave="updateUser('xbox',$data)">{{user.xbox || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">IGN Tag:</label>
+                            <a editable-text="user.ign" onbeforesave="updateUser('ign',$data)">{{user.ign || 'Not Set' }}</a>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Steam Id:</label>
+                            <a editable-text="user.steam" onbeforesave="updateUser('steam',$data)">{{user.steam || 'Not Set'
+                                }}</a>
+                        </div>
+                    </fieldset>
                 </div>
-                <div class="form-group">
-                    <label class="control-label">BN:</label>
-                    <a editable-text="user.bn" onbeforesave="updateUser('bn',$data)">{{user.bn || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Xbox Tag:</label>
-                    <a editable-text="user.xbox" onbeforesave="updateUser('xbox',$data)">{{user.xbox || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">IGN Tag:</label>
-                    <a editable-text="user.ign" onbeforesave="updateUser('ign',$data)">{{user.ign || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Steam Id:</label>
-                    <a editable-text="user.steam" onbeforesave="updateUser('steam',$data)">{{user.steam || 'Not Set'
-                        }}</a>
-                </div>
-            </fieldset>
-        </div>
-    </div>
-    <div class="col-md-8 col-sm-12" ng-if="!ownProfile">
-        <div class="lead">
-            <fieldset>
-                <legend>User Information</legend>
-                <div class="form-group">
-                    <label class="control-label">Alias:</label>
-                    <a>{{user.alias || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">LoL Tag:</label>
-                    <a>{{user.lol || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">BN:</label>
-                    <a>{{user.bn || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Xbox Tag:</label>
-                    <a>{{user.xbox || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">IGN Tag:</label>
-                    <a>{{user.ign || 'Not Set' }}</a>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Steam Id:</label>
-                    <a>{{user.steam || 'Not Set' }}</a>
-                </div>
-            </fieldset>
+            </div>
         </div>
     </div>
     <div class="col-md-4 col-sm-12">
@@ -106,7 +110,7 @@
                     </fieldset>
                 </div>
             </div>
-            <div ng-if="ownProfile"  class="col-md-12 col-sm-12 col-xs-12">
+            <div ng-if="ownProfile || admin"  class="col-md-12 col-sm-12 col-xs-12">
                 <div class="lead">
                     <fieldset>
                         <legend>Account Information</legend>
@@ -116,10 +120,10 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label">Paid :</label>
-                            <a>{{user.paid == 1 ? 'Yes' : 'No' }}</a> <button ng-if="user.paid == 0" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
+                            <a>{{user.paid == 1 ? 'Yes' : 'No' }}</a> <button ng-if="user.paid == 0 && ownProfile" type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button>
                         </div>
                         <div class="form-group">
-                            <a ng-hide="showPassword" ng-click="showPassword = true">Change Password</a>
+                            <a ng-show="showPassword && ownProfile" ng-click="showPassword = true">Change Password</a>
                         </div>
                         <form name="passwordChangeForm" ng-show="showPassword" ng-submit="passwordChangeForm.$valid && submitPasswordChange()">
                         <div class="form-group">

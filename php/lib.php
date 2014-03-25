@@ -8,8 +8,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
-        $db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
         return $db;
     }
 

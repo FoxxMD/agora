@@ -14,21 +14,14 @@ angular.module('app.services', [])
                 token: null,
                 tokenExpire: null,
                 justPaid: false,
-                alreadyPaid: false
+                alreadyPaid: false,
+                role: 0
             },
-            isInit = false;
+            isInit = false,
+            adminMode = false;
 
         this.getProfile = function () {
-            if(isInit)
-            {
-                return user;
-            }
-            else
-            {
-                this.initUser().promise.then(function(){
                     return user;
-                });
-            }
         };
 
 
@@ -52,10 +45,10 @@ angular.module('app.services', [])
             return deferred;
         };
 
-        this.initUser = function () {
+        this.initUser = function (override) {
             var deferred = $q.defer();
 
-            if ($localStorage.token != undefined || $localStorage.token != null) {
+            if (override || (!isInit && $localStorage.token != undefined || $localStorage.token != null)) {
                 user.alias = $localStorage.alias;
                 user.email = $localStorage.email;
                 user.token = $localStorage.token;
@@ -68,14 +61,17 @@ angular.module('app.services', [])
                     user.alias = response.alias;
                     user.steam = response.steam;
                     user.bn = response.bn;
+                    user.role = response.role;
+                    adminMode = (response.role == 1 || response.role == 2);
                     user.paid = (response.paid == 1);
+                    isInit = true;
                     deferred.resolve();
                 });
             }
             else {
                 deferred.resolve();
             }
-            isInit = true;
+
             return deferred;
         };
 
@@ -86,17 +82,25 @@ angular.module('app.services', [])
             user.justPaid = action;
         };
 
+        this.adminMode = function(action) {
+            if(action != undefined)
+            {
+                adminMode = action;
+            }
+            return adminMode;
+        };
+
 
         this.isLoggedIn = function () {
             if (!isInit) {
                 this.initUser();
             }
             var d = new Date();
-            return (user.token !== null) //TODO (user.tokenExpire > d.getDate()) need to fix expiration compare
+            return (user.token !== null); //TODO (user.tokenExpire > d.getDate()) need to fix expiration compare
         };
 
         this.login = function (data) {
-
+            var that = this;
             var deferred = $q.defer();
             $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'verify'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
@@ -110,6 +114,7 @@ angular.module('app.services', [])
                         $localStorage.alias = response.alias;
                         $localStorage.id = response.id;
                         $localStorage.email = data.email;
+                        that.initUser(true);
                         user.tokenExpire = new Date();
                         var today = new Date();
                         user.tokenExpire.setDate(today.getDate() + 1);
@@ -206,12 +211,12 @@ angular.module('app.services', [])
             return deferred;
         };
 
-        this.updateUser = function (param, paramValue) {
+        this.updateUser = function (id, param, paramValue) {
 
             var deferred = $q.defer();
 
             var postData = {
-                id: user.id,
+                id: id,
                 param: param,
                 updatevalue: paramValue
             };
