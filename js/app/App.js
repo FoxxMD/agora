@@ -35,7 +35,8 @@ app.config(['$stateProvider', '$urlRouterProvider',
             .state('pay', {
                 template: '<div stripe-dir></div>',
                 url: '/pay',
-                parent: 'index'
+                parent: 'index',
+                authenticated: true
             })
             .state('games', {
                 template: '<div gamesection-dir></div>',
@@ -110,7 +111,7 @@ app.config(['RestangularProvider', '$httpProvider', function (RestangularProvide
     RestangularProvider.setBaseUrl('/');
 }]);
 
-app.run(function ($rootScope, userService, editableOptions) {
+app.run(function ($rootScope, userService, editableOptions, $state) {
     $rootScope.$on('broadcast', function (e, data) {
         if (undefined == data.with) {
             $rootScope.$broadcast(data.say);
@@ -127,6 +128,7 @@ app.run(function ($rootScope, userService, editableOptions) {
             if (toState.authenticated) {
                 if (!userService.isLoggedIn()) {
                     event.preventDefault();
+                    $state.go('home');
                 }
             }
         })
@@ -225,7 +227,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                     }
                     $modalInstance.close('registered');
                 }, function (response) {
-                    alert("Registration failed: " + response);
+                    $scope.formErrorMessage = "There was a problem with registration: " + response;
                 });
             };
             $scope.close = function () {

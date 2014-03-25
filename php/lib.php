@@ -13,11 +13,11 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         return $db;
     }
 
-    function checkDuplicate($field, $value) {
+    function checkDuplicate($value) {
         $db = getDB();
         $sql = "select * from users where email=?";
         $statement = $db -> prepare($sql);
-        $statement -> bind_param('ss',$value);
+        $statement -> bind_param('s',$value);
 
         if($statement -> execute())
         {
@@ -189,7 +189,6 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             }
          }
          else{
-         ChromePhp::log($db -> error);
             return null;
          }
     }
@@ -425,42 +424,48 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         Stripe::setApiKey("sk_test_MEx8F6JQpTjOfy67AOICA3xf");
         $response = new stdClass();
         $response -> success = false;
-        try {
-            $charge = Stripe_Charge::create(array(
-                "amount" => 15 * 100,
-                "currency" => "usd",
-                "card" => $token,
-                "description" => $authUser -> email,
-                "statement_description" => "GT Gamefest"
-            ));
+        if(property_exists($authUser,"email"))
+        {
+            try {
+                $charge = Stripe_Charge::create(array(
+                    "amount" => 15 * 100,
+                    "currency" => "usd",
+                    "card" => $token,
+                    "description" => $authUser -> email,
+                    "statement_description" => "GT Gamefest"
+                ));
 
-            $response -> success = true;
-            $db = getDB();
-            $sql = "update users set paid=1 where id=?";
+                $response -> success = true;
+                $db = getDB();
+                $sql = "update users set paid=1 where id=?";
 
-            $statement = $db -> prepare($sql);
-            $statement -> bind_param('i', $authUser -> id);
+                $statement = $db -> prepare($sql);
+                $statement -> bind_param('i', $authUser -> id);
 
-            if($statement -> execute())
-            {
-            $response -> success = true;
-            }
-            else{
-                $response -> message = "Your card has been charged successfully, however there was a problem updating your account. Please contact an admin. Error: ".$db -> error;
-            }
+                if($statement -> execute())
+                {
+                $response -> success = true;
+                }
+                else{
+                    $response -> message = "Your card has been charged successfully, however there was a problem updating your account. Please contact an admin. Error: ".$db -> error;
+                }
 
-        } catch(Stripe_CardError $e) {
-            $body = $e -> getJsonBody();
-            $err = $body['error'];
-            $response -> message = $err['code']." -- ".$err['message'];
-        } catch (Stripe_ApiConnectionError $e) {
-            error_log($e);
-            $response -> message = "A problem occurred within the Stripe API. Possibly a certificate or network issue.";
-         } catch (Stripe_Error $e) {
-            error_log($e);
-            $response -> message = "A general error occurred with Stripe.";
-         } catch (Exception $e) {
-           $response -> message = $e -> getMessage();
+            } catch(Stripe_CardError $e) {
+                $body = $e -> getJsonBody();
+                $err = $body['error'];
+                $response -> message = $err['code']." -- ".$err['message'];
+            } catch (Stripe_ApiConnectionError $e) {
+                error_log($e);
+                $response -> message = "A problem occurred within the Stripe API. Possibly a certificate or network issue.";
+             } catch (Stripe_Error $e) {
+                error_log($e);
+                $response -> message = "A general error occurred with Stripe.";
+             } catch (Exception $e) {
+               $response -> message = $e -> getMessage();
+             }
+         }
+         else{
+            $response -> message = "Problem with getting authenticated user, no email existed for returned object.";
          }
         return $response;
     }

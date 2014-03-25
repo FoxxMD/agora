@@ -74,6 +74,10 @@ angular.module('app.directives', [])
                     userService.alreadyPaid(true);
                     $state.go('profile');
                 }
+                if(userService.getProfile().token == null)
+                {
+                    $state.go('home');
+                }
 
                 $scope.handleStripe = function(status, response) {
                     if(response.error) {

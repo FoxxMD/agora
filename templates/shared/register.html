@@ -6,6 +6,9 @@
     </div>
     <form role="form" name="registerForm" novalidate ng-submit="registerForm.$valid && submitRegistration()">
     <div class="modal-body">
+        <div ng-if="formErrorMessage != undefined" class="alert alert-warning">
+            <strong>{{formErrorMessage}}</strong>
+        </div>
             <div class="form-group">
                 <label class="control-label" for="alias">Alias</label>
                 <div class="left-inner-addon">

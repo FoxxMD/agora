@@ -51,20 +51,21 @@ angular.module('app.services', [])
                 user.tokenExpire = $localStorage.tokenExpire;
                 $http.defaults.headers.common.Authentication = $localStorage.token;
 
-                this.getUser(user.id).promise.then(function(response){
-                    user = response;
+                this.getUser(user.id).promise.then(function (response) {
+                    user.id = response.id;
+                    user.alias = response.alias;
+                    user.steam = response.steam;
+                    user.bn = response.bn;
                     user.paid = (response.paid == 1);
                 });
             }
             isInit = true;
         };
 
-        this.alreadyPaid = function(action)
-        {
+        this.alreadyPaid = function (action) {
             user.alreadyPaid = action;
         };
-        this.justPaid = function(action)
-        {
+        this.justPaid = function (action) {
             user.justPaid = action;
         };
 
@@ -74,7 +75,7 @@ angular.module('app.services', [])
                 this.initUser();
             }
             var d = new Date();
-            return (user.token !== null) //(user.tokenExpire > d.getDate()) need to fix expiration compare
+            return (user.token !== null) //TODO (user.tokenExpire > d.getDate()) need to fix expiration compare
         };
 
         this.login = function (data) {
@@ -100,7 +101,7 @@ angular.module('app.services', [])
                     $rootScope.$broadcast('loginChange');
                     deferred.resolve();
                 }
-                else{
+                else {
                     deferred.reject(response.message);
                 }
             }).error(function (response) {
@@ -119,8 +120,14 @@ angular.module('app.services', [])
             $http.post('php/register.php', data).success(function (response) {
                 if (response.success) {
                     var loginData = {email: user.email, password: data.password};
-                    that.login(loginData);
-                    deferred.resolve();
+                    that.login(loginData).promise.then(function () {
+
+                        deferred.resolve();
+
+                    }, function (response) {
+
+                        deferred.reject(response);
+                    });
                 }
                 else {
                     deferred.reject(response.message);
@@ -133,21 +140,26 @@ angular.module('app.services', [])
 
         this.payRegistration = function (data) {
             var deferred = $q.defer();
-            $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'pay'}}).success(function (response) {
-                if (response.success != undefined && response.success) {
-                    user.paid = true;
-                    deferred.resolve();
-                }
-                else {
-                    deferred.reject(response.message);
-                }
-            }).error(function (response) {
-                    deferred.reject(response);
-                });
+            if (user.token != null) {
+                $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'pay'}}).success(function (response) {
+                    if (response.success != undefined && response.success) {
+                        user.paid = true;
+                        deferred.resolve();
+                    }
+                    else {
+                        deferred.reject(response.message);
+                    }
+                }).error(function (response) {
+                        deferred.reject(response);
+                    });
+            }
+            else{
+                deferred.reject("User is not logged in or missing authentication token.");
+            }
             return deferred;
         };
 
-        this.resetPassword = function(data){
+        this.resetPassword = function (data) {
             var deferred = $q.defer();
             $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'resetPassword'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
@@ -162,7 +174,7 @@ angular.module('app.services', [])
             return deferred;
         };
 
-        this.changePassword = function(data) {
+        this.changePassword = function (data) {
             var deferred = $q.defer();
             $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'changePassword'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
