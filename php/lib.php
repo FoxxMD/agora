@@ -8,8 +8,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
-        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        $db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
         return $db;
     }
 
@@ -40,7 +40,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             $sql = "select id,alias,steam,bn,lol,xbox,ign from users where id=?";
         }
         else{
-            $sql = "select id,email,alias,paid,entered,steam,bn,lol,xbox,ign,role,locktime,attempt from users where id=?";
+            $sql = "select id,email,alias,paid,entered,steam,bn,lol,xbox,ign,role,locktime,attempt,authtoken,authExpire,resetToken from users where id=?";
         }
 
         $statement = $db -> prepare($sql);
@@ -57,7 +57,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $statement -> bind_result($userObj -> id, $userObj -> alias, $userObj -> steam, $userObj -> bn, $userObj -> lol, $userObj -> xbox, $userObj -> ign);
                 }
                 else{
-                    $statement -> bind_result($userObj -> id, $userObj -> email, $userObj -> alias, $userObj -> paid, $userObj -> entered, $userObj -> steam, $userObj -> bn, $userObj -> lol, $userObj -> xbox, $userObj -> ign, $userObj -> role, $userObj -> locktime, $userObj -> attempt);
+                    $statement -> bind_result($userObj -> id, $userObj -> email, $userObj -> alias, $userObj -> paid, $userObj -> entered, $userObj -> steam, $userObj -> bn, $userObj -> lol, $userObj -> xbox, $userObj -> ign, $userObj -> role, $userObj -> locktime, $userObj -> attempt, $userObj -> authtoken, $userObj -> authExpire, $userObj -> resetToken);
                 }
 
                 $statement -> fetch();
@@ -308,16 +308,16 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 {
                 $subject = "Forgotten password reset from GT Gamefest";
                 $headers   = array();
-                $headers[] = 'MIME-Version: 1.0'."\r\n";
-                $headers[] = "Content-type: text/html; charset=iso-8859-1". "\r\n";
-                $headers[] = "From: GT Gamefest <sender@domain.com>". "\r\n";
-                $headers[] = "Subject: {$subject}". "\r\n";
-                $headers[] = "X-Mailer: PHP/".phpversion()."\r\n";
-                $headers.="Return-Path:<noreply@gtgamefest.com>". "\r\n";
+                $headers[] = "MIME-Version: 1.0";
+                $headers[] = "Content-type: text/html; charset=iso-8859-1";
+                $headers[] = "From: GT Gamefest <noreply@gtgamefest.com>";
+                $headers[] = "Subject: {$subject}";
+                $headers[] = "X-Mailer: PHP/".phpversion();
+                $headers.="Return-Path:<noreply@gtgamefest.com>";
 
                 $body = "Hello User,\r\n\r\nTo reset your password visit http://beta.gtgamefest.com/#/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit http://beta.gtgamefest.com/#/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\n -Gt Gamefest Staff";
 
-                    if(mail($data -> email, $subject, $body, $headers))
+                    if(mail($data -> email, $subject, $body, implode("\r\n",$headers), "-f noreply@gtgamefest.com"))
                     {
                         $response -> success = true;
                     }
