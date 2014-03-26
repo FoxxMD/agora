@@ -1,0 +1,35 @@
+{
+    "title": "Pokemon X&Y",
+    "overview": "content/games/poke.html",
+    "rules": ["Battles Will Use the Pokemon Organized Play Standard Format Style rule set. (The format for VGC 2014 events; the rules used on the Special Battlespot Ladder)",
+        "http://assets22.pokemon.com/assets/cms/pdf/op/tournaments/2014/Play_Pokemon_VG_Rules_and_Formats_2014.pdf ",
+        "Battles are set to Doubles with Flat Rules. Six Pokemon are brought to the battle, 4 are selected for the battle.",
+        "Xerneus, Yveltal, Zygarde, and Mewtwo (as well as Diancie, Hoopa, and Volcanion), though in the Kalos dex, are banned",
+        "Please note that these bans are not the same as those enforced in typical 6v6 formats; Mega Kangaskhan and Mega Gengar are allowed.",
+        "Pokemon must be Kalos Native. If a Pokemon is Kalos native, a small Blue Pentagon will appear on the summary screen.",
+        "No two Pokemon may be of the same species",
+        "No two Pokemon may hold the same item",
+        "No Pokemon may have the same nickname",
+        "No Pokemon may be named after the species of another Pokemon (Ex: You cannot have a Chespin named Fennekin)",
+        "If any player is discovered having Pokemon that have been modified by an external program (I.E., Action Replay, Pokegen, Pokesav), that player is disqualified."
+    ],
+    "tourney": [
+        {
+            "title": "Doubles 1v1",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "http://bravelydefault.nintendo.com/",
+                    "title": "Bravely Default - Nintendo 3DS"
+                },
+                {
+                    "place": "2nd",
+                    "href": "http://www.amazon.com/dp/B00DMYS468",
+                    "title": "Pokemon 3DS XL Travel Case"
+                }
+            ],
+            "rules": ["Swiss format, Finals are best of 3.",
+                "Procedure: \nArrange a battle with your opponent using the Player Search System, but do not move to the 'select which Pokemon will participate' screen yet. Wait until the Admin announces you may begin your match.\nUpon completion of your match, raise your hand and the Admin will record the results of your match. DO NOT leave your table until your match results are recorded.\nUpon results being recorded, you are free to lounge until the next set of pairings are posted."]
+        }
+    ]
+}

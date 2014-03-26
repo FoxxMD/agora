@@ -625,6 +625,21 @@
 .gtgamefest .contentPane .jumbotron {
   background-color: inherit;
 }
+.gtgamefest .contentPane .gamesSection .thumbnail {
+  min-height: 130px;
+}
+.gtgamefest .contentPane .gamesSection .thumbnail img {
+  max-height: 130px;
+}
+@media (max-width: 992px) {
+  .gtgamefest .contentPane .gamesSection .thumbnail {
+    min-height: 80px;
+  }
+  .gtgamefest .contentPane .gamesSection .thumbnail img {
+    max-height: 80px;
+    max-width: 200px;
+  }
+}
 .gtgamefest .noborder {
   border: none;
 }

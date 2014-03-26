@@ -1,0 +1,59 @@
+{
+    "title": "Counterstrike: Global Offensive",
+    "overview": "content/games/csgo.html",
+    "rules": ["CEVO configuration http://cevo.com/event/cs-globaloffensive/rules/",
+        "Any form of script is prohibited and using console is forbidden (except to record).",
+        "Silent planting and planting bombs so that they cannot be defused is illegal.",
+		"Winning team must report result and round score to the admin.",
+		"If a team is not ready at the game start deadline, that team will forfeit one round for each two minutes delayed.  The match will be forfeit at thirty (30) minutes.",
+		"All delays must be reported and delay penalties must be approved by an admin.",
+		"All teams must notify the admin of attendance.  Team leaders are responsible of making sure his team is in the bracket at the start of the tournament.",
+		"All team members must have registered and paid before joining the tournament.",
+		"Freeagent teams will be formed before the tournament start."
+		],
+    "tourney": [
+        {
+            "title": "5v5",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "http://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20AK-47%20|%20Blue%20Laminate%20%28Factory%20New%29",
+                    "title": "Stattrak AK"
+                },
+                {
+                    "place": "2nd",
+                    "href": "http://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20Glock-18%20|%20Dragon%20Tattoo%20%28Factory%20New%29",
+                    "title": "Stattrak Glock"
+                }
+            ],
+            "rules": ["5v5: Single Elimination, one match.  Finals are BO3.",
+			"Rounds: 31 Rounds (Max rounds format)",
+			"15 rounds as Terrorists and 15 rounds as Counter-Terrorists per team.",
+			"1 knife round to determine sides.",
+			"The first team that scores 16 rounds wins and the match ends immediately.",
+			"Single Match Set Procedure:\n1. Team B removes one of the 5 maps;\n2. Team A removes one of the 4 remaining maps;\n3. Team B removes one of the 3 remaining maps;\n4. Team A picks the map to be played on from the two remaining maps;",
+			"Team A will be the winner of a coin toss. The match is played on the map which is selected by Team A at step 4 of this procedure. The sides are chosen via a knife round.",
+			"BO3 Set Procedure: \n1. Team B removes one of the 5 maps;\n2. Team A removes one of the 4 remaining maps;\n3. Team A picks one of the 3 remaining maps, will be played as 1st map;\n4. Team B picks one of the 2 remaining maps, will be played as 2nd map;\n5. The last map will be, if needed, played as 3rd  map.",
+			"Team A is the winner of a coin toss. The first match will start on the map which has been chosen by Team A at step 3 of this procedure. The sides will be chosen via a knife round. The last map will only be played if both teams win one map during the match. For the overtime teams do not switch sides at the end of a match."],
+            "maps": [
+                {
+                    "title": "de_train"
+                },
+                {
+                    "title": "de_inferno"
+                },
+                { 
+                    "title": "de_dust2"
+                },
+                { 
+                    "title": "de_mirage"
+                },
+                { 
+                    "title": "de_cache"
+                }
+            ]
+        }
+    ],
+    "streaming":"/streams/csgoStream.html"
+
+}

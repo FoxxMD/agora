@@ -1,0 +1,45 @@
+{
+    "title": "Will Jones",
+    "overview": "content/games/lol.html",
+    "rules": [
+        "Will Jones"
+    ],
+    "tourney": [
+        {
+            "title": "5v5 Summoner's Rift",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "Will Jones",
+                    "title": "Will Jones"
+                },
+                {
+                    "place": "2nd",
+                    "href": "Will Jones",
+                    "title": "Will Jones"
+                }
+            ],
+            "rules": ["Will Jones",
+                "Will Jones"]
+        },
+        {
+            "title": "5v5 Howling Abyss",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "Will Jones",
+                    "title": "Will Jones"
+                },
+                {
+                    "place": "2nd",
+                    "href": "Will Jones",
+                    "title": "Will Jones"
+                }
+            ],
+            "rules": ["Will Jones",
+                "Will Jones"]
+        }
+    ],
+    "streaming": "/streams/lolStream.html"
+
+}

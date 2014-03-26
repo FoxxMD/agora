@@ -1,0 +1,40 @@
+{
+    "title": "Halo 3",
+    "overview": "content/games/halo.html",
+    "rules": ["No coaching or excessive commentating during the match. You may be asked to leave if you violate this rule.",
+        "Participants are encouraged to bring a copy of the game, we have stations but few games.",
+        "Each player must bring his or her own unmodified controller."],
+    "tourney": [
+        {
+            "title": "2v2",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "http://www.xbox.com/en-US/live?xr=shellnav",
+                    "title": "Microsoft Xbox LIVE 12 Month Gold"
+                }
+            ],
+            "rules": ["Swiss style given enough stations.  Limited number will be single elimination.",
+                    "Bracket stage games are best of 3. Finals are best of 5.",
+					"At the start of each round, both teams will come together and choose a map and gametype for the game, repeat for all games in the match.",
+					"Sequential games in a match may not repeat gametypes nor maps.",
+					"No two games in a match will have the same map and gametype."]
+        },
+        {
+            "title": "4v4",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "http://www.xbox.com/en-US/live?xr=shellnav",
+                    "title": "Microsoft Xbox LIVE 12 Month Gold"
+                }
+            ],
+            "rules": ["Swiss style given enough stations.  Limited number will be single elimination.",
+                    "Bracket stage games are best of 3. Finals are best of 5.",
+					"At the start of each round, both teams will come together and choose a map and gametype for the game, repeat for all games in the match.",
+					"Sequential games in a match may not repeat gametypes nor maps.",
+					"No two games in a match will have the same map and gametype."]
+        }
+    ]
+
+}

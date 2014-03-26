@@ -1,0 +1,119 @@
+{
+    "title": "Super Smash Brothers",
+    "overview": "content/games/ssb.html",
+    "rules": ["No hacks are allowed in tournament matches unless expressly authorized by an admin.",
+        "No coaching or excessive commentating during the match. You may be asked to leave if you violate this rule.",
+        "Do not be late to your match. 10 minutes late = match loss. 15 minutes late = set loss.",
+        "Bring your own controller. Ask an admin if you need to borrow one, but there is no guarantee one will be available. Desync your Wii Remote after your match (you can do this by removing the batteries). If you disrupt someone else's match with your controller you may be disqualified."
+    ],
+    "tourney": [
+        {
+            "title": "Brawl 1v1",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "title": "Super Mario 3D World, Rayman Legends WiiU, SSB Poster"
+                },
+                {
+                    "place": "2nd",
+                    "title": "Deus Ex HR - Wii U, 5"
+                },
+                {
+                    "place": "2nd",
+                    "title": "Goomba Plush"
+                }
+            ],
+            "rules": ["Double elimination, best of 3.",
+                "Winners� Bracket Finals, Losers� Bracket Finals, and Grand Finals are best of 5.",
+                "Apex 2014 Ruleset will be used for this tournament. https://www.apex-series.com/rules/brawl/",
+                "3 Stocks, 8 Minute Time Limit",
+                "Items set to None and Off, Pause set to Off.",
+                "All infinites and chain grabs are legal (except MK�s Infinite Dimensional Cape)",
+                "There is a 35 Ledge Grab Limit (LGL) for all characters. This limit only applies in the event that a game goes to time - If one player exceeds the LGL, that player loses. If both players exceed the LGL, this rule has no effect.",
+                "Stalling in any form is banned. This includes but is not limited to planking (ledge stalling), scrooging (travelling under the stage more than once from the ledge), continuing infinites or chain grabs past 300%.",
+                "If the game goes to time and the LGL does not apply, the winner will be determined by stock and then percent. If both players die at the same time or have the same stock and percent, a 1 stock, 3 minute rematch will be played on the same stage, with a LGL of 15.",
+                "If the game ends via suicide move, the initiator of the move wins.",
+                "Procedure: \nEach team selects their controller port(s). If there is a dispute, teams may play rock-paper-scissors to determine priority, with the winner selecting whether they would like first pick of port or stage strike and the loser receiving first pick of the other.\nEach team selects their character. Double blind pick may be called by either team.\nGame 1 is played on a stage selected from the Starter List either by mutual consent or by stage striking (Team 1 strikes 1 stage, Team 2 strikes 2 stages, Team 1 strikes 1 stage, remaining stage is selected for play)\nGame 1 is played.\nThe winner of the previous match may announce one Stage Ban if they have not done so this set.\nThe loser of the previous match selects and announces the stage for the next match (from the Starter or Counterpick list). No stage announced as a Stage Ban or on which a team has already won in the current set may be selected unless both teams agree to the stage.\nThe winner of the previous match selects their character(s).\nThe loser of the previous match selects their character(s).\nThe next match is played.\nRepeat steps 5-9 for all subsequent matches."
+
+            ],
+            "maps": [
+                {
+                    "title": "Starter: Battlefield"
+                },
+                {
+                    "title": "Starter: Final Destination"
+                },
+                {
+                    "title": "Starter: Lylat Cruise"
+                },
+                {
+                    "title": "Starter: Smashville"
+                },
+                {
+                    "title": "Starter: Yoshi�s Island (Brawl)"
+                },
+                {
+                    "title": "Counterpick: Battleship Halberd"
+                },
+                {
+                    "title": "Counterpick: Pokemon Stadium 1"
+                },
+                {
+                    "title": "Counterpick: Castle Siege"
+                }
+            ]
+        },
+        {
+            "title": "Melee 1v1",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "title": "Skyward Sword Link Action Figure"
+                },
+                {
+                    "place": "1st",
+                    "title": "Pikmin 3"
+                },
+                {
+                    "place": "2nd",
+                    "title": "White Gamecube Controller"
+                },
+                {
+                    "place": "2nd",
+                    "title": " Super Mario Plush - 10 Bowser"
+                }
+            ],
+            "rules": ["Double elimination, best of 3.",
+                "Winners� Bracket Finals, Losers� Bracket Finals, and Grand Finals are best of 5.",
+                "Apex 2014 Ruleset will be used for this tournament. https://www.apex-series.com/rules/melee/",
+                "4 Stocks, 8 Minute Time Limit",
+                "Items set to �Off�",
+                "Pausing is legal ONLY when both players are on their respawn platform, and ONLY for the purpose of summoning an admin or in the event of a controller malfunction. Any other pausing will result in a stock loss for the pausing player.",
+                "Wobbling is legal (up to 250%, past which it is considered stalling)",
+                "Stalling in any form is banned.",
+                "If the game goes to time, the winner will be determined by stock and then percent. If both players die at the same time or have the same stock and percent, the match shall be replayed.",
+                "Procedure: \nEach team selects their controller port(s). If there is a dispute, teams may play rock-paper-scissors to determine priority, with the winner selecting whether they would like first pick of port or stage strike and the loser receiving first pick of the other.\nEach team selects their character. Double blind pick may be called by either team.\nGame 1 is played on a stage selected from the Starter List either by mutual consent or by stage striking (Team 1 strikes 1 stage, Team 2 strikes 2 stages, Team 1 strikes 1 stage, remaining stage is selected for play)\nGame 1 is played.\nThe winner of the\n previous match may announce one Stage Ban if they have not done so this set. For best of 5 sets, there are no stage bans.\nThe loser of the previous match selects and announces the stage for the next match (from the Starter or Counterpick list). No stage announced as a Stage Ban or on which a team has already won in the current set may be selected unless both teams agree to the stage.\nThe winner of the previous match selects their character(s).\nThe loser of the previous match selects their character(s).\nThe next match is played.\nRepeat steps 5-9 for all subsequent matches.\n"
+            ],
+            "maps": [
+                {
+                    "title": "Yoshi's Story"
+                },
+                {
+                    "title": "Fountain of Dreams"
+                },
+                {
+                    "title": "Battlefield"
+                },
+                {
+                    "title": "Final Destination"
+                },
+                {
+                    "title": "Dream Land"
+                },
+                {
+                    "title": "Counterpick: Pokemon Stadium"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "title": "Ultimate Marvel Vs Capcom 3",
+    "overview": "content/games/mvc.html",
+    "rules": ["EVO Championship Series ruleset will be used for this tournament. http://evo.shoryuken.com/additional-rules/",
+        "All matches will be played on the Xbox 360 version of the game",
+        "Galactus is banned.",
+        "Glitches which prevent the game from being played, including but not limited to, game freezing, game resetting, player freezing, and dead body infinites.",
+        "If you accidentally pause during a match, call an admin. Do not unpause until the admin arrives; if you do, you will forfeit the match. The admin will determine the appropriate penalty, up to set forfeiture for repeated offenses.",
+        "No coaching or excessive commentating during the match. You may be asked to leave if you violate this rule.",
+        "Do not be late to your match. 10 minutes late = match loss. 15 minutes late = set loss.",
+        "Bring your own controller. Ask an admin if you need to borrow one, but there is no guarantee one will be available. Hardware-assisted mechanisms (e.g. Turbo buttons) may not be used."
+    ],
+    "tourney": [
+        {
+            "title": "Tournament",
+            "prizes": [
+                {
+                    "place": "1st",
+                    "href": "http://www.darksoulsii.com/",
+                    "title": "Dark Souls II Xbox 360"
+                }
+            ],
+            "rules": ["99 second matches, default damage, default handicap",
+                "Double elimination bracket. All sets are best of 5.",
+                "Set Procedure: \n1. Each team selects their team. Double blind pick may be called by either team.\n2. Game 1 is played.\n3. The winner of the previous match must keep the same team (including assists), but may switch the order of assists.\n4. The loser of the previous match selects their team.\n5. The next match is played.", "Repeat steps 2-5 for all subsequent matches."
+            ]
+        }
+    ]
+}

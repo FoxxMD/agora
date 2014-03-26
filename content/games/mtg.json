@@ -1,0 +1,13 @@
+{
+    "title": "Magic: The Gathering Booster Draft",
+    "overview": "content/games/mtg.html",
+    "rules": ["Regular REL (rules enforcement level)",
+        "Booster draft.  All cards and lands provided."
+    ],
+    "tourney": [
+        {
+            "title": "Booster Draft",
+            "rules": ["http://www.wizards.com/contentresources/wizards/wpn/main/documents/magic_the_gathering_tournament_rules_pdf1.pdf", "Drafts will be run until the end of the day."]
+        }
+    ]
+}

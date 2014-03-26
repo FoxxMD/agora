@@ -43,12 +43,74 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 url: '/games',
                 parent: 'index'
             })
+            /*
+                Game Sections
+
+             */
             .state('sc2', {
                 template: '<div game-dir></div>',
                 url: '/sc2',
                 data: '/content/games/sc2.json',
                 parent: 'games'
             })
+            .state('csgo', {
+                template: '<div game-dir></div>',
+                url: '/csgo',
+                data: '/content/games/csgo.json',
+                parent: 'games'
+            })
+            .state('dota', {
+                template: '<div game-dir></div>',
+                url: '/dota',
+                data: '/content/games/dota.json',
+                parent: 'games'
+            })
+            .state('halo', {
+                template: '<div game-dir></div>',
+                url: '/halo',
+                data: '/content/games/halo.json',
+                parent: 'games'
+            })
+            .state('lol', {
+                template: '<div game-dir></div>',
+                url: '/lol',
+                data: '/content/games/lol.json',
+                parent: 'games'
+            })
+            .state('mtg', {
+                template: '<div game-dir></div>',
+                url: '/mtg',
+                data: '/content/games/mtg.json',
+                parent: 'games'
+            })
+            .state('mvc', {
+                template: '<div game-dir></div>',
+                url: '/mvc',
+                data: '/content/games/mvc.json',
+                parent: 'games'
+            })
+            .state('poke', {
+                template: '<div game-dir></div>',
+                url: '/pokemon',
+                data: '/content/games/poke.json',
+                parent: 'games'
+            })
+            .state('ptcg', {
+                template: '<div game-dir></div>',
+                url: '/ptcg',
+                data: '/content/games/ptcg.json',
+                parent: 'games'
+            })
+            .state('ssb', {
+                template: '<div game-dir></div>',
+                url: '/ssb',
+                data: '/content/games/ssb.json',
+                parent: 'games'
+            })
+            /*
+                End of Game Sections
+
+             */
             .state('profile', {
                 templateUrl: 'templates/user.html',
                 url: '/profile',

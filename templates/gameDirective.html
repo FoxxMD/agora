@@ -1,7 +1,9 @@
 <div class="panel">
     <div class="panel-body">
         <tabset justified="true">
-            <tab heading="Overview"><ng-include src="gameInfo.overview"></ng-include></tab>
+            <tab heading="Overview">
+                <ng-include src="gameInfo.overview"></ng-include>
+            </tab>
             <tab heading="Tournaments And Rules">
                 <div class="panel" ng-if="gameInfo.rules !== undefined">
                     <div class="panel-heading">
@@ -15,16 +17,17 @@
                 </div>
                 <div class="row" ng-if="gameInfo.tourney !== undefined">
                     <h3 class="text-center">Tournaments</h3>
+
                     <div class="panel-group" id="tourneyAccordion">
                         <div class="panel panel-default noborder" ng-repeat="tour in gameInfo.tourney">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#tourneyAccordion" href="#collapse{{tour.title}}">
+                            <a data-toggle="collapse" data-parent="#tourneyAccordion" href="#collapsetour{{$index}}">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
                                         {{tour.title}}
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapse{{tour.title}}" class="panel-collapse collapse">
+                                    </h4>
+                                </div>
+                            </a>
+                            <div id="collapsetour{{$index}}" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <div class="panel panel-default consecutive-panel" ng-if="tour.rules !== undefined">
                                         <div class="panel-heading">
@@ -32,17 +35,19 @@
                                         </div>
                                         <div class="panel-body">
                                             <ul>
-                                                <li ng-repeat="rule in tour.rules">{{rule}}</li>
+                                                <li ng-repeat="rule in tour.rules track by $index">{{rule}}</li>
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="panel panel-default consecutive-panel" ng-if="tour.prizes !== undefined">
+                                    <div class="panel panel-default consecutive-panel"
+                                         ng-if="tour.prizes !== undefined">
                                         <div class="panel-heading">
                                             Prizes
                                         </div>
                                         <div class="panel-body">
                                             <ul>
-                                                <li ng-repeat="prize in tour.prizes">{{prize.place}} -- <a ng-href="{{prize.href}}">{{prize.title}}</a></li>
+                                                <li ng-repeat="prize in tour.prizes">{{prize.place}} -- <a
+                                                        ng-href="{{prize.href}}">{{prize.title}}</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -52,7 +57,8 @@
                                         </div>
                                         <div class="panel-body">
                                             <ul>
-                                                <li ng-repeat="map in tour.maps"><a ng-href="{{map.href}}">{{map.title}}</a></li>
+                                                <li ng-repeat="map in tour.maps"><a
+                                                        ng-href="{{map.href}}">{{map.title}}</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -66,7 +72,7 @@
             <tab ng-if="gameInfo.streaming !== undefined" heading="Streaming">
                 <div class="row" style="margin-top:40px;">
                     <div class="col-md-10 col-md-offset-2">
-                    <ng-include src="gameInfo.streaming"></ng-include>
+                        <ng-include src="gameInfo.streaming"></ng-include>
                     </div>
                 </div>
             </tab>

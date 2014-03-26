@@ -107,6 +107,10 @@ angular.module('app.directives', [])
                 $(element).find('.thumbnail').on('click', function (ev, target) {
                     $(element).find('.thumbnail').removeClass('active orange');
                     $(this).addClass('active orange');
+                    var anchor = $(this).attr('href');
+                    $(document.body).animate({
+                        'scrollTop':   $('#eventRules').offset().top
+                    }, 1000, 'swing');
                 });
             }
         }
