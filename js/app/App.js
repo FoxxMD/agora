@@ -3,8 +3,10 @@ var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.rou
 
 //configure routing
 //hydrate all states for application in order to setup site structure
-app.config(['$stateProvider', '$urlRouterProvider',
-    function ($stateProvider, $urlRouterProvider) {
+app.config(['$stateProvider', '$urlRouterProvider','$locationProvider',
+    function ($stateProvider, $urlRouterProvider, $locationProvider) {
+
+        $locationProvider.html5Mode(true);
 
         $stateProvider
             .state('index', {

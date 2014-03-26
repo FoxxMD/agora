@@ -1,6 +1,6 @@
 {
     "title": "Pokemon X&Y",
-    "overview": "content/games/poke.html",
+    "overview": "/content/games/poke.html",
     "rules": ["Battles Will Use the Pokemon Organized Play Standard Format Style rule set. (The format for VGC 2014 events; the rules used on the Special Battlespot Ladder)",
         "http://assets22.pokemon.com/assets/cms/pdf/op/tournaments/2014/Play_Pokemon_VG_Rules_and_Formats_2014.pdf ",
         "Battles are set to Doubles with Flat Rules. Six Pokemon are brought to the battle, 4 are selected for the battle.",

@@ -1,6 +1,6 @@
 {
     "title": "Halo 3",
-    "overview": "content/games/halo.html",
+    "overview": "/content/games/halo.html",
     "rules": ["No coaching or excessive commentating during the match. You may be asked to leave if you violate this rule.",
         "Participants are encouraged to bring a copy of the game, we have stations but few games.",
         "Each player must bring his or her own unmodified controller."],

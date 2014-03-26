@@ -1,6 +1,6 @@
 {
     "title": "Super Smash Brothers",
-    "overview": "content/games/ssb.html",
+    "overview": "/content/games/ssb.html",
     "rules": ["No hacks are allowed in tournament matches unless expressly authorized by an admin.",
         "No coaching or excessive commentating during the match. You may be asked to leave if you violate this rule.",
         "Do not be late to your match. 10 minutes late = match loss. 15 minutes late = set loss.",

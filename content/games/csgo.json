@@ -1,6 +1,6 @@
 {
     "title": "Counterstrike: Global Offensive",
-    "overview": "content/games/csgo.html",
+    "overview": "/content/games/csgo.html",
     "rules": ["CEVO configuration http://cevo.com/event/cs-globaloffensive/rules/",
         "Any form of script is prohibited and using console is forbidden (except to record).",
         "Silent planting and planting bombs so that they cannot be defused is illegal.",

@@ -1,6 +1,6 @@
 {
     "title": "Magic: The Gathering Booster Draft",
-    "overview": "content/games/mtg.html",
+    "overview": "/content/games/mtg.html",
     "rules": ["Regular REL (rules enforcement level)",
         "Booster draft.  All cards and lands provided."
     ],

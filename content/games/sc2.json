@@ -1,6 +1,6 @@
 {
     "title": "Starcraft II: Heart of the Swarm",
-    "overview": "content/games/sc2.html",
+    "overview": "/content/games/sc2.html",
     "rules": ["General rules about lack of excessive BM, etc.",
         "Upon completion of the game, quickly find an admin and report the score to them so that the tournament can progress.",
         "Be sure to use Ladder Edition maps made by Blizzard so to avoid using unofficial edited maps.",

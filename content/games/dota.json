@@ -1,6 +1,6 @@
 {
     "title": "DOTA2",
-    "overview": "content/games/dota.html",
+    "overview": "/content/games/dota.html",
     "rules": [
         "Admin must be notified of ALL pauses. Pause abuse will result in disqualification.",
         "If your game is to be shoutcasted, you must accommodate for the caster in your lobby.",

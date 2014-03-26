@@ -1,6 +1,6 @@
 {
     "title": "Ultimate Marvel Vs Capcom 3",
-    "overview": "content/games/mvc.html",
+    "overview": "/content/games/mvc.html",
     "rules": ["EVO Championship Series ruleset will be used for this tournament. http://evo.shoryuken.com/additional-rules/",
         "All matches will be played on the Xbox 360 version of the game",
         "Galactus is banned.",
