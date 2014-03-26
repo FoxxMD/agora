@@ -10,22 +10,22 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider',
 
         $stateProvider
             .state('index', {
-                templateUrl: 'templates/shared/skeleton.html',
+                templateUrl: '/templates/shared/skeleton.html',
                 abstract: true,
                 controller: 'cnc'
             })
             .state('home', {
-                templateUrl: 'templates/home.html',
+                templateUrl: '/templates/home.html',
                 url: '/',
                 parent: 'index'
             })
             .state('schedule', {
-                templateUrl: 'templates/schedule.html',
+                templateUrl: '/templates/schedule.html',
                 url: '/schedule',
                 parent: 'index'
             })
             .state('servers', {
-                templateUrl: 'templates/servers.html',
+                templateUrl: '/templates/servers.html',
                 url: '/servers',
                 parent: 'index'
             })
@@ -114,21 +114,21 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider',
 
              */
             .state('profile', {
-                templateUrl: 'templates/user.html',
+                templateUrl: '/templates/user.html',
                 url: '/profile',
                 parent: 'index',
                 controller: 'userctrl',
                 authenticated: true
             })
             .state('user', {
-                templateUrl: 'templates/user.html',
+                templateUrl: '/templates/user.html',
                 url: '/user/:userId',
                 parent: 'index',
                 controller: 'userctrl',
                 authenticated: true
             })
             .state('users', {
-                templateUrl: 'templates/users.html',
+                templateUrl: '/templates/users.html',
                 url: '/users',
                 parent: 'index',
                 controller: 'usersctrl',
@@ -160,7 +160,7 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider',
                 controller:'forgotctrl'
             })
             .state('404', {
-                templateUrl: 'templates/shared/404.html',
+                templateUrl: '/templates/shared/404.html',
                 url: '/404',
                 parent: 'index'
             });

@@ -102,7 +102,7 @@ angular.module('app.directives', [])
     .directive('gamesectionDir', [function () {
         return {
             restrict: 'A',
-            templateUrl: 'templates/games.html',
+            templateUrl: '/templates/games.html',
             link: function (scope, element, attrs) {
                 $(element).find('.thumbnail').on('click', function (ev, target) {
                     $(element).find('.thumbnail').removeClass('active orange');
@@ -118,7 +118,7 @@ angular.module('app.directives', [])
     .directive('gameDir', ['$http', '$state', function ($http, $state) {
         return {
             restrict: 'A',
-            templateUrl: 'templates/gameDirective.html',
+            templateUrl: '/templates/gameDirective.html',
             controller: function ($scope, $element) {
                 $http.get($state.current.data).success(function (data) {
                     $scope.gameInfo = data;
@@ -132,7 +132,7 @@ angular.module('app.directives', [])
     .directive('aboutDir', ['$http', function ($http) {
         return {
             restrict: 'A',
-            templateUrl: 'templates/about.html',
+            templateUrl: '/templates/about.html',
             controller: function ($scope) {
                 $http.get('content/credits.json').success(function (data) {
                     $scope.credits = data;
@@ -151,7 +151,7 @@ angular.module('app.directives', [])
     .directive('teamDir', ['userService', 'teamService', '$stateParams', '$filter', '$state', function (userService, teamService, $stateParams, $filter, $state) {
         return {
             restrict: 'A',
-            templateUrl: 'templates/team.html',
+            templateUrl: '/templates/team.html',
             controller: function ($scope) {
                 //TODO Behavior for leaving a team
                 //TODO Allow captains to remove members at will

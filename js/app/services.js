@@ -27,7 +27,7 @@ angular.module('app.services', [])
 
         this.getUser = function (id) {
             var deferred = $q.defer();
-            $http({method: 'GET', url: 'php/users.php', params: {mode: 'get', id: id}}).success(function (response) {
+            $http({method: 'GET', url: '/php/users.php', params: {mode: 'get', id: id}}).success(function (response) {
                 deferred.resolve(response);
             }).error(function (response) {
                     deferred.reject();
@@ -37,7 +37,7 @@ angular.module('app.services', [])
 
         this.getUsers = function () {
             var deferred = $q.defer();
-            $http({method: 'GET', url: 'php/users.php', params: {mode: 'getAll'}}).success(function (response) {
+            $http({method: 'GET', url: '/php/users.php', params: {mode: 'getAll'}}).success(function (response) {
                 deferred.resolve(response);
             }).error(function (response) {
                     deferred.reject(response);
@@ -102,7 +102,7 @@ angular.module('app.services', [])
         this.login = function (data) {
             var that = this;
             var deferred = $q.defer();
-            $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'verify'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'verify'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     if (response.authtoken != undefined) {
                         user.token = response.authtoken;
@@ -139,7 +139,7 @@ angular.module('app.services', [])
             user.email = data.email;
             user.alias = data.alias;
 
-            $http.post('php/register.php', data).success(function (response) {
+            $http.post('/php/register.php', data).success(function (response) {
                 if (response.success) {
                     var loginData = {email: user.email, password: data.password};
                     that.login(loginData).promise.then(function () {
@@ -163,7 +163,7 @@ angular.module('app.services', [])
         this.payRegistration = function (data) {
             var deferred = $q.defer();
             if (user.token != null) {
-                $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'pay'}}).success(function (response) {
+                $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'pay'}}).success(function (response) {
                     if (response.success != undefined && response.success) {
                         user.paid = true;
                         deferred.resolve();
@@ -183,7 +183,7 @@ angular.module('app.services', [])
 
         this.resetPassword = function (data) {
             var deferred = $q.defer();
-            $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'resetPassword'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'resetPassword'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     deferred.resolve();
                 }
@@ -198,7 +198,7 @@ angular.module('app.services', [])
 
         this.changePassword = function (data) {
             var deferred = $q.defer();
-            $http({method: 'POST', url: 'php/users.php', data: data, params: {mode: 'changePassword'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'changePassword'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     deferred.resolve();
                 }
@@ -220,7 +220,7 @@ angular.module('app.services', [])
                 param: param,
                 updatevalue: paramValue
             };
-            $http({method: 'POST', url: 'php/users.php', data: postData, params: {mode: 'set'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/users.php', data: postData, params: {mode: 'set'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     user[param] = paramValue;
                     if (param == 'alias')
@@ -261,7 +261,7 @@ angular.module('app.services', [])
         this.getTeams = function () {
             var deferred = $q.defer();
 
-            $http({method: 'GET', url: 'php/teams.php', params: {mode: 'getAll'}}).success(function (response) {
+            $http({method: 'GET', url: '/php/teams.php', params: {mode: 'getAll'}}).success(function (response) {
                 deferred.resolve(response);
             }).error(function (response) {
                     deferred.reject('Error getting teams');
@@ -272,7 +272,7 @@ angular.module('app.services', [])
         this.getTeam = function (id) {
             var deferred = $q.defer();
 
-            $http({method: 'GET', url: 'php/teams.php', params: {mode: 'get', id: id}}).success(function (response) {
+            $http({method: 'GET', url: '/php/teams.php', params: {mode: 'get', id: id}}).success(function (response) {
                 deferred.resolve(response);
             }).error(function (response) {
                     deferred.reject('Error getting team');
@@ -283,7 +283,7 @@ angular.module('app.services', [])
         this.createTeam = function (postData) {
             var deferred = $q.defer();
 
-            $http({method: 'POST', url: 'php/teams.php', data: postData, params: {mode: 'create'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/teams.php', data: postData, params: {mode: 'create'}}).success(function (response) {
                 if (response.success)
                     deferred.resolve();
                 else
@@ -303,7 +303,7 @@ angular.module('app.services', [])
                 param: param,
                 updatevalue: paramValue
             };
-            $http({method: 'POST', url: 'php/teams.php', data: postData, params: {mode: 'set'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/teams.php', data: postData, params: {mode: 'set'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     deferred.resolve();
                 }
@@ -319,7 +319,7 @@ angular.module('app.services', [])
         this.addMember = function (teamId, id, password) {
             var data = {teamId: teamId, id: id, password: password},
                 deferred = $q.defer();
-            $http({method: 'POST', url: 'php/teams.php', data: data, params: {mode: 'add'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/teams.php', data: data, params: {mode: 'add'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     deferred.resolve();
                 }
