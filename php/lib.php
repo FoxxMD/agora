@@ -342,27 +342,44 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         return $response;
     }
 
-    function changePassword($data){
+    function changePassword($data, $isAdmin){
         $response = new stdClass();
         $response -> success = false;
         $db = getDB();
 
-        if($data -> resetToken != null)
+        if(property_exists($data,"resetToken"))
         {
             $phpassHash = new \Phpass\Hash;
-            $pwHash = $phpassHash -> hashPassword($data -> newPassword);
-            $sql = "update users set password=? where resetToken=?";
-            $statement = $db -> prepare($sql);
-            $statement -> bind_param('ss', $pwHash, $data -> resetToken);
-            if($statement -> execute())
+            $sql = "select * from users where resetToken=?";
+            $statement1 = $db -> prepare($sql);
+            $statement1 -> bind_param('s',$data -> resetToken);
+            if($statement1 -> execute())
             {
-                $response -> success = true;
+                $statement1 -> store_result();
+                if($statement1 -> num_rows > 0)
+                {
+                    $statement1 -> close();
+                    $pwHash = $phpassHash -> hashPassword($data -> newPassword);
+                    $sql = "update users set password=? where resetToken=?";
+                    $statement = $db -> prepare($sql);
+                    $statement -> bind_param('ss', $pwHash, $data -> resetToken);
+                    if($statement -> execute())
+                    {
+                        $response -> success = true;
+                    }
+                    else {
+                        $response -> message = "Could not change password: ".$db -> error;
+                    }
+                }
+                else{
+                    $response -> message = "Could not find reset token, please make sure it is inputted correctly.";
+                }
             }
-            else {
-                $response -> message = "Could not change password: ".$db -> error;
+            else{
+                $response -> message = "DB error: ".$db -> error;
             }
         }
-        else if($data -> oldPassword != null)
+        else if(property_exists($data,"oldPassword") || $isAdmin)
         {
             $sql = "select password from users where email=?";
             $statement1 = $db -> prepare($sql);
@@ -376,7 +393,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $statement1 -> fetch();
                     $statement1 -> close();
                     $phpassHash = new \Phpass\Hash;
-                    if($phpassHash->checkPassword($data -> oldPassword, $passwordHash))
+                    if((property_exists($data,"oldPassword") && $phpassHash->checkPassword($data -> oldPassword, $passwordHash)) || $isAdmin)
                     {
                         $pwHash = $phpassHash -> hashPassword($data -> newPassword);
                         $sql = "update users set password=? where email=?";

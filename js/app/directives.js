@@ -172,6 +172,8 @@ angular.module('app.directives', [])
                     $scope.showJoin = true;
                 };
 
+                $scope.admin = userService.adminMode() && (userService.getProfile().role == 1 || userService.getProfile().role == 1);
+
                 $scope.tryJoin = function () {
                     teamService.addMember($stateParams.teamId, userService.getProfile().id, $scope.joinPassword).promise.then(function (response) {
                         getTeamInfo();
@@ -194,11 +196,6 @@ angular.module('app.directives', [])
                     });
                 };
 
-                $scope.showGames = function () {
-                    var selected = $filter('filter')($scope.games, {value: $scope.team.game});
-                    return ($scope.team.game && selected.length) ? selected[0].text : 'Not set';
-                };
-
                 $scope.updateTeam = function (element, updateVal) {
                     teamService.updateTeam(element, updateVal, $stateParams.teamId).promise.then(function (response) {
                         getTeamInfo();
@@ -212,6 +209,12 @@ angular.module('app.directives', [])
 
                     teamService.getTeam($stateParams.teamId).promise.then(function (teamData) {
                         $scope.team = teamData;
+
+
+                        $scope.showGames = function () {
+                            var selected = $filter('filter')($scope.games, {value: $scope.team.game});
+                            return ($scope.team.game && selected.length) ? selected[0].text : 'Not set';
+                        };
 
                         $scope.teamMembers = [];
                         for (i = 1; i < 4; i++) {

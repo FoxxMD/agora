@@ -337,9 +337,13 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         }
         $scope.submitPasswordChange = function(){
-            this.formData.resetToken = null;
+            if($scope.admin)
+            {
+                this.formData.email = $scope.user.email;
+            }
             userService.changePassword(this.formData).promise.then(function(response){
                 $scope.passwordSuccess = true;
+                $scope.showPassword = false;
             }, function(response){
                 $scope.userErrorMessage = "Password change failed: " + response;
             });
@@ -436,84 +440,6 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             };
 
         };
-    }]).controller('teamctrl', ['$scope', 'userService', 'teamService', '$stateParams', '$filter', '$state', function ($scope, userService, teamService, $stateParams, $filter, $state) {
-
-        //TODO Behavior for leaving a team
-        //TODO Allow captains to add/remove members at will
-
-        if ($stateParams.teamId != null) {
-            getTeamInfo();
-        }
-        $scope.games = [
-            {value: 'Starcraft II', text: 'Starcraft II'},
-            {value: 'League of Legends', text: 'League of Legends'},
-            {value: 'CS:GO', text: 'CS:GO'},
-            {value: 'Halo 3', text: 'Halo 3'},
-            {value: 'SSB:Brawl', text: 'SSB:Brawl'}
-        ];
-
-        $scope.showJoin = false;
-        $scope.clickJoin = function(){
-            $scope.showJoin = true;
-        }
-
-        $scope.tryJoin = function () {
-            teamService.addMember($stateParams.teamId, userService.getProfile().id, $scope.joinPassword).promise.then(function (response) {
-                getTeamInfo();
-                $scope.teamErrorMessage = undefined;
-            }, function (response) {
-                $scope.teamErrorMessage = '<strong>Could not join team! </strong>' + response;
-            })
-        };
-
-        $scope.showGames = function () {
-            var selected = $filter('filter')($scope.games, {value: $scope.team.game});
-            return ($scope.team.game && selected.length) ? selected[0].text : 'Not set';
-        };
-
-        $scope.updateTeam = function (element, updateVal) {
-            teamService.updateTeam(element, updateVal, $stateParams.teamId).promise.then(function(response){
-
-            },function(response){
-                $scope.teamErrorMessage = '<strong>Could not update team! </strong>' + response;
-            });
-        };
-
-        function getTeamInfo() {
-
-            teamService.getTeam($stateParams.teamId).promise.then(function (teamData) {
-                $scope.team = teamData;
-
-                $scope.teamMembers = [];
-                for(i = 1; i < 4; i++)
-                {
-                    if(teamData["member"+i] != 0)
-                    {
-                        $scope.teamMembers.push({value:teamData["member"+i],text:teamData["member"+i+"Name"]});
-                    }
-                }
-                /*                    {value:teamData.member1, text:teamData.member1Name},
-                 {value:teamData.member2, text:teamData.member2Name},
-                 {value:teamData.member3, text:teamData.member3Name},
-                 {value:teamData.member4, text:teamData.member4Name}];*/
-
-                $scope.showTeamMembers = function () {
-                    var selected = $filter('filter')($scope.teamMembers, {value: $scope.team.captain});
-                    return ($scope.team.captain && selected.length) ? selected[0].text : $scope.team.captainName;
-                };
-
-                var yourid = userService.getProfile().id; //Oy this is shoddy
-                if (yourid == teamData.captain)
-                {
-                    $scope.ownTeam = true;
-                    $scope.onTeam = true;
-                }
-                if(teamData.member1 == yourid || teamData.member2 == yourid || teamData.member3 == yourid || teamData.member4 == yourid)
-                {
-                    $scope.onTeam = true;
-                }
-            });
-        }
     }])
     .controller('resetctrl', ['$scope','userService', function($scope,userService){
        $scope.tryResetPassword = function(){

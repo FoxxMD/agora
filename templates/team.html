@@ -6,7 +6,7 @@
     <small>Team Profile</small>
 </h1>
 <div class="row">
-    <div class="col-md-8 col-sm-12" ng-if="ownTeam">
+    <div class="col-md-8 col-sm-12" ng-if="ownTeam || admin">
         <div class="lead">
             <fieldset>
                 <legend>Team Information</legend>
@@ -33,10 +33,10 @@
                         {{ showGames() }}
                     </a>
                 </div>
-                <div class="form-group">
+<!--                <div class="form-group">
                     <label class="control-label">Logo:</label>
                     <a editable-text="team.ign" onbeforesave="updateTeam('logo',$data)">{{team.logo || 'Not Set' }}</a>
-                </div>
+                </div>-->
                 <div class="form-group">
                     <label class="control-label">Password:</label>
                     <!-- TODO Restrict to 5 character to respect DB rules -->
@@ -47,7 +47,7 @@
             </fieldset>
         </div>
     </div>
-    <div class="col-md-8 col-sm-12" ng-if="!ownTeam">
+    <div class="col-md-8 col-sm-12" ng-if="!ownTeam && !admin">
         <div class="lead">
             <fieldset>
                 <legend>Team Information</legend>
@@ -88,16 +88,16 @@
                 </legend>
                 <div class="teamList">
                     <span ng-if="team.member1 != 0">
-                        <a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member1',0)" class="glyphicon glyphicon-remove-circle"></span>
+                        <a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a><span ng-if="ownTeam || admin" ng-click="updateTeam('member1',0)" class="glyphicon glyphicon-remove-circle"></span>
                     </span>
                      <span ng-if="team.member2 != 0">
-                    <a ui-sref="user({userId: team.member2})">{{team.member2Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member2',0)" class="glyphicon glyphicon-remove-circle"></span>
+                    <a ui-sref="user({userId: team.member2})">{{team.member2Name}}</a><span ng-if="ownTeam || admin" ng-click="updateTeam('member2',0)" class="glyphicon glyphicon-remove-circle"></span>
                          </span>
                     <span ng-if="team.member3 != 0">
-                    <a ui-sref="user({userId: team.member3})">{{team.member3Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member3',0)" class="glyphicon glyphicon-remove-circle"></span>
+                    <a ui-sref="user({userId: team.member3})">{{team.member3Name}}</a><span ng-if="ownTeam || admin" ng-click="updateTeam('member3',0)" class="glyphicon glyphicon-remove-circle"></span>
                         </span>
                     <span ng-if="team.member4 != 0">
-                    <a ui-sref="user({userId: team.member4})">{{team.member4Name}}</a><span ng-if="ownTeam" ng-click="updateTeam('member4',0)" class="glyphicon glyphicon-remove-circle"></span>
+                    <a ui-sref="user({userId: team.member4})">{{team.member4Name}}</a><span ng-if="ownTeam || admin" ng-click="updateTeam('member4',0)" class="glyphicon glyphicon-remove-circle"></span>
                         </span>
                 </div>
                 <div class="form-group" style="margin-top:20px;" ng-show="showJoin && !onTeam">
