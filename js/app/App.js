@@ -1,5 +1,5 @@
 //initialize app
-var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments', 'xeditable']);
+var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments', 'xeditable','ngTable']);
 
 //configure routing
 //hydrate all states for application in order to setup site structure
@@ -345,23 +345,68 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             });
         }
     }])
-    .controller('usersctrl', ['$scope', 'userService', '$state', function ($scope, userService, $state) {
+    .controller('usersctrl', ['$scope', 'userService', '$state','ngTableParams','$filter', function ($scope, userService, $state, ngTableParams, $filter) {
         $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
-        userService.getUsers().promise.then(function (userArray) {
-            $scope.users = userArray;
+        userService.getUsers().promise.then(function (data) {
+            //$scope.users = userArray;
+
+            $scope.tableParams = new ngTableParams({
+                page: 1,            // show first page
+                count: 10          // count per page
+/*                filter: {
+                    alias:''       // initial filter
+                }*/
+            }, {
+                total: data.length, // length of data
+                getData: function($defer, params) {
+                    // use build-in angular filter
+                    var orderedData = params.filter() ?
+                        $filter('filter')(data, params.filter()) :
+                        data;
+
+                    $scope.users = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
+
+                    params.total(orderedData.length); // set total for recalc pagination
+                    $defer.resolve($scope.users);
+                }
+            });
+
         });
+
         $scope.goToUser = function (id) {
             $state.go('user', {userId: id});
         }
     }])
-    .controller('teamsctrl', ['$scope', 'teamService', '$state', '$modal', function ($scope, teamService, $state, $modal) {
+    .controller('teamsctrl', ['$scope', 'teamService', '$state', '$modal','ngTableParams','$filter', function ($scope, teamService, $state, $modal, ngTableParams, $filter) {
 
         $scope.goToTeam = function (id) {
             $state.go('team', {teamId: id});
         }
 
-        teamService.getTeams().promise.then(function (response) {
-            $scope.teams = response;
+        teamService.getTeams().promise.then(function (data) {
+            //$scope.teams = response;
+
+            $scope.tableParams = new ngTableParams({
+                page: 1,            // show first page
+                count: 10          // count per page
+                /*                filter: {
+                 alias:''       // initial filter
+                 }*/
+            }, {
+                total: data.length, // length of data
+                getData: function($defer, params) {
+                    // use build-in angular filter
+                    var orderedData = params.filter() ?
+                        $filter('filter')(data, params.filter()) :
+                        data;
+
+                    $scope.teams = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
+
+                    params.total(orderedData.length); // set total for recalc pagination
+                    $defer.resolve($scope.teams);
+                }
+            });
+
         }, function (response) {
             alert(response);
         });

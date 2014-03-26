@@ -1,33 +1,17 @@
-
-<table class="table table-hover">
-    <thead>
-    <tr>
-        <th>Alias</th>
-        <th>Steam</th>
-        <th>Xbox</th>
-        <th>IGN</th>
-        <th>Lol</th>
-        <th>BN</th>
-        <th ng-if="admin">Email</th>
-        <th ng-if="admin">Attempt</th>
-        <th ng-if="admin">Locktime</th>
-        <th ng-if="admin">Auth Expire</th>
-        <th ng-if="admin">Role</th>
-    </tr>
-    </thead>
+<table ng-table="tableParams" show-filter="true" class="table table-hover">
     <tbody>
-    <tr ng-repeat="user in users" ng-click="goToUser(user.id)" style="cursor:pointer">
-        <td>{{user.alias}}</td>
-        <td>{{user.steam}}</td>
-        <td>{{user.xbox}}</td>
-        <td>{{user.ign}}</td>
-        <td>{{user.lol}}</td>
-        <td>{{user.bn}}</td>
-        <td ng-if="admin">{{user.email}}</td>
-        <td ng-if="admin">{{user.attempt}}</td>
-        <td ng-if="admin">{{user.locktime}}</td>
-        <td ng-if="admin">{{user.authExpire}}</td>
-        <td ng-if="admin">{{(user.role == 0) ? "Standard" : (user.role == 1) ? "System Admin" : "Game Admin"}}</td>
+    <tr ng-repeat="user in $data" ng-click="goToUser(user.id)" style="cursor:pointer" class="animate-repeat">
+        <td data-title="'Alias'" filter="{'alias':'text'}">{{user.alias}}</td>
+        <td data-title="'Steam Tag'">{{user.steam}}</td>
+        <td data-title="'Xbox Tag'">{{user.xbox}}</td>
+        <td data-title="'IGN'">{{user.ign}}</td>
+        <td data-title="'LoL Tag'">{{user.lol}}</td>
+        <td data-title="'Battle.net Tag'">{{user.bn}}</td>
+        <td ng-show="admin" data-title="'Email'" filter="{'email':'text'}">{{user.email}}</td>
+        <td ng-show="admin" data-title="'PW Attempt'">{{user.attempt}}</td>
+        <td ng-show="admin" data-title="'Locktime'">{{user.locktime}}</td>
+        <td ng-show="admin" data-title="'Auth Expire'">{{user.authExpire}}</td>
+        <td ng-show="admin" data-title="'Role'">{{(user.role == 0) ? "Standard" : (user.role == 1) ? "System Admin" : "Game Admin"}}</td>
     </tr>
     </tbody>
 </table>

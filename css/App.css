@@ -932,3 +932,32 @@ a.thumbnail.active.orange {
   margin-top: 10px;
   display: none;
 }
+.ng-table th {
+  vertical-align: bottom;
+  text-align: center;
+}
+.animate-repeat.ng-enter {
+  -webkit-animation: fadeInLeft 0.4s;
+  -moz-animation: fadeInLeft 0.4s;
+  -ms-animation: fadeInLeft 0.4s;
+  animation: fadeInLeft 0.4s;
+  opacity: 0;
+  /*    position:absolute;*/
+
+}
+.animate-repeat.ng-leave {
+  -webkit-animation: fadeOutLeft 0.4s;
+  -moz-animation: fadeOutLeft 0.4s;
+  -ms-animation: fadeOutLeft 0.4s;
+  animation: fadeOutLeft 0.4s;
+  /*    position:absolute;*/
+
+}
+.animate-repeat.ng-enter-stagger,
+.animate-repeat.ng-leave-stagger,
+.animate-repeat.ng-move-stagger {
+  -webkit-animation-delay: 0.1s;
+  animation-delay: 0.1s;
+  -webkit-animation-duration: 0;
+  animation-duration: 0;
+}
