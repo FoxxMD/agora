@@ -1,8 +1,9 @@
 angular.module('app.directives', [])
-    .directive('scheduleDirective', ['$compile', '$http', function ($compile, $http) {
+    //no longer using this but may be useful later!
+    /*.directive('scheduleDirective', ['$compile', '$http', function ($compile, $http) {
         var directive = {
             restrict: 'AE',
-            template: '<button class="btn btn-info pull-right" ng-click="changeDay(\'2014-03-08\')">Day 1</button><button class="btn btn-info pull-right" ng-click="changeDay(\'2014-03-09\')">Day 2</button><div id="calendar" style="float:left;"></div>',
+            template: '<button class="btn btn-info pull-right" ng-click="changeDay(\'2014-04-20\')">Day 2</button><button class="btn btn-info pull-right" ng-click="changeDay(\'2014-04-19\')">Day 1</button><div id="calendar" style="float:left;"></div>',
             link: function (scope, element, attrs) {
                 $http.get('/content/schedule.json').success(function (data) {
                     var realSchedule = [];
@@ -16,7 +17,7 @@ angular.module('app.directives', [])
                         events_source: realSchedule,
                         tmpl_path: 'js/calendar/tmpls/',
                         view: 'day',
-                        day: '2014-03-08'
+                        day: '2014-04-19'
                     });
 
                     scope.changeDay = function (theDay) {
@@ -29,7 +30,7 @@ angular.module('app.directives', [])
             }
         };
         return directive;
-    }])
+    }])*/
     //stolen from http://rogeralsing.com/2013/08/26/angularjs-directive-to-check-that-passwords-match-followup/
     .directive('passwordMatch', [function () {
         return {

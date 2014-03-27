@@ -684,6 +684,12 @@
 .gtgamefest .teamList .glyphicon:hover {
   color: #e6e6e6;
 }
+.gtgamefest .scheduleTable thead tr {
+  background-color: #2f2f2f;
+}
+.gtgamefest .scheduleTable .timeHeader {
+  background-color: #2f2f2f;
+}
 .imageFit {
   max-width: 300px;
   width: 100%;
