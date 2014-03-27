@@ -41,7 +41,7 @@
             $result = createTeam($data,$authUser);
             break;
         case "get":
-            $result = getTeam($params["id"]);
+            $result = getTeam($params["id"], $authUser, $isAdmin, $isGameAdmin);
             break;
         case "getAll":
             $result = getTeams($isAdmin);

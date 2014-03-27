@@ -512,7 +512,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         return $response;
     }
 
-    function getTeam($id) {
+    function getTeam($id, $authUser, $isAdmin, $isGameAdmin) {
         $db = getdb();
         $sql = "select * from teams where ID=?";
 
@@ -522,9 +522,12 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
         if($statement -> execute())
         {
-            //TODO check for captain/admin to include password
             $statement -> bind_result($teamObj -> ID, $teamObj -> name, $teamObj -> captain, $teamObj -> password, $teamObj -> des, $teamObj -> logo, $teamObj -> game, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4);
             $statement -> fetch();
+            if($teamObj -> captain != $authUser -> id || (!$isAdmin && !$isGameAdmin))
+            {
+                $teamObj -> password = null;
+            }
             $statement -> close();
 
             $statement1 = $db -> prepare("CALL getTeamByIds(?,?,?,?,?)");
@@ -647,7 +650,6 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 }
 
                 $sql = "update teams set ".$fixedParam."=? where id=?";
-
                 if($statement = $db -> prepare($sql))
                 {
                     $statement -> bind_param('si', $data -> updatevalue, $data -> teamId);

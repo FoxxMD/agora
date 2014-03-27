@@ -153,9 +153,6 @@ angular.module('app.directives', [])
             restrict: 'A',
             templateUrl: '/templates/team.html',
             controller: function ($scope) {
-                //TODO Behavior for leaving a team
-                //TODO Allow captains to remove members at will
-
                 if ($stateParams.teamId != null) {
                     getTeamInfo();
                 }
