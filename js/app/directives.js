@@ -197,6 +197,11 @@ angular.module('app.directives', [])
                 };
 
                 $scope.updateTeam = function (element, updateVal) {
+                    if(element === 'password' && updateVal === undefined)
+                    {
+                        return 'Password must be 5 characters or less';
+                    }
+
                     teamService.updateTeam(element, updateVal, $stateParams.teamId).promise.then(function (response) {
                         getTeamInfo();
                     }, function (response) {
