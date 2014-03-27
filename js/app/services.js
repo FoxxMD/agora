@@ -49,21 +49,29 @@ angular.module('app.services', [])
             var deferred = $q.defer();
 
             if (override || (!isInit && $localStorage.token != undefined || $localStorage.token != null)) {
+                //set user config to fail-safe localstorage values if they exist.
                 user.alias = $localStorage.alias;
                 user.email = $localStorage.email;
                 user.token = $localStorage.token;
                 user.id = $localStorage.id;
+                user.paid = $localStorage.paid;
+                user.role = $localStorage.role;
+                adminMode = $localStorage.adminMode || false;
                 user.tokenExpire = $localStorage.tokenExpire;
                 $http.defaults.headers.common.Authentication = $localStorage.token;
 
                 this.getUser(user.id).promise.then(function (response) {
+                    //Set user config to latest data
                     user.id = response.id;
                     user.alias = response.alias;
                     user.steam = response.steam;
                     user.bn = response.bn;
                     user.role = response.role;
-                    adminMode = (response.role == 1 || response.role == 2);
+                    adminMode = (response.role == 1 || response.role == 2) ? (($localStorage.adminMode != undefined) ? $localStorage.adminMode : false) : false;
                     user.paid = (response.paid == 1);
+                    //store important user config to localstorage to ensure directly accessing a page creates the expected behavior if latest response hasn't been returned in time
+                    $localStorage.role = response.role;
+                    $localStorage.paid = (response.paid == 1);
                     isInit = true;
                     deferred.resolve();
                 });
@@ -86,6 +94,7 @@ angular.module('app.services', [])
             if(action != undefined)
             {
                 adminMode = action;
+                $localStorage.adminMode = action;
             }
             return adminMode;
         };
