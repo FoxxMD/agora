@@ -140,11 +140,15 @@ angular.module('app.directives', [])
                 });
             },
             link: function (scope, element, attrs) {
-                $(element).find('#regCredits').on('click', function () {
-                    $(element).find('#start').remove();
-                    $(element).find('#titles').attr('id', 'boringtitle');
-                    $(element).find('#titlecontent').attr('id', 'boringtitlecontent');
-                    $(element).closest('html').css('overflow', 'auto');
+                $(element).closest('html').css('overflow', 'auto');
+                $(element).find('#starCredits').on('click', function () {
+                    credits = $(element).find('#creditsSection').clone();
+                    $(element).find('#creditsSection').remove();
+                    $(credits).find('#boringtitle').before('<p class="text-center" id="start">Thanks for those that made Gamefest possible...</p>');
+                    $(credits).find('#boringtitle').attr('id', 'titles');
+                    $(credits).find('#boringtitlecontent').attr('id', 'titlecontent');
+                    $(element).closest('html').css('overflow', 'hidden');
+                    $(element).find('#creditsWrapper').html(credits);
                 });
             }
         }
