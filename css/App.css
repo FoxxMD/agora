@@ -967,3 +967,21 @@ a.thumbnail.active.orange {
   -webkit-animation-duration: 0;
   animation-duration: 0;
 }
+.animate-fade.ng-enter,
+.animate-fade.ng-leave {
+  position: absolute;
+  -webkit-transition: 0.5s all;
+  transition: 0.5s all;
+}
+.animate-fade.ng-enter {
+  opacity: 0;
+}
+.animate-fade.ng-leave {
+  opacity: 1;
+}
+.animate-fade.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+.animate-fade.ng-leave.ng-leave-active {
+  opacity: 0;
+}

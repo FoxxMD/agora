@@ -25,71 +25,79 @@
         "people":[
             {
                 "name":"Marco Cognetta",
-                "title":"fdfsfd"
+                "title":"PC Overseer"
             },
             {
-                "name": "Nicolai Popescu",
-                "title": "Staffing/Volunteers"
+                "name": "Caleb Ditchfield",
+                "title": "Starcraft II"
             },
             {
-                "name": "Grant Grimes",
-                "title": "Registration"
+                "name": "Dallas Balliet",
+                "title": "DOTA 2"
             },
             {
-                "name": "Barrett McGowin",
-                "title": "Logistics"
+                "name": "Steffan Slater",
+                "title": "SSB"
             },
             {
-                "name": "(Jack) Zhiwei Chen",
-                "title": "Sergeant-at-Arms"
+                "name": "Bud Whitley",
+                "title": "Halo"
+            },
+            {
+                "name":"Benjamin Sauk",
+                "title":"League of Legends"
+            },
+            {
+                "name": "Will Jones",
+                "title": "League of Legends"
             }]
     },
     {
-        "title":"Game Administrators",
+        "title":"Casters",
         "people":[
             {
-                "name":"Marco Cognetta",
-                "title":"fdfsfd"
+                "name":"Phillip Nguyen",
+                "title":"League of Legends"
             },
             {
-                "name": "Nicolai Popescu",
-                "title": "Staffing/Volunteers"
+                "name": "Timothy Li",
+                "title": "League of Legends"
             },
             {
-                "name": "Grant Grimes",
-                "title": "Registration"
+                "name": "Ari Markovitz",
+                "title": "League of Legends"
             },
             {
-                "name": "Barrett McGowin",
-                "title": "Logistics"
+                "name": "Patrick Steele",
+                "title": "League of Legends"
             },
             {
-                "name": "(Jack) Zhiwei Chen",
-                "title": "Sergeant-at-Arms"
+                "name": "Josh Cavender",
+                "title": "DOTA 2 - English"
             }]
     },
     {
-        "title":"Game Administrators",
+        "title":"Designers",
         "people":[
             {
-                "name":"Marco Cognetta",
-                "title":"fdfsfd"
+                "name":"Matt Duncan",
+                "title":"Web Frontend/Design/Backend"
             },
             {
-                "name": "Nicolai Popescu",
-                "title": "Staffing/Volunteers"
+                "name": "Zhengyang Wu",
+                "title": "Web Backend"
             },
             {
-                "name": "Grant Grimes",
-                "title": "Registration"
+                "name": "Lisa Xia",
+                "title": "Graphics — Print Media"
             },
             {
-                "name": "Barrett McGowin",
-                "title": "Logistics"
+                "name": "Michael Smith",
+                "title": "Graphics — Branding"
             },
             {
-                "name": "(Jack) Zhiwei Chen",
-                "title": "Sergeant-at-Arms"
+                "name": "Joseph Benamy",
+                "title": "Late-night Infrastructure Monkey"
             }]
     }
 ]
