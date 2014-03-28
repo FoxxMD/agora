@@ -69,13 +69,6 @@
                 </div>
             </tab>
             <tab ng-if="gameInfo.server !== undefined" heading="Servers"></tab>
-            <tab ng-if="gameInfo.streaming !== undefined" heading="Streaming">
-                <div class="row" style="margin-top:40px;">
-                    <div class="col-md-10 col-md-offset-2">
-                       <ng-include src="gameInfo.streaming"></ng-include>
-                    </div>
-                </div>
-            </tab>
         </tabset>
     </div>
 </div>
