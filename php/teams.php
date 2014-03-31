@@ -33,7 +33,7 @@
             }
             $isOwnData = ($authUser -> id == $id);
             $isAdmin = ($authUser -> role == 1);
-            $isGameAdmin = ($authUser -> role == 2);
+            $isGameAdmin = ($authUser -> role == 2 || $authUser -> role == 1);
             $fullAccess = ($isOwnData || $isAdmin);
 
     switch($mode) {

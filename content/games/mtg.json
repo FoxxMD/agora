@@ -7,7 +7,7 @@
     "tourney": [
         {
             "title": "Booster Draft",
-            "rules": ["http://www.wizards.com/contentresources/wizards/wpn/main/documents/magic_the_gathering_tournament_rules_pdf1.pdf", "Drafts will be run until the end of the day."]
+            "rules": ["<a href=\"http://www.wizards.com/contentresources/wizards/wpn/main/documents/magic_the_gathering_tournament_rules_pdf1.pdf\">Offical Tournament Rules</a>", "Drafts will be run until the end of the day."]
         }
     ]
 }

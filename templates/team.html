@@ -84,6 +84,7 @@
                     </button>
                 </legend>
                 <div class="teamList">
+                    <a ui-sref="user({userId: team.captain})">{{team.captainName}}</a>
                     <span ng-if="team.member1 != 0">
                         <a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a><span ng-if="ownTeam || admin" ng-click="updateTeam('member1',0)" class="glyphicon glyphicon-remove-circle"></span>
                     </span>

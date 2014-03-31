@@ -12,10 +12,13 @@
             <div class="form-group">
                 <label class="control-label" for="alias">Alias</label>
                 <div class="left-inner-addon">
-                    <input type="text" class="form-control"  ng-model="formData.alias"  id="alias" placeholder="Alias" required/>
+                    <input type="text" class="form-control"  ng-model="formData.alias" name="alias" id="alias" placeholder="Alias" required ng-maxlength="20"/>
                     <i class="glyphicon glyphicon-eye-open"></i>
                 </div>
             </div>
+        <div class="alert alert-danger" ng-show="registerForm.alias.$error.maxlength">
+            Your alias is too long, max 20 characters.
+        </div>
             <div class="form-group">
                 <label class="control-label" for="email">Email</label>
                 <div class="left-inner-addon">

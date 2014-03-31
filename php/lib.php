@@ -524,7 +524,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         {
             $statement -> bind_result($teamObj -> ID, $teamObj -> name, $teamObj -> captain, $teamObj -> password, $teamObj -> des, $teamObj -> logo, $teamObj -> game, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4);
             $statement -> fetch();
-            if($teamObj -> captain != $authUser -> id || (!$isAdmin && !$isGameAdmin))
+            if($teamObj -> captain != $authUser -> id && (!$isAdmin && !$isGameAdmin))
             {
                 $teamObj -> password = null;
             }

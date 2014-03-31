@@ -1,8 +1,7 @@
 {
     "title": "Pokemon X&Y",
     "overview": "/content/games/poke.html",
-    "rules": ["Battles Will Use the Pokemon Organized Play Standard Format Style rule set. (The format for VGC 2014 events; the rules used on the Special Battlespot Ladder)",
-        "http://assets22.pokemon.com/assets/cms/pdf/op/tournaments/2014/Play_Pokemon_VG_Rules_and_Formats_2014.pdf ",
+    "rules": ["Battles Will Use the <a href=\"http://assets22.pokemon.com/assets/cms/pdf/op/tournaments/2014/Play_Pokemon_VG_Rules_and_Formats_2014.pdf\">Pokemon Organized Play Standard Format Style rule set</a>. (The format for VGC 2014 events; the rules used on the Special Battlespot Ladder)",
         "Battles are set to Doubles with Flat Rules. Six Pokemon are brought to the battle, 4 are selected for the battle.",
         "Xerneus, Yveltal, Zygarde, and Mewtwo (as well as Diancie, Hoopa, and Volcanion), though in the Kalos dex, are banned",
         "Please note that these bans are not the same as those enforced in typical 6v6 formats; Mega Kangaskhan and Mega Gengar are allowed.",
@@ -29,7 +28,7 @@
                 }
             ],
             "rules": ["Swiss format, Finals are best of 3.",
-                "Procedure: \nArrange a battle with your opponent using the Player Search System, but do not move to the 'select which Pokemon will participate' screen yet. Wait until the Admin announces you may begin your match.\nUpon completion of your match, raise your hand and the Admin will record the results of your match. DO NOT leave your table until your match results are recorded.\nUpon results being recorded, you are free to lounge until the next set of pairings are posted."]
+                "Procedure: <ul><li>Arrange a battle with your opponent using the Player Search System, but do not move to the 'select which Pokemon will participate' screen yet. Wait until the Admin announces you may begin your match.</li> <li>Upon completion of your match, raise your hand and the Admin will record the results of your match. DO NOT leave your table until your match results are recorded.</li><li>Upon results being recorded, you are free to lounge until the next set of pairings are posted.</li></ul>"]
         }
     ]
 }

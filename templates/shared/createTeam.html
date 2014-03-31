@@ -8,25 +8,36 @@
         <div class="modal-body">
             <div class="form-group">
                 <label class="control-label" for="name">Team Name</label>
-                <input type="text" class="form-control" ng-model="formData.name" id="name" placeholder="Team Name"
-                       required/>
+                <input type="text" class="form-control" name="name" ng-model="formData.name" id="name"
+                       placeholder="Team Name"
+                       required ng-maxlength="30"/>
+            </div>
+            <div class="alert alert-danger" ng-show="teamForm.name.$error.maxlength">
+                Your title is too long, maximum of 30 characters.
             </div>
             <div class="form-group">
                 <label class="control-label" for="game">Game</label>
-                <select class="form-control" ng-model="formData.game" id="game" required ng-options="g for g in games"></select>
+                <select class="form-control" ng-model="formData.game" id="game" required
+                        ng-options="g for g in games"></select>
             </div>
             <div class="form-group">
                 <label class="control-label" for="description">Description</label>
-                <textarea id="description" ng-model="formData.des" class="form-control"
-                          placeholder="Password"></textarea>
+                <textarea id="description" ng-model="formData.des" name="description" class="form-control"
+                          placeholder="Description" ng-maxlength="30"></textarea>
+            </div>
+            <div class="alert alert-danger" ng-show="teamForm.description.$error.maxlength">
+                Your description is too long, maximum of 40 characters.
             </div>
             <div class="form-group">
                 <label class="control-label" for="password">Password</label>
 
                 <div class="left-inner-addon">
                     <input type="Password" id="password" ng-model="formData.password"
-                           class="form-control" placeholder="Password" required/>
+                           class="form-control" placeholder="Password" name="password" required ng-maxlength="5"/>
                     <i class="glyphicon glyphicon-lock"></i>
+                </div>
+                <div class="alert alert-danger" ng-show="teamForm.password.$error.maxlength">
+                    Your password is too long, max 5 characters.
                 </div>
             </div>
         </div>

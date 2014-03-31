@@ -24,16 +24,16 @@
                 }
             ],
             "rules": ["Double elimination, best of 3.",
-                "Winners� Bracket Finals, Losers� Bracket Finals, and Grand Finals are best of 5.",
-                "Apex 2014 Ruleset will be used for this tournament. https://www.apex-series.com/rules/brawl/",
+                "Winners Bracket Finals, Losers Bracket Finals, and Grand Finals are best of 5.",
+                "<a href=\"https://www.apex-series.com/rules/brawl\">Apex 2014 Ruleset</a> will be used for this tournament.",
                 "3 Stocks, 8 Minute Time Limit",
                 "Items set to None and Off, Pause set to Off.",
-                "All infinites and chain grabs are legal (except MK�s Infinite Dimensional Cape)",
-                "There is a 35 Ledge Grab Limit (LGL) for all characters. This limit only applies in the event that a game goes to time - If one player exceeds the LGL, that player loses. If both players exceed the LGL, this rule has no effect.",
-                "Stalling in any form is banned. This includes but is not limited to planking (ledge stalling), scrooging (travelling under the stage more than once from the ledge), continuing infinites or chain grabs past 300%.",
+                "All infinites and chain grabs are legal (except MK's Infinite Dimensional Cape)",
+                "There is a 35 Ledge Grab Limit (LGL) for all characters. This limit only applies in the event that a game goes to time <br/>- If one player exceeds the LGL, that player loses. <br/>- If both players exceed the LGL, this rule has no effect.",
+                "Stalling in any form is banned. This includes but is not limited to <br/>- planking (ledge stalling)<br/> -scrooging (travelling under the stage more than once from the ledge)<br/> -continuing infinites or chain grabs past 300%.",
                 "If the game goes to time and the LGL does not apply, the winner will be determined by stock and then percent. If both players die at the same time or have the same stock and percent, a 1 stock, 3 minute rematch will be played on the same stage, with a LGL of 15.",
                 "If the game ends via suicide move, the initiator of the move wins.",
-                "Procedure: \nEach team selects their controller port(s). If there is a dispute, teams may play rock-paper-scissors to determine priority, with the winner selecting whether they would like first pick of port or stage strike and the loser receiving first pick of the other.\nEach team selects their character. Double blind pick may be called by either team.\nGame 1 is played on a stage selected from the Starter List either by mutual consent or by stage striking (Team 1 strikes 1 stage, Team 2 strikes 2 stages, Team 1 strikes 1 stage, remaining stage is selected for play)\nGame 1 is played.\nThe winner of the previous match may announce one Stage Ban if they have not done so this set.\nThe loser of the previous match selects and announces the stage for the next match (from the Starter or Counterpick list). No stage announced as a Stage Ban or on which a team has already won in the current set may be selected unless both teams agree to the stage.\nThe winner of the previous match selects their character(s).\nThe loser of the previous match selects their character(s).\nThe next match is played.\nRepeat steps 5-9 for all subsequent matches."
+                "Procedure: <ul style=\"list-style-type=decimal\"><li>Each team selects their controller port(s).</li> <li>If there is a dispute, teams may play rock-paper-scissors to determine priority, with the winner selecting whether they would like first pick of port or stage strike and the loser receiving first pick of the other.</li> <li>Each team selects their character. Double blind pick may be called by either team.</li> <li>Game 1 is played on a stage selected from the Starter List either by mutual consent or by stage striking (Team 1 strikes 1 stage, Team 2 strikes 2 stages, Team 1 strikes 1 stage, remaining stage is selected for play)</li> <li>Game 1 is played.</li> <li>The winner of the previous match may announce one Stage Ban if they have not done so this set.</li> <li>The loser of the previous match selects and announces the stage for the next match (from the Starter or Counterpick list). No stage announced as a Stage Ban or on which a team has already won in the current set may be selected unless both teams agree to the stage.</li> <li>The winner of the previous match selects their character(s). </li><li> The loser of the previous match selects their character(s).</li> <li>The next match is played.</li> <li>Repeat steps 5-9 for all subsequent matches.</li></ul>"
 
             ],
             "maps": [
@@ -50,7 +50,7 @@
                     "title": "Starter: Smashville"
                 },
                 {
-                    "title": "Starter: Yoshi�s Island (Brawl)"
+                    "title": "Starter: Yoshi's Island (Brawl)"
                 },
                 {
                     "title": "Counterpick: Battleship Halberd"
@@ -84,15 +84,15 @@
                 }
             ],
             "rules": ["Double elimination, best of 3.",
-                "Winners� Bracket Finals, Losers� Bracket Finals, and Grand Finals are best of 5.",
-                "Apex 2014 Ruleset will be used for this tournament. https://www.apex-series.com/rules/melee/",
+                "Winners Bracket Finals, Losers Bracket Finals, and Grand Finals are best of 5.",
+                "<a href=\"https://www.apex-series.com/rules/melee/\">Apex 2014 Ruleset</a> will be used for this tournament.",
                 "4 Stocks, 8 Minute Time Limit",
-                "Items set to �Off�",
+                "Items set to \"Off\"",
                 "Pausing is legal ONLY when both players are on their respawn platform, and ONLY for the purpose of summoning an admin or in the event of a controller malfunction. Any other pausing will result in a stock loss for the pausing player.",
                 "Wobbling is legal (up to 250%, past which it is considered stalling)",
                 "Stalling in any form is banned.",
                 "If the game goes to time, the winner will be determined by stock and then percent. If both players die at the same time or have the same stock and percent, the match shall be replayed.",
-                "Procedure: \nEach team selects their controller port(s). If there is a dispute, teams may play rock-paper-scissors to determine priority, with the winner selecting whether they would like first pick of port or stage strike and the loser receiving first pick of the other.\nEach team selects their character. Double blind pick may be called by either team.\nGame 1 is played on a stage selected from the Starter List either by mutual consent or by stage striking (Team 1 strikes 1 stage, Team 2 strikes 2 stages, Team 1 strikes 1 stage, remaining stage is selected for play)\nGame 1 is played.\nThe winner of the\n previous match may announce one Stage Ban if they have not done so this set. For best of 5 sets, there are no stage bans.\nThe loser of the previous match selects and announces the stage for the next match (from the Starter or Counterpick list). No stage announced as a Stage Ban or on which a team has already won in the current set may be selected unless both teams agree to the stage.\nThe winner of the previous match selects their character(s).\nThe loser of the previous match selects their character(s).\nThe next match is played.\nRepeat steps 5-9 for all subsequent matches.\n"
+                "Procedure: <ul style=\"list-style-type=decimal\"><li>Each team selects their controller port(s).</li> <li>If there is a dispute, teams may play rock-paper-scissors to determine priority, with the winner selecting whether they would like first pick of port or stage strike and the loser receiving first pick of the other.</li> <li>Each team selects their character. Double blind pick may be called by either team.</li> <li>Game 1 is played on a stage selected from the Starter List either by mutual consent or by stage striking (Team 1 strikes 1 stage, Team 2 strikes 2 stages, Team 1 strikes 1 stage, remaining stage is selected for play)</li> <li> Game 1 is played.</li> <li>The winner of the previous match may announce one Stage Ban if they have not done so this set. For best of 5 sets, there are no stage bans.</li> <li>The loser of the previous match selects and announces the stage for the next match (from the Starter or Counterpick list). No stage announced as a Stage Ban or on which a team has already won in the current set may be selected unless both teams agree to the stage.</li> <li>The winner of the previous match selects their character(s).</li> <li>The loser of the previous match selects their character(s).</li> <li>The next match is played.</li><li>Repeat steps 5-9 for all subsequent matches.</li></ul>"
             ],
             "maps": [
                 {

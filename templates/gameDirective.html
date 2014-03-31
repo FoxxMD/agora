@@ -11,7 +11,7 @@
                     </div>
                     <div class="panel-body">
                         <ul>
-                            <li ng-repeat="rule in gameInfo.rules">{{rule}}</li>
+                            <li ng-repeat="rule in gameInfo.rules" ng-bind-html="rule"></li>
                         </ul>
                     </div>
                 </div>
@@ -33,9 +33,9 @@
                                         <div class="panel-heading">
                                             Rules
                                         </div>
-                                        <div class="panel-body">
+                                        <div class="panel-body tournamentRulesSection">
                                             <ul>
-                                                <li ng-repeat="rule in tour.rules track by $index">{{rule}}</li>
+                                                <li ng-repeat="rule in tour.rules track by $index" ng-bind-html="rule"></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -46,8 +46,8 @@
                                         </div>
                                         <div class="panel-body">
                                             <ul>
-                                                <li ng-repeat="prize in tour.prizes">{{prize.place}} -- <a
-                                                        ng-href="{{prize.href}}">{{prize.title}}</a></li>
+                                                <li ng-repeat="prize in tour.prizes">{{prize.place}} -- <a ng-if="prize.href != undefined"
+                                                        ng-href="{{prize.href}}">{{prize.title}}</a> <span ng-if="prize.href == undefined">{{prize.title}}</span></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -57,8 +57,9 @@
                                         </div>
                                         <div class="panel-body">
                                             <ul>
-                                                <li ng-repeat="map in tour.maps"><a
-                                                        ng-href="{{map.href}}">{{map.title}}</a></li>
+                                                <li ng-repeat="map in tour.maps"><a ng-if="map.href != undefined"
+                                                        ng-href="{{map.href}}">{{map.title}}</a>
+                                                <span ng-if="map.href == undefined">{{map.title}}</span></li>
                                             </ul>
                                         </div>
                                     </div>
