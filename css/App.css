@@ -646,14 +646,17 @@
 .gtgamefest .noborder .panel-heading {
   border: 1px solid #e8e8e8;
 }
-.gtgamefest .panel {
-  background-color: transparent;
-}
-.gtgamefest .panel .nav-tabs li a {
+.gtgamefest .nav-tabs li a {
   color: #ffffff;
 }
-.gtgamefest .panel .nav-tabs li a:hover {
+.gtgamefest .nav-tabs li a:hover {
   background-color: #333333;
+}
+.gtgamefest .generalRulesTabs .tab-content {
+  padding-top: 20px;
+}
+.gtgamefest .panel {
+  background-color: transparent;
 }
 .gtgamefest .panel.panel-default.consecutive-panel {
   border-radius: 0px;

@@ -110,7 +110,7 @@ angular.module('app.directives', [])
                     $(this).addClass('active orange');
                     var anchor = $(this).attr('href');
                     $(document.body).animate({
-                        'scrollTop':   $('#eventRules').offset().top
+                        'scrollTop':   $('.generalRulesTabs').offset().top
                     }, 1000, 'swing');
                 });
             }

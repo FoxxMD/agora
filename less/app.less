@@ -38,14 +38,19 @@
       border: 1px solid #e8e8e8;
     }
   }
+  .nav-tabs li a {
+    color: @text-color;
+    &:hover {
+      background-color: @gray-dark;
+    }
+  }
+  .generalRulesTabs{
+    .tab-content{
+      padding-top:20px;
+    }
+  }
   .panel {
     background-color: transparent;
-    .nav-tabs li a {
-      color: @text-color;
-      &:hover {
-        background-color: @gray-dark;
-      }
-    }
     &.panel-default {
       &.consecutive-panel {
         border-radius: 0px;
