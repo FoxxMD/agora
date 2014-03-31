@@ -122,7 +122,6 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     function setUsers($param1, $param2, $param3, $isAdmin) {
         $db = getDB();
         $response = new stdClass();
-        if(($param2 != "paid" && $param2 != "email") || $isAdmin) {
         $fixedParam = "";
             switch($param2)
             {
@@ -145,24 +144,48 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 $fixedParam = "steam";
                 break;
             }
-            $sql = "update users set ".$fixedParam."=? where id=?";
-            //$sql = "update users set ?=? where id=?";
-
-            $statement = $db -> prepare($sql);
-            $statement -> bind_param('si', $param3, $param1);
-
-            if($statement -> execute())
-            {
-               $response -> success = true;
+            if($param2 == "paid" || $param2 == "email" || $param2 == "entered" && $isAdmin) {
+                switch($param2)
+                {
+                case "paid":
+                    $fixedParam = "paid";
+                    break;
+                case "email":
+                    $fixedParam = "email";
+                    break;
+                case "entered":
+                    $fixedParam = "entered";
+                    break;
+                }
             }
             else{
                 $response -> success = false;
-                $response -> message = $db -> error;
+                $response -> message = "Unauthorized";
             }
-        } else {
-            $response -> success = false;
-            $response -> message = "Unauthorized";
-        }
+            if($fixedParam != "")
+            {
+                $sql = "update users set ".$fixedParam."=? where id=?";
+
+                $statement = $db -> prepare($sql);
+                $statement -> bind_param('si', $param3, $param1);
+
+                if($statement -> execute())
+                {
+                   $response -> success = true;
+                }
+                else{
+                    $response -> success = false;
+                    $response -> message = $db -> error;
+                }
+            }
+            else{
+                $response -> success = false;
+                if(!property_exist($response, "message"))
+                {
+                    $response -> message = "A valid field was not provided.";
+                }
+            }
+
         return $response;
     }
 
@@ -740,4 +763,46 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
        }
        return $response;
     }
+        function deleteTeam($id, $authUser, $isAdmin, $isGameAdmin) {
+            $db = getDB();
+            $response = new stdClass();
+
+            $sql = "select captain from teams where id=?";
+            $statement1 = $db -> prepare($sql);
+            $statement1 -> bind_param('i', $id);
+            if($statement1 -> execute())
+            {
+                $statement1 -> bind_result($captain);
+                $statement1 -> fetch();
+                $statement1 -> close();
+
+                if($authUser -> id == $captain || $isAdmin || $isGameAdmin)
+                {
+                    $sql = "delete from teams where id=?";
+
+                    $statement = $db -> prepare($sql);
+                    $statement -> bind_param('i', $id);
+                    if($statement -> execute())
+                    {
+                        $response -> success = true;
+                    }
+                    else{
+                        $response -> success = false;
+                        $response -> message = $db -> error;
+                    }
+                }
+                else{
+                    $response -> success = false;
+                    $response -> message = "Not Authorized";
+                }
+
+            }
+            else{
+                $response -> success = false;
+                $response -> message = $db -> error;
+            }
+
+
+            return $response;
+        }
 ?>

@@ -302,7 +302,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         };
     }])
-    .controller('userctrl', ['$scope', 'userService', '$stateParams', '$state', function ($scope, userService, $stateParams, $state) {
+    .controller('userctrl', ['$scope', 'userService', '$stateParams', '$state','$filter', function ($scope, userService, $stateParams, $state, $filter) {
 
         if(userService.getProfile().justPaid)
         {
@@ -315,8 +315,23 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             userService.alreadyPaid(false);
         }
 
+        $scope.paid = [{value: 1, text:"Yes"},
+            {value: 0, text:"No"}];
+        $scope.entered = [{value: 1, text:"Yes"},
+            {value: 0, text:"No"}];
+
         userService.getUser($stateParams.userId).promise.then(function (userData) {
             $scope.user = userData;
+
+            $scope.showPaid = function() {
+                var selected = $filter('filter')($scope.paid, {value: $scope.user.paid});
+                return ($scope.user.paid && selected.length) ? selected[0].text : 'Not set';
+            };
+            $scope.showEntered = function() {
+                var selected = $filter('filter')($scope.entered, {value: $scope.user.entered});
+                return ($scope.user.entered && selected.length) ? selected[0].text : 'Not set';
+            };
+
         });
         $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
         $scope.ownProfile = ($stateParams.userId == userService.getProfile().id) || $state.current.name == "profile";
@@ -335,7 +350,20 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 return userService.updateUser(userService.getProfile().id , element, updateVal);
             }
 
-        }
+        };
+
+        $scope.deleteUser = function(userId) {
+          userService.deleteUser(userId).promise.then(function(){
+              if(userService.getProfile().id == userId){
+                  userService.logoff();
+              }else{
+                  $state.go('users');
+              }
+          },function(response){
+            $scope.userErrorMessage = response;
+          });
+        };
+
         $scope.submitPasswordChange = function(){
             if($scope.admin)
             {
@@ -351,6 +379,12 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
     }])
     .controller('usersctrl', ['$scope', 'userService', '$state','ngTableParams','$filter', function ($scope, userService, $state, ngTableParams, $filter) {
         $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
+
+        $scope.paid = [{value: 1, text:"Yes"},
+            {value: 0, text:"No"}];
+        $scope.entered = [{value: 1, text:"Yes"},
+            {value: 0, text:"No"}];
+
         userService.getUsers().promise.then(function (data) {
             //$scope.users = userArray;
 
@@ -377,6 +411,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         });
 
+        $scope.updateUser = function (userId, element, updateVal) {
+            return userService.updateUser(userId, element, updateVal);
+        };
+
         $scope.goToUser = function (id) {
             $state.go('user', {userId: id});
         }
@@ -385,7 +423,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         $scope.goToTeam = function (id) {
             $state.go('team', {teamId: id});
-        }
+        };
 
         teamService.getTeams().promise.then(function (data) {
             //$scope.teams = response;

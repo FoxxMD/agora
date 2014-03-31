@@ -216,6 +216,15 @@ angular.module('app.directives', [])
                     });
                 };
 
+                $scope.deleteTeam = function(id)
+                {
+                    teamService.deleteTeam(id).promise.then(function(){
+                        $state.go('teams');
+                    },function(response){
+                        $scope.teamErrorMessage = response;
+                    });
+                };
+
                 function getTeamInfo() {
 
                     teamService.getTeam($stateParams.teamId).promise.then(function (teamData) {

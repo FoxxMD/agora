@@ -49,6 +49,9 @@
         case "set":
             $result = setTeam($data, $authUser, $isAdmin, $isGameAdmin);
             break;
+        case "delete":
+            $result = deleteTeam($data -> id, $authUser, $isAdmin, $isGameAdmin);
+            break;
         case "add":
             $result = addTeamMember($data);
             break;

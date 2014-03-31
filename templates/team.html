@@ -105,5 +105,6 @@
                 </div>
             </fieldset>
         </div>
+        <button ng-if="ownTeam || admin" type="button" class="btn btn-danger" ng-click="deleteTeam(team.ID)">Delete Team</button>
     </div>
 </div>

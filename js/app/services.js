@@ -245,6 +245,26 @@ angular.module('app.services', [])
             return deferred;
         };
 
+        this.deleteUser = function(id) {
+            var deferred = $q.defer();
+            var postData = {
+                id: id
+            };
+
+            $http({method: 'POST', url: '/php/users.php', data: postData, params: {mode: 'delete'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else{
+                    deferred.reject(response.message);
+                }
+            }).error(function(response){
+                deferred.reject('Error deleting. Technical error: ' + response.message);
+            });
+
+            return deferred;
+        };
+
         this.logoff = function () {
             $localStorage.$reset();
             user = {
@@ -287,7 +307,7 @@ angular.module('app.services', [])
                     deferred.reject('Error getting team');
                 });
             return deferred;
-        }
+        };
 
         this.createTeam = function (postData) {
             var deferred = $q.defer();
@@ -301,7 +321,7 @@ angular.module('app.services', [])
                     deferred.reject('Error creating team');
                 });
             return deferred;
-        }
+        };
 
         this.updateTeam = function (param, paramValue, teamId) {
 
@@ -322,6 +342,26 @@ angular.module('app.services', [])
             }).error(function (response) {
                     deferred.reject(response);
                 });
+            return deferred;
+        };
+
+        this.deleteTeam = function(id)
+        {
+            var deferred = $q.defer();
+
+            var postData = {
+                id: id
+            };
+            $http({method: 'POST', url: '/php/teams.php', data: postData, params: {mode: 'delete'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            }).error(function (response) {
+                deferred.reject(response);
+            });
             return deferred;
         };
 

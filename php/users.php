@@ -53,7 +53,7 @@
                 $result = getUser($id, $fullAccess);
             } else if($mode == "set" && $fullAccess) {
                 $result = setUsers($data -> id, $data -> param, $data -> updatevalue, $isAdmin);
-            } else if($mode == "delete" && $fullAccess) {
+            } else if($mode == "delete" && ($isOwnData || $isAdmin)) {
                 $result = deleteUser($id);
             } else if($mode == "getAll") {
                 $result = getUsers($isAdmin);

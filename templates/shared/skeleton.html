@@ -16,7 +16,7 @@
                 <li><a ui-sref="servers">Servers</a></li>
                 <li><a href="http://streams.gtgamefest.com">Streams</a></li>
                 <li ng-if="isLoggedIn"><a ui-sref="users"><strong>Users</strong></a></li>
-                <li ng-if="isLoggedIn"><a ui-sref="teams"><strong>Teams</strong></a></li>
+                <li ng-if="userService.getProfile().role != 0"><a ui-sref="teams"><strong>Teams</strong></a></li> <!-- TODO was isLoggedIn, wait until tournaments included -->
                 <li><a ui-sref="about">About Us</a></li>
             </ul>
             <ul ng-if="!isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right">
