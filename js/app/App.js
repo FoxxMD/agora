@@ -109,6 +109,12 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider',
                 data: '/content/games/ssb.json',
                 parent: 'games'
             })
+            .state('hs', {
+                template: '<div game-dir></div>',
+                url: '/hearthstone',
+                data: '/content/games/hs.json',
+                parent: 'games'
+            })
             /*
                 End of Game Sections
 

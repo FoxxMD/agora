@@ -23,7 +23,7 @@
             ],
             "rules": ["Tournament format is BO3 (best of three) single elimination bracket with exception of the final match which is BO5 (best of five). ",
 				"Players may pick any hero before start of each round and must play all three (five) games with the same hero. Players are allowed to switch cards (sideboard) between each game during a match and should do so within reasonable amount of time. ",
-				"Both players are expected to report/confirm the result of the match immediately after it\’s completed. Screenshot your victory screens just in case. Matches are reported by messaging the admin. ",
+				"Both players are expected to report/confirm the result of the match immediately after it's completed. Screenshot your victory screens just in case. Matches are reported by messaging the admin. ",
 				"Disconnect during a game is counted as a game loss unless both participants of the match agree otherwise. "
 			]
         }
