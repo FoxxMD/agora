@@ -20,8 +20,8 @@
                 <li><a ui-sref="about">About Us</a></li>
             </ul>
             <ul ng-if="!isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right">
-                <li><a ng-click="openRegistration()">Register</a></li>
-                <li><a ng-click="openLogin()">Login</a></li>
+                <li><a analytics-on ng-click="openRegistration()">Register</a></li>
+                <li><a analytics-on ng-click="openLogin()">Login</a></li>
             </ul>
             <ul ng-if="isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right-login">
                 <li>
@@ -44,7 +44,7 @@
     <strong>Hey! Listen!</strong><span style="margin-left:15px; font-size:18px;"
                                        class="glyphicon glyphicon-info-sign"></span>
     <span class="fulltext">
-       Your entry fee has not been paid yet. Complete registration by paying now. <button type="button"
+       Your entry fee has not been paid yet. Complete registration by paying now. <button analytics-on analytics-event="Pay From Indicator" type="button"
                                                                                           ng-click="openPay()"
                                                                                           class="btn btn-info">Pay Now!
     </button>
