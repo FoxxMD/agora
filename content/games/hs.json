@@ -1,0 +1,32 @@
+{
+    "title": "Pokemon Trading Card Game",
+    "overview": "content/games/hs.html",
+    "rules": ["Every participant of the tournament must own a Hearthstone () account. Tournament entry is free of charge. ",
+				"All games must be played on the respective region for which the tournament is held (North America). ",
+				"If your opponent does not show for 15 minutes since the start of first round, 15 minutes since both you and your opponent are paired together in a bracket match, or disconnects for more than 15 minutes in between the games of an ongoing match, please contact the tournament administrator.",
+				"ANY form of cheating will result in a permanent ban from this and all future Gamefest tournaments. ",
+				"Excessive BM will not be tolerated. ",
+				"You are free to stream at your own risk. "
+		],
+    "tourney": [ 
+        {
+            "title": "TCG",
+            "prizes": [ 
+                {
+                    "place": "1st",
+                    "title": "40 Expert Packs"
+                },
+                { 
+                    "place": "2nd",
+                    "title": "15 Expert Packs"
+                }
+            ],
+            "rules": ["Tournament format is BO3 (best of three) single elimination bracket with exception of the final match which is BO5 (best of five). ",
+				"Players may pick any hero before start of each round and must play all three (five) games with the same hero. Players are allowed to switch cards (sideboard) between each game during a match and should do so within reasonable amount of time. ",
+				"Both players are expected to report/confirm the result of the match immediately after it\’s completed. Screenshot your victory screens just in case. Matches are reported by messaging the admin. ",
+				"Disconnect during a game is counted as a game loss unless both participants of the match agree otherwise. "
+			]
+        }
+    ],
+	"streaming":"/streams/hsStream.html" 
+}
