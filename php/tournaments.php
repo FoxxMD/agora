@@ -39,7 +39,9 @@
         switch($mode) {
             case "registerPlayer":
                 if($fullAccess || $isGameAdmin)
-                    $result = registerPlayers($params["tourneyID"], $params["ID"]);
+                {
+                    $result = registerPlayer($data);
+                }
                 else {
                     $result -> success = false;
                     $result -> message = "Not Authorized";
@@ -48,7 +50,7 @@
 
             case "registerTeam":
                 if($fullAccess || $isGameAdmin)
-                    $result = registerTeams($params["tourneyID"], $params["ID"]);
+                    $result = registerTeam($data);
                 else {
                     $result -> success = false;
                     $result -> message = "Not Authorized";

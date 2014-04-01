@@ -8,9 +8,9 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
         //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
-        $db = new mysqli("localhost","gtgamefe_live","3{{(a=lc?JFN", "gtgamefe_live"); //for live
+        //$db = new mysqli("localhost","gtgamefe_live","3{{(a=lc?JFN", "gtgamefe_live"); //for live
         return $db;
     }
 
@@ -764,48 +764,47 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
        }
        return $response;
     }
-        function deleteTeam($id, $authUser, $isAdmin, $isGameAdmin) {
-            $db = getDB();
-            $response = new stdClass();
 
-            $sql = "select captain from teams where id=?";
-            $statement1 = $db -> prepare($sql);
-            $statement1 -> bind_param('i', $id);
-            if($statement1 -> execute())
+    function deleteTeam($id, $authUser, $isAdmin, $isGameAdmin) {
+        $db = getDB();
+        $response = new stdClass();
+        $response -> success = false;
+
+        $sql = "select captain from teams where id=?";
+        $statement1 = $db -> prepare($sql);
+        $statement1 -> bind_param('i', $id);
+        if($statement1 -> execute())
+        {
+            $statement1 -> bind_result($captain);
+            $statement1 -> fetch();
+            $statement1 -> close();
+
+            if($authUser -> id == $captain || $isAdmin || $isGameAdmin)
             {
-                $statement1 -> bind_result($captain);
-                $statement1 -> fetch();
-                $statement1 -> close();
+                $sql = "delete from teams where id=?";
 
-                if($authUser -> id == $captain || $isAdmin || $isGameAdmin)
+                $statement = $db -> prepare($sql);
+                $statement -> bind_param('i', $id);
+                if($statement -> execute())
                 {
-                    $sql = "delete from teams where id=?";
-
-                    $statement = $db -> prepare($sql);
-                    $statement -> bind_param('i', $id);
-                    if($statement -> execute())
-                    {
-                        $response -> success = true;
-                    }
-                    else{
-                        $response -> success = false;
-                        $response -> message = $db -> error;
-                    }
+                    $response -> success = true;
                 }
                 else{
-                    $response -> success = false;
-                    $response -> message = "Not Authorized";
+                    $response -> message = $db -> error;
                 }
-
             }
             else{
-                $response -> success = false;
-                $response -> message = $db -> error;
+                $response -> message = "Not Authorized";
             }
 
-
-            return $response;
         }
+        else{
+            $response -> message = $db -> error;
+        }
+
+
+        return $response;
+    }
 
 
     function getTourneyPlayers($tourneyID) {
@@ -854,66 +853,74 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         }
     }
 
-    function registerPlayer($tourneyID, $playerID) {
+    function registerPlayer($data) {
 
         $db = getDB();
 
-        $sql = "select identifier from tournaments where ID = ?";
+        $sql = "select * from tournaments where ID = ?";
         $statement = $db->prepare($sql);
-        $statement->bind_param("i", $tourneyID);
+        $statement->bind_param("i", $data -> tournamentId);
 
         $response = new stdClass();
+        $response -> success = false;
 
         if($statement->execute()) {
-            $statement->bind_result($identifier);
-            $statement->fetch();
 
-            $sql2 = "insert into ? values (NULL, ?)";
-            $statement2 = $db->prepare($sql2);
-            $statement2->bind_param("si",$identifier, $playerID);
+            $statement -> store_result();
+            $statement -> close();
+            if($statement -> num_rows > 0)
+            {
+                $sql = "insert into tournament_users values (NULL, ?, ?, 0, 0)";
+                $statement2 = $db->prepare($sql);
+                $statement2->bind_param("ii",$data -> userId, $data -> tournamentId);
 
-            if($statement2->execute()) {
-                $response->success = true;
-            } else {
-                $response->success = false;
-                $response->message = $db->error;
+                if($statement2->execute()) {
+                    $response->success = true;
+                } else {
+                    $response->message = $db->error;
+                }
             }
         } else {
-            $response->success = false;
             $response->message = $db->error;
         }
 
         return $response;
     }
 
-    function registerTeam($tourneyID, $teamID) {
+    function registerTeam($data) {
 
         $db = getDB();
 
-        $sql = "select identifier from tournaments where ID = ?";
+        $sql = "select * from tournaments where ID = ?";
         $statement = $db->prepare($sql);
-        $statement->bind_param("i", $tourneyID);
+        $statement->bind_param("i", $data -> tournamentId);
 
         $response = new stdClass();
+        $response -> success = false;
 
         if($statement->execute()) {
-            $statement->bind_result($identifier);
-            $statement->fetch();
 
-            $sql2 = "insert into ? values (NULL, ?)";
-            $statement2 = $db->prepare($sql2);
-            $statement2->bind_param("si",$identifier, $teamID);
+            $statement -> store_result();
+            $statement -> close();
+            if($statement -> num_rows > 0)
+            {
+                $sql2 = "insert into tournament_teams values (NULL, ?, ?, 0)";
+                $statement2 = $db-> prepare($sql2);
+                $statement2-> bind_param("ii",$data -> teamId, $data -> tournamentId);
 
-            if($statement2->execute()) {
-                $response->success = true;
-            } else {
-                $response->success = false;
-                $response->message = $db->error;
+                if($statement2->execute()) {
+                    $response-> success = true;
+                } else {
+                    $response->message = $db->error;
+                }
             }
-        } else {
-            $response->success = false;
-            $response->message = $db->error;
+            else{
+                $response -> message = "Tournament ID was not valid.";
+            }
         }
+        else {
+        $response->message = $db->error;
+    }
 
         return $response;
     }
