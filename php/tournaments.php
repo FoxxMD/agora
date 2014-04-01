@@ -37,6 +37,7 @@
         $fullAccess = ($isOwnData || $isAdmin);
 
         switch($mode) {
+        //TODO add getting tournament information or flag for returning tournmanet information with some other request
             case "registerPlayer":
                 if($fullAccess || $isGameAdmin)
                 {
@@ -56,10 +57,10 @@
                     $result -> message = "Not Authorized";
                 }
                 break;
-
+            //TODO add leaving tournament as player or team
             case "getUsers":
                 if($isAdmin || $isGameAdmin)
-                    $result = getTourneyPlayers($params["tourneyID"]);
+                    $result = getTourneyPlayers($params["tourneyId"]);
                 else {
                     $result -> success = false;
                     $result -> message = "Not Authorized";
@@ -68,25 +69,7 @@
 
             case "getTeams":
                 if($isAdmin || $isGameAdmin)
-                    $result = getTourneyTeams($params["tourneyID"]);
-                else {
-                    $result -> success = false;
-                    $result -> message = "Not Authorized";
-                }
-                break;
-
-            case "getUsersAll":
-                if($isAdmin || $isGameAdmin)
-                    $result = getTourneyPlayersAll($params["tourneyID"]);
-                else {
-                    $result -> success = false;
-                    $result -> message = "Not Authorized";
-                }
-                break;
-
-            case "getTeamsAll":
-                if($isAdmin || $isGameAdmin)
-                    $result = getTourneyTeamsAll($params["tourneyID"]);
+                    $result = getTourneyTeams($params["tourneyId"]);
                 else {
                     $result -> success = false;
                     $result -> message = "Not Authorized";
