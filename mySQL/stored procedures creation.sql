@@ -1,9 +1,4 @@
--- --------------------------------------------------------------------------------
--- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
--- --------------------------------------------------------------------------------
 DELIMITER $$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getTeamByIds`(IN captainId int(11), IN member1Id int(11), IN member2Id int(11), IN member3Id int(11), IN member4Id int(11))
 BEGIN
 
@@ -31,4 +26,25 @@ end if;
 
 SELECT @captainName,@member1Name,@member2Name,@member3Name,@member4Name;
 
-END
+END$$
+DELIMITER ;
+
+-- Get Teams by Tournament Id
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTeamByTournament`(IN inputTournamentId int(11))
+BEGIN
+
+SELECT te.ID, te.name, te.captain, t.isPresent FROM teams te INNER JOIN tournament_teams t ON t.TeamId = te.ID WHERE t.TournamentId=inputTournamentId;
+
+END$$
+DELIMITER ;
+
+--Get Users by Tournament Id
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsersByTournament`(IN inputTournamentId int(11))
+BEGIN
+
+SELECT u.id, u.alias , u.email, u.steam, u.bn, u.lol, u.xbox, u.ign, u.role, t.isAdmin, t.isPresent FROM users u INNER JOIN tournament_users t ON t.UserId = u.id WHERE t.TournamentId=inputTournamentId;
+
+END$$
+DELIMITER ;
