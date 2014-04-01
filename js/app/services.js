@@ -231,9 +231,6 @@ angular.module('app.services', [])
             };
             $http({method: 'POST', url: '/php/users.php', data: postData, params: {mode: 'set'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
-                    user[param] = paramValue;
-                    if (param == 'alias')
-                        $localStorage.alias = paramValue;
                     deferred.resolve();
                 }
                 else {

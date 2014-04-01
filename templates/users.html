@@ -12,8 +12,8 @@
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'Locktime'">{{user.locktime}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'Auth Expire'">{{user.authExpire}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'Role'">{{(user.role == 0) ? "Standard" : (user.role == 1) ? "System Admin" : "Game Admin"}}</td>
-        <td ng-show="admin" data-title="'Paid'"><button type="button" ng-click="updateUser(user.id,'paid',(user.paid == 1 ? 0 : 1)); user.paid = (user.paid == 1 ? 0 : 1) " ng-class="{'btn':true,'btn-success':user.paid == 1,'btn-danger': user.paid == 0}">{{user.paid == 1 ? 'Yes' : 'No'}}</button></td>
-        <td ng-show="admin" data-title="'Entered'"><button type="button" ng-click="updateUser(user.id,'entered',(user.entered == 1 ? 0 : 1)); user.entered = (user.entered == 1 ? 0 : 1)" ng-class="{'btn':true,'btn-success':user.entered == 1,'btn-danger': user.entered == 0}">{{user.entered == 1 ? 'Yes' : 'No'}}</button></td>
+        <td ng-show="admin" data-title="'Paid'"><button type="button" ng-click="updateUser(user.id,'paid',(user.paid == 1 ? 0 : 1)); user.paid = (user.paid == 1 ? 0 : 1)" class="btn" ng-class='user.paid == 0 ? "btn-danger" : "btn-success"'>{{user.paid == 1 ? 'Yes' : 'No'}}</button></td>
+        <td ng-show="admin" data-title="'Entered'"><button type="button" ng-click="updateUser(user.id,'entered',(user.entered == 1 ? 0 : 1)); user.entered = (user.entered == 1 ? 0 : 1)" class="btn" ng-class='user.entered == 0 ? "btn-danger" : "btn-success"'>{{user.entered == 1 ? 'Yes' : 'No'}}</button></td>
     </tr>
     </tbody>
 </table>

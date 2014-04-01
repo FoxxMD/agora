@@ -61,7 +61,7 @@ angular.module('app.directives', [])
             restrict: 'A',
             templateUrl: '/templates/pay.html',
             link: function (scope, elem, attrs) {
-                Stripe.setPublishableKey('pk_test_C5kuVaBMR3FiCbMYfxS9mxpq'); //test key
+                Stripe.setPublishableKey('pk_live_YwddUwRH90xpNcHRNewOjZhG'); //live key
             },
             controller: function ($scope) {
                 if (userService.getProfile().paid == 1) {
@@ -110,7 +110,7 @@ angular.module('app.directives', [])
                     $(this).addClass('active orange');
                     var anchor = $(this).attr('href');
                     $(document.body).animate({
-                        'scrollTop':   $('.generalRulesTabs').offset().top
+                        'scrollTop':   $('.gamesDirSection').offset().top
                     }, 1000, 'swing');
                 });
             }

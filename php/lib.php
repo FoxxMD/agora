@@ -9,7 +9,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
     function getDB() {
         //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
-        $db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        $db = new mysqli("localhost","gtgamefe_live","3{{(a=lc?JFN", "gtgamefe_live"); //for live
         return $db;
     }
 
@@ -338,7 +339,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 $headers[] = "X-Mailer: PHP/".phpversion();
                 $headers.="Return-Path:<noreply@gtgamefest.com>";
 
-                $body = "Hello User,\r\n\r\nTo reset your password visit http://beta.gtgamefest.com/#/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit http://beta.gtgamefest.com/#/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\n -Gt Gamefest Staff";
+                $body = "Hello User,\r\n\r\nTo reset your password visit http://gtgamefest.com/#/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit http://gtgamefest.com/#/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\n -Gt Gamefest Staff";
 
                     if(mail($data -> email, $subject, $body, implode("\r\n",$headers), "-f noreply@gtgamefest.com"))
                     {
@@ -461,7 +462,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     {
         require_once("./Stripe.php");
 
-        Stripe::setApiKey("sk_test_MEx8F6JQpTjOfy67AOICA3xf");
+        Stripe::setApiKey("sk_live_EQe99LHgK8Pk8qSwT7xCqEIz");
         $response = new stdClass();
         $response -> success = false;
         if(property_exists($authUser,"email"))
