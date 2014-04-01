@@ -805,4 +805,175 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             return $response;
         }
+
+
+    function getTourneyPlayers($tourneyID) {
+        $db = getDB();
+
+        $tourneyPlayerObj = new stdClass();
+
+        $sql = "select * from tournaments_user where ID = ?";
+        $statement = $db->prepare($sql);
+        $statement->bind_param('i',$tourneyID);
+
+
+        if($statement->execute()) {
+            $statement->bind_result($ID, $player1, $player2, $player1_e, $player2_e);
+            $statement->fetch();
+
+            $tourneyPlayerObj->player1 = getUser($player1, true);
+            $tourneyPlayerObj->player2 = getUser($player2, true);
+            $tourneyPlayerObj->player1_entered = $player1_e;
+            $tourneyPlayerObj->player2_entered = $player2_e;
+
+            return $tourneyPlayerObj;
+        }
+    }
+
+    function getTourneyTeams($tourneyID) {
+        $db = getDB();
+
+        $tourneyTeamObj = new stdClass();
+
+        $sql = "select * from tournaments_team where ID = ?";
+        $statement = $db->prepare($sql);
+        $statement->bind_param('i',$tourneyID);
+
+
+        if($statement->execute()) {
+            $statement->bind_result($ID, $team1, $team2, $team1_e, $team2_e);
+            $statement->fetch();
+
+            $tourneyTeamObj->team1 = getUser($team1, true);
+            $tourneyTeamObj->team2 = getUser($team2, true);
+            $tourneyTeamObj->team1_entered = $team1_e;
+            $tourneyTeamObj->team2_entered = $team2_e;
+
+            return $tourneyTeamObj;
+        }
+    }
+
+    function registerPlayer($tourneyID, $playerID) {
+
+        $db = getDB();
+
+        $sql = "select identifier from tournaments where ID = ?";
+        $statement = $db->prepare($sql);
+        $statement->bind_param("i", $tourneyID);
+
+        $response = new stdClass();
+
+        if($statement->execute()) {
+            $statement->bind_result($identifier);
+            $statement->fetch();
+
+            $sql2 = "insert into ? values (NULL, ?)";
+            $statement2 = $db->prepare($sql2);
+            $statement2->bind_param("si",$identifier, $playerID);
+
+            if($statement2->execute()) {
+                $response->success = true;
+            } else {
+                $response->success = false;
+                $response->message = $db->error;
+            }
+        } else {
+            $response->success = false;
+            $response->message = $db->error;
+        }
+
+        return $response;
+    }
+
+    function registerTeam($tourneyID, $teamID) {
+
+        $db = getDB();
+
+        $sql = "select identifier from tournaments where ID = ?";
+        $statement = $db->prepare($sql);
+        $statement->bind_param("i", $tourneyID);
+
+        $response = new stdClass();
+
+        if($statement->execute()) {
+            $statement->bind_result($identifier);
+            $statement->fetch();
+
+            $sql2 = "insert into ? values (NULL, ?)";
+            $statement2 = $db->prepare($sql2);
+            $statement2->bind_param("si",$identifier, $teamID);
+
+            if($statement2->execute()) {
+                $response->success = true;
+            } else {
+                $response->success = false;
+                $response->message = $db->error;
+            }
+        } else {
+            $response->success = false;
+            $response->message = $db->error;
+        }
+
+        return $response;
+    }
+
+    function getTourneyPlayersAll($tourneyID) {
+
+        $db = getDB();
+
+        $sql = "select identifier from tournaments where ID = ?";
+        $statement = $db->prepare($sql);
+        $statement->bind_param("i", $tourneyID);
+
+        $tourneyPlayersArray = array();
+        $count = 0;
+
+        if($statement->execute()) {
+            $statement->bind_result($identifier);
+            $statement->fetch();
+
+
+            $sql = "select * from '".$identifier."'";
+            if($result = $db->query($sql)) {
+                while($playerIDObj = $result->fetch_object()) {
+                    $sql2 = "select * from users where ID=".$playerIDObj->playerID;
+                    $result2 = $db->query($sql2);
+                    $tourneyPlayersArray[$count] = $result2->fetch_object();
+                    $count++;
+                }
+            }
+
+            return $tourneyPlayersArray;
+        }
+    }
+
+    function getTourneyTeamsAll($tourneyID) {
+
+        $db = getDB();
+
+        $sql = "select identifier from tournaments where ID = ?";
+        $statement = $db->prepare($sql);
+        $statement->bind_param("i", $tourneyID);
+
+        $tourneyTeamsArray = array();
+        $count = 0;
+
+        if($statement->execute()) {
+            $statement->bind_result($identifier);
+            $statement->fetch();
+
+
+            $sql = "select * from '".$identifier."'";
+            if($result = $db->query($sql)) {
+                while($teamIDObj = $result->fetch_object()) {
+                    $sql2 = "select * from teams where ID=".$teamIDObj->teamID;
+                    $result2 = $db->query($sql2);
+                    $tourneyTeamsArray[$count] = $result2->fetch_object();
+                    $count++;
+                }
+            }
+
+            return $tourneyTeamsArray;
+        }
+    }
 ?>
