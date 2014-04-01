@@ -37,5 +37,6 @@ CREATE TABLE `users` (
   `attempt` int(11) DEFAULT NULL,
   `authtoken` varchar(300) DEFAULT NULL,
   `authExpire` datetime DEFAULT NULL,
+  `resetToken` varchar(300) DEFAULT NULL
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
