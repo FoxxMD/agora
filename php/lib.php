@@ -925,4 +925,24 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             return $tourneyTeamsArray;
         }
     }
+    function getTournamentInfo($tourId) {
+
+        $db = getDB();
+        $tour = new stdClass();
+        $response = new stdClass();
+        $response -> success = false;
+
+        $statement = $db -> prepare("CALL getTournamentInfo(?)");
+        $statement->bind_param("i", $tourId);
+
+        if($statement -> execute()) {
+            $statement -> bind_result($tour -> id, $tour -> game, $tour -> name, $tour -> teamCount, $tour -> playerCount);
+            $statement -> fetch();
+            return $tour;
+        }
+        else{
+            $response -> message = $db -> error;
+            return $response;
+        }
+    }
 ?>

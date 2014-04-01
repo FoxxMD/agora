@@ -39,12 +39,28 @@ SELECT te.ID, te.name, te.captain, t.isPresent FROM teams te INNER JOIN tourname
 END$$
 DELIMITER ;
 
---Get Users by Tournament Id
+-- Get Users by Tournament Id
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsersByTournament`(IN inputTournamentId int(11))
 BEGIN
 
 SELECT u.id, u.alias , u.email, u.steam, u.bn, u.lol, u.xbox, u.ign, u.role, t.isAdmin, t.isPresent FROM users u INNER JOIN tournament_users t ON t.UserId = u.id WHERE t.TournamentId=inputTournamentId;
+
+END$$
+DELIMITER ;
+
+-- Get Tournament Info
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTournamentInfo`(IN inputTournamentId int(11))
+BEGIN
+
+DECLARE teamCount INT;
+DECLARE playerCount INT;
+
+SELECT COUNT(*) INTO @teamCount FROM tournament_teams t where t.TournamentId=inputTournamentId;
+SELECT COUNT(*) INTO @playerCount FROM tournament_users t where t.TournamentId=inputTournamentId;
+
+Select *,@teamCount,@playerCount FROM tournaments t where t.Id=inputTournamentId;
 
 END$$
 DELIMITER ;

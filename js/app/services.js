@@ -457,7 +457,14 @@ angular.module('app.services', [])
 
         this.getTournamentInfo = function(id)
         {
-            //stub
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getTournamentInfo', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                deferred.reject('Error getting teams for this tournament.');
+            });
+            return deferred;
         };
 
     }]);
