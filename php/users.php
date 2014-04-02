@@ -33,8 +33,9 @@
         $result = resetPassword($data);
     }
     else {
+        $result = new stdClass();
         $authUser = authenticateRequest($headers["Authentication"]);
-        if($authUser != null)
+        if($authUser != null && !property_exists($authUser, "success"))
         {
             $id = $authUser -> id;
             if($data != null)
@@ -72,8 +73,7 @@
             }
         }
         else {
-            $result -> success = false;
-            $result -> message = "Not Authorized";
+            $result = $authUser;
         }
     }
     echo json_encode($result);
