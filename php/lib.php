@@ -192,8 +192,10 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
     function authenticateRequest($authToken)
     {
+         $response = new stdClass();
+         $response -> success = false;
          $db = getDB();
-         $sql = "select email,id,role from users where authtoken=?";
+         $sql = "select email,id,role,authExpire from users where authtoken=?";
          $statement = $db -> prepare($sql);
          $statement -> bind_param('s',$authToken);
 
@@ -204,23 +206,32 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             if($statement -> num_rows > 0)
             {
                  $userObj = new stdClass();
-                 $statement -> bind_result($userObj -> email,$userObj -> id, $userObj -> role);
+                 $statement -> bind_result($userObj -> email,$userObj -> id, $userObj -> role, $userObj -> authExpire);
                  $statement -> fetch();
+
+                 //check to see if token is still valid
+                 $date = new DateTime();
+                 if($date -> getTimestamp() >= $userObj -> authExpire) {
+                    $response -> message = "authExpire";
+                    return $response;
+                 }
                  return $userObj;
             }
             else{
-                return null;
+                $response -> message = "Authentication Token was not valid.";
+                return $response;
             }
          }
          else{
-            return null;
+            $response -> message = $db -> error;
+            return $response;
          }
     }
 
     function verifyUser($param1, $param2) {
         $db = getDB();
 
-        $sqlTop = "select id,email,password,alias,role,locktime,attempt from users where email=? ";
+        $sqlTop = "select id,email,password,alias,role,locktime,attempt,authtoken,authExpire from users where email=? ";
 
         $statement = $db -> prepare($sqlTop);
         $statement -> bind_param('s', $param1);
@@ -234,16 +245,16 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             {
                 $userObj = new stdClass();
 
-                $statement -> bind_result($userObj -> id, $userObj -> email, $userObj -> password, $userObj -> alias,$userObj -> role, $userObj -> locktime, $userObj -> attempt);
+                $statement -> bind_result($userObj -> id, $userObj -> email, $userObj -> password, $userObj -> alias,$userObj -> role, $userObj -> locktime, $userObj -> attempt, $userObj -> authtoken, $userObj -> authExpire);
                 $statement -> fetch();
                 $statement -> close();
                 if($userObj -> attempt >= 5) {
-                    $time = time();
-                    if($time - strtotime($userObj -> locktime >= (60 * 15))) {
+                    $date = new DateTime();
+                    if($date -> getTimestamp() >= $userObj -> locktime) {
                         $sql = "update users set attempt=0 where email=?";
-                        $statement1 = $db -> query($sql);
+                        $statement1 = $db -> prepare($sql);
                         $statement1 -> bind_param('s', $param1);
-                        $db -> execute();
+                        $statement1 -> execute();
                         $statement1 -> close();
                     } else {
                        $response -> success = false;
@@ -264,7 +275,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $statement2 -> close();
                     if(($userObj -> attempt +1 ) >= 4) {
                         $time = time();
-                        $sql = "update users set locktime=DATE_ADD(NOW(), INTERVAL 15 MINUTE) where email=?";
+                        $sql = "update users set locktime=UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 15 MINUTE)) where email=?";
 
                         $statement3 = $db -> prepare($sql);
                         $statement3 -> bind_param('s', $param1);
@@ -280,18 +291,25 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $response -> message = "Username or Password incorrect";
                     return $response;
                 }
-                else{
-                    $authToken = getToken(40);
-                    $sql = "update users set attempt=0,authtoken=?,authExpire=DATE_ADD(NOW(),INTERVAL 1 DAY) where email=?";
-                    $statement4 = $db -> prepare($sql);
-                    $statement4 -> bind_param('ss', $authToken, $param1);
-                    $statement4 -> execute();
-                    $statement4 -> close();
+                else {
+                    $date = new DateTime();
+                    if($date -> getTimestamp() >= $userObj -> authExpire) {
+                        $authToken = getToken(40);
+                        $sql = "update users set attempt=0,authtoken=?,authExpire=UNIX_TIMESTAMP(DATE_ADD(NOW(),INTERVAL 1 DAY)) where email=?";
+                        $statement4 = $db -> prepare($sql);
+                        $statement4 -> bind_param('ss', $authToken, $param1);
+                        $statement4 -> execute();
+                        $statement4 -> close();
+                        $response -> authtoken = $authToken;
+                    }
+                    else{
+                        $response -> authtoken = $userObj -> authtoken;
+                    }
 
                     $response -> success = true;
                     $response -> alias = $userObj -> alias;
                     $response -> id = $userObj -> id;
-                    $response -> authtoken = $authToken;
+                    $response -> authExpire = $userObj -> authExpire;
                     $response -> role = $userObj -> role;
                 }
             }
@@ -308,7 +326,6 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     }
 
     function resetPassword($data){
-        ChromePhp::log($data -> email);
         $db = getDB();
         $response = new stdClass();
         $response -> success = false;
@@ -764,217 +781,46 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
        }
        return $response;
     }
-        function deleteTeam($id, $authUser, $isAdmin, $isGameAdmin) {
-            $db = getDB();
-            $response = new stdClass();
 
-            $sql = "select captain from teams where id=?";
-            $statement1 = $db -> prepare($sql);
-            $statement1 -> bind_param('i', $id);
-            if($statement1 -> execute())
+    function deleteTeam($id, $authUser, $isAdmin, $isGameAdmin) {
+        $db = getDB();
+        $response = new stdClass();
+        $response -> success = false;
+
+        $sql = "select captain from teams where id=?";
+        $statement1 = $db -> prepare($sql);
+        $statement1 -> bind_param('i', $id);
+        if($statement1 -> execute())
+        {
+            $statement1 -> bind_result($captain);
+            $statement1 -> fetch();
+            $statement1 -> close();
+
+            if($authUser -> id == $captain || $isAdmin || $isGameAdmin)
             {
-                $statement1 -> bind_result($captain);
-                $statement1 -> fetch();
-                $statement1 -> close();
+                $sql = "delete from teams where id=?";
 
-                if($authUser -> id == $captain || $isAdmin || $isGameAdmin)
+                $statement = $db -> prepare($sql);
+                $statement -> bind_param('i', $id);
+                if($statement -> execute())
                 {
-                    $sql = "delete from teams where id=?";
-
-                    $statement = $db -> prepare($sql);
-                    $statement -> bind_param('i', $id);
-                    if($statement -> execute())
-                    {
-                        $response -> success = true;
-                    }
-                    else{
-                        $response -> success = false;
-                        $response -> message = $db -> error;
-                    }
+                    $response -> success = true;
                 }
                 else{
-                    $response -> success = false;
-                    $response -> message = "Not Authorized";
+                    $response -> message = $db -> error;
                 }
-
             }
             else{
-                $response -> success = false;
-                $response -> message = $db -> error;
+                $response -> message = "Not Authorized";
             }
 
-
-            return $response;
+        }
+        else{
+            $response -> message = $db -> error;
         }
 
-
-    function getTourneyPlayers($tourneyID) {
-        $db = getDB();
-
-        $tourneyPlayerObj = new stdClass();
-
-        $sql = "select * from tournaments_user where ID = ?";
-        $statement = $db->prepare($sql);
-        $statement->bind_param('i',$tourneyID);
-
-
-        if($statement->execute()) {
-            $statement->bind_result($ID, $player1, $player2, $player1_e, $player2_e);
-            $statement->fetch();
-
-            $tourneyPlayerObj->player1 = getUser($player1, true);
-            $tourneyPlayerObj->player2 = getUser($player2, true);
-            $tourneyPlayerObj->player1_entered = $player1_e;
-            $tourneyPlayerObj->player2_entered = $player2_e;
-
-            return $tourneyPlayerObj;
-        }
-    }
-
-    function getTourneyTeams($tourneyID) {
-        $db = getDB();
-
-        $tourneyTeamObj = new stdClass();
-
-        $sql = "select * from tournaments_team where ID = ?";
-        $statement = $db->prepare($sql);
-        $statement->bind_param('i',$tourneyID);
-
-
-        if($statement->execute()) {
-            $statement->bind_result($ID, $team1, $team2, $team1_e, $team2_e);
-            $statement->fetch();
-
-            $tourneyTeamObj->team1 = getUser($team1, true);
-            $tourneyTeamObj->team2 = getUser($team2, true);
-            $tourneyTeamObj->team1_entered = $team1_e;
-            $tourneyTeamObj->team2_entered = $team2_e;
-
-            return $tourneyTeamObj;
-        }
-    }
-
-    function registerPlayer($tourneyID, $playerID) {
-
-        $db = getDB();
-
-        $sql = "select identifier from tournaments where ID = ?";
-        $statement = $db->prepare($sql);
-        $statement->bind_param("i", $tourneyID);
-
-        $response = new stdClass();
-
-        if($statement->execute()) {
-            $statement->bind_result($identifier);
-            $statement->fetch();
-
-            $sql2 = "insert into ? values (NULL, ?)";
-            $statement2 = $db->prepare($sql2);
-            $statement2->bind_param("si",$identifier, $playerID);
-
-            if($statement2->execute()) {
-                $response->success = true;
-            } else {
-                $response->success = false;
-                $response->message = $db->error;
-            }
-        } else {
-            $response->success = false;
-            $response->message = $db->error;
-        }
 
         return $response;
     }
 
-    function registerTeam($tourneyID, $teamID) {
-
-        $db = getDB();
-
-        $sql = "select identifier from tournaments where ID = ?";
-        $statement = $db->prepare($sql);
-        $statement->bind_param("i", $tourneyID);
-
-        $response = new stdClass();
-
-        if($statement->execute()) {
-            $statement->bind_result($identifier);
-            $statement->fetch();
-
-            $sql2 = "insert into ? values (NULL, ?)";
-            $statement2 = $db->prepare($sql2);
-            $statement2->bind_param("si",$identifier, $teamID);
-
-            if($statement2->execute()) {
-                $response->success = true;
-            } else {
-                $response->success = false;
-                $response->message = $db->error;
-            }
-        } else {
-            $response->success = false;
-            $response->message = $db->error;
-        }
-
-        return $response;
-    }
-
-    function getTourneyPlayersAll($tourneyID) {
-
-        $db = getDB();
-
-        $sql = "select identifier from tournaments where ID = ?";
-        $statement = $db->prepare($sql);
-        $statement->bind_param("i", $tourneyID);
-
-        $tourneyPlayersArray = array();
-        $count = 0;
-
-        if($statement->execute()) {
-            $statement->bind_result($identifier);
-            $statement->fetch();
-
-
-            $sql = "select * from '".$identifier."'";
-            if($result = $db->query($sql)) {
-                while($playerIDObj = $result->fetch_object()) {
-                    $sql2 = "select * from users where ID=".$playerIDObj->playerID;
-                    $result2 = $db->query($sql2);
-                    $tourneyPlayersArray[$count] = $result2->fetch_object();
-                    $count++;
-                }
-            }
-
-            return $tourneyPlayersArray;
-        }
-    }
-
-    function getTourneyTeamsAll($tourneyID) {
-
-        $db = getDB();
-
-        $sql = "select identifier from tournaments where ID = ?";
-        $statement = $db->prepare($sql);
-        $statement->bind_param("i", $tourneyID);
-
-        $tourneyTeamsArray = array();
-        $count = 0;
-
-        if($statement->execute()) {
-            $statement->bind_result($identifier);
-            $statement->fetch();
-
-
-            $sql = "select * from '".$identifier."'";
-            if($result = $db->query($sql)) {
-                while($teamIDObj = $result->fetch_object()) {
-                    $sql2 = "select * from teams where ID=".$teamIDObj->teamID;
-                    $result2 = $db->query($sql2);
-                    $tourneyTeamsArray[$count] = $result2->fetch_object();
-                    $count++;
-                }
-            }
-
-            return $tourneyTeamsArray;
-        }
-    }
 ?>

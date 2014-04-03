@@ -37,6 +37,10 @@
         </div>
     </div>
 </div>
+<div ng-if="siteError != undefined && siteError != null" style="margin-top:60px;" class="alert alert-danger alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <strong>{{siteError}}</strong>
+</div>
 <div ng-if="isLoggedIn && !userService.getProfile().paid && !dismissPaid"
      class="payReminder alert alert-warning alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -51,7 +55,7 @@
     </span>
 </div>
 <div class="contentPane container" style="position:relative;">
-    <div ui-view></div> <!-- class="animate-fade" Decided against, it messes with repeat animations and make the footer unsticky. -->
+    <div ui-view autoscroll='false'></div> <!-- class="animate-fade" Decided against, it messes with repeat animations and make the footer unsticky. -->
 </div>
 <div class="footer" style="padding-top:2em">
     <div class="container">

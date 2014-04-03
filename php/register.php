@@ -16,7 +16,7 @@
         $pwHash = $phpassHash -> hashPassword($user -> password);
         $authToken = getToken(40);
 
-        $sql = "insert into users values (NULL, ?,?,'',?,0,0,'','','','','',0,NULL,0,?,DATE_ADD(NOW(),INTERVAL 1 DAY),NULL)";
+        $sql = "insert into users values (NULL, ?,?,'',?,0,0,'','','','','',0,NULL,0,?,UNIX_TIMESTAMP(DATE_ADD(NOW(),INTERVAL 1 DAY)),NULL)";
 
         $statement = $db -> prepare($sql);
         $statement -> bind_param('ssss',$user -> email, $pwHash, $user -> alias, $authToken);

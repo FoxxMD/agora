@@ -2,7 +2,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <span ng-bind-html="teamErrorMessage"></span>
 </div>
-<h1>{{team.name}}<br/>
+<h1>{{team.name}}<img style="margin-left:35%;" ng-hide="team != undefined" src="/img/loading-cylon-red.svg" width="256" height="32" alt="Loading..."/><br/>
     <small>Team Profile</small>
 </h1>
 <div class="row">

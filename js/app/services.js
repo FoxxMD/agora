@@ -1,5 +1,5 @@
 angular.module('app.services', [])
-    .service('userService', ['Restangular', '$http', '$localStorage', '$q', '$rootScope', function (Restangular, $http, $localStorage, $q, $rootScope) {
+    .service('userService', ['$http', '$localStorage', '$q', '$rootScope', function ($http, $localStorage, $q, $rootScope) {
         var user = {
                 id: 0,
                 alias: '',
@@ -21,7 +21,7 @@ angular.module('app.services', [])
             adminMode = false;
 
         this.getProfile = function () {
-                    return user;
+            return user;
         };
 
 
@@ -256,8 +256,8 @@ angular.module('app.services', [])
                     deferred.reject(response.message);
                 }
             }).error(function(response){
-                deferred.reject('Error deleting. Technical error: ' + response.message);
-            });
+                    deferred.reject('Error deleting. Technical error: ' + response.message);
+                });
 
             return deferred;
         };
@@ -357,8 +357,8 @@ angular.module('app.services', [])
                     deferred.reject(response.message);
                 }
             }).error(function (response) {
-                deferred.reject(response);
-            });
+                    deferred.reject(response);
+                });
             return deferred;
         };
 
