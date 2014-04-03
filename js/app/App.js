@@ -476,7 +476,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         var modalCreateTeamCtrl = function ($scope, $modalInstance) {
 
-            $scope.games = ['Starcraft 2', 'League of Legends SR', 'League of Legends ARAM', 'CS:GO', 'Halo 3 2v2', 'Halo 3 3v3', 'SSB:Brawl', 'SSB:Melee', 'DOTA 2'];
+            $scope.games = ['CS:GO', 'DOTA 2', 'Starcraft 2', 'Halo 3 2v2', 'Halo 3 3v3', 'League of Legends SR', 'League of Legends ARAM', 'SSB:Brawl', 'SSB:Melee' ];
 
             $scope.submitTeam = function () {
                 var that = this;
