@@ -41,17 +41,14 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <strong>{{siteError}}</strong>
 </div>
-<div ng-cloak ng-if="isLoggedIn && !userService.getProfile().paid && !dismissPaid"
+<div ng-cloak ng-if="isLoggedIn && !userService.getProfile().paid && userService.getRemind()"
      class="payReminder alert alert-warning alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <!--ng-click="dismissPaid = true"-->
     <strong>Hey! Listen!</strong><span style="margin-left:15px; font-size:18px;"
                                        class="glyphicon glyphicon-info-sign"></span>
     <span class="fulltext">
-       Your entry fee has not been paid yet. Complete registration by paying now. <button type="button"
-                                                                                          ng-click="openPay()"
-                                                                                          class="btn btn-info">Pay Now!
-    </button>
+       <p style="margin-bottom:5px;">If you want to compete in a tournament you need to pay an entree fee! Complete registration by paying now. </p><button type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button> <buttton type="button" ng-click="stopReminder()" class="btn btn-danger">Don't Ask Again</buttton>
     </span>
 </div>
 <div class="contentPane container" style="position:relative;">

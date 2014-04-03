@@ -243,6 +243,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             $state.go('pay');
         };
 
+        $scope.stopReminder = function() {
+            userService.stopReminder();
+        };
+
         $scope.openLogin = function () {
 
             var modalInstance = $modal.open({
