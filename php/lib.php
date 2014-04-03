@@ -356,7 +356,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 $headers[] = "X-Mailer: PHP/".phpversion();
                 $headers.="Return-Path:<noreply@gtgamefest.com>";
 
-                $body = "Hello User,\r\n\r\nTo reset your password visit http://gtgamefest.com/#/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit http://gtgamefest.com/#/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\n -Gt Gamefest Staff";
+                $body = "Hello User,\r\n\r\nTo reset your password visit https://www.gtgamefest.com/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit https://www.gtgamefest.com/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\nGamefest Staff\r\ncontact@gtgamefest.com";
 
                     if(mail($data -> email, $subject, $body, implode("\r\n",$headers), "-f noreply@gtgamefest.com"))
                     {

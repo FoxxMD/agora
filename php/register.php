@@ -34,7 +34,7 @@
             $headers[] = "X-Mailer: PHP/".phpversion();
             $headers.="Return-Path:<noreply@gtgamefest.com>";
 
-            $body = "Hello New User,\r\n\r\n You have just registered for Gamefest, which will take place on April 19-20, 2014.\r\n\r\n If you would like to compete in any tournaments at the event, you will need to pay the $15 fee online at https://www.gtgamefest.com or at the registration desk at the event. Free play is free.\r\n\r\n See You There,\r\nGamefest Staff";
+            $body = "Hello New User,\r\n\r\nYou have just registered for Gamefest, which will take place on April 19-20, 2014.\r\n\r\nIf you would like to compete in any tournaments at the event, you will need to pay the \$15 fee online at https://www.gtgamefest.com or at the registration desk at the event. Free play is free.\r\n\r\nSee You There,\r\nGamefest Staff\r\ncontact@gtgamefest.com";
 
             if(!mail($user -> email, $subject, $body, implode("\r\n",$headers), "-f noreply@gtgamefest.com"))
             {
