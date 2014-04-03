@@ -823,4 +823,144 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         return $response;
     }
 
+    function registerPlayer($data) {
+
+            $db = getDB();
+
+            $sql = "select * from tournaments where ID = ?";
+            $statement = $db->prepare($sql);
+            $statement->bind_param("i", $data -> tournamentId);
+
+            $response = new stdClass();
+            $response -> success = false;
+
+            if($statement->execute()) {
+
+                $statement -> store_result();
+                $statement -> close();
+                if($statement -> num_rows > 0)
+                {
+                    $sql = "insert into tournament_users values (NULL, ?, ?, 0, 0)";
+                    $statement2 = $db->prepare($sql);
+                    $statement2->bind_param("ii",$data -> userId, $data -> tournamentId);
+
+                    if($statement2->execute()) {
+                        $response->success = true;
+                    } else {
+                        $response->message = $db->error;
+                    }
+                }
+            } else {
+                $response->message = $db->error;
+            }
+
+            return $response;
+        }
+
+        function registerTeam($data) {
+
+            $db = getDB();
+
+            $sql = "select * from tournaments where ID = ?";
+            $statement = $db->prepare($sql);
+            $statement->bind_param("i", $data -> tournamentId);
+
+            $response = new stdClass();
+            $response -> success = false;
+
+            if($statement->execute()) {
+
+                $statement -> store_result();
+                $statement -> close();
+                if($statement -> num_rows > 0)
+                {
+                    $sql2 = "insert into tournament_teams values (NULL, ?, ?, 0)";
+                    $statement2 = $db-> prepare($sql2);
+                    $statement2-> bind_param("ii",$data -> teamId, $data -> tournamentId);
+
+                    if($statement2->execute()) {
+                        $response-> success = true;
+                    } else {
+                        $response->message = $db->error;
+                    }
+                }
+                else{
+                    $response -> message = "Tournament ID was not valid.";
+                }
+            }
+            else {
+            $response->message = $db->error;
+        }
+
+            return $response;
+        }
+
+        function getPlayersByTournament($tourneyID) {
+
+            $db = getDB();
+
+            $statement = $db -> prepare("CALL getUsersByTournament(?)");
+            $statement->bind_param("i", $tourneyID);
+
+            $tourneyPlayersArray = array();
+            $count = 0;
+
+            if($statement->execute()) {
+
+                $user = new stdClass();
+                $statement->bind_result($user -> id, $user -> alias, $user -> steam, $user -> lol, $user -> xbox, $user -> ign, $user -> role, $user -> isAdmin, $user -> isPresent);
+                while($statement->fetch())
+                {
+                    $tourneyPlayersArray[$count] = $user;
+                    $count = ++$count;
+                }
+
+                return $tourneyPlayersArray;
+            }
+        }
+
+        function getTeamsByTournament($tourneyID) {
+
+            $db = getDB();
+
+            $statement = $db -> prepare("CALL getTeamByTournament(?)");
+            $statement->bind_param("i", $tourneyID);
+
+            $tourneyTeamsArray = array();
+            $count = 0;
+
+            if($statement->execute()) {
+
+                $team = new stdClass();
+                $statement->bind_result($team -> id, $team -> name, $team -> captain, $team -> isPresent);
+                while($statement->fetch())
+                {
+                    $tourneyTeamsArray[$count] = $team;
+                    $count = ++$count;
+                }
+
+                return $tourneyTeamsArray;
+            }
+        }
+        function getTournamentInfo($tourId) {
+
+            $db = getDB();
+            $tour = new stdClass();
+            $response = new stdClass();
+            $response -> success = false;
+
+            $statement = $db -> prepare("CALL getTournamentInfo(?)");
+            $statement->bind_param("i", $tourId);
+
+            if($statement -> execute()) {
+                $statement -> bind_result($tour -> id, $tour -> game, $tour -> name, $tour -> teamCount, $tour -> playerCount);
+                $statement -> fetch();
+                return $tour;
+            }
+            else{
+                $response -> message = $db -> error;
+                return $response;
+            }
+        }
+
 ?>

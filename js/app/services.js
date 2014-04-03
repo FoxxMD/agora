@@ -376,4 +376,95 @@ angular.module('app.services', [])
             return deferred;
         };
 
+    }])
+    .service('tourService', ['$http','$q', function($http, $q){
+
+        this.registerUser = function(userId, tourId)
+        {
+            var deferred = $q.defer();
+
+            var postData = {
+                userId: userId,
+                tourId: tourId
+            };
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'registerPlayer'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            }).error(function (response) {
+                deferred.reject(response);
+            });
+            return deferred;
+        };
+
+        this.registerTeam = function(teamId, tourId)
+        {
+            var deferred = $q.defer();
+
+            var postData = {
+                teamId: teamId,
+                tourId: tourId
+            };
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'registerTeam'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            }).error(function (response) {
+                deferred.reject(response);
+            });
+            return deferred;
+        };
+
+        this.removeUser = function()
+        {
+            //stub
+        };
+
+        this.removeTeam = function()
+        {
+            //stub
+        };
+
+        this.getUsers = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getUsers', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                deferred.reject('Error getting users for this tournament.');
+            });
+            return deferred;
+        };
+
+        this.getTeams = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getTeams', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                deferred.reject('Error getting teams for this tournament.');
+            });
+            return deferred;
+        };
+
+        this.getTournamentInfo = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getTournamentInfo', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                deferred.reject('Error getting teams for this tournament.');
+            });
+            return deferred;
+        };
+
     }]);
