@@ -359,6 +359,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
 
         $scope.updateUser = function (element, updateVal) {
+            if(updateVal == undefined)
+            {
+                return "Max length is 20 characters!";
+            }
             if($stateParams.userId != undefined)
             {
                 return userService.updateUser($stateParams.userId, element, updateVal);

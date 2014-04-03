@@ -57,28 +57,28 @@
                         <legend>User Information</legend>
                         <div class="form-group">
                             <label class="control-label">Alias:</label>
-                            <a editable-text="user.alias" onbeforesave="updateUser('alias',$data)">{{user.alias || 'Not Set'
+                            <a editable-text="user.alias" onbeforesave="updateUser('alias',$data)" e-maxlength="20">{{user.alias || 'Not Set'
                                 }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">LoL Tag:</label>
-                            <a editable-text="user.lol" onbeforesave="updateUser('lol',$data)">{{user.lol || 'Not Set' }}</a>
+                            <a editable-text="user.lol" onbeforesave="updateUser('lol',$data)" e-maxlength="20">{{user.lol || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">BN:</label>
-                            <a editable-text="user.bn" onbeforesave="updateUser('bn',$data)">{{user.bn || 'Not Set' }}</a>
+                            <a editable-text="user.bn" onbeforesave="updateUser('bn',$data)" e-maxlength="20">{{user.bn || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Xbox Tag:</label>
-                            <a editable-text="user.xbox" onbeforesave="updateUser('xbox',$data)">{{user.xbox || 'Not Set' }}</a>
+                            <a editable-text="user.xbox" onbeforesave="updateUser('xbox',$data)" e-maxlength="20">{{user.xbox || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">IGN Tag:</label>
-                            <a editable-text="user.ign" onbeforesave="updateUser('ign',$data)">{{user.ign || 'Not Set' }}</a>
+                            <a editable-text="user.ign" onbeforesave="updateUser('ign',$data)" e-maxlength="20">{{user.ign || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Steam Id:</label>
-                            <a editable-text="user.steam" onbeforesave="updateUser('steam',$data)">{{user.steam || 'Not Set'
+                            <a editable-text="user.steam" onbeforesave="updateUser('steam',$data)" e-maxlength="20">{{user.steam || 'Not Set'
                                 }}</a>
                         </div>
                     </fieldset>
