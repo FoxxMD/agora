@@ -382,13 +382,19 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
 
         $scope.submitPasswordChange = function(){
+            var that = this;
             if($scope.admin)
             {
                 this.formData.email = $scope.user.email;
             }
             userService.changePassword(this.formData).promise.then(function(response){
                 $scope.passwordSuccess = true;
-                $scope.showPassword = false;
+                $scope.userErrorMessage = null;
+                that.showPassword = false;
+                that.formData.oldPassword = null;
+                that.formData.newPassword = null;
+                that.formData.passwordConfirm = null;
+                that.passwordChangeForm.$setPristine();
             }, function(response){
                 $scope.userErrorMessage = "Password change failed: " + response;
             });

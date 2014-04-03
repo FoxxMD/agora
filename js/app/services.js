@@ -223,7 +223,7 @@ angular.module('app.services', [])
                     deferred.resolve();
                 }
                 else {
-                    deferred.reject(response);
+                    deferred.reject(response.message);
                 }
             }).error(function (response) {
                     deferred.reject(response);
