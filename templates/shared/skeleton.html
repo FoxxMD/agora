@@ -41,7 +41,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <strong>{{siteError}}</strong>
 </div>
-<div ng-if="isLoggedIn && !userService.getProfile().paid && !dismissPaid"
+<div ng-cloak ng-if="isLoggedIn && !userService.getProfile().paid && !dismissPaid"
      class="payReminder alert alert-warning alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <!--ng-click="dismissPaid = true"-->
