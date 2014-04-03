@@ -929,7 +929,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             $db = getDB();
 
-            $statement = $db -> prepare("CALL getTeamByTournament(?)");
+            $statement = $db -> prepare("CALL getTeamsByTournament(?)");
             $statement->bind_param("i", $tourneyID);
 
             $tourneyTeamsArray = array();

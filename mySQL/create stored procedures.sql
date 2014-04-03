@@ -31,7 +31,7 @@ DELIMITER ;
 
 -- Get Teams by Tournament Id
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTeamByTournament`(IN inputTournamentId int(11))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTeamsByTournament`(IN inputTournamentId int(11))
 BEGIN
 
 SELECT te.ID, te.name, te.captain, t.isPresent FROM teams te INNER JOIN tournament_teams t ON t.TeamId = te.ID WHERE t.TournamentId=inputTournamentId;
@@ -64,3 +64,34 @@ Select *,@teamCount,@playerCount FROM tournaments t where t.Id=inputTournamentId
 
 END$$
 DELIMITER ;
+
+-- Get Tournaments a user is participating in
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTournamentsByUserId`(IN userId int(11))
+BEGIN
+
+Select tour.* from tournaments tour INNER JOIN tournament_users tu on tu.TournamentId = tour.Id where tu.UserId = userId;
+
+END$$
+DELIMITER ;
+
+-- Get Tournaments a team is participating in
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTournamentsByTeamId`(IN teamId int(11))
+BEGIN
+
+Select tour.* from tournaments tour INNER JOIN tournament_teams tt on tt.TournamentId = tour.Id where tt.TeamId = teamId;
+
+END$$
+DELIMITER ;
+
+-- Get All teams a user is a captain for
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTeamsByCaptain`(IN captainId int(11))
+BEGIN
+
+SELECT t.ID,t.name,t.game FROM teams t where t.captain = captainId;
+
+END$$
+DELIMITER ;
+

@@ -393,7 +393,7 @@ angular.module('app.services', [])
         this.registerUser = function(userId, tourId)
         {
             var deferred = $q.defer();
-
+            //TODO Implement bracketcloud
             var postData = {
                 userId: userId,
                 tourId: tourId
@@ -414,7 +414,7 @@ angular.module('app.services', [])
         this.registerTeam = function(teamId, tourId)
         {
             var deferred = $q.defer();
-
+            //TODO Implement bracketcloud
             var postData = {
                 teamId: teamId,
                 tourId: tourId
