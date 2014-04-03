@@ -452,7 +452,13 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                         $response -> message = "Current password verification failed.";
                     }
                 }
+                else{
+                    $response -> message = "Email provided was invalid.";
+                }
             }
+        }
+        else{
+            $response -> message = "Current password was not provided or your account does not have privileges to perform this action.";
         }
         return $response;
     }

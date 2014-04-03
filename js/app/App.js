@@ -243,6 +243,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             $state.go('pay');
         };
 
+        $scope.stopReminder = function() {
+            userService.stopReminder();
+        };
+
         $scope.openLogin = function () {
 
             var modalInstance = $modal.open({
@@ -355,6 +359,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
 
         $scope.updateUser = function (element, updateVal) {
+            if(updateVal == undefined)
+            {
+                return "Max length is 20 characters!";
+            }
             if($stateParams.userId != undefined)
             {
                 return userService.updateUser($stateParams.userId, element, updateVal);
@@ -378,13 +386,19 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
 
         $scope.submitPasswordChange = function(){
+            var that = this;
             if($scope.admin)
             {
                 this.formData.email = $scope.user.email;
             }
             userService.changePassword(this.formData).promise.then(function(response){
                 $scope.passwordSuccess = true;
-                $scope.showPassword = false;
+                $scope.userErrorMessage = null;
+                that.showPassword = false;
+                that.formData.oldPassword = null;
+                that.formData.newPassword = null;
+                that.formData.passwordConfirm = null;
+                that.passwordChangeForm.$setPristine();
             }, function(response){
                 $scope.userErrorMessage = "Password change failed: " + response;
             });
@@ -476,7 +490,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         var modalCreateTeamCtrl = function ($scope, $modalInstance) {
 
-            $scope.games = ['Starcraft 2', 'League of Legends SR', 'League of Legends ARAM', 'CS:GO', 'Halo 3 2v2', 'Halo 3 3v3', 'SSB:Brawl', 'SSB:Melee', 'DOTA 2'];
+            $scope.games = ['CS:GO', 'DOTA 2', 'Starcraft 2', 'Halo 3 2v2', 'Halo 3 3v3', 'League of Legends SR', 'League of Legends ARAM', 'SSB:Brawl', 'SSB:Melee' ];
 
             $scope.submitTeam = function () {
                 var that = this;

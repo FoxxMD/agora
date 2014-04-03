@@ -15,13 +15,23 @@ angular.module('app.services', [])
                 tokenExpire: null,
                 justPaid: false,
                 alreadyPaid: false,
-                role: 0
+                role: 0,
+                remind: true
             },
             isInit = false,
             adminMode = false;
 
         this.getProfile = function () {
             return user;
+        };
+
+        this.stopReminder = function(){
+            user.remind = false;
+            $localStorage.remind = false;
+        };
+
+        this.getRemind = function() {
+            return user.remind;
         };
 
 
@@ -53,6 +63,7 @@ angular.module('app.services', [])
                 user.alias = $localStorage.alias;
                 user.email = $localStorage.email;
                 user.token = $localStorage.token;
+                user.remind = $localStorage.remind === undefined ? user.remind : $localStorage.remind;
                 user.id = $localStorage.id;
                 user.paid = $localStorage.paid;
                 user.role = $localStorage.role;
@@ -212,7 +223,7 @@ angular.module('app.services', [])
                     deferred.resolve();
                 }
                 else {
-                    deferred.reject(response);
+                    deferred.reject(response.message);
                 }
             }).error(function (response) {
                     deferred.reject(response);
