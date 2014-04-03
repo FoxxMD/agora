@@ -375,8 +375,9 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         $scope.deleteUser = function(userId) {
             userService.deleteUser(userId).promise.then(function(){
-                if(userService.getProfile().id == userId){
+                if(userService.getProfile().id == userId) {
                     userService.logoff();
+                    $state.go('home');
                 }else{
                     $state.go('users');
                 }
