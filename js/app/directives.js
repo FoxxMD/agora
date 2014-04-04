@@ -153,7 +153,7 @@ angular.module('app.directives', [])
             }
         }
     }])
-    .directive('teamDir', ['userService', 'teamService', '$stateParams', '$filter', '$state', function (userService, teamService, $stateParams, $filter, $state) {
+    .directive('teamDir', ['userService', 'teamService', '$stateParams', '$filter', '$state','$rootScope', function (userService, teamService, $stateParams, $filter, $state, $rootScope) {
         return {
             restrict: 'A',
             templateUrl: '/templates/team.html',
@@ -183,9 +183,7 @@ angular.module('app.directives', [])
                 $scope.tryJoin = function () {
                     teamService.addMember($stateParams.teamId, userService.getProfile().id, $scope.joinPassword).promise.then(function (response) {
                         getTeamInfo();
-                        $scope.teamErrorMessage = undefined;
-                    }, function (response) {
-                        $scope.teamErrorMessage = '<strong>Could not join team! </strong>' + response;
+                        $rootScope.siteError = null;
                     })
                 };
                 $scope.tryLeave = function () {
@@ -197,8 +195,6 @@ angular.module('app.directives', [])
                     }
                     teamService.updateTeam(memberVar, 0, $stateParams.teamId).promise.then(function (response) {
                         getTeamInfo();
-                    }, function (response) {
-                        $scope.teamErrorMessage = '<strong>Could not update team! </strong>' + response;
                     });
                 };
 
@@ -210,9 +206,6 @@ angular.module('app.directives', [])
 
                     teamService.updateTeam(element, updateVal, $stateParams.teamId).promise.then(function (response) {
                         getTeamInfo();
-                    }, function (response) {
-                        $scope.teamErrorMessage = '<strong>Could not update team! </strong>' + response;
-                        return false;
                     });
                 };
 
@@ -220,8 +213,6 @@ angular.module('app.directives', [])
                 {
                     teamService.deleteTeam(id).promise.then(function(){
                         $state.go('teams');
-                    },function(response){
-                        $scope.teamErrorMessage = response;
                     });
                 };
 

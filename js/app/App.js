@@ -182,18 +182,11 @@ app.run(function ($rootScope, userService, editableOptions, $state) {
 
     userService.initUser();
 
-    $rootScope.$on('broadcast', function (e, data) {
-        if (undefined == data.with) {
-            $rootScope.$broadcast(data.say);
-        }
-        else {
-            $rootScope.$broadcast(data.say, data.with);
-        }
-    });
     editableOptions.theme = 'bs3';
 
     $rootScope.$on('$stateChangeStart',
         function (event, toState, toParams, fromState, fromParams) {
+            $rootScope.siteError = null; //reset error state on state change so errors don't follow you around the entire site
             if (toState.authenticated) {
                 if (!userService.isLoggedIn()) {
                     event.preventDefault();
@@ -223,6 +216,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         $scope.isLoggedIn = userService.isLoggedIn();
         $scope.alias = userService.getProfile().alias;
         $scope.userService = userService;
+        $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
 
         $rootScope.$on('loginChange', function () {
             $scope.alias = userService.getProfile().alias;
@@ -231,12 +225,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         });
         $rootScope.$on('authExpired', function(event, data){
             userService.logoff();
-            $rootScope.siteError = "Your login has expired! Please log back in.";
             if($state.current.authenticated)
             {
                 $state.go('home');
             }
-            //$scope.openLogin();
         });
 
         $scope.openPay = function () {
@@ -375,13 +367,12 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         $scope.deleteUser = function(userId) {
             userService.deleteUser(userId).promise.then(function(){
-                if(userService.getProfile().id == userId){
+                if(userService.getProfile().id == userId) {
                     userService.logoff();
+                    $state.go('home');
                 }else{
                     $state.go('users');
                 }
-            },function(response){
-                $scope.userErrorMessage = response;
             });
         };
 
@@ -393,14 +384,12 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             }
             userService.changePassword(this.formData).promise.then(function(response){
                 $scope.passwordSuccess = true;
-                $scope.userErrorMessage = null;
+                $rootScope.siteError = null;
                 that.showPassword = false;
                 that.formData.oldPassword = null;
                 that.formData.newPassword = null;
                 that.formData.passwordConfirm = null;
                 that.passwordChangeForm.$setPristine();
-            }, function(response){
-                $scope.userErrorMessage = "Password change failed: " + response;
             });
         }
     }])
@@ -534,12 +523,14 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 app.factory('authResponseInterceptor', ['$q','$rootScope', function($q, $rootScope){
     return {
         response: function(response) {
-            if(response.data != undefined && response.data.success == false)
+            if(!response.config.preventError && response.data != undefined && response.data.success == false)
             {
-                if(response.data.message == "authExpire")
+                if(response.data.authExpire)
                 {
                     $rootScope.$broadcast('authExpired');
                 }
+                $rootScope.siteError = response.data.message;
+                return $q.reject(response);
             }
             return response;
         }

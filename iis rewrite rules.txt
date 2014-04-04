@@ -1,0 +1,14 @@
+<rewrite>
+    <rules>
+      <rule name="Main Rule" stopProcessing="true">
+        <match url=".*" />
+        <conditions logicalGrouping="MatchAll">
+          <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+          <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          <add input="{REQUEST_URI}" pattern="^/content/games" negate="true" />
+          <add input="{REQUEST_URI}" pattern="^/streams" negate="true" />
+        </conditions>
+        <action type="Rewrite" url="/" />
+      </rule>
+    </rules>
+  </rewrite>

@@ -38,7 +38,7 @@
         if($authUser != null && !property_exists($authUser, "success"))
         {
             $id = $authUser -> id;
-            if($data != null)
+            if($data != null && property_exists($data, "id"))
             {
              $id = $data -> id;
             }
