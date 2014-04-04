@@ -2,11 +2,11 @@
     <tbody>
     <tr ng-repeat="user in $data" style="cursor:pointer" class="animate-repeat">
         <td ng-click="goToUser(user.id)" data-title="'Alias'" filter="{'alias':'text'}">{{user.alias}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'Steam Tag'">{{user.steam}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'Xbox Tag'">{{user.xbox}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'IGN'">{{user.ign}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'LoL Tag'">{{user.lol}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'Battle.net Tag'">{{user.bn}}</td>
+        <td ng-click="goToUser(user.id)" data-title="'Steam Tag'" filter="{'steam':'text'}">{{user.steam}}</td>
+        <td ng-click="goToUser(user.id)" data-title="'Xbox Tag'" filter="{'xbox':'text'}">{{user.xbox}}</td>
+        <td ng-click="goToUser(user.id)" data-title="'IGN'" filter="{'ign':'text'}">{{user.ign}}</td>
+        <td ng-click="goToUser(user.id)" data-title="'LoL Tag'" filter="{'lol':'text'}">{{user.lol}}</td>
+        <td ng-click="goToUser(user.id)" data-title="'Battle.net Tag'" filter="{'bn':'text'}">{{user.bn}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'Email'" filter="{'email':'text'}">{{user.email}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'PW Attempt'">{{user.attempt}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'Locktime'">{{user.locktime}}</td>
@@ -17,3 +17,4 @@
     </tr>
     </tbody>
 </table>
+<img style="margin-left:35%;" ng-hide="users != undefined" src="/img/loading-cylon-red.svg" width="256" height="32" alt="Loading..."/>

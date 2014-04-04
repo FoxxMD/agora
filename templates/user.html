@@ -6,7 +6,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <strong>You've already paid for registration!</strong> No need to give us more money!
 </div>
-<div ng-if="userErrorMessage != undefined" class="alert alert-warning alert-dismissable">
+<div ng-if="userErrorMessage != undefined && userErrorMessage != null" class="alert alert-warning alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <span ng-bind-html="userErrorMessage"></span>
 </div>
@@ -14,7 +14,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     Password successfully changed.
 </div>
-<h1>{{user.alias}}<br/>
+<h1>{{user.alias}}<img style="margin-left:35%;" ng-hide="user != undefined" src="/img/loading-cylon-red.svg" width="256" height="32" alt="Loading..."/><br/>
     <small>User Profile</small>
 </h1>
 <div class="row">
@@ -57,28 +57,28 @@
                         <legend>User Information</legend>
                         <div class="form-group">
                             <label class="control-label">Alias:</label>
-                            <a editable-text="user.alias" onbeforesave="updateUser('alias',$data)">{{user.alias || 'Not Set'
+                            <a editable-text="user.alias" onbeforesave="updateUser('alias',$data)" e-maxlength="20">{{user.alias || 'Not Set'
                                 }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">LoL Tag:</label>
-                            <a editable-text="user.lol" onbeforesave="updateUser('lol',$data)">{{user.lol || 'Not Set' }}</a>
+                            <a editable-text="user.lol" onbeforesave="updateUser('lol',$data)" e-maxlength="20">{{user.lol || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">BN:</label>
-                            <a editable-text="user.bn" onbeforesave="updateUser('bn',$data)">{{user.bn || 'Not Set' }}</a>
+                            <a editable-text="user.bn" onbeforesave="updateUser('bn',$data)" e-maxlength="20">{{user.bn || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Xbox Tag:</label>
-                            <a editable-text="user.xbox" onbeforesave="updateUser('xbox',$data)">{{user.xbox || 'Not Set' }}</a>
+                            <a editable-text="user.xbox" onbeforesave="updateUser('xbox',$data)" e-maxlength="20">{{user.xbox || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">IGN Tag:</label>
-                            <a editable-text="user.ign" onbeforesave="updateUser('ign',$data)">{{user.ign || 'Not Set' }}</a>
+                            <a editable-text="user.ign" onbeforesave="updateUser('ign',$data)" e-maxlength="20">{{user.ign || 'Not Set' }}</a>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Steam Id:</label>
-                            <a editable-text="user.steam" onbeforesave="updateUser('steam',$data)">{{user.steam || 'Not Set'
+                            <a editable-text="user.steam" onbeforesave="updateUser('steam',$data)" e-maxlength="20">{{user.steam || 'Not Set'
                                 }}</a>
                         </div>
                     </fieldset>
@@ -169,7 +169,7 @@
                             <a ng-show="ownProfile || admin" ng-click="showPassword = true">Change Password</a>
                         </div>
                         <form name="passwordChangeForm" ng-show="showPassword" ng-submit="passwordChangeForm.$valid && submitPasswordChange()">
-                        <div ng-if="!admin" class="form-group">
+                        <div ng-hide="admin" class="form-group">
                             <label class="control-label">Old Password:</label>
                             <input type="Password" id="oldPassword" ng-model="formData.oldPassword" class="form-control" placeholder="Old Password" required/>
                         </div>
@@ -179,7 +179,7 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label">Confirm New Password:</label>
-                            <input type="Password" id="passwordConfirm" ng-model="passwordConfirm" password-match="formData.newPassword" class="form-control" placeholder="Confirm Password" required/>
+                            <input type="Password" id="passwordConfirm" ng-model="formData.passwordConfirm" password-match="formData.newPassword" class="form-control" placeholder="Confirm Password" required/>
                         </div>
                             <button type="submit" style="float:right;" class="btn btn-primary">Change Password</button>
                         </form>

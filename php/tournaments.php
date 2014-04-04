@@ -22,9 +22,10 @@
     }
 
     $id = new stdClass();
+    $result = new stdClass();
     $authUser = authenticateRequest($headers["Authentication"]);
 
-    if($authUser != null)
+    if($authUser != null && !property_exists($authUser, "success"))
     {
         $id = $authUser -> id;
         if($data != null && property_exists($data,"id"))
@@ -69,16 +70,15 @@
         //TODO add leaving tournament as player or team
 
         case "getUsers":
-                $result = getTourneyPlayers($params["tourneyId"]);
+                $result = getPlayersByTournament($params["tourneyId"]);
             break;
 
         case "getTeams":
-                $result = getTourneyTeams($params["tourneyId"]);
+                $result = getTeamsByTournament($params["tourneyId"]);
             break;
         }
     }else{
-        $result -> success = false;
-        $result -> message = "Not Authorized";
+        $result = $authUser;
     }
     echo json_encode($result);
 ?>

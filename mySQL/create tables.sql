@@ -11,14 +11,14 @@ CREATE TABLE `users` (
   `lol` varchar(60) DEFAULT NULL,
   `xbox` varchar(100) DEFAULT NULL,
   `ign` varchar(100) DEFAULT NULL,
-  `role` varchar(10) DEFAULT 0,
-  `locktime` timestamp NULL DEFAULT NULL,
+  `role` varchar(10) DEFAULT '0',
+  `locktime` int(30) DEFAULT NULL,
   `attempt` int(11) DEFAULT NULL,
   `authtoken` varchar(300) DEFAULT NULL,
-  `authExpire` datetime DEFAULT NULL,
-   `resetToken` varchar(300) DEFAULT NULL,
+  `authExpire` int(30) DEFAULT NULL,
+  `resetToken` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `teams` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
