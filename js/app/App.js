@@ -1,10 +1,10 @@
 //initialize app
-var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'restangular', 'app.directives', 'app.services', 'angularPayments', 'xeditable','ngTable', 'angulartics', 'angulartics.google.analytics']);
+var app = angular.module('app', ['ngAnimate', 'ngStorage', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'app.directives', 'app.services', 'angularPayments', 'xeditable','ngTable', 'angulartics', 'angulartics.google.analytics']);
 
 //configure routing
 //hydrate all states for application in order to setup site structure
-app.config(['$stateProvider', '$urlRouterProvider','$locationProvider',
-    function ($stateProvider, $urlRouterProvider, $locationProvider) {
+app.config(['$stateProvider', '$urlRouterProvider','$locationProvider', '$httpProvider',
+    function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
 
         $locationProvider.html5Mode(true);
 
@@ -174,12 +174,9 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider',
         $urlRouterProvider.when('', '/');
         //anything else gets 404'd
         $urlRouterProvider.otherwise('404');
-    }]);
+        $httpProvider.interceptors.push('authResponseInterceptor');
 
-//configure RESTful provider -- will be using to hydrate domain model
-app.config(['RestangularProvider', '$httpProvider', function (RestangularProvider, $httpProvider) {
-    RestangularProvider.setBaseUrl('/');
-}]);
+    }]);
 
 app.run(function ($rootScope, userService, editableOptions, $state) {
 
@@ -226,15 +223,29 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         $scope.isLoggedIn = userService.isLoggedIn();
         $scope.alias = userService.getProfile().alias;
         $scope.userService = userService;
+        $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
 
         $rootScope.$on('loginChange', function () {
             $scope.alias = userService.getProfile().alias;
             $scope.isLoggedIn = userService.isLoggedIn();
             $scope.paid = userService.getProfile().paid;
         });
+        $rootScope.$on('authExpired', function(event, data){
+            userService.logoff();
+            $rootScope.siteError = "Your login has expired! Please log back in.";
+            if($state.current.authenticated)
+            {
+                $state.go('home');
+            }
+            //$scope.openLogin();
+        });
 
         $scope.openPay = function () {
             $state.go('pay');
+        };
+
+        $scope.stopReminder = function() {
+            userService.stopReminder();
         };
 
         $scope.openLogin = function () {
@@ -257,6 +268,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 var that = this;
 
                 userService.login(this.loginData).promise.then(function (response) {
+                    $rootScope.siteError = null;
                     $modalInstance.close('logged in');
                 }, function (response) {
                     $scope.formErrorMessage = response;
@@ -348,6 +360,10 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
 
         $scope.updateUser = function (element, updateVal) {
+            if(updateVal == undefined)
+            {
+                return "Max length is 20 characters!";
+            }
             if($stateParams.userId != undefined)
             {
                 return userService.updateUser($stateParams.userId, element, updateVal);
@@ -359,25 +375,32 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
 
         $scope.deleteUser = function(userId) {
-          userService.deleteUser(userId).promise.then(function(){
-              if(userService.getProfile().id == userId){
-                  userService.logoff();
-              }else{
-                  $state.go('users');
-              }
-          },function(response){
-            $scope.userErrorMessage = response;
-          });
+            userService.deleteUser(userId).promise.then(function(){
+                if(userService.getProfile().id == userId) {
+                    userService.logoff();
+                    $state.go('home');
+                }else{
+                    $state.go('users');
+                }
+            },function(response){
+                $scope.userErrorMessage = response;
+            });
         };
 
         $scope.submitPasswordChange = function(){
+            var that = this;
             if($scope.admin)
             {
                 this.formData.email = $scope.user.email;
             }
             userService.changePassword(this.formData).promise.then(function(response){
                 $scope.passwordSuccess = true;
-                $scope.showPassword = false;
+                $scope.userErrorMessage = null;
+                that.showPassword = false;
+                that.formData.oldPassword = null;
+                that.formData.newPassword = null;
+                that.formData.passwordConfirm = null;
+                that.passwordChangeForm.$setPristine();
             }, function(response){
                 $scope.userErrorMessage = "Password change failed: " + response;
             });
@@ -397,9 +420,9 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             $scope.tableParams = new ngTableParams({
                 page: 1,            // show first page
                 count: 10          // count per page
-/*                filter: {
-                    alias:''       // initial filter
-                }*/
+                /*                filter: {
+                 alias:''       // initial filter
+                 }*/
             }, {
                 total: data.length, // length of data
                 getData: function($defer, params) {
@@ -469,7 +492,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
 
         var modalCreateTeamCtrl = function ($scope, $modalInstance) {
 
-            $scope.games = ['Starcraft 2', 'League of Legends SR', 'League of Legends ARAM', 'CS:GO', 'Halo 3 2v2', 'Halo 3 3v3', 'SSB:Brawl', 'SSB:Melee', 'DOTA 2'];
+            $scope.games = ['CS:GO', 'DOTA 2', 'Starcraft 2', 'Halo 3 2v2', 'Halo 3 3v3', 'League of Legends SR', 'League of Legends ARAM', 'SSB:Brawl', 'SSB:Melee' ];
 
             $scope.submitTeam = function () {
                 var that = this;
@@ -486,13 +509,13 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         };
     }])
     .controller('resetctrl', ['$scope','userService', function($scope,userService){
-       $scope.tryResetPassword = function(){
-           userService.resetPassword(this.formData).promise.then(function(response){
-              $scope.passwordSuccess = true;
-           }, function(response){
-               alert(response);
-           });
-       }
+        $scope.tryResetPassword = function(){
+            userService.resetPassword(this.formData).promise.then(function(response){
+                $scope.passwordSuccess = true;
+            }, function(response){
+                alert(response);
+            });
+        }
     }])
     .controller('forgotctrl', ['$scope','$state','userService','$stateParams','$timeout', function($scope, $state, userService, $stateParams, $timeout){
         $scope.formData = {
@@ -509,3 +532,28 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             });
         }
     }]);
+
+app.factory('authResponseInterceptor', ['$q','$rootScope', function($q, $rootScope){
+    return {
+        response: function(response) {
+            if(response.data != undefined && response.data.success == false)
+            {
+                if(response.data.message == "authExpire")
+                {
+                    $rootScope.$broadcast('authExpired');
+                }
+            }
+            return response;
+        }
+        //can't get this to work...
+        /*responseError: function(rejection){
+         if(rejection.data.message == "authExpire")
+         {
+         //userService.logoff();
+         alert('Auth has expired, please log back in.');
+         //$state.go('home');
+         }
+         return $q.resolve();
+         }*/
+    }
+}]);

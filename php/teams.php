@@ -23,8 +23,9 @@
 
     $id = new stdClass();
     $authUser = authenticateRequest($headers["Authentication"]);
+    $result = new stdClass();
 
-        if($authUser != null)
+        if($authUser != null && !property_exists($authUser, "success"))
         {
             $id = $authUser -> id;
             if($data != null && property_exists($data,"id"))
@@ -57,8 +58,7 @@
             break;
     }
         }else{
-            $result -> success = false;
-            $result -> message = "Not Authorized";
+            $result = $authUser;
         }
     echo json_encode($result);
 ?>
