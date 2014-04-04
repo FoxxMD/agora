@@ -6,10 +6,6 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <strong>You've already paid for registration!</strong> No need to give us more money!
 </div>
-<div ng-if="userErrorMessage != undefined && userErrorMessage != null" class="alert alert-warning alert-dismissable">
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <span ng-bind-html="userErrorMessage"></span>
-</div>
 <div ng-if="passwordSuccess" class="alert alert-success alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     Password successfully changed.
@@ -170,7 +166,7 @@
                         </div>
                         <form name="passwordChangeForm" ng-show="showPassword" ng-submit="passwordChangeForm.$valid && submitPasswordChange()">
                         <div ng-hide="admin" class="form-group">
-                            <label class="control-label">Old Password:</label>
+                            <label class="control-label">Current Password:</label>
                             <input type="Password" id="oldPassword" ng-model="formData.oldPassword" class="form-control" placeholder="Old Password" required/>
                         </div>
                         <div class="form-group">

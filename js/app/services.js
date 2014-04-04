@@ -49,9 +49,7 @@ angular.module('app.services', [])
             var deferred = $q.defer();
             $http({method: 'GET', url: '/php/users.php', params: {mode: 'getAll'}}).success(function (response) {
                 deferred.resolve(response);
-            }).error(function (response) {
-                    deferred.reject(response);
-                });
+            });
             return deferred;
         };
 
@@ -122,7 +120,7 @@ angular.module('app.services', [])
         this.login = function (data) {
             var that = this;
             var deferred = $q.defer();
-            $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'verify'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'verify'}, preventError: true}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     if (response.authtoken != undefined) {
                         user.token = response.authtoken;
@@ -159,8 +157,7 @@ angular.module('app.services', [])
             user.email = data.email;
             user.alias = data.alias;
 
-            $http.post('/php/register.php', data).success(function (response) {
-                if (response.success) {
+            $http.post('/php/register.php', data, {preventError: true}).success(function (response) {
                     var loginData = {email: user.email, password: data.password};
                     that.login(loginData).promise.then(function () {
 
@@ -170,10 +167,6 @@ angular.module('app.services', [])
 
                         deferred.reject(response);
                     });
-                }
-                else {
-                    deferred.reject(response.message);
-                }
             }).error(function (response) {
                     deferred.reject(response.message);
                 });
@@ -184,13 +177,8 @@ angular.module('app.services', [])
             var deferred = $q.defer();
             if (user.token != null) {
                 $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'pay'}}).success(function (response) {
-                    if (response.success != undefined && response.success) {
                         user.paid = true;
                         deferred.resolve();
-                    }
-                    else {
-                        deferred.reject(response.message);
-                    }
                 }).error(function (response) {
                         deferred.reject(response);
                     });
@@ -204,12 +192,7 @@ angular.module('app.services', [])
         this.resetPassword = function (data) {
             var deferred = $q.defer();
             $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'resetPassword'}}).success(function (response) {
-                if (response.success != undefined && response.success) {
                     deferred.resolve();
-                }
-                else {
-                    deferred.reject(response.message);
-                }
             }).error(function (response) {
                     deferred.reject(response.message);
                 });
@@ -219,15 +202,8 @@ angular.module('app.services', [])
         this.changePassword = function (data) {
             var deferred = $q.defer();
             $http({method: 'POST', url: '/php/users.php', data: data, params: {mode: 'changePassword'}}).success(function (response) {
-                if (response.success != undefined && response.success) {
                     deferred.resolve();
-                }
-                else {
-                    deferred.reject(response.message);
-                }
-            }).error(function (response) {
-                    deferred.reject(response);
-                });
+            });
             return deferred;
         };
 
@@ -381,7 +357,7 @@ angular.module('app.services', [])
                     deferred.resolve();
                 }
                 else {
-                    deferred.reject(response.message);
+                    deferred.reject();
                 }
             });
             return deferred;

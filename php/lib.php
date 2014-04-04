@@ -8,9 +8,9 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
         //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
-        $db = new mysqli("localhost","gtgamefe_live","3{{(a=lc?JFN", "gtgamefe_live"); //for live
+        //$db = new mysqli("localhost","gtgamefe_live","3{{(a=lc?JFN", "gtgamefe_live"); //for live
         return $db;
     }
 
@@ -35,6 +35,9 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getUser($param, $showAllData) {
+        $response = new stdClass();
+        $response -> success = false;
+
         $db = getDB();
         if(!$showAllData)
         {
@@ -89,12 +92,18 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 return $userObj;
             }
             else{
-                return null;
+                $response -> message = "No user was found with the Id provided.";
             }
+        } else {
+            $response -> message = "There was a problem getting the user, please contact an administrator.";
         }
+        return $response;
     }
     function getUsers($showAllData)
     {
+        $response = new stdClass();
+        $response -> success = false;
+
         $db = getDB();
         $userArray = array();
         $userObj = new stdClass();
@@ -116,6 +125,9 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 $userArray[$count] = $userObj;
                 $count++;
             }
+        } else {
+            $response -> message = "There was a problem getting users, please contact an administrator.";
+            return $response;
         }
         return $userArray;
     }
@@ -212,7 +224,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                  //check to see if token is still valid
                  $date = new DateTime();
                  if($date -> getTimestamp() >= $userObj -> authExpire) {
-                    $response -> message = "authExpire";
+                    $response -> message = "Your login has expired! Please log back in.";
+                    $response -> authExpire = true;
                     return $response;
                  }
                  return $userObj;
@@ -223,7 +236,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             }
          }
          else{
-            $response -> message = $db -> error;
+            $response -> message = "There was a problem authenticating your request, please contact an administrator.";
+            error_log($db -> error);
             return $response;
          }
     }
@@ -342,34 +356,33 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 $sql = "update users set resetToken=? where email=?";
                 if($statement1 = $db -> prepare($sql))
                 {
-
-
-                $statement1 -> bind_param('ss', $authToken, $data -> email);
-                if($statement1 -> execute())
-                {
-                $subject = "Forgotten password reset from GT Gamefest";
-                $headers   = array();
-                $headers[] = "MIME-Version: 1.0";
-                $headers[] = "Content-type: text/html; charset=iso-8859-1";
-                $headers[] = "From: GT Gamefest <noreply@gtgamefest.com>";
-                $headers[] = "Subject: {$subject}";
-                $headers[] = "X-Mailer: PHP/".phpversion();
-                $headers.="Return-Path:<noreply@gtgamefest.com>";
-
-                $body = "Hello User,\r\n\r\nTo reset your password visit https://www.gtgamefest.com/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit https://www.gtgamefest.com/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\nGamefest Staff\r\ncontact@gtgamefest.com";
-
-                    if(mail($data -> email, $subject, $body, implode("\r\n",$headers), "-f noreply@gtgamefest.com"))
+                    $statement1 -> bind_param('ss', $authToken, $data -> email);
+                    if($statement1 -> execute())
                     {
-                        $response -> success = true;
+                    $subject = "Forgotten password reset from GT Gamefest";
+                    $headers   = array();
+                    $headers[] = "MIME-Version: 1.0";
+                    $headers[] = "Content-type: text/html; charset=iso-8859-1";
+                    $headers[] = "From: GT Gamefest <noreply@gtgamefest.com>";
+                    $headers[] = "Subject: {$subject}";
+                    $headers[] = "X-Mailer: PHP/".phpversion();
+                    $headers.="Return-Path:<noreply@gtgamefest.com>";
+
+                    $body = "Hello User,\r\n\r\nTo reset your password visit https://www.gtgamefest.com/forgotpw/".$authToken."\r\n\r\nIf HTML does not work please visit https://www.gtgamefest.com/forgotpw/ and use this token to reset your password:\r\n\r\n".$authToken."\r\n\r\nGamefest Staff\r\ncontact@gtgamefest.com";
+
+                        if(mail($data -> email, $subject, $body, implode("\r\n",$headers), "-f noreply@gtgamefest.com"))
+                        {
+                            $response -> success = true;
+                        }
+                        else{
+                            $response -> message = "Mail delivery was unsuccessful.";
+                        }
                     }
                     else{
-                        $response -> message = "Mail delivery was unsuccessful.";
+                        $response -> message = "Could not set resetToken: ".$db -> error;
                     }
                 }
                 else{
-                    $response -> message = "Could not set resetToken: ".$db -> error;
-                }
-                } else{
                     $response -> message = "SQL preparation error: ".$db -> error;
                 }
             }
@@ -378,7 +391,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             }
         }
         else{
-            $response -> message = "DB error: ".$db -> error;
+            $response -> message = "There was a problem resetting your password, please contact an administrator.";
+            error_log($db -> error);
         }
         return $response;
     }
@@ -409,7 +423,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                         $response -> success = true;
                     }
                     else {
-                        $response -> message = "Could not change password: ".$db -> error;
+                        $response -> message = "Could not change password, please contact an administrator.";
+                        error_log($db -> error);
                     }
                 }
                 else{
@@ -417,7 +432,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 }
             }
             else{
-                $response -> message = "DB error: ".$db -> error;
+                error_log($db -> error);
+                $response -> message = "there was a problem changing your password, please contact an administrator";
             }
         }
         else if(property_exists($data,"oldPassword") || $isAdmin)
@@ -449,7 +465,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                         }
                     }
                     else{
-                        $response -> message = "Current password verification failed.";
+                        $response -> message = "Current password was incorrect.";
                     }
                 }
                 else{
@@ -476,7 +492,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         }
         else{
             $response -> success = false;
-            $response -> message = $db -> error;
+            error_log($db -> error);
+            $response -> message = "Could not delete user, please contact an administrator.";
         }
         return $response;
     }
@@ -554,12 +571,16 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         }
         else{
             $response -> success = false;
-            $response -> message = $db -> error;
+            error_log($db -> error);
+            $response -> message = "There was a problem creating your team, please ensure all information is correctly entered. If this problem persists contact an administrator.";
         }
         return $response;
     }
 
     function getTeam($id, $authUser, $isAdmin, $isGameAdmin) {
+        $response = new stdClass();
+        $response -> success = false;
+
         $db = getdb();
         $sql = "select * from teams where ID=?";
 
@@ -569,6 +590,13 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
         if($statement -> execute())
         {
+            $statement -> store_result();
+            if($statement -> num_rows == 0)
+                {
+                    $response -> message = "No team found with that Team Id!";
+                    return $response;
+                }
+
             $statement -> bind_result($teamObj -> ID, $teamObj -> name, $teamObj -> captain, $teamObj -> password, $teamObj -> des, $teamObj -> logo, $teamObj -> game, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4);
             $statement -> fetch();
             if($teamObj -> captain != $authUser -> id && (!$isAdmin && !$isGameAdmin))
@@ -586,16 +614,21 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 $statement1 -> fetch();
             }
             else{
-            ChromePhp::log($db -> error);
+                error_log("Error making a call to stored proc".$db -> error);
             }
         }
         else{
-            ChromePhp::error($db -> error);
+            error_log($db -> error);
+            $response -> message = "There was a problem getting the team, please contact an administrator.";
+            return $response;
         }
         return $teamObj;
     }
 
     function getTeams($showAllData){
+        $response = new stdClass();
+        $response -> success = false;
+
         $db = getdb();
         $teamArray = array();
         $teamObj = new stdClass();
@@ -614,115 +647,114 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             }
                 return $teamArray;
         }
+        else{
+            $response -> message = "Could not get teams, please contact an administrator.";
+            return $response;
+        }
     }
 
     function setTeam($data, $authUser, $isAdmin, $isGameAdmin) {
         $db = getDB();
         $response = new stdClass();
+        $response -> success = false;
 
         $sql = "select captain, member1, member2, member3, member4 from teams where id=?";
-        if($statement1 = $db -> prepare($sql))
+        $statement1 = $db -> prepare($sql);
+        $statement1 -> bind_param('i', $data -> teamId);
+        if($statement1 -> execute())
         {
-            $statement1 -> bind_param('i', $data -> teamId);
-            if($statement1 -> execute())
-            {
-                $statement1 -> bind_result($captainId, $member1Id, $member2Id, $member3Id, $member4Id);
-                $statement1 -> fetch();
-                $statement1 -> close();
-                $fixedParam = "";
+            $statement1 -> bind_result($captainId, $member1Id, $member2Id, $member3Id, $member4Id);
+            $statement1 -> fetch();
+            $statement1 -> close();
+            $fixedParam = "";
 
-                if($authUser -> id == $captainId || $isAdmin || $isGameAdmin)
-                {
-                    switch($data -> param)
-                    {
-                    case "name":
-                        $fixedParam = "name";
-                        break;
-                    case "password":
-                        $fixedParam = "password";
-                        break;
-                    case "des":
-                        $fixedParam = "des";
-                        break;
-                    case "game":
-                        $fixedParam = "game";
-                        break;
-                    }
-                }
+            if($authUser -> id == $captainId || $isAdmin || $isGameAdmin)
+            {
                 switch($data -> param)
                 {
-                    //THIS IS CRAP
-                    //needs a more elegant solution ;__;
-
-                    case "member1":
-                        if($authUser -> id == $captainId || $authUser -> id == $member1Id || $isAdmin || $isGameAdmin)
-                        {
-                            $fixedParam = "member1";
-                        }else{
-                            $response -> success = false;
-                            $response -> message = "Not authorized to make this change";
-                            return $response;
-                        }
-                        break;
-                    case "member2":
-                        if($authUser -> id == $captainId || $authUser -> id == $member2Id || $isAdmin || $isGameAdmin)
-                        {
-                            $fixedParam = "member2";
-                        }else{
-                            $response -> success = false;
-                            $response -> message = "Not authorized to make this change";
-                            return $response;
-                        }
-                        break;
-                    case "member3":
-                        if($authUser -> id == $captainId || $authUser -> id == $member3Id || $isAdmin || $isGameAdmin)
-                        {
-                            $fixedParam = "member3";
-                        }else{
-                            $response -> success = false;
-                            $response -> message = "Not authorized to make this change";
-                            return $response;
-                        }
-                        break;
-                    case "member4":
-                        if($authUser -> id == $captainId || $authUser -> id == $member4Id || $isAdmin || $isGameAdmin)
-                        {
-                            $fixedParam = "member4";
-                        }else{
-                            $response -> success = false;
-                            $response -> message = "Not authorized to make this change";
-                            return $response;
-                        }
-                        break;
+                case "name":
+                    $fixedParam = "name";
+                    break;
+                case "password":
+                    $fixedParam = "password";
+                    break;
+                case "des":
+                    $fixedParam = "des";
+                    break;
+                case "game":
+                    $fixedParam = "game";
+                    break;
                 }
+            }
+            switch($data -> param)
+            {
+                //THIS IS CRAP
+                //needs a more elegant solution ;__;
 
-                $sql = "update teams set ".$fixedParam."=? where id=?";
-                if($statement = $db -> prepare($sql))
-                {
-                    $statement -> bind_param('si', $data -> updatevalue, $data -> teamId);
-
-                    if($statement -> execute())
+                case "member1":
+                    if($authUser -> id == $captainId || $authUser -> id == $member1Id || $isAdmin || $isGameAdmin)
                     {
-                        $response -> success = true;
+                        $fixedParam = "member1";
+                    }else{
+                        $response -> message = "Not authorized to make this change";
+                        return $response;
                     }
-                    else{
-                        $response -> success = false;
-                        $response -> message = $db -> error;
+                    break;
+                case "member2":
+                    if($authUser -> id == $captainId || $authUser -> id == $member2Id || $isAdmin || $isGameAdmin)
+                    {
+                        $fixedParam = "member2";
+                    }else{
+                        $response -> message = "Not authorized to make this change";
+                        return $response;
                     }
+                    break;
+                case "member3":
+                    if($authUser -> id == $captainId || $authUser -> id == $member3Id || $isAdmin || $isGameAdmin)
+                    {
+                        $fixedParam = "member3";
+                    }else{
+                        $response -> message = "Not authorized to make this change";
+                        return $response;
+                    }
+                    break;
+                case "member4":
+                    if($authUser -> id == $captainId || $authUser -> id == $member4Id || $isAdmin || $isGameAdmin)
+                    {
+                        $fixedParam = "member4";
+                    }else{
+                        $response -> message = "Not authorized to make this change";
+                        return $response;
+                    }
+                    break;
+            }
+            if($fixedParam == "")
+            {
+                $response -> message = "The field name provided was not valid.";
+                return $response;
+            }
+            $sql = "update teams set ".$fixedParam."=? where id=?";
+            if($statement = $db -> prepare($sql))
+            {
+                $statement -> bind_param('si', $data -> updatevalue, $data -> teamId);
+
+                if($statement -> execute())
+                {
+                    $response -> success = true;
                 }
                 else{
-                    $response -> success = false;
-                    $response -> message = $db -> error;
-                };
+                    $response -> message = "Could not update field, please contact an administrator.";
+                    error_log($db -> error);
+                }
             }
             else{
-                $response -> success = false;
-                $response -> message = $db -> error;
-            }
+                $response -> message = "Could not update field, please contact an administrator.";
+                error_log($db -> error);
+            };
         }
         else{
-            $response -> success = false;
-            $response -> message = $db -> error;
+            $response -> message = "Team Id was not valid, please contact an administrator.";
+            error_log($db -> error);
         }
         return $response;
     }
@@ -730,6 +762,8 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     function addTeamMember($data) {
         $db = getDB();
         $response = new stdClass();
+        $response -> success = false;
+
         $sql = "select password,member1,member2,member3,member4 from teams where id=?";
 
         $statement = $db -> prepare($sql);
@@ -754,8 +788,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 }
                 if($currSlot == 0)
                 {
-                    $response -> success = false;
-                    $response -> message = "No available slots";
+                    $response -> message = "No available slots on this team!";
                 }
                 $sql = "UPDATE teams SET ".$memberProp."=? where id=?";
                 if($statement1 = $db -> prepare($sql))
@@ -767,23 +800,22 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                         $response -> success = true;
                     }
                     else{
-                        $response -> success = false;
-                        $response -> message = $db -> error;
+                        $response -> message = "Joining team failed due to powers beyond your control. Please contact an administrator.";
+                        error_log($db -> error);
                     }
                 }
                 else{
-                    $response -> success = false;
-                    $response -> message = $db -> error;
+                    $response -> message = "Joining team failed due to powers beyond your control. Please contact an administrator.";
+                    error_log($db -> error);
                 }
             }
             else{
-                $response -> success = false;
-                $response -> message = "Password incorrect";
+                $response -> message = "Team password is incorrect.";
             }
         }
        else{
-           $response -> success = false;
-           $response -> message = $db -> error;
+           error_log($db -> error);
+           $response -> message = "Joining team failed due to powers beyond your control. Please contact an administrator.";
        }
        return $response;
     }
@@ -798,6 +830,13 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         $statement1 -> bind_param('i', $id);
         if($statement1 -> execute())
         {
+            $statement1 -> store_result();
+            if($statement -> num_rows == 0)
+                {
+                    $response -> message = "No team found with that Team Id!";
+                    return $response;
+                }
+
             $statement1 -> bind_result($captain);
             $statement1 -> fetch();
             $statement1 -> close();
@@ -813,19 +852,19 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     $response -> success = true;
                 }
                 else{
-                    $response -> message = $db -> error;
+                    error_log($db -> error);
+                    $response -> message = "There was a problem deleting this team";
                 }
             }
             else{
-                $response -> message = "Not Authorized";
+                $response -> message = "You are not authorized to delete a team!";
             }
 
         }
         else{
             $response -> message = $db -> error;
+            error_log($db -> error);
         }
-
-
         return $response;
     }
 
