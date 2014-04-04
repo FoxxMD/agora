@@ -76,6 +76,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     while($captainInfo = $result -> fetch_object())
                     {
                         $userObj -> captainList[$count] = $captainInfo;
+                        $count = ++$count;
                     }
                 }
                 $sql = "select ID, name from teams where member1=".$userObj -> id." or member2=".$userObj -> id." or member3=".$userObj -> id." or member4=".$userObj -> id;
@@ -87,6 +88,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                     while($memberInfo = $result -> fetch_object())
                     {
                         $userObj -> memberList[$count] = $memberInfo;
+                        $count = ++$count;
                     }
                 }
                 return $userObj;
@@ -1003,9 +1005,43 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                 return $tour;
             }
             else{
-                $response -> message = $db -> error;
+                error_log($db -> error);
+                $response -> message = "There was a problem retrieving information for this tournament.";
                 return $response;
             }
+        }
+        function getAllTournamentInfo() {
+
+            $db = getDB();
+            $tourArray = array();
+            $response = new stdClass();
+            $response -> success = false;
+
+            //this is terrible and needs to be replaced by a stored proc but I am stupid and stackoverflow won't answer my question
+
+            $sql = "select Id from tournaments";
+            if($result = $db -> query($sql))
+            {
+                $tour = new stdClass();
+                $count = 0;
+                //$result -> store_result();
+                //$result -> close();
+                //TODO -- dafuq
+                while($id = $result -> fetch_object())
+                {
+                    if(!$tourResult = $db -> query("CALL getTournamentInfo(".$id -> Id.")"))
+                    {
+                        echo($db -> error);
+                    }
+                    $tourArray[$count] = $tourResult -> fetch_object();
+                    $count = ++$count;
+                }
+            }
+            else{
+                $response -> message = "Failed to get all tournament info.";
+                return $response;
+            }
+            return $tourArray;
         }
 
 ?>

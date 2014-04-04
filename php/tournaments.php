@@ -38,8 +38,12 @@
         $fullAccess = ($isOwnData || $isAdmin);
 
         switch($mode) {
-        case: "getTournamentInfo":
+        case "getTournamentInfo":
             $result = getTournamentInfo($params["tourneyId"]);
+            break;
+
+        case "getAllTournamentInfo":
+            $result = getAllTournamentInfo();
             break;
 
         case "registerPlayer":

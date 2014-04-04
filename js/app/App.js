@@ -153,6 +153,13 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider', '$httpPr
                 controller: 'teamsctrl',
                 authenticated: true
             })
+            .state('tournaments',{
+                templateUrl:'/templates/tournaments.html',
+                url:'/tournaments',
+                parent:'index',
+                controller:'tournamentsctrl',
+                authenticated: true
+            })
             .state('resetPW', {
                 templateUrl:'/templates/resetpw.html',
                 url:'/resetpw',
@@ -494,6 +501,12 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             };
 
         };
+    }])
+    .controller('tournamentsctrl', ['$scope', 'tourService', '$state', '$modal','ngTableParams','$filter', function ($scope, tourService, $state, $modal, ngTableParams, $filter) {
+        tourService.getAllTournamentInfo().promise.then(function(response){
+           debugger;
+        });
+
     }])
     .controller('resetctrl', ['$scope','userService', function($scope,userService){
         $scope.tryResetPassword = function(){
