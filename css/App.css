@@ -625,11 +625,12 @@
 .gtgamefest .contentPane .jumbotron {
   background-color: inherit;
 }
-.gtgamefest .contentPane .gamesSection .thumbnail {
-  height: 140px;
+.gtgamefest .contentPane .gamesSection .col-md-1 {
+  padding-left: 2px;
+  padding-right: 2px;
 }
-.gtgamefest .contentPane .gamesSection .thumbnail img {
-  max-height: 130px;
+.gtgamefest .contentPane .gamesSection .thumbnail {
+  height: 60px;
 }
 .gtgamefest .contentPane .thumbnail {
   height: 300px;
@@ -643,12 +644,10 @@
 }
 @media (max-width: 992px) {
   .gtgamefest .contentPane .thumbnail {
-    min-height: 80px;
     height: auto;
   }
   .gtgamefest .contentPane .thumbnail img {
-    max-height: 80px;
-    max-width: 200px;
+    max-height: 50px;
   }
 }
 .gtgamefest .contentPane #tourInfoPane button {
@@ -660,13 +659,16 @@
 .gtgamefest .noborder .panel-heading {
   border: 1px solid #e8e8e8;
 }
+.gtgamefest .nav-tabs li {
+  float: right;
+}
 .gtgamefest .nav-tabs li a {
   color: #ffffff;
 }
 .gtgamefest .nav-tabs li a:hover {
   background-color: #333333;
 }
-.gtgamefest .generalRulesTabs .tab-content {
+.gtgamefest .tab-content {
   padding-top: 20px;
 }
 .gtgamefest .panel {
@@ -931,6 +933,8 @@ a.thumbnail:hover {
 }
 a.thumbnail.active.orange {
   border-color: #ffa02d;
+  border-width: 3px;
+  background-color: #404040;
 }
 .ng-animate.shake-add {
   -webkit-animation-name: shake;

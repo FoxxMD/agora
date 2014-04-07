@@ -116,16 +116,29 @@ angular.module('app.directives', [])
             }
         }
     }])
-    .directive('gameDir', ['$http', '$state', function ($http, $state) {
+    .directive('gameDir', ['$http', '$state','$timeout','$stateParams','$rootScope', function ($http, $state, $timeout, $stateParams,$rootScope) {
         return {
             restrict: 'A',
             templateUrl: '/templates/gameDirective.html',
-            controller: function ($scope, $element) {
-                $http.get($state.current.data).success(function (data) {
+            controller: function ($scope, $element, $stateParams) {
+                $http.get('/content/games/'+$stateParams.gameId+'.json').success(function (data) {
                     $scope.gameInfo = data;
+                    $scope.gameImg = '/img/game_logos/'+ data.img;
                 });
+                $scope.openTourney = function(id)
+                {
+                    $state.go('tourDetail', {tourId: id});
+                };
+                $rootScope.hideTour = function(which)
+                {
+                    $rootScope.hideTour = which;
+                }
+
             },
             link: function (scope, element, attrs) {
+                /*$timeout(function(){
+                    scope.$$childHead.tabs[scope.$$childHead.tabs.length -1].active = true;
+                },0);*/
 
             }
         }
