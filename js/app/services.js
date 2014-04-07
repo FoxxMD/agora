@@ -16,7 +16,9 @@ angular.module('app.services', [])
                 justPaid: false,
                 alreadyPaid: false,
                 role: 0,
-                remind: true
+                remind: true,
+                captainOf: [],
+                tournaments: []
             },
             isInit = false,
             adminMode = false;
@@ -76,6 +78,8 @@ angular.module('app.services', [])
                     user.steam = response.steam;
                     user.bn = response.bn;
                     user.role = response.role;
+                    user.captainOf = response.captainList;
+                    user.tournaments = response.tournaments;
                     adminMode = (response.role == 1 || response.role == 2) ? (($localStorage.adminMode != undefined) ? $localStorage.adminMode : false) : false;
                     user.paid = (response.paid == 1);
                     //store important user config to localstorage to ensure directly accessing a page creates the expected behavior if latest response hasn't been returned in time
@@ -84,11 +88,19 @@ angular.module('app.services', [])
                     isInit = true;
                     deferred.resolve();
                 });
+
             }
             else {
                 deferred.resolve();
             }
 
+            return deferred;
+        };
+
+        this.getTeamsCaptained = function(id) {
+            $http({method: 'GET', url: '/php/users.php', params: {mode: 'getTeamsCaptained', userId: id}}).success(function (response) {
+                deferred.resolve(response);
+            });
             return deferred;
         };
 
@@ -447,6 +459,7 @@ angular.module('app.services', [])
             var deferred = $q.defer();
 
             $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getTournamentInfo', tourneyId: id}}).success(function (response) {
+                response.info = hydrateGameContent(response.info);
                 deferred.resolve(response);
             });
             return deferred;
@@ -456,9 +469,31 @@ angular.module('app.services', [])
             var deferred = $q.defer();
 
             $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getAllTournamentInfo'}}).success(function (response) {
-                deferred.resolve(response);
+
+                var newarray = response.map(function(item) {
+                return hydrateGameContent(item);
+                });
+                deferred.resolve(newarray);
             });
             return deferred;
         };
 
+        function hydrateGameContent(item) {
+            var baseUrl = '/img/game_logos/',
+                baseContentUrl = '/content/games/';
+            switch (item.Game) {
+                case "Halo 3":
+                    item.logo = baseUrl + 'halo3-trans.png';
+                    item.content = baseContentUrl + 'halo.json';
+                    break;
+                case "LoL":
+                    item.logo = baseUrl + 'lol-trans.png';
+                    item.content = baseContentUrl + 'lol.json';
+                    break;
+                default:
+                    item.logo = baseUrl + 'dota-2-trans.png';
+                    break;
+            }
+            return item;
+        }
     }]);

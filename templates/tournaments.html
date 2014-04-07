@@ -1,3 +1,12 @@
-<!-- stub -->
-
-        <h1>:O</h1>
+<div class="row">
+    <div ng-repeat="tour in tournaments" class="col-md-3">
+        <a ng-click="goToTourDetail(tour.Id)" class="thumbnail">
+            <img src="{{tour.logo}}">
+            <div class="caption">
+                <h2>{{tour.Name}}</h2>
+                <p>Players: {{tour.playerCount}}</p>
+                <p>Teams: {{tour.teamCount}}</p>
+            </div>
+        </a>
+    </div>
+</div>

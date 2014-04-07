@@ -60,7 +60,7 @@
 
         case "registerTeam":
 
-        $team = getTeam($data -> teamId, $isAdmin, $isGameAdmin);
+        $team = getTeam($data -> teamId, $authUser, $isAdmin, $isGameAdmin);
             if($team -> captain == $authUser -> id || $isGameAdmin)
             {
                 $result = registerTeam($data);

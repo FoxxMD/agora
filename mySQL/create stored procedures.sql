@@ -95,3 +95,47 @@ SELECT t.ID,t.name,t.game FROM teams t where t.captain = captainId;
 END$$
 DELIMITER ;
 
+-- Get all tournaments info
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllTournamentInfo`()
+BEGIN
+
+drop temporary table if exists team_counts;
+drop temporary table if exists player_counts;
+
+create temporary table team_counts
+(
+Id int unsigned,
+Game varchar(100),
+Name varchar(100),
+teamCount int unsigned
+)engine=memory;
+
+create temporary table player_counts
+(
+Id int unsigned,
+Game varchar(100),
+Name varchar(100),
+playerCount int unsigned
+)engine=memory;
+
+insert into team_counts(Id, Game, Name, teamCount)
+select t.Id,t.Game,t.Name, COUNT(tt.TeamId) as teamCount
+from tournaments t
+left join tournament_teams tt on tt.TournamentId = t.Id
+group by t.Id,t.Game,t.Name;
+
+insert into player_counts(Id, Game, Name, playerCount)
+select t.Id,t.Game,t.Name, COUNT(tu.UserId) as playerCount
+from tournaments t
+left join tournament_users tu on tu.TournamentId =  t.Id
+group by t.Id,t.Game,t.Name;
+
+
+Select t.Id,T.Game,T.Name,T.teamCount,p.playerCount
+from team_counts t
+left join player_counts p on t.Id = p.Id;
+
+END$$
+DELIMITER ;
+

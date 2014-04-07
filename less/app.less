@@ -13,12 +13,25 @@
       background-color: inherit;
     }
     .gamesSection {
-
       .thumbnail{
-        //min-height:130px;
         height:140px;
         img{
           max-height:130px;
+        }
+      }
+    }
+
+      .thumbnail {
+        //min-height:130px;
+        height:300px;
+        img{
+          //height:140px;
+        }
+        .caption{
+          &:hover{
+            text-decoration:none;
+          }
+          /*height:50%;*/
         }
       }
       @media(max-width:992px) {
@@ -30,6 +43,11 @@
             max-width:200px;
           }
         }
+      }
+
+    #tourInfoPane {
+      button {
+        margin: 10px 0 10px 0;
       }
     }
 

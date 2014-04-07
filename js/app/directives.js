@@ -1,36 +1,36 @@
 angular.module('app.directives', [])
     //no longer using this but may be useful later!
     /*.directive('scheduleDirective', ['$compile', '$http', function ($compile, $http) {
-        var directive = {
-            restrict: 'AE',
-            template: '<button class="btn btn-info pull-right" ng-click="changeDay(\'2014-04-20\')">Day 2</button><button class="btn btn-info pull-right" ng-click="changeDay(\'2014-04-19\')">Day 1</button><div id="calendar" style="float:left;"></div>',
-            link: function (scope, element, attrs) {
-                $http.get('/content/schedule.json').success(function (data) {
-                    var realSchedule = [];
-                    angular.copy(data, realSchedule);
-                    for(var i = 0; i < data.length; i++)
-                    {
-                        realSchedule[i].start = moment(data[i].start, "YYYY-MM-DD HH:mm").valueOf();
-                        realSchedule[i].end = moment(data[i].end, "YYYY-MM-DD HH:mm").valueOf();
-                    }
-                    var calendar = $(element).find('#calendar').calendar({
-                        events_source: realSchedule,
-                        tmpl_path: 'js/calendar/tmpls/',
-                        view: 'day',
-                        day: '2014-04-19'
-                    });
+     var directive = {
+     restrict: 'AE',
+     template: '<button class="btn btn-info pull-right" ng-click="changeDay(\'2014-04-20\')">Day 2</button><button class="btn btn-info pull-right" ng-click="changeDay(\'2014-04-19\')">Day 1</button><div id="calendar" style="float:left;"></div>',
+     link: function (scope, element, attrs) {
+     $http.get('/content/schedule.json').success(function (data) {
+     var realSchedule = [];
+     angular.copy(data, realSchedule);
+     for(var i = 0; i < data.length; i++)
+     {
+     realSchedule[i].start = moment(data[i].start, "YYYY-MM-DD HH:mm").valueOf();
+     realSchedule[i].end = moment(data[i].end, "YYYY-MM-DD HH:mm").valueOf();
+     }
+     var calendar = $(element).find('#calendar').calendar({
+     events_source: realSchedule,
+     tmpl_path: 'js/calendar/tmpls/',
+     view: 'day',
+     day: '2014-04-19'
+     });
 
-                    scope.changeDay = function (theDay) {
-                        calendar.setOptions({day: theDay});
-                        calendar.view();
-                    };
+     scope.changeDay = function (theDay) {
+     calendar.setOptions({day: theDay});
+     calendar.view();
+     };
 
-                });
+     });
 
-            }
-        };
-        return directive;
-    }])*/
+     }
+     };
+     return directive;
+     }])*/
     //stolen from http://rogeralsing.com/2013/08/26/angularjs-directive-to-check-that-passwords-match-followup/
     .directive('passwordMatch', [function () {
         return {
@@ -110,7 +110,7 @@ angular.module('app.directives', [])
                     $(this).addClass('active orange');
                     var anchor = $(this).attr('href');
                     $(document.body).animate({
-                        'scrollTop':   $('.gamesDirSection').offset().top
+                        'scrollTop': $('.gamesDirSection').offset().top
                     }, 1000, 'swing');
                 });
             }
@@ -153,7 +153,7 @@ angular.module('app.directives', [])
             }
         }
     }])
-    .directive('teamDir', ['userService', 'teamService', '$stateParams', '$filter', '$state','$rootScope', function (userService, teamService, $stateParams, $filter, $state, $rootScope) {
+    .directive('teamDir', ['userService', 'teamService', '$stateParams', '$filter', '$state', '$rootScope', function (userService, teamService, $stateParams, $filter, $state, $rootScope) {
         return {
             restrict: 'A',
             templateUrl: '/templates/team.html',
@@ -199,8 +199,7 @@ angular.module('app.directives', [])
                 };
 
                 $scope.updateTeam = function (element, updateVal) {
-                    if(element === 'password' && updateVal === undefined)
-                    {
+                    if (element === 'password' && updateVal === undefined) {
                         return 'Password must be 5 characters or less';
                     }
 
@@ -209,9 +208,8 @@ angular.module('app.directives', [])
                     });
                 };
 
-                $scope.deleteTeam = function(id)
-                {
-                    teamService.deleteTeam(id).promise.then(function(){
+                $scope.deleteTeam = function (id) {
+                    teamService.deleteTeam(id).promise.then(function () {
                         $state.go('teams');
                     });
                 };
@@ -257,4 +255,80 @@ angular.module('app.directives', [])
 
             }
         };
+    }])
+    .directive('tourdetailDir', ['tourService', '$stateParams', '$http', '$state', 'userService', function (tourService, $stateParams, $http, $state, userService) {
+        return {
+            restrict: 'AE',
+            templateUrl: '/templates/tourDetail.html',
+            controller: function ($scope) {
+                tourService.getTournamentInfo($stateParams.tourId).promise.then(function (response) {
+                    $scope.tourInfo = response.info;
+                    $scope.tourUsers = response.users;
+                    $scope.tourTeams = response.teams;
+                    $http.get(response.info.content).success(function (data) {
+                        $scope.jsonInfo = data;
+                    });
+                    $scope.foundTeam = false;
+                    $scope.foundPlayer = false;
+                    $scope.yourTeams = userService.getProfile().captainOf;
+
+                    userService.getProfile().captainOf.map(function (item) {
+                        var found = false;
+                        for (var i = 0; i < response.teams.length; i++) {
+                            if (response.teams[i].ID == item.ID) {
+                                $scope.foundTeam = true;
+                                break;
+                            }
+                        }
+                    });
+                    if(userService.getProfile().tournaments[$stateParams.tourId] !== undefined)
+                    {
+                        $scope.foundPlayer = true;
+                    }
+                });
+
+                $scope.selectedTeam = null;
+                $scope.showTeams = false;
+
+                $scope.goToTeam = function (id) {
+                    $state.go('team', {teamId: id});
+                };
+                $scope.goToPlayer = function (id) {
+                    $state.go('user', {userId: id});
+                };
+                $scope.tryRegisterPlayer = function () {
+                    tourService.registerUser(userService.getProfile().id, $stateParams.tourId).promise.then(function () {
+                        //$(element).find('#registerPlayer').hide();
+                    });
+                };
+                $scope.tryRegisterTeam = function () {
+                    tourService.registerTeam(userService.getProfile().id).promise.then(function () {
+                        //$(element).find('#registerTeam').hide();
+                    });
+                };
+            },
+            link: function (scope, element, attrs) {
+
+
+                $(element).find('#registerTeam').on('click', function (ev, elem) {
+                    if (scope.selectedTeam === null) {
+                        $(this).text('Register');
+                        $(this).attr('disabled', true);
+                        scope.showTeams = true;
+                        scope.$apply();
+                    }
+                    else {
+                        tourService.registerTeam(scope.selectedTeam.ID, $stateParams.tourId).promise.then(function () {
+                            $(element).find('#registerTeam').hide();
+                            scope.showTeams = false;
+                            scope.$apply();
+                        });
+                    }
+                });
+
+                scope.update = function () {
+                    $(element).find('#registerTeam').attr('disabled', false);
+                };
+            }
+        }
     }]);

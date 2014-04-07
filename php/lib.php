@@ -91,6 +91,16 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
                         $count = ++$count;
                     }
                 }
+                $sql = "CALL getTournamentsByUserId(".$userObj -> id.")";
+                if($result = $db -> query($sql))
+                {
+                    $userObj -> tournaments = array();
+                    $tourney = new stdClass();
+                    while($tourney = $result -> fetch_object())
+                    {
+                        $userObj -> tournaments[$tourney -> Id] = $tourney;
+                    }
+                }
                 return $userObj;
             }
             else{
@@ -500,6 +510,33 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
         return $response;
     }
 
+    function getTeamsCaptained($id) {
+        $response = new stdClass();
+        $response -> success = false;
+
+        $sql = "CALL getTeamsByCaptain(?)";
+        $statement = $db -> prepare($sql);
+        $statement -> bind_param('i', $id);
+
+        if(!$statement -> execute()){
+            error_log($db -> error);
+            $response -> message = "Error returning teams captained.";
+            return $response;
+        }
+
+        $team = new stdClass();
+        $teamArray = array();
+        $count = 0;
+        while($statement -> more_results)
+        {
+           $statement -> bind_result($team -> Id, $team -> Name, $team -> Game);
+           $teamArray[$count] = $team;
+           $count = ++$count;
+           $statement -> next_result();
+        }
+        return $teamArray();
+    }
+
     function payRegistration($token, $authUser)
     {
         require_once("./Stripe.php");
@@ -876,7 +913,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             $sql = "select * from tournaments where ID = ?";
             $statement = $db->prepare($sql);
-            $statement->bind_param("i", $data -> tournamentId);
+            $statement->bind_param("i", $data -> tourId);
 
             $response = new stdClass();
             $response -> success = false;
@@ -884,12 +921,12 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             if($statement->execute()) {
 
                 $statement -> store_result();
-                $statement -> close();
                 if($statement -> num_rows > 0)
                 {
+                    $statement -> close();
                     $sql = "insert into tournament_users values (NULL, ?, ?, 0, 0)";
                     $statement2 = $db->prepare($sql);
-                    $statement2->bind_param("ii",$data -> userId, $data -> tournamentId);
+                    $statement2->bind_param("ii",$data -> userId, $data -> tourId);
 
                     if($statement2->execute()) {
                         $response->success = true;
@@ -910,7 +947,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             $sql = "select * from tournaments where ID = ?";
             $statement = $db->prepare($sql);
-            $statement->bind_param("i", $data -> tournamentId);
+            $statement->bind_param("i", $data -> tourId);
 
             $response = new stdClass();
             $response -> success = false;
@@ -918,12 +955,12 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             if($statement->execute()) {
 
                 $statement -> store_result();
-                $statement -> close();
                 if($statement -> num_rows > 0)
                 {
+                    $statement -> close();
                     $sql2 = "insert into tournament_teams values (NULL, ?, ?, 0)";
                     $statement2 = $db-> prepare($sql2);
-                    $statement2-> bind_param("ii",$data -> teamId, $data -> tournamentId);
+                    $statement2-> bind_param("ii",$data -> teamId, $data -> tourId);
 
                     if($statement2->execute()) {
                         $response-> success = true;
@@ -993,6 +1030,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             $db = getDB();
             $tour = new stdClass();
+            $info = new stdClass();
             $response = new stdClass();
             $response -> success = false;
 
@@ -1000,8 +1038,44 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
             $statement->bind_param("i", $tourId);
 
             if($statement -> execute()) {
-                $statement -> bind_result($tour -> id, $tour -> game, $tour -> name, $tour -> teamCount, $tour -> playerCount);
+                $statement -> store_result();
+                $statement -> bind_result($info -> Id, $info -> Game, $info -> Name, $info -> isPlaying, $info -> teamCount, $info -> playerCount);
                 $statement -> fetch();
+                $statement -> close();
+
+                $tour -> info = $info;
+
+               $sql = "CAll getUsersByTournament(".$info -> Id.")";
+                if($result = $db -> query($sql))
+                {
+                    $tour -> users = array();
+                    $count = 0;
+                    while($user = $result -> fetch_object())
+                      {
+                        $tour -> users[$count] = $user;
+                        $count = ++$count;
+                      }
+                      $db -> next_result();
+                }
+                else{
+                    error_log($db -> error." at line 1023");
+                }
+
+                $sql = "CALL getTeamsByTournament(".$info -> Id.")";
+                if($result = $db -> query($sql))
+                {
+                    $tour -> teams = array();
+                    $count = 0;
+                    while($team = $result -> fetch_object())
+                      {
+                        $tour -> teams[$count] = $team;
+                        $count = ++$count;
+                      }
+                      $db -> next_result();
+                }
+                else{
+                    error_log($db -> error." at line 1041");
+                }
                 return $tour;
             }
             else{
@@ -1019,21 +1093,13 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             //this is terrible and needs to be replaced by a stored proc but I am stupid and stackoverflow won't answer my question
 
-            $sql = "select Id from tournaments";
+            $sql = "CALL getAllTournamentInfo()";
             if($result = $db -> query($sql))
             {
-                $tour = new stdClass();
                 $count = 0;
-                //$result -> store_result();
-                //$result -> close();
-                //TODO -- dafuq
-                while($id = $result -> fetch_object())
+                while($tour = $result -> fetch_object())
                 {
-                    if(!$tourResult = $db -> query("CALL getTournamentInfo(".$id -> Id.")"))
-                    {
-                        echo($db -> error);
-                    }
-                    $tourArray[$count] = $tourResult -> fetch_object();
+                    $tourArray[$count] = $tour;
                     $count = ++$count;
                 }
             }

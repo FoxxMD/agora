@@ -631,15 +631,28 @@
 .gtgamefest .contentPane .gamesSection .thumbnail img {
   max-height: 130px;
 }
+.gtgamefest .contentPane .thumbnail {
+  height: 300px;
+}
+.gtgamefest .contentPane .thumbnail .caption {
+  /*height:50%;*/
+
+}
+.gtgamefest .contentPane .thumbnail .caption:hover {
+  text-decoration: none;
+}
 @media (max-width: 992px) {
-  .gtgamefest .contentPane .gamesSection .thumbnail {
+  .gtgamefest .contentPane .thumbnail {
     min-height: 80px;
     height: auto;
   }
-  .gtgamefest .contentPane .gamesSection .thumbnail img {
+  .gtgamefest .contentPane .thumbnail img {
     max-height: 80px;
     max-width: 200px;
   }
+}
+.gtgamefest .contentPane #tourInfoPane button {
+  margin: 10px 0 10px 0;
 }
 .gtgamefest .noborder {
   border: none;
