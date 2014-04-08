@@ -31,7 +31,7 @@ DELIMITER ;
 
 -- Get Teams by Tournament Id
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTeamsByTournament`(IN inputTournamentId int(11))
+CREATE PROCEDURE `getTeamsByTournament`(IN inputTournamentId int(11))
 BEGIN
 
 SELECT te.ID, te.name, te.captain, t.isPresent FROM teams te INNER JOIN tournament_teams t ON t.TeamId = te.ID WHERE t.TournamentId=inputTournamentId;
@@ -41,7 +41,7 @@ DELIMITER ;
 
 -- Get Users by Tournament Id
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsersByTournament`(IN inputTournamentId int(11))
+CREATE PROCEDURE `getUsersByTournament`(IN inputTournamentId int(11))
 BEGIN
 
 SELECT u.id, u.alias , u.email, u.steam, u.bn, u.lol, u.xbox, u.ign, u.role, t.isAdmin, t.isPresent FROM users u INNER JOIN tournament_users t ON t.UserId = u.id WHERE t.TournamentId=inputTournamentId;
@@ -51,7 +51,7 @@ DELIMITER ;
 
 -- Get Tournament Info
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTournamentInfo`(IN inputTournamentId int(11))
+CREATE PROCEDURE `getTournamentInfo`(IN inputTournamentId int(11))
 BEGIN
 
 DECLARE teamCount INT;
@@ -60,14 +60,14 @@ DECLARE playerCount INT;
 SELECT COUNT(*) INTO @teamCount FROM tournament_teams t where t.TournamentId=inputTournamentId;
 SELECT COUNT(*) INTO @playerCount FROM tournament_users t where t.TournamentId=inputTournamentId;
 
-Select *,@teamCount,@playerCount FROM tournaments t where t.Id=inputTournamentId;
+Select *,@teamCount as teamCount,@playerCount as playerCount FROM tournaments t where t.Id=inputTournamentId;
 
 END$$
 DELIMITER ;
 
 -- Get Tournaments a user is participating in
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTournamentsByUserId`(IN userId int(11))
+CREATE PROCEDURE `getTournamentsByUserId`(IN userId int(11))
 BEGIN
 
 Select tour.* from tournaments tour INNER JOIN tournament_users tu on tu.TournamentId = tour.Id where tu.UserId = userId;
@@ -77,7 +77,7 @@ DELIMITER ;
 
 -- Get Tournaments a team is participating in
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTournamentsByTeamId`(IN teamId int(11))
+CREATE PROCEDURE `getTournamentsByTeamId`(IN teamId int(11))
 BEGIN
 
 Select tour.* from tournaments tour INNER JOIN tournament_teams tt on tt.TournamentId = tour.Id where tt.TeamId = teamId;
@@ -87,7 +87,7 @@ DELIMITER ;
 
 -- Get All teams a user is a captain for
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTeamsByCaptain`(IN captainId int(11))
+CREATE PROCEDURE `getTeamsByCaptain`(IN captainId int(11))
 BEGIN
 
 SELECT t.ID,t.name,t.game FROM teams t where t.captain = captainId;
@@ -97,7 +97,7 @@ DELIMITER ;
 
 -- Get all tournaments info
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllTournamentInfo`()
+CREATE PROCEDURE `getAllTournamentInfo`()
 BEGIN
 
 drop temporary table if exists team_counts;
@@ -136,7 +136,7 @@ left join tournament_users tu on tu.TournamentId =  t.Id
 group by t.Id,t.Game,t.Name;
 
 
-Select t.Id, t.Game, t.Name, t.isPlaying, t.jsonName, T.teamCount, p.playerCount
+Select t.Id, t.Game, t.Name, t.isPlaying, t.jsonName, t.teamCount, p.playerCount
 from team_counts t
 left join player_counts p on t.Id = p.Id;
 

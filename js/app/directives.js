@@ -341,7 +341,7 @@ angular.module('app.directives', [])
 
                     tourService.removeUser(userId, $stateParams.tourId).promise.then(function () {
                         $scope.tourUsers = $scope.tourUsers.map(function(item){
-                            if(item.id !== userId)
+                            if(item.id != userId)
                             {
                                 return item;
                             }
@@ -353,7 +353,7 @@ angular.module('app.directives', [])
 
                     tourService.removeTeam(teamId, $stateParams.tourId).promise.then(function () {
                         $scope.tourTeams = $scope.tourTeams.map(function(item){
-                           if(item.ID !== teamId)
+                           if(item.ID != teamId)
                            {
                                return item;
                            }

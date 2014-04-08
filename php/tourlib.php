@@ -1,6 +1,7 @@
 <?php
 
     require_once("lib.php");
+    error_reporting(E_ALL);
 
     function registerPlayer($data) {
 
@@ -24,13 +25,13 @@
                     $statement2->bind_param("ii",$data -> userId, $data -> tourId);
 
                     if($statement2->execute()) {
-                        $response->success = true;
+                        $response-> success = true;
                     } else {
                         $response->message = $db->error;
                     }
                 }
             } else {
-                $response->message = $db->error;
+                $response-> message = $db->error;
             }
 
             return $response;
@@ -217,6 +218,10 @@
                 $statement -> bind_result($info -> Id, $info -> Game, $info -> Name, $info -> isPlaying, $info -> jsonName, $info -> teamCount, $info -> playerCount);
                 $statement -> fetch();
                 $statement -> close();
+                if($db -> more_results())
+                {
+                    $db -> next_result();
+                }
 
                 $tour -> info = $info;
 
@@ -230,10 +235,13 @@
                         $tour -> users[$count] = $user;
                         $count = ++$count;
                       }
-                      $db -> next_result();
+                      if($db -> more_results())
+                      {
+                          $db -> next_result();
+                      }
                 }
                 else{
-                    error_log($db -> error." at line 1023");
+                    error_log($db -> error);
                 }
 
                 $sql = "CALL getTeamsByTournament(".$info -> Id.")";
@@ -246,10 +254,13 @@
                         $tour -> teams[$count] = $team;
                         $count = ++$count;
                       }
-                      $db -> next_result();
+                      if($db -> more_results())
+                      {
+                          $db -> next_result();
+                      }
                 }
                 else{
-                    error_log($db -> error." at line 1041");
+                    error_log($db -> error);
                 }
                 return $tour;
             }
@@ -277,7 +288,8 @@
                 }
             }
             else{
-                $response -> message = "Failed to get all tournament info.";
+                $response -> message = "Failed to get all tournament info.".$db -> error;
+                error_log($db -> error);
                 return $response;
             }
             return $tourArray;

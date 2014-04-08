@@ -1,0 +1,16 @@
+Id,Game,Name,isPlaying,jsonName
+1,"Halo 3",2v2,0,halo
+2,"Halo 3",4v4,0,halo
+3,LoL,"5v5 Howling Abyss",0,lol
+4,LoL,"5v5 Summoner's Rift",0,lol
+5,SSB,"Brawl 1v1",0,ssb
+6,SSB,"Melee 1v1",0,ssb
+7,"Pokemon X/Y","Doubles 1v1",0,poke
+8,"Starcraft II",1v1,0,sc2
+9,"Starcraft II",2v2,0,sc2
+10,"DOTA 2","5v5 Captain's Mode",0,dota
+11,"Magic The Gathering","Booster Draft",0,mtg
+12,CS:GO,5v5,0,csgo
+13,"Marvel vs Capcom","1v1 Tournament",0,mvc
+14,"Pokemon TCG",Tournament,0,ptcg
+15,Hearthstone,Tournament,0,hs
