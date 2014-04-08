@@ -1,6 +1,7 @@
 {
     "title": "Will Jones",
     "overview": "content/games/lol.html",
+    "img": "lol-trans.png",
     "rules": [
         "Create an account at www.challonge.com.  You will be provided with a link to the tournament.",
 		"Read the summoner's code.  Ignorance is not an excuse to violating rules.",
@@ -17,6 +18,9 @@
     "tourney": [
         {
             "title": "5v5 Summoner's Rift",
+            "id": "4",
+            "when": "14:00-24:00, Saturday",
+            "where": "Klaus 1447, 1456, 2443, 2447, 2456",
             "prizes": [
                 {
                     "place": "1st",
@@ -36,6 +40,9 @@
         },
 		{
             "title": "5v5 Howling Abyss",
+            "id": "3",
+            "when": "14:00-24:00, Saturday",
+            "where": "Klaus Lower 1456",
             "prizes": [ 
                 {
                     "place": "1st",

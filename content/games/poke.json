@@ -1,6 +1,7 @@
 {
     "title": "Pokemon X&Y",
     "overview": "/content/games/poke.html",
+    "img": "pokemonxy-trans.png",
     "rules": ["Battles Will Use the <a href=\"http://assets22.pokemon.com/assets/cms/pdf/op/tournaments/2014/Play_Pokemon_VG_Rules_and_Formats_2014.pdf\">Pokemon Organized Play Standard Format Style rule set</a>. (The format for VGC 2014 events; the rules used on the Special Battlespot Ladder)",
         "Battles are set to Doubles with Flat Rules. Six Pokemon are brought to the battle, 4 are selected for the battle.",
         "Xerneus, Yveltal, Zygarde, and Mewtwo (as well as Diancie, Hoopa, and Volcanion), though in the Kalos dex, are banned",
@@ -15,6 +16,9 @@
     "tourney": [
         {
             "title": "Doubles 1v1",
+            "id":"7",
+            "when":"14:00, Saturday",
+            "where": "CULC 152",
             "prizes": [
                 {
                     "place": "1st",

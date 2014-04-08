@@ -1,11 +1,16 @@
 <div class="row">
     <div ng-repeat="tour in tournaments" class="col-md-3">
-        <a ng-click="goToTourDetail(tour.Id)" class="thumbnail">
+        <a ui-sref="tourDetail({gameId: tour.jsonName, tourId:tour.Id})" class="thumbnail">
             <img src="{{tour.logo}}">
             <div class="caption">
-                <h2>{{tour.Name}}</h2>
+                <h2 class="tourneyName">{{tour.Name}}</h2>
                 <p>Players: {{tour.playerCount}}</p>
                 <p>Teams: {{tour.teamCount}}</p>
+                <p ng-switch on="tour.isPlaying">Status:
+                    <strong ng-switch-when="0">Open <i class="glyphicon glyphicon-off" style="color:green;"></i></strong>
+                    <strong ng-switch-when="1">In Progress <i class="glyphicon glyphicon-off" style="color:deepskyblue;"></i></strong>
+                    <strong ng-switch-when="2">Completed <i class="glyphicon glyphicon-off" style="color:red;"></i></strong>
+                </p>
             </div>
         </a>
     </div>

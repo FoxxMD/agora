@@ -639,6 +639,9 @@
   /*height:50%;*/
 
 }
+.gtgamefest .contentPane .thumbnail .caption h2.tourneyName {
+  font-size: 26px;
+}
 .gtgamefest .contentPane .thumbnail .caption:hover {
   text-decoration: none;
 }

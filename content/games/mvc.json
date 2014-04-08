@@ -1,6 +1,7 @@
 {
     "title": "Ultimate Marvel Vs Capcom 3",
     "overview": "/content/games/mvc.html",
+    "img": "marvelcapcom-trans.png",
     "rules": ["<a href=\"http://evo.shoryuken.com/additional-rules/\">EVO Championship Series ruleset</a> will be used for this tournament.",
         "All matches will be played on the Xbox 360 version of the game",
         "Galactus is banned.",
@@ -12,7 +13,10 @@
     ],
     "tourney": [
         {
-            "title": "Tournament",
+            "title": "1v1 Tournament",
+            "id": "13",
+            "when": "12:00, Sunday",
+            "where": "Klaus Atrium",
             "prizes": [
                 {
                     "place": "1st",

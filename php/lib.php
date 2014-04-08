@@ -1039,7 +1039,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
             if($statement -> execute()) {
                 $statement -> store_result();
-                $statement -> bind_result($info -> Id, $info -> Game, $info -> Name, $info -> isPlaying, $info -> teamCount, $info -> playerCount);
+                $statement -> bind_result($info -> Id, $info -> Game, $info -> Name, $info -> isPlaying, $info -> jsonName, $info -> teamCount, $info -> playerCount);
                 $statement -> fetch();
                 $statement -> close();
 

@@ -1,74 +1,6 @@
 <tabset>
-    <tab ng-repeat="tour in gameInfo.tourney" heading="{{tour.title}}"
-         ng-click="openTourney(tour.id);">
-    </tab>
-    <tab heading="Tournaments, Prizes, and Rules">
-        <div class="panel" ng-if="gameInfo.rules !== undefined">
-            <div class="panel-heading">
-                <h3 class="text-center">Rules</h3>
-            </div>
-            <div class="panel-body">
-                <ul>
-                    <li ng-repeat="rule in gameInfo.rules" ng-bind-html="rule"></li>
-                </ul>
-            </div>
-        </div>
-        <div class="row" ng-if="gameInfo.tourney !== undefined">
-            <h3 class="text-center">Tournaments</h3>
-
-            <div class="panel-group" id="tourneyAccordion">
-                <div class="panel panel-default noborder" ng-repeat="tour in gameInfo.tourney">
-                    <a data-toggle="collapse" data-parent="#tourneyAccordion" href="#collapsetour{{$index}}">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                {{tour.title}}
-                            </h4>
-                        </div>
-                    </a>
-
-                    <div id="collapsetour{{$index}}" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            <div class="panel panel-default consecutive-panel" ng-if="tour.rules !== undefined">
-                                <div class="panel-heading">
-                                    Rules
-                                </div>
-                                <div class="panel-body tournamentRulesSection">
-                                    <ul>
-                                        <li ng-repeat="rule in tour.rules track by $index" ng-bind-html="rule"></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="panel panel-default consecutive-panel"
-                                 ng-if="tour.prizes !== undefined">
-                                <div class="panel-heading">
-                                    Prizes
-                                </div>
-                                <div class="panel-body">
-                                    <ul>
-                                        <li ng-repeat="prize in tour.prizes">{{prize.place}} -- <a
-                                                ng-if="prize.href != undefined"
-                                                ng-href="{{prize.href}}">{{prize.title}}</a> <span
-                                                ng-if="prize.href == undefined">{{prize.title}}</span></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="panel panel-default consecutive-panel" ng-if="tour.maps !== undefined">
-                                <div class="panel-heading">
-                                    Maps
-                                </div>
-                                <div class="panel-body">
-                                    <ul>
-                                        <li ng-repeat="map in tour.maps"><a ng-if="map.href != undefined"
-                                                                            ng-href="{{map.href}}">{{map.title}}</a>
-                                            <span ng-if="map.href == undefined">{{map.title}}</span></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <tab ng-repeat="tour in tabs" heading="{{tour.title}}"
+         ng-click="openTourney(tour.id); hideTour(false);" active="tour.active">
     </tab>
     <tab ng-if="gameInfo.server !== undefined" heading="Servers"></tab>
     <tab heading="Overview" ng-click="hideTour(true);">
@@ -119,7 +51,7 @@
         </div>
     </tab>
 </tabset>
-<div>
+<div ng-hide="hideTourPane">
     <div ui-view>
     </div>
 </div>

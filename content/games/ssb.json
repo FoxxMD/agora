@@ -1,6 +1,7 @@
 {
     "title": "Super Smash Brothers",
     "overview": "/content/games/ssb.html",
+    "img": "ssbbrawl-trans.png",
     "rules": ["No hacks are allowed in tournament matches unless expressly authorized by an admin.",
         "No coaching or excessive commentating during the match. You may be asked to leave if you violate this rule.",
         "Do not be late to your match. 10 minutes late = match loss. 15 minutes late = set loss.",
@@ -9,6 +10,9 @@
     "tourney": [
         {
             "title": "Brawl 1v1",
+            "id": "5",
+            "when": "14:00-24:00, Saturday",
+            "where": "Klaus Atrium 1116 W",
             "prizes": [
                 {
                     "place": "1st",
@@ -61,6 +65,9 @@
         },
         {
             "title": "Melee 1v1",
+            "id": "6",
+            "when": "14:00-24:00, Saturday",
+            "where": "Klaus Atrium 1116 W",
             "prizes": [
                 {
                     "place": "1st",

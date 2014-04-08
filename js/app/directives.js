@@ -123,22 +123,34 @@ angular.module('app.directives', [])
             controller: function ($scope, $element, $stateParams) {
                 $http.get('/content/games/'+$stateParams.gameId+'.json').success(function (data) {
                     $scope.gameInfo = data;
+                    $scope.tabs = data.tourney.map(function(item){
+                        return { "title": item.title,
+                            "id": item.id,
+                            "active": $stateParams.tourId === item.id};
+                    });
                     $scope.gameImg = '/img/game_logos/'+ data.img;
                 });
+
                 $scope.openTourney = function(id)
                 {
                     $state.go('tourDetail', {tourId: id});
                 };
-                $rootScope.hideTour = function(which)
+                $scope.hideTour = function(which)
                 {
-                    $rootScope.hideTour = which;
+                    $scope.hideTourPane = which;
+                };
+
+                if($stateParams.tourId !== undefined)
+                {
+                    $scope.openTourney($stateParams.tourId);
+                    $scope.hideTourPane = false;
+                }
+                else{
+                    $scope.hideTourPane = true;
                 }
 
             },
             link: function (scope, element, attrs) {
-                /*$timeout(function(){
-                    scope.$$childHead.tabs[scope.$$childHead.tabs.length -1].active = true;
-                },0);*/
 
             }
         }
@@ -278,7 +290,7 @@ angular.module('app.directives', [])
                     $scope.tourInfo = response.info;
                     $scope.tourUsers = response.users;
                     $scope.tourTeams = response.teams;
-                    $http.get(response.info.content).success(function (data) {
+                    $http.get('/content/games/'+response.info.jsonName +'.json').success(function (data) {
                         $scope.jsonInfo = data;
                     });
                     $scope.foundTeam = false;

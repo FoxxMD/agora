@@ -1,6 +1,7 @@
 {
     "title": "Pokemon Trading Card Game",
     "overview": "/content/games/ptcg.html",
+    "img": "Pokemon_Trading_Card_Game-trans.png",
     "rules": ["Matches will be played in the modified format.",
         "A 60 card deck is to be used, alongside 6 Prize cards",
         "Only cards from the set Next Destinies, Dark Explorers, Dragons Exalted, Dragon's Vault, Boundaries Crossed, Plasma Storm, Plasma Freeze, Plasma Blast, Legendary Tresures, The Kalos Starter Set, X&Y, McDonalds Collection, and BW promos numbered 33 and higher.",
@@ -13,7 +14,10 @@
     ],
     "tourney": [
         {
-            "title": "TCG",
+            "title": "Tournament",
+            "id": "14",
+            "when": "12:00, Sunday",
+            "where": "CULC 131",
             "prizes": [
                 {
                     "place": "1st",

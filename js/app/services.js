@@ -459,7 +459,6 @@ angular.module('app.services', [])
             var deferred = $q.defer();
 
             $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getTournamentInfo', tourneyId: id}}).success(function (response) {
-                response.info = hydrateGameContent(response.info);
                 deferred.resolve(response);
             });
             return deferred;
@@ -479,19 +478,40 @@ angular.module('app.services', [])
         };
 
         function hydrateGameContent(item) {
-            var baseUrl = '/img/game_logos/',
-                baseContentUrl = '/content/games/';
-            switch (item.Game) {
-                case "Halo 3":
+            var baseUrl = '/img/game_logos/';
+            switch (item.jsonName) {
+                case "halo":
                     item.logo = baseUrl + 'halo3-trans.png';
-                    item.content = baseContentUrl + 'halo.json';
                     break;
-                case "LoL":
+                case "lol":
                     item.logo = baseUrl + 'lol-trans.png';
-                    item.content = baseContentUrl + 'lol.json';
                     break;
-                default:
+                case 'ssb':
+                    item.logo = baseUrl + 'ssbbrawl-trans.png';
+                    break;
+                case 'poke':
+                    item.logo = baseUrl + 'pokemonxy-trans.png';
+                    break;
+                case 'sc2':
+                    item.logo = baseUrl + 'starcraft2-trans.png';
+                    break;
+                case 'dota':
                     item.logo = baseUrl + 'dota-2-trans.png';
+                    break;
+                case 'mtg':
+                    item.logo = baseUrl + 'magic-the-gathering-trans.png';
+                    break;
+                case 'csgo':
+                    item.logo = baseUrl + 'csgo-trans.png';
+                    break;
+                case 'mvc':
+                    item.logo = baseUrl + 'marvelcapcom-trans.png';
+                    break;
+                case 'ptcg':
+                    item.logo = baseUrl + 'Pokemon_Trading_Card_Game-trans.png';
+                    break;
+                case 'hs':
+                    item.logo = baseUrl + 'Hearthstone_Logo.png';
                     break;
             }
             return item;
