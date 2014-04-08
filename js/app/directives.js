@@ -61,9 +61,12 @@ angular.module('app.directives', [])
             restrict: 'A',
             templateUrl: '/templates/pay.html',
             link: function (scope, elem, attrs) {
-                Stripe.setPublishableKey('pk_live_YwddUwRH90xpNcHRNewOjZhG'); //live key
+               Stripe.setPublishableKey('pk_live_YwddUwRH90xpNcHRNewOjZhG'); //live key
             },
             controller: function ($scope) {
+
+                var payed = false;
+
                 if (userService.getProfile().paid == 1) {
                     userService.alreadyPaid(true);
                     $state.go('profile');
@@ -80,20 +83,25 @@ angular.module('app.directives', [])
                     } else {
                         // got stripe token, send
                         var data = { token: response.id};
-                        userService.payRegistration(data).promise.then(function (response) {
-                            //payment success
-                            if (response == undefined || response == null) {
-                                userService.justPaid(true);
-                                $state.go('profile');
-                            } else {
-                                $scope.formErrorMessage = '<strong>Your payment was submitted successfully! But there was a problem recording your payment.</strong> Please contact an admin to fix this issue. <strong>Do not resubmit your payment!</strong>';
+                        if(!payed)
+                        {
+                            payed = true;
+                            userService.payRegistration(data).promise.then(function (response) {
+                                //payment success
+                                if (response == undefined || response == null) {
+                                    userService.justPaid(true);
+                                    $state.go('profile');
+                                } else {
+                                    $scope.formErrorMessage = '<strong>Your payment was submitted successfully! But there was a problem recording your payment.</strong> Please contact an admin to fix this issue. <strong>Do not resubmit your payment!</strong>';
+                                    $scope.formErrorTechMessage = response;
+                                }
+                                payed = false;
+                            }, function (response) {
+                                $scope.formErrorMessage = '<strong>There was an error processing your payment, you have not been charged.</strong> Please ensure your card and billing information is correct before trying again.';
                                 $scope.formErrorTechMessage = response;
-                            }
-
-                        }, function (response) {
-                            $scope.formErrorMessage = '<strong>There was an error processing your payment, you have not been charged.</strong> Please ensure your card and billing information is correct before trying again.';
-                            $scope.formErrorTechMessage = response;
-                        });
+                                payed = false;
+                            });
+                        }
                     }
                 }
             }
