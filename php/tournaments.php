@@ -51,7 +51,7 @@
 
         case "registerPlayer":
 
-            if($fullAccess || $isGameAdmin)
+            if($data -> userId == $authUser -> id || $isGameAdmin)
             {
                 $result = registerPlayer($data);
             }
@@ -74,7 +74,50 @@
             }
             break;
 
-        //TODO add leaving tournament as player or team
+        case "leaveTeam":
+            $team = getTeam($data -> teamId, $authUser, $isAdmin, $isGameAdmin);
+            if($team -> captain == $authUser -> id || $isGameAdmin)
+            {
+                $result = leaveTeam($data);
+            }
+            else {
+                $result -> success = false;
+                $result -> message = "Not Authorized";
+            }
+            break;
+
+        case "leavePlayer":
+            if($data -> userId == $authUser -> id || $isGameAdmin)
+            {
+                $result = leavePlayer($data);
+            }
+            else {
+                $result -> success = false;
+                $result -> message = "Not Authorized";
+            }
+            break;
+
+        case "makeTeamPresent":
+            if($isGameAdmin)
+            {
+                $result = makeTeamPresent($data);
+            }
+            else {
+                $result -> success = false;
+                $result -> message = "Not Authorized";
+            }
+            break;
+
+        case "makePlayerPresent":
+            if($isGameAdmin)
+            {
+                $result = makePlayerPresent($data);
+            }
+            else {
+                $result -> success = false;
+                $result -> message = "Not Authorized";
+            }
+            break;
 
         case "getUsers":
                 $result = getPlayersByTournament($params["tourneyId"]);

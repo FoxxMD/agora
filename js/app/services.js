@@ -420,14 +420,66 @@ angular.module('app.services', [])
             return deferred;
         };
 
-        this.removeUser = function()
+        this.removeUser = function(userId, tourId)
         {
-            //stub
+            var postData = {
+                userId: userId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'leavePlayer'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+
+            return deferred;
         };
 
-        this.removeTeam = function()
+        this.removeTeam = function(teamId, tourId)
         {
-            //stub
+            var postData = {
+                teamId: teamId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'leaveTeam'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
+
+        this.makeUserPresent = function(userId, tourId)
+        {
+            var postData = {
+                userId: userId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'makePlayerPresent'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+
+            return deferred;
+        };
+
+        this.makeTeamPresent = function(teamId, tourId)
+        {
+            var postData = {
+                teamId: teamId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'makeTeamPresent'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
         };
 
         this.getUsers = function(id)

@@ -14,7 +14,7 @@
             $response -> success = false;
 
             if($statement->execute()) {
-
+//TODO add check to see if they are already registered.
                 $statement -> store_result();
                 if($statement -> num_rows > 0)
                 {
@@ -46,7 +46,7 @@
 
             $response = new stdClass();
             $response -> success = false;
-
+//TODO add check to see if they are already registered.
             if($statement->execute()) {
 
                 $statement -> store_result();
@@ -71,6 +71,86 @@
             $response->message = $db->error;
         }
 
+            return $response;
+        }
+
+        function leaveTeam($data) {
+
+            $response = new stdClass();
+            $response -> success = false;
+
+            $db = getDB();
+            $sql = "delete from tournament_teams where TournamentId=? and TeamId=?";
+            $statement = $db -> prepare($sql);
+            $statement -> bind_param('ii',$data -> tourId, $data -> teamId);
+
+            if($statement -> execute()){
+                $response -> success = true;
+            }
+            else{
+                error_log("Error removing team ".$data -> teamId." from tournament ".$data -> tourId." : ".$db -> error);
+                $response -> message = "There was a problem removing your team from this tournament, please contact an administrator.";
+            }
+            return $response;
+        }
+
+        function leavePlayer($data) {
+
+            $response = new stdClass();
+            $response -> success = false;
+
+            $db = getDB();
+            $sql = "delete from tournament_users where TournamentId=? and UserId=?";
+            $statement = $db -> prepare($sql);
+            $statement -> bind_param('ii', $data -> tourId, $data -> userId);
+
+            if($statement -> execute()){
+                $response -> success = true;
+            }
+            else{
+                error_log("Error removing user ".$data -> userId." from tournament ".$data -> tourId." : ".$db -> error);
+                $response -> message = "There was a problem removing you from this tournament, please contact an administrator.";
+            }
+            return $response;
+        }
+
+        function makePlayerPresent($data) {
+
+            $response = new stdClass();
+            $response -> success = false;
+
+            $db = getDB();
+            $sql = "update tournament_users set isPresent=1 where TournamentId=? and UserId=?";
+            $statement = $db -> prepare($sql);
+            $statement -> bind_param('ii', $data -> tourId, $data -> userId);
+
+            if($statement -> execute()){
+                $response -> success = true;
+            }
+            else{
+                error_log("Error setting user ".$data -> userId." as present for tournament ".$data -> tourId." : ".$db -> error);
+                $response -> message = "There was a problem setting this user as present, please contact an administrator.";
+            }
+            return $response;
+        }
+
+        function makeTeamPresent($data) {
+
+            $response = new stdClass();
+            $response -> success = false;
+
+            $db = getDB();
+            $sql = "update tournament_teams set isPresent=1 where TournamentId=? and TeamId=?";
+            $statement = $db -> prepare($sql);
+            $statement -> bind_param('ii',$data -> tourId, $data -> teamId);
+
+            if($statement -> execute()){
+                $response -> success = true;
+            }
+            else{
+                error_log("Error setting team ".$data -> teamId." present for tournament ".$data -> tourId." : ".$db -> error);
+                $response -> message = "There was a problem setting this team present, please contact an administrator.";
+            }
             return $response;
         }
 

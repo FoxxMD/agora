@@ -106,9 +106,8 @@ angular.module('app.directives', [])
             templateUrl: '/templates/games.html',
             link: function (scope, element, attrs) {
 
-                if($stateParams.gameId !== undefined)
-                {
-                    $('#gameSelect'+$stateParams.gameId).addClass('active orange');
+                if ($stateParams.gameId !== undefined) {
+                    $('#gameSelect' + $stateParams.gameId).addClass('active orange');
                 }
 
                 $(element).find('.thumbnail').on('click', function (ev, target) {
@@ -116,44 +115,41 @@ angular.module('app.directives', [])
                     $(this).addClass('active orange');
 
                     //don't think animation is necessary here anymore
-/*                    var anchor = $(this).attr('href');
-                    $(document.body).animate({
-                        'scrollTop': $('.gamesDirSection').offset().top
-                    }, 1000, 'swing');*/
+                    /*                    var anchor = $(this).attr('href');
+                     $(document.body).animate({
+                     'scrollTop': $('.gamesDirSection').offset().top
+                     }, 1000, 'swing');*/
                 });
             }
         }
     }])
-    .directive('gameDir', ['$http', '$state','$timeout','$stateParams','$rootScope', function ($http, $state, $timeout, $stateParams,$rootScope) {
+    .directive('gameDir', ['$http', '$state', '$timeout', '$stateParams', '$rootScope', function ($http, $state, $timeout, $stateParams, $rootScope) {
         return {
             restrict: 'A',
             templateUrl: '/templates/gameDirective.html',
             controller: function ($scope, $element, $stateParams) {
-                $http.get('/content/games/'+$stateParams.gameId+'.json').success(function (data) {
+                $http.get('/content/games/' + $stateParams.gameId + '.json').success(function (data) {
                     $scope.gameInfo = data;
-                    $scope.tabs = data.tourney.map(function(item){
+                    $scope.tabs = data.tourney.map(function (item) {
                         return { "title": item.title,
                             "id": item.id,
                             "active": $stateParams.tourId === item.id};
                     });
-                    $scope.gameImg = '/img/game_logos/'+ data.img;
+                    $scope.gameImg = '/img/game_logos/' + data.img;
                 });
 
-                $scope.openTourney = function(id)
-                {
+                $scope.openTourney = function (id) {
                     $state.go('tourDetail', {tourId: id});
                 };
-                $scope.hideTour = function(which)
-                {
+                $scope.hideTour = function (which) {
                     $scope.hideTourPane = which;
                 };
 
-                if($stateParams.tourId !== undefined)
-                {
+                if ($stateParams.tourId !== undefined) {
                     $scope.openTourney($stateParams.tourId);
                     $scope.hideTourPane = false;
                 }
-                else{
+                else {
                     $scope.hideTourPane = true;
                 }
 
@@ -294,38 +290,42 @@ angular.module('app.directives', [])
             restrict: 'AE',
             templateUrl: '/templates/tourDetail.html',
             controller: function ($scope) {
+
+                $scope.waitForLoad = true;
+
                 tourService.getTournamentInfo($stateParams.tourId).promise.then(function (response) {
                     $scope.tourInfo = response.info;
                     $scope.tourUsers = response.users;
                     $scope.tourTeams = response.teams;
-                    $http.get('/content/games/'+response.info.jsonName +'.json').success(function (data) {
+                    $http.get('/content/games/' + response.info.jsonName + '.json').success(function (data) {
                         $scope.jsonInfo = data;
-                        for(var i = 0; i < data.tourney.length; i++)
-                        {
-                            if(data.tourney[i].title == response.info.Name)
-                            {
+                        for (var i = 0; i < data.tourney.length; i++) {
+                            if (data.tourney[i].title == response.info.Name) {
                                 $scope.tourney = data.tourney[i];
                             }
                         }
-
+                        $scope.waitForLoad = false;
                     });
-                    $scope.foundTeam = false;
-                    $scope.foundPlayer = false;
+
+                    $scope.admin = userService.adminMode() && (userService.getProfile().role == 1 || userService.getProfile().role == 2);
+
                     $scope.yourTeams = userService.getProfile().captainOf;
 
                     userService.getProfile().captainOf.map(function (item) {
                         var found = false;
                         for (var i = 0; i < response.teams.length; i++) {
                             if (response.teams[i].ID == item.ID) {
-                                $scope.foundTeam = true;
+                                $scope.foundTeam = item.ID;
                                 break;
                             }
                         }
                     });
-                    if(userService.getProfile().tournaments[$stateParams.tourId] !== undefined)
-                    {
-                        $scope.foundPlayer = true;
-                    }
+                    userService.getProfile().tournaments.map(function (item) {
+                        if (item.Id == $stateParams.tourId) {
+                            $scope.foundPlayer = userService.getProfile().id
+                        }
+                    });
+
                 });
 
                 $scope.selectedTeam = null;
@@ -333,12 +333,32 @@ angular.module('app.directives', [])
 
                 $scope.tryRegisterPlayer = function () {
                     tourService.registerUser(userService.getProfile().id, $stateParams.tourId).promise.then(function () {
-                        //$(element).find('#registerPlayer').hide();
+                        $scope.tourUsers.push(userService.getProfile());
+                        $scope.foundPlayer = userService.getProfile().id;
                     });
                 };
-                $scope.tryRegisterTeam = function () {
-                    tourService.registerTeam(userService.getProfile().id).promise.then(function () {
-                        //$(element).find('#registerTeam').hide();
+                $scope.tryLeavePlayer = function (userId) {
+
+                    tourService.removeUser(userId, $stateParams.tourId).promise.then(function () {
+                        $scope.tourUsers = $scope.tourUsers.map(function(item){
+                            if(item.id !== userId)
+                            {
+                                return item;
+                            }
+                        });
+                        $scope.foundPlayer = undefined;
+                    });
+                };
+                $scope.tryLeaveTeam = function (teamId) {
+
+                    tourService.removeTeam(teamId, $stateParams.tourId).promise.then(function () {
+                        $scope.tourTeams = $scope.tourTeams.map(function(item){
+                           if(item.ID !== teamId)
+                           {
+                               return item;
+                           }
+                        });
+                        $scope.foundTeam = undefined;
                     });
                 };
             },
@@ -353,11 +373,25 @@ angular.module('app.directives', [])
                     }
                     else {
                         tourService.registerTeam(scope.selectedTeam.ID, $stateParams.tourId).promise.then(function () {
-                            $(element).find('#registerTeam').hide();
+                            //$(element).find('#registerTeam').hide();
+                            scope.foundTeam = scope.selectedTeam.ID;
                             scope.showTeams = false;
+                            scope.tourTeams.push(scope.selectedTeam)
                         });
                     }
                 });
+
+                scope.makePlayerPresent = function(userId) {
+                    tourService.makePlayerPresent(userId, $stateParams.tourId).promise.then(function(){
+                        $(element).find('#presentPlayer'+userId).remove();
+                    });
+                };
+
+                scope.makeTeamPresent = function(teamId) {
+                    tourService.makeTeamPresent(teamId, $stateParams.tourId).promise.then(function(){
+                        $(element).find('#presentTeam'+teamId).remove();
+                    });
+                };
 
                 scope.update = function () {
                     $(element).find('#registerTeam').attr('disabled', false);
