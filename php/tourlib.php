@@ -1,7 +1,8 @@
 <?php
 
     require_once("lib.php");
-    error_reporting(E_ALL);
+    include('bracketcloud.lib.php');
+    $request = new BracketCloudAPIRequest('14c9dd9a37169b696f52b326cb2fa765468a58dd');
 
     function registerPlayer($data) {
 
@@ -215,7 +216,7 @@
 
             if($statement -> execute()) {
                 $statement -> store_result();
-                $statement -> bind_result($info -> Id, $info -> Game, $info -> Name, $info -> isPlaying, $info -> jsonName, $info -> teamCount, $info -> playerCount);
+                $statement -> bind_result($info -> Id, $info -> Game, $info -> Name, $info -> isPlaying, $info -> jsonName, $info -> bracketCloudId, $info -> teamCount, $info -> playerCount);
                 $statement -> fetch();
                 $statement -> close();
                 if($db -> more_results())

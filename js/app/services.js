@@ -376,7 +376,7 @@ angular.module('app.services', [])
         };
 
     }])
-    .service('tourService', ['$http','$q', function($http, $q){
+    .service('tourService', ['$http','$q', function($http, $q) {
 
         this.registerUser = function(userId, tourId)
         {
