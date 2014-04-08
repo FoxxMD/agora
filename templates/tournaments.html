@@ -1,6 +1,6 @@
 <div class="row">
     <div ng-repeat="tour in tournaments" class="col-md-3">
-        <a ui-sref="tourDetail({gameId: tour.jsonName, tourId:tour.Id})" class="thumbnail">
+        <a ui-sref="tourDetail({gameId: tour.jsonName, tourId:tour.Id})" class="thumbnail tourneyThumb">
             <img src="{{tour.logo}}">
             <div class="caption">
                 <h2 class="tourneyName">{{tour.Name}}</h2>

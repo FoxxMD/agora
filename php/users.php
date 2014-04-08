@@ -1,6 +1,7 @@
 <?php
 
     require_once("./lib.php");
+    require("userlib.php");
 
     $postData = file_get_contents('php://input');
     $data = json_decode($postData);

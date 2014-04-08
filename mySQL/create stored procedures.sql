@@ -108,6 +108,8 @@ create temporary table team_counts
 Id int unsigned,
 Game varchar(100),
 Name varchar(100),
+isPlaying int(3),
+jsonName varchar(15),
 teamCount int unsigned
 )engine=memory;
 
@@ -116,23 +118,25 @@ create temporary table player_counts
 Id int unsigned,
 Game varchar(100),
 Name varchar(100),
+isPlaying int(3),
+jsonName varchar(15),
 playerCount int unsigned
 )engine=memory;
 
-insert into team_counts(Id, Game, Name, teamCount)
-select t.Id,t.Game,t.Name, COUNT(tt.TeamId) as teamCount
+insert into team_counts(Id, Game, Name, isPlaying, jsonName, teamCount)
+select t.Id,t.Game,t.Name,t.isPlaying,t.jsonName, COUNT(tt.TeamId) as teamCount
 from tournaments t
 left join tournament_teams tt on tt.TournamentId = t.Id
 group by t.Id,t.Game,t.Name;
 
-insert into player_counts(Id, Game, Name, playerCount)
-select t.Id,t.Game,t.Name, COUNT(tu.UserId) as playerCount
+insert into player_counts(Id, Game, Name, isPlaying, jsonName, playerCount)
+select t.Id,t.Game,t.Name,t.isPlaying, t.jsonName, COUNT(tu.UserId) as playerCount
 from tournaments t
 left join tournament_users tu on tu.TournamentId =  t.Id
 group by t.Id,t.Game,t.Name;
 
 
-Select t.Id,T.Game,T.Name,T.teamCount,p.playerCount
+Select t.Id, t.Game, t.Name, t.isPlaying, t.jsonName, T.teamCount, p.playerCount
 from team_counts t
 left join player_counts p on t.Id = p.Id;
 

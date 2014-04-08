@@ -1,6 +1,9 @@
 <?php
 
     require_once("lib.php");
+    require_once("tourlib.php");
+    require_once("teamlib.php");
+    require_once("userlib.php");
 
     $postData = file_get_contents('php://input');
     $data = json_decode($postData);

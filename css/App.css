@@ -640,7 +640,7 @@
 
 }
 .gtgamefest .contentPane .thumbnail .caption h2.tourneyName {
-  font-size: 26px;
+  font-size: 25px;
 }
 .gtgamefest .contentPane .thumbnail .caption:hover {
   text-decoration: none;
@@ -651,6 +651,9 @@
   }
   .gtgamefest .contentPane .thumbnail img {
     max-height: 50px;
+  }
+  .gtgamefest .contentPane .tourneyThumb img {
+    max-height: 150px;
   }
 }
 .gtgamefest .contentPane #tourInfoPane button {

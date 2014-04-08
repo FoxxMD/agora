@@ -45,9 +45,11 @@ CREATE TABLE `tournaments` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `Game` varchar(60) NOT NULL,
   `Name` varchar(60) NOT NULL,
+  `isPlaying` int(3) DEFAULT '0',
+  `jsonName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Id_UNIQUE` (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tournament_users` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,

@@ -100,18 +100,26 @@ angular.module('app.directives', [])
 
         };
     }])
-    .directive('gamesectionDir', [function () {
+    .directive('gamesectionDir', ['$stateParams', function ($stateParams) {
         return {
             restrict: 'A',
             templateUrl: '/templates/games.html',
             link: function (scope, element, attrs) {
+
+                if($stateParams.gameId !== undefined)
+                {
+                    $('#gameSelect'+$stateParams.gameId).addClass('active orange');
+                }
+
                 $(element).find('.thumbnail').on('click', function (ev, target) {
                     $(element).find('.thumbnail').removeClass('active orange');
                     $(this).addClass('active orange');
-                    var anchor = $(this).attr('href');
+
+                    //don't think animation is necessary here anymore
+/*                    var anchor = $(this).attr('href');
                     $(document.body).animate({
                         'scrollTop': $('.gamesDirSection').offset().top
-                    }, 1000, 'swing');
+                    }, 1000, 'swing');*/
                 });
             }
         }
@@ -292,6 +300,14 @@ angular.module('app.directives', [])
                     $scope.tourTeams = response.teams;
                     $http.get('/content/games/'+response.info.jsonName +'.json').success(function (data) {
                         $scope.jsonInfo = data;
+                        for(var i = 0; i < data.tourney.length; i++)
+                        {
+                            if(data.tourney[i].title == response.info.Name)
+                            {
+                                $scope.tourney = data.tourney[i];
+                            }
+                        }
+
                     });
                     $scope.foundTeam = false;
                     $scope.foundPlayer = false;
@@ -315,12 +331,6 @@ angular.module('app.directives', [])
                 $scope.selectedTeam = null;
                 $scope.showTeams = false;
 
-                $scope.goToTeam = function (id) {
-                    $state.go('team', {teamId: id});
-                };
-                $scope.goToPlayer = function (id) {
-                    $state.go('user', {userId: id});
-                };
                 $scope.tryRegisterPlayer = function () {
                     tourService.registerUser(userService.getProfile().id, $stateParams.tourId).promise.then(function () {
                         //$(element).find('#registerPlayer').hide();
@@ -334,8 +344,7 @@ angular.module('app.directives', [])
             },
             link: function (scope, element, attrs) {
 
-
-                $(element).find('#registerTeam').on('click', function (ev, elem) {
+                $(element).find('.tourActions').on('click', '#registerTeam', function (ev, elem) {
                     if (scope.selectedTeam === null) {
                         $(this).text('Register');
                         $(this).attr('disabled', true);
@@ -346,7 +355,6 @@ angular.module('app.directives', [])
                         tourService.registerTeam(scope.selectedTeam.ID, $stateParams.tourId).promise.then(function () {
                             $(element).find('#registerTeam').hide();
                             scope.showTeams = false;
-                            scope.$apply();
                         });
                     }
                 });
