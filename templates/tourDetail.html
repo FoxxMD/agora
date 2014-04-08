@@ -72,10 +72,10 @@
                     <button type="button" ng-if="admin" ng-click="tryLeaveTeam(team.ID)"
                             class="btn btn-sm btn-danger pull-right" style="margin-left:25px;">Remove
                     </button>
-                    <button type="button" ng-if="admin && !team.isPresent" ng-click="makeTeamPresent(team.ID)"
+                    <button type="button" ng-if="admin && team.isPresent == 0" ng-click="makeTeamPresent(team.ID)"
                             id="presentTeam{{team.ID}}" class="btn btn-sm btn-success pull-right">Present
                     </button>
-                    <p ng-if="team.isPresent" class="pull-right" style="color:green;">Present</p>
+                    <p ng-if="team.isPresent == 1" class="pull-right" style="color:green;">Present</p>
                 </li>
             </ul>
             <p class="lead" ng-if="tourTeams.length == 0">No Teams currently competing!</p>
@@ -90,10 +90,10 @@
                     <button type="button" ng-if="admin" ng-click="tryLeavePlayer(player.id)"
                             class="btn btn-sm btn-danger pull-right" style="margin-left:25px;">Remove
                     </button>
-                    <button type="button" ng-if="admin && !player.isPresent" ng-click="makePlayerPresent(player.id)"
+                    <button type="button" ng-if="admin && player.isPresent == 0" ng-click="makePlayerPresent(player.id)"
                             id="presentPlayer{{player.id}}" class="btn btn-sm btn-success pull-right">Present
                     </button>
-                    <p ng-if="player.isPresent" class="pull-right" style="color:green;">Present</p>
+                    <p ng-if="player.isPresent == 1" class="pull-right" style="color:green;">Present</p>
                 </li>
             </ul>
             <p class="lead" ng-if="tourUsers.length == 0">No Players currently competing!</p>
