@@ -20,11 +20,11 @@
                 <li ng-if="isLoggedIn"><a ui-sref="tournaments"><strong>Tournaments</strong></a></li>
                 <li><a ui-sref="about">About Us</a></li>
             </ul>
-            <ul ng-if="!isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right">
+            <ul ng-show="!isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right">
                 <li><a ng-click="openRegistration()">Register</a></li>
                 <li><a ng-click="openLogin()">Login</a></li>
             </ul>
-            <ul ng-if="isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right-login">
+            <ul ng-show="isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right-login">
                 <li>
                     <button style="padding:5px; margin:10px;" type="button" class="btn btn-sm btn-danger"
                             ng-if="userService.getProfile().role != 0"
