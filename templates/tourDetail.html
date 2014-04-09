@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div class="col-md-2 tourActions" ng-show="openRosters && userService.isLoggedIn()">
-                            <button type="button" ng-show="(foundPlayer == undefined) && (tourInfo.isTeamOnly && foundTeam == undefined)"
+                            <button type="button" ng-show="(foundPlayer == undefined && foundTeam == undefined)"
                                     class="btn btn-sm btn-info pull-right" id="registerPlayer"
                                     ng-click="tryRegisterPlayer()" style="margin-left:20px;">{{tourInfo.isTeamOnly ? 'Join Waiting List as Player' : 'Register As Player'}}
                             </button>
@@ -57,7 +57,7 @@
                                     class="btn btn-sm btn-danger pull-right" ng-click="tryLeaveTeam(foundTeam)"
                                     id="leaveTeam">Leave As Team
                             </button>
-                            <button type="button" ng-show="foundTeam == undefined && tourInfo.isTeamOnly"
+                            <button type="button" ng-show="foundTeam == undefined && tourInfo.isTeamOnly && foundPlayer == undefined"
                                     class="btn btn-sm btn-info pull-right" ng-click="open()" id="registerTeam">Register As Team
                             </button>
                         </div>
@@ -110,14 +110,14 @@
             <ul class="list-unstyled">
                 <li ng-repeat="player in tourUsers" class="lead">
                     <a ui-sref="user({userId:player.id})">{{player.alias}}</a>
-                    <button type="button" ng-if="admin" ng-click="tryLeavePlayer(player.id)"
+                    <button type="button" ng-if="admin && player != undefined" ng-click="tryLeavePlayer(player.id)"
                             class="btn btn-sm btn-danger pull-right" style="margin-left:25px;">Remove
                     </button>
-                    <button type="button" ng-if="admin && player.isPresent == 0" ng-click="makePlayerPresent(player.id)"
+                    <button type="button" ng-if="admin && player.isPresent == 0 && player != undefined" ng-click="makePlayerPresent(player.id)"
                             id="presentPlayer{{player.id}}" class="btn btn-sm btn-success pull-right">Present
                     </button>
-                    <button ng-show="tourInfo.isTeamOnly && player.id != userService.getProfile().id && foundTeam == undefined && openRosters" type="button" ng-click="addPlayerToTeam(player.id)" class="btn btn-sm btn-info pull-right">Add To Team</button>
-                    <p ng-if="player.isPresent == 1" class="pull-right" style="color:green;">Present</p>
+                    <button ng-show="tourInfo.isTeamOnly && player.id != userService.getProfile().id && foundTeam == undefined && openRosters && player != undefined" type="button" ng-click="addPlayerToTeam(player.id)" class="btn btn-sm btn-info pull-right">Add To Team</button>
+                    <p ng-if="player.isPresent == 1 && player != undefined" class="pull-right" style="color:green;">Present</p>
                 </li>
             </ul>
             <p class="lead" ng-if="tourUsers.length == 0 && !tourInfo.isTeamOnly">No Players currently competing!</p>
