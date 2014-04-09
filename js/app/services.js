@@ -557,6 +557,15 @@ angular.module('app.services', [])
             });
             return deferred;
         };
+        this.getLimitedTournamentInfo = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getLimitedTournamentInfo', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            });
+            return deferred;
+        };
         this.getAllTournamentInfo = function(id)
         {
             var deferred = $q.defer();

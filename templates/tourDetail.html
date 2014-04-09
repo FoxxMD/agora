@@ -44,7 +44,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-md-2 tourActions" ng-show="openRosters">
+                        <div class="col-md-2 tourActions" ng-show="openRosters && userService.isLoggedIn()">
                             <button type="button" ng-show="(foundPlayer == undefined) && (tourInfo.isTeamOnly && foundTeam == undefined)"
                                     class="btn btn-sm btn-info pull-right" id="registerPlayer"
                                     ng-click="tryRegisterPlayer()" style="margin-left:20px;">{{tourInfo.isTeamOnly ? 'Join Waiting List as Player' : 'Register As Player'}}
@@ -85,7 +85,7 @@
             </div>
         </fieldset>
     </div>
-    <div class="col-md-6" id="teamPane" ng-show="tourInfo.isTeamOnly">
+    <div class="col-md-6" id="teamPane" ng-show="tourInfo.isTeamOnly && userService.isLoggedIn()">
         <fieldset>
             <legend>Team Roster</legend>
             <ul class="list-unstyled">
@@ -103,7 +103,7 @@
             <p class="lead" ng-if="tourTeams.length == 0">No Teams currently competing!</p>
         </fieldset>
     </div>
-    <div id="playerPane" ng-class="{'col-md-6': tourInfo.isTeamOnly, 'co-md-12': !tourInfo.isTeamOnly}">
+    <div id="playerPane" ng-show="userService.isLoggedIn()" ng-class="{'col-md-6': tourInfo.isTeamOnly, 'co-md-12': !tourInfo.isTeamOnly}">
         <fieldset>
             <legend ng-if="!tourInfo.isTeamOnly">Player Roster</legend>
             <legend ng-if="tourInfo.isTeamOnly">Waiting List</legend>

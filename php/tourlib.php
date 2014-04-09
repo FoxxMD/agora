@@ -201,6 +201,37 @@
                 return $tourneyTeamsArray;
             }
         }
+
+        function getLimitedTournamentInfo($tourId)
+        {
+        $db = getDB();
+        $tour = new stdClass();
+        $info = new stdClass();
+        $response = new stdClass();
+        $response -> success = false;
+
+        $statement = $db -> prepare("CALL getTournamentInfo(?)");
+        $statement->bind_param("i", $tourId);
+
+        if($statement -> execute()) {
+            $statement -> store_result();
+            $statement -> bind_result($info -> Id, $info -> Game, $info -> Name, $info -> isPlaying, $info -> jsonName, $info -> bracketCloudId, $info -> isTeamOnly, $info -> minTeamMembers, $info -> teamCount, $info -> playerCount);
+            $statement -> fetch();
+            $statement -> close();
+            if($db -> more_results())
+            {
+                $db -> next_result();
+            }
+
+            $tour -> info = $info;
+            }
+            else{
+            error_log($db -> error);
+            $response -> message = "Failed to get tournament data.";
+            }
+            return $tour;
+        }
+
         function getTournamentInfo($tourId) {
 
             $db = getDB();
