@@ -48,6 +48,8 @@ CREATE TABLE `tournaments` (
   `isPlaying` int(3) DEFAULT '0',
   `jsonName` varchar(45) DEFAULT NULL,
   `bracketCloudId` int(10) DEFAULT NULL,
+  `isTeamOnly` bit(1) DEFAULT b'0',
+  `minTeamMembers` int(2) DEFAULT '0',
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Id_UNIQUE` (`Id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
