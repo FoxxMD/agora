@@ -8,7 +8,7 @@
     </tr>
     </thead>-->
     <tbody>
-    <tr ng-repeat="team in $data" ng-click="goToTeam(team.ID)" style="cursor:pointer" class="animate-repeat">
+    <tr ng-repeat="team in $data" ng-click="goToTeam(team.ID)" style="cursor:pointer" ng-class="{'animate-repeat': !admin}">
         <td data-title="'Team Name'" filter="{'name':'text'}">{{team.name}}</td>
         <td data-title="'Game'">{{team.game}}</td>
         <td data-title="'Description'">{{team.des}}</td>
