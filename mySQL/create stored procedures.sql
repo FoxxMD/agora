@@ -34,7 +34,7 @@ DELIMITER $$
 CREATE PROCEDURE `getTeamsByTournament`(IN inputTournamentId int(11))
 BEGIN
 
-SELECT te.ID, te.name, te.captain, t.isPresent FROM teams te INNER JOIN tournament_teams t ON t.TeamId = te.ID WHERE t.TournamentId=inputTournamentId;
+SELECT te.ID, te.name, te.captain, t.isPresent, te.member1, te.member2, te.member3, te.member4 FROM teams te INNER JOIN tournament_teams t ON t.TeamId = te.ID WHERE t.TournamentId=inputTournamentId;
 
 END$$
 DELIMITER ;
@@ -90,7 +90,7 @@ DELIMITER $$
 CREATE PROCEDURE `getTeamsByCaptain`(IN captainId int(11))
 BEGIN
 
-SELECT t.ID,t.name,t.game FROM teams t where t.captain = captainId;
+SELECT t.ID,t.name,t.game,t.member1, t.member2, t.member3, t.member4 FROM teams t where t.captain = captainId;
 
 END$$
 DELIMITER ;
