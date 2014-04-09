@@ -55,7 +55,7 @@
             $result = deleteTeam($data -> id, $authUser, $isAdmin, $isGameAdmin);
             break;
         case "add":
-            $result = addTeamMember($data);
+            $result = addTeamMember($data, $authUser);
             break;
     }
         }else{

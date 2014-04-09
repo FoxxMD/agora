@@ -87,14 +87,14 @@
             break;
 
         case "leavePlayer":
-            if($data -> userId == $authUser -> id || $isGameAdmin)
-            {
+            //if($data -> userId == $authUser -> id || $isGameAdmin)
+            //{
                 $result = leavePlayer($data);
-            }
-            else {
-                $result -> success = false;
-                $result -> message = "Not Authorized";
-            }
+            //}
+            //else {
+            //    $result -> success = false;
+            //    $result -> message = "Not Authorized";
+            //}
             break;
 
         case "makeTeamPresent":
@@ -112,6 +112,28 @@
             if($isGameAdmin)
             {
                 $result = makePlayerPresent($data);
+            }
+            else {
+                $result -> success = false;
+                $result -> message = "Not Authorized";
+            }
+            break;
+
+        case "setPlayers":
+            if($isGameAdmin)
+            {
+                $result = setTournamentPlayers($data);
+            }
+            else {
+                $result -> success = false;
+                $result -> message = "Not Authorized";
+            }
+            break;
+
+        case "setEntrantType":
+            if($isGameAdmin)
+            {
+                $result = setTournamentEntrantType($data);
             }
             else {
                 $result -> success = false;

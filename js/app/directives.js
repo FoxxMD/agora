@@ -61,7 +61,7 @@ angular.module('app.directives', [])
             restrict: 'A',
             templateUrl: '/templates/pay.html',
             link: function (scope, elem, attrs) {
-               Stripe.setPublishableKey('pk_live_YwddUwRH90xpNcHRNewOjZhG'); //live key
+                Stripe.setPublishableKey('pk_live_YwddUwRH90xpNcHRNewOjZhG'); //live key
             },
             controller: function ($scope) {
 
@@ -83,8 +83,7 @@ angular.module('app.directives', [])
                     } else {
                         // got stripe token, send
                         var data = { token: response.id};
-                        if(!payed)
-                        {
+                        if (!payed) {
                             payed = true;
                             userService.payRegistration(data).promise.then(function (response) {
                                 //payment success
@@ -293,13 +292,11 @@ angular.module('app.directives', [])
             }
         };
     }])
-    .directive('tourdetailDir', ['tourService', '$stateParams', '$http', '$state', 'userService', function (tourService, $stateParams, $http, $state, userService) {
+    .directive('tourdetailDir', ['tourService', '$stateParams', '$http', '$state', 'userService', '$modal', '$filter','teamService','$rootScope', function (tourService, $stateParams, $http, $state, userService, $modal, $filter, teamService, $rootScope) {
         return {
             restrict: 'AE',
             templateUrl: '/templates/tourDetail.html',
             controller: function ($scope) {
-
-                $scope.waitForLoad = true;
 
                 tourService.getTournamentInfo($stateParams.tourId).promise.then(function (response) {
                     $scope.tourInfo = response.info;
@@ -312,12 +309,9 @@ angular.module('app.directives', [])
                                 $scope.tourney = data.tourney[i];
                             }
                         }
-                        $scope.waitForLoad = false;
                     });
 
                     $scope.admin = userService.adminMode() && (userService.getProfile().role == 1 || userService.getProfile().role == 2);
-
-                    $scope.yourTeams = userService.getProfile().captainOf;
 
                     userService.getProfile().captainOf.map(function (item) {
                         var found = false;
@@ -333,11 +327,45 @@ angular.module('app.directives', [])
                             $scope.foundPlayer = userService.getProfile().id
                         }
                     });
-
+                    $scope.showPlayers = function () {
+                        var selected = $filter('filter')($scope.numPlayers, {value: $scope.tourInfo.minTeamMembers});
+                        return ($scope.tourInfo.minTeamMembers != undefined && selected.length > 0) ? selected[0].text : 'Not set';
+                    };
+                    $scope.showEntrants = function () {
+                        var selected = $filter('filter')($scope.entrants, {value: $scope.tourInfo.isTeamOnly});
+                        return ($scope.tourInfo.isTeamOnly != undefined && selected.length > 0) ? selected[0].text : 'Not set';
+                    };
                 });
 
-                $scope.selectedTeam = null;
-                $scope.showTeams = false;
+                //$scope.selectedTeam = null;
+
+                $scope.userService = userService;
+
+                $scope.numPlayers = [
+                    {value: 0, text: 'Not Set'},
+                    {value: 1, text: '1'},
+                    {value: 2, text: '2'},
+                    {value: 3, text: '3'},
+                    {value: 4, text: '4'},
+                    {value: 5, text: '5'}
+                ];
+                $scope.entrants = [
+                    {value: 0, text: 'Players'},
+                    {value: 1, text: 'Teams'}
+                ];
+
+                $scope.setPlayers = function (num) {
+                    tourService.setPlayers(num, $stateParams.tourId).promise.then(function () {
+                    }, function () {
+                        return "Couldn't set players..";
+                    });
+                };
+                $scope.setEntrantType = function (num) {
+                    tourService.setEntrantType(num, $stateParams.tourId).promise.then(function () {
+                    }, function () {
+                        return "Cound't set entrant type";
+                    });
+                };
 
                 $scope.tryRegisterPlayer = function () {
                     tourService.registerUser(userService.getProfile().id, $stateParams.tourId).promise.then(function () {
@@ -348,9 +376,8 @@ angular.module('app.directives', [])
                 $scope.tryLeavePlayer = function (userId) {
 
                     tourService.removeUser(userId, $stateParams.tourId).promise.then(function () {
-                        $scope.tourUsers = $scope.tourUsers.map(function(item){
-                            if(item.id != userId)
-                            {
+                        $scope.tourUsers = $scope.tourUsers.map(function (item) {
+                            if (item.id != userId) {
                                 return item;
                             }
                         });
@@ -360,49 +387,198 @@ angular.module('app.directives', [])
                 $scope.tryLeaveTeam = function (teamId) {
 
                     tourService.removeTeam(teamId, $stateParams.tourId).promise.then(function () {
-                        $scope.tourTeams = $scope.tourTeams.map(function(item){
-                           if(item.ID != teamId)
-                           {
-                               return item;
-                           }
+                        $scope.tourTeams = $scope.tourTeams.map(function (item) {
+                            if (item.ID != teamId) {
+                                return item;
+                            }
                         });
                         $scope.foundTeam = undefined;
                     });
                 };
+
+                var $tourScope = $scope;
+
+                /*
+                 Team Join Modal
+
+                 */
+                $scope.open = function () {
+
+                    var modalInstance = $modal.open({
+                        templateUrl: 'teamRegister.html',
+                        controller: ModalTeamRegisterInstanceCtrl,
+                        resolve: {
+                            yourTeams: function () {
+                                return userService.getProfile().captainOf;
+                            },
+                            tourneyTeams: function () {
+                                return $scope.tourTeams;
+                            },
+                            minimumMembers: function () {
+                                return $scope.tourInfo.minTeamMembers;
+                            }
+                        }
+                    });
+
+                    /*                        modalInstance.result.then(function (selectedItem) {
+                     $scope.selected = selectedItem;
+                     }, function () {
+                     //$log.info('Modal dismissed at: ' + new Date());
+                     });*/
+                };
+
+
+                var ModalTeamRegisterInstanceCtrl = function ($scope, $modalInstance, yourTeams, tourneyTeams, minimumMembers) {
+                    var allPlayers = [];
+                    $scope.loading = true;
+                    $scope.minimum = minimumMembers;
+                    tourneyTeams.map(function (item) {
+                        for (var i = 0; i < item.members.length; i++) {
+                            if (item.members[i] != 0) {
+                                allPlayers[item.members[i]] = true;
+                            }
+                        }
+                        allPlayers[item.captain] = true;
+                    });
+                    $scope.modifiedTeams = yourTeams.map(function (item) {
+                        item.valid = true;
+                        item.numberValid = true;
+                        for (var i = 0; i < item.members.length; i++) {
+                            if (allPlayers[item.members[0]] != undefined) {
+                                item.valid = false;
+                            }
+                        }
+                        if (allPlayers[userService.getProfile().id] != undefined) {
+                            item.valid = false;
+                        }
+                        if (minimumMembers != null) {
+                            var realmems = [];
+                            for (var y = 0; y < item.members.length; y++) {
+                                if (item.members[y] != undefined && item.members[y] != 0) {
+                                    realmems.push(item.members[y]);
+                                }
+                            }
+                            item.members = realmems;
+                            item.members.push(item.captain);
+                            if (item.members.length != minimumMembers) {
+                                item.numberValid = false;
+                            }
+                        }
+                        return item;
+                    });
+                    $scope.loading = false;
+
+                    $scope.selectedTeam = null;
+                    $scope.selectTeam = function (team) {
+                        if (team.valid && team.numberValid) {
+                            $scope.selectedTeam = team;
+                        }
+                    };
+
+                    $scope.register = function () {
+                        tourService.registerTeam($scope.selectedTeam.ID, $stateParams.tourId).promise.then(function () {
+                            $tourScope.foundTeam = $scope.selectedTeam.ID;
+                            $tourScope.tourTeams.push($scope.selectedTeam);
+                            $modalInstance.close();
+                        });
+                    };
+
+                    $scope.cancel = function () {
+                        $modalInstance.dismiss('cancel');
+                    };
+                };
+
+
+                $scope.addPlayerToTeam = function (id) {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'teamJoin.html',
+                        controller: ModalTeamJoinInstanceCtrl,
+                        resolve: {
+                            yourTeams: function () {
+                                return userService.getProfile().captainOf;
+                            },
+                            id: function () {
+                                return id;
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (success) {
+                        if(success)
+                        {
+                            $rootScope.siteSuccess = "User added to your team.";
+                        }
+                     }, function () {
+
+                     });
+                };
+
+                var ModalTeamJoinInstanceCtrl = function ($scope, $modalInstance, yourTeams, id) {
+
+                    $scope.loading = true;
+
+                    $scope.modifiedTeams = yourTeams.map(function (item) {
+                        item.valid = true,
+                        item.duplicateUser = false;
+                            var realmems = [];
+                            for (var y = 0; y < item.members.length; y++) {
+                                if (item.members[y] != undefined && item.members[y] != 0) {
+                                    realmems.push(item.members[y]);
+                                    if(id == item.members[y])
+                                    {
+                                        item.duplicateUser = true;
+                                    }
+                                }
+                            }
+                            item.members = realmems;
+                            item.members.push(item.captain);
+                            if (item.members.length == 5) {
+                                item.valid = false;
+                            }
+                        return item;
+                    });
+                    $scope.loading = false;
+
+                    $scope.selectedTeam = null;
+                    $scope.selectTeam = function (team) {
+                        if (team.valid && !team.duplicateUser) {
+                            $scope.selectedTeam = team;
+                        }
+                    };
+
+                    $scope.addToTeam = function () {
+                        teamService.addMember($scope.selectedTeam.ID, id).promise.then(function (response) {
+                            tourService.removeUser(id, $stateParams.tourId).promise.then(function () {
+                                var userindex = 0;
+                                $tourScope.tourUsers.map(function(item,index){
+                                    if(item.id == id)
+                                    {
+                                        userindex = index;
+                                    }
+                                });
+                                $tourScope.tourUsers.splice(userindex,1);
+                            });
+                            $modalInstance.close(true);
+                        });
+                    };
+
+                    $scope.cancel = function () {
+                        $modalInstance.dismiss('cancel');
+                    };
+                };
+
             },
             link: function (scope, element, attrs) {
 
-                $(element).find('.tourActions').on('click', '#registerTeam', function (ev, elem) {
-                    if (scope.selectedTeam === null) {
-                        $(this).text('Register');
-                        $(this).attr('disabled', true);
-                        scope.showTeams = true;
-                        scope.$apply();
-                    }
-                    else {
-                        tourService.registerTeam(scope.selectedTeam.ID, $stateParams.tourId).promise.then(function () {
-                            //$(element).find('#registerTeam').hide();
-                            scope.foundTeam = scope.selectedTeam.ID;
-                            scope.showTeams = false;
-                            scope.tourTeams.push(scope.selectedTeam)
-                        });
-                    }
-                });
-
-                scope.makePlayerPresent = function(userId) {
-                    tourService.makePlayerPresent(userId, $stateParams.tourId).promise.then(function(){
-                        $(element).find('#presentPlayer'+userId).remove();
+                scope.makePlayerPresent = function (userId) {
+                    tourService.makePlayerPresent(userId, $stateParams.tourId).promise.then(function () {
+                        $(element).find('#presentPlayer' + userId).remove();
                     });
                 };
 
-                scope.makeTeamPresent = function(teamId) {
-                    tourService.makeTeamPresent(teamId, $stateParams.tourId).promise.then(function(){
-                        $(element).find('#presentTeam'+teamId).remove();
+                scope.makeTeamPresent = function (teamId) {
+                    tourService.makeTeamPresent(teamId, $stateParams.tourId).promise.then(function () {
+                        $(element).find('#presentTeam' + teamId).remove();
                     });
-                };
-
-                scope.update = function () {
-                    $(element).find('#registerTeam').attr('disabled', false);
                 };
             }
         }

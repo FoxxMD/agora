@@ -34,7 +34,8 @@
                 $statement -> fetch();
                 $statement -> close();
 
-                $sql = "select ID, name from teams where captain=".$userObj -> id;
+                //$sql = "select ID, name from teams where captain=".$userObj -> id;
+                $sql = "CALL getTeamsByCaptain(".$userObj -> id.")";
                 if($result = $db -> query($sql))
                 {
                     $captainInfo = new stdClass();
@@ -42,9 +43,18 @@
                     $userObj -> captainList = array();
                     while($captainInfo = $result -> fetch_object())
                     {
+                        $captainInfo -> members = array();
+                        $captainInfo -> members[0] = $captainInfo -> member1;
+                        $captainInfo -> members[1] = $captainInfo -> member2;
+                        $captainInfo -> members[2] = $captainInfo -> member3;
+                        $captainInfo -> members[3] = $captainInfo -> member4;
                         $userObj -> captainList[$count] = $captainInfo;
                         $count = ++$count;
                     }
+                  if($db -> more_results())
+                  {
+                      $db -> next_result();
+                  }
                 }
                 $sql = "select ID, name from teams where member1=".$userObj -> id." or member2=".$userObj -> id." or member3=".$userObj -> id." or member4=".$userObj -> id;
                 if($result = $db -> query($sql))

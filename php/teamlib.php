@@ -220,12 +220,12 @@
         return $response;
     }
 
-    function addTeamMember($data) {
+    function addTeamMember($data, $authUser) {
         $db = getDB();
         $response = new stdClass();
         $response -> success = false;
 
-        $sql = "select password,member1,member2,member3,member4 from teams where id=?";
+        $sql = "select password,member1,member2,member3,member4,captain from teams where id=?";
 
         $statement = $db -> prepare($sql);
         $statement -> bind_param('i',$data -> teamId);
@@ -233,11 +233,11 @@
         if($statement ->  execute())
         {
             $teamObj = new stdClass();
-            $statement -> bind_result($teamObj -> password, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4);
+            $statement -> bind_result($teamObj -> password, $teamObj -> member1, $teamObj -> member2, $teamObj -> member3, $teamObj -> member4, $teamObj -> captain);
             $statement -> fetch();
             $statement -> close();
 
-            if($teamObj -> password == "" || $teamObj -> password == $data -> password) {
+            if($teamObj -> password == "" || $teamObj -> password == $data -> password || $authUser -> id == $teamObj -> captain) {
                 $currSlot = 0;
                 $memberProp = "";
                 for($i = 1; $i <= 4; $i++) {

@@ -481,6 +481,34 @@ angular.module('app.services', [])
             });
             return deferred;
         };
+        this.setPlayers = function(numPlayers, tourId)
+        {
+            var postData = {
+                numPlayers: numPlayers,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'setPlayers'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
+        this.setEntrantType = function(etype, tourId)
+        {
+            var postData = {
+                entrantType: etype,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'setEntrantType'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
 
         this.getUsers = function(id)
         {
