@@ -131,6 +131,7 @@ app.run(function ($rootScope, userService, editableOptions, $state) {
         function (event, toState, toParams, fromState, fromParams) {
             $rootScope.siteError = null; //reset error state on state change so errors don't follow you around the entire site
             $rootScope.siteSuccess = null;
+            $rootScope.siteInfo = null;
             if (toState.authenticated) {
                 if (!userService.isLoggedIn()) {
                     event.preventDefault();

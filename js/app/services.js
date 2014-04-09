@@ -509,6 +509,20 @@ angular.module('app.services', [])
             });
             return deferred;
         };
+        this.setTourStatus = function(status, tourId)
+        {
+            var postData = {
+                status: status,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'setTourStatus'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
 
         this.getUsers = function(id)
         {

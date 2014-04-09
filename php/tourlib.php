@@ -348,4 +348,29 @@
             return $response;
         }
 
+        function setTournamentStatus($data){
+            $db = getDB();
+            $response = new stdClass();
+            $response -> success = false;
+
+            $sql = "update tournaments set isPlaying=? where Id=?";
+            if($statement = $db -> prepare($sql))
+            {
+                $statement -> bind_param('ii', $data -> status, $data -> tourId);
+                if($statement -> execute())
+                {
+                    $response -> success = true;
+                }
+                else{
+                    error_log($db -> error);
+                    $response -> message = "Could not set tournament status, please contact administrator.";
+                }
+            }
+               else{
+                    error_log($db -> error);
+                    $response -> message = "Could not set tournament status, please contact administrator.";
+                }
+            return $response;
+        }
+
 ?>

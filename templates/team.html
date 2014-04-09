@@ -3,7 +3,7 @@
     <small>Team Profile</small>
 </h1>
 <div class="row">
-    <div class="col-md-8 col-sm-12" ng-if="ownTeam || admin">
+    <div class="col-md-8 col-sm-12" ng-if="(ownTeam && !registeredForTour) || admin">
         <div class="lead">
             <fieldset>
                 <legend>Team Information</legend>
@@ -42,7 +42,7 @@
             </fieldset>
         </div>
     </div>
-    <div class="col-md-8 col-sm-12" ng-if="!ownTeam && !admin">
+    <div class="col-md-8 col-sm-12" ng-if="(!ownTeam || registeredForTour) && !admin">
         <div class="lead">
             <fieldset>
                 <legend>Team Information</legend>
@@ -72,11 +72,11 @@
                 <div class="lead">
                     <fieldset>
                         <legend>Team Members
-                            <button ng-if="!onTeam" type="button" class="btn btn-info pull-right"
+                            <button ng-if="!onTeam && !registeredForTour" type="button" class="btn btn-info pull-right"
                                     style="margin-right:10px;"
                                     ng-click="clickJoin()">Join
                             </button>
-                            <button ng-if="onTeam && !ownTeam" type="button" class="btn btn-danger pull-right"
+                            <button ng-if="onTeam && !ownTeam && !registeredForTour" type="button" class="btn btn-danger pull-right"
                                     style="margin-right:10px;"
                                     ng-click="tryLeave()">Leave
                             </button>
@@ -85,22 +85,22 @@
                             <a ui-sref="user({userId: team.captain})">{{team.captainName}}</a>
                     <span ng-if="team.member1 != 0">
                         <br/><a ui-sref="user({userId: team.member1})">{{team.member1Name}}</a><span
-                            ng-if="ownTeam || admin" ng-click="updateTeam('member1',0)"
+                            ng-if="(ownTeam && !registeredForTour) || admin" ng-click="updateTeam('member1',0)"
                             class="glyphicon glyphicon-remove-circle"></span>
                     </span>
                      <span ng-if="team.member2 != 0">
                         <br/><a ui-sref="user({userId: team.member2})">{{team.member2Name}}</a><span
-                             ng-if="ownTeam || admin" ng-click="updateTeam('member2',0)"
+                             ng-if="(ownTeam && !registeredForTour) || admin" ng-click="updateTeam('member2',0)"
                              class="glyphicon glyphicon-remove-circle"></span>
                          </span>
                     <span ng-if="team.member3 != 0">
                         <br/><a ui-sref="user({userId: team.member3})">{{team.member3Name}}</a><span
-                            ng-if="ownTeam || admin" ng-click="updateTeam('member3',0)"
+                            ng-if="(ownTeam && !registeredForTour) || admin" ng-click="updateTeam('member3',0)"
                             class="glyphicon glyphicon-remove-circle"></span>
                         </span>
                     <span ng-if="team.member4 != 0">
                         <br/><a ui-sref="user({userId: team.member4})">{{team.member4Name}}</a><span
-                            ng-if="ownTeam || admin" ng-click="updateTeam('member4',0)"
+                            ng-if="(ownTeam && !registeredForTour) || admin" ng-click="updateTeam('member4',0)"
                             class="glyphicon glyphicon-remove-circle"></span>
                         </span>
                         </div>

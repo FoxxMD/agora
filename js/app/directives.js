@@ -284,6 +284,16 @@ angular.module('app.directives', [])
                         else {
                             $scope.onTeam = false;
                         }
+
+                        if(teamData.tournaments.length > 0)
+                        {
+                            $scope.registeredForTour = true;
+                            if($scope.ownTeam)
+                            {
+                                $rootScope.siteInfo = "While your team is registered for a tournament you cannot change team details or add/remove members.";
+                            }
+                        }
+
                     });
                 }
             },
@@ -335,6 +345,11 @@ angular.module('app.directives', [])
                         var selected = $filter('filter')($scope.entrants, {value: $scope.tourInfo.isTeamOnly});
                         return ($scope.tourInfo.isTeamOnly != undefined && selected.length > 0) ? selected[0].text : 'Not set';
                     };
+                    $scope.showStatus = function () {
+                        var selected = $filter('filter')($scope.tourStatus, {value: $scope.tourInfo.isPlaying});
+                        return ($scope.tourInfo.isPlaying != undefined && selected.length > 0) ? selected[0].text : 'Not set';
+                    };
+                    $scope.openRosters = $scope.tourInfo.isPlaying == 0;
                 });
 
                 //$scope.selectedTeam = null;
@@ -353,6 +368,11 @@ angular.module('app.directives', [])
                     {value: 0, text: 'Players'},
                     {value: 1, text: 'Teams'}
                 ];
+                $scope.tourStatus = [
+                    {value: 0, text: 'Open'},
+                    {value: 1, text: 'Rosters Closed'},
+                    {value: 2, text: 'In-Progress'},
+                    {value: 3, text: 'Complete'}];
 
                 $scope.setPlayers = function (num) {
                     tourService.setPlayers(num, $stateParams.tourId).promise.then(function () {
@@ -363,7 +383,13 @@ angular.module('app.directives', [])
                 $scope.setEntrantType = function (num) {
                     tourService.setEntrantType(num, $stateParams.tourId).promise.then(function () {
                     }, function () {
-                        return "Cound't set entrant type";
+                        return "Couldn't set entrant type";
+                    });
+                };
+                $scope.setTourStatus = function (num) {
+                    tourService.setTourStatus(num, $stateParams.tourId).promise.then(function () {
+                    }, function () {
+                        return "Couldn't set status";
                     });
                 };
 

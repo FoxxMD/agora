@@ -7,9 +7,10 @@
                 <p>Players: {{tour.playerCount}}</p>
                 <p>Teams: {{tour.teamCount}}</p>
                 <p ng-switch on="tour.isPlaying">Status:
-                    <strong ng-switch-when="0">Open <i class="glyphicon glyphicon-off" style="color:green;"></i></strong>
-                    <strong ng-switch-when="1">In Progress <i class="glyphicon glyphicon-off" style="color:deepskyblue;"></i></strong>
-                    <strong ng-switch-when="2">Completed <i class="glyphicon glyphicon-off" style="color:red;"></i></strong>
+                <strong ng-switch-when="0">Open <i class="glyphicon glyphicon-off" style="color:green;"></i></strong>
+                <strong ng-switch-when="1">Rosters Closed <i class="glyphicon glyphicon-off" style="color:darkorange;"></i></strong>
+                <strong ng-switch-when="2">In-Progress <i class="glyphicon glyphicon-off" style="color:deepskyblue;"></i></strong>
+                <strong ng-switch-when="3">Completed <i class="glyphicon glyphicon-off" style="color:red;"></i></strong>
                 </p>
             </div>
         </a>

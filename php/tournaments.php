@@ -141,6 +141,17 @@
             }
             break;
 
+        case "setTourStatus":
+            if($isGameAdmin)
+            {
+                $result = setTournamentStatus($data);
+            }
+            else {
+                $result -> success = false;
+                $result -> message = "Not Authorized";
+            }
+            break;
+
         case "getUsers":
                 $result = getPlayersByTournament($params["tourneyId"]);
             break;
