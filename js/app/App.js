@@ -45,80 +45,11 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider', '$httpPr
                 url: '/games',
                 parent: 'index'
             })
-            /*
-                Game Sections
-
-             */
-            .state('sc2', {
-                template: '<div game-dir></div>',
-                url: '/sc2',
-                data: '/content/games/sc2.json',
-                parent: 'games'
+            .state('gamedir',{
+                template:'<div game-dir></div>',
+                url:'/:gameId',
+                parent:'games'
             })
-            .state('csgo', {
-                template: '<div game-dir></div>',
-                url: '/csgo',
-                data: '/content/games/csgo.json',
-                parent: 'games'
-            })
-            .state('dota', {
-                template: '<div game-dir></div>',
-                url: '/dota',
-                data: '/content/games/dota.json',
-                parent: 'games'
-            })
-            .state('halo', {
-                template: '<div game-dir></div>',
-                url: '/halo',
-                data: '/content/games/halo.json',
-                parent: 'games'
-            })
-            .state('lol', {
-                template: '<div game-dir></div>',
-                url: '/lol',
-                data: '/content/games/lol.json',
-                parent: 'games'
-            })
-            .state('mtg', {
-                template: '<div game-dir></div>',
-                url: '/mtg',
-                data: '/content/games/mtg.json',
-                parent: 'games'
-            })
-            .state('mvc', {
-                template: '<div game-dir></div>',
-                url: '/mvc',
-                data: '/content/games/mvc.json',
-                parent: 'games'
-            })
-            .state('poke', {
-                template: '<div game-dir></div>',
-                url: '/pokemon',
-                data: '/content/games/poke.json',
-                parent: 'games'
-            })
-            .state('ptcg', {
-                template: '<div game-dir></div>',
-                url: '/ptcg',
-                data: '/content/games/ptcg.json',
-                parent: 'games'
-            })
-            .state('ssb', {
-                template: '<div game-dir></div>',
-                url: '/ssb',
-                data: '/content/games/ssb.json',
-                parent: 'games'
-            })
-            .state('hs', {
-                template: '<div game-dir></div>',
-                url: '/hearthstone',
-                data: '/content/games/hs.json',
-                parent: 'games'
-            })
-            /*
-                End of Game Sections
-
-             */
             .state('profile', {
                 templateUrl: '/templates/user.html',
                 url: '/profile',
@@ -152,6 +83,18 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider', '$httpPr
                 parent: 'index',
                 controller: 'teamsctrl',
                 authenticated: true
+            })
+            .state('tournaments',{
+                templateUrl:'/templates/tournaments.html',
+                url:'/tournaments',
+                parent:'index',
+                controller:'tournamentsctrl',
+                authenticated: true
+            })
+            .state('tourDetail',{
+                template:'<div tourdetail-dir></div>',
+                url:'/tournament/:tourId',
+                parent:'gamedir'
             })
             .state('resetPW', {
                 templateUrl:'/templates/resetpw.html',
@@ -187,6 +130,8 @@ app.run(function ($rootScope, userService, editableOptions, $state) {
     $rootScope.$on('$stateChangeStart',
         function (event, toState, toParams, fromState, fromParams) {
             $rootScope.siteError = null; //reset error state on state change so errors don't follow you around the entire site
+            $rootScope.siteSuccess = null;
+            $rootScope.siteInfo = null;
             if (toState.authenticated) {
                 if (!userService.isLoggedIn()) {
                     event.preventDefault();
@@ -493,6 +438,14 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 $modalInstance.dismiss('canceled');
             };
 
+        };
+    }])
+    .controller('tournamentsctrl', ['$scope', 'tourService', '$state', '$modal','ngTableParams','$filter', function ($scope, tourService, $state, $modal, ngTableParams, $filter) {
+        tourService.getAllTournamentInfo().promise.then(function(response){
+            $scope.tournaments = response;
+        });
+        $scope.goToTourDetail = function(id){
+          $state.go('tourDetail',{tourId:id});
         };
     }])
     .controller('resetctrl', ['$scope','userService', function($scope,userService){

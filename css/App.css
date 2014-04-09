@@ -625,21 +625,39 @@
 .gtgamefest .contentPane .jumbotron {
   background-color: inherit;
 }
-.gtgamefest .contentPane .gamesSection .thumbnail {
-  height: 140px;
+.gtgamefest .contentPane .gamesSection .col-md-1 {
+  padding-left: 2px;
+  padding-right: 2px;
 }
-.gtgamefest .contentPane .gamesSection .thumbnail img {
-  max-height: 130px;
+.gtgamefest .contentPane .gamesSection .thumbnail {
+  height: 60px;
+}
+.gtgamefest .contentPane .thumbnail {
+  height: 300px;
+}
+.gtgamefest .contentPane .thumbnail .caption {
+  /*height:50%;*/
+
+}
+.gtgamefest .contentPane .thumbnail .caption h2.tourneyName {
+  font-size: 25px;
+}
+.gtgamefest .contentPane .thumbnail .caption:hover {
+  text-decoration: none;
 }
 @media (max-width: 992px) {
-  .gtgamefest .contentPane .gamesSection .thumbnail {
-    min-height: 80px;
+  .gtgamefest .contentPane .thumbnail {
     height: auto;
   }
-  .gtgamefest .contentPane .gamesSection .thumbnail img {
-    max-height: 80px;
-    max-width: 200px;
+  .gtgamefest .contentPane .thumbnail img {
+    max-height: 50px;
   }
+  .gtgamefest .contentPane .tourneyThumb img {
+    max-height: 150px;
+  }
+}
+.gtgamefest .contentPane #tourInfoPane button {
+  margin: 10px 0 10px 0;
 }
 .gtgamefest .noborder {
   border: none;
@@ -647,13 +665,16 @@
 .gtgamefest .noborder .panel-heading {
   border: 1px solid #e8e8e8;
 }
+.gtgamefest .nav-tabs li {
+  float: right;
+}
 .gtgamefest .nav-tabs li a {
   color: #ffffff;
 }
 .gtgamefest .nav-tabs li a:hover {
   background-color: #333333;
 }
-.gtgamefest .generalRulesTabs .tab-content {
+.gtgamefest .tab-content {
   padding-top: 20px;
 }
 .gtgamefest .panel {
@@ -915,9 +936,19 @@ form[name="paymentForm"] {
 }
 a.thumbnail:hover {
   border-color: #ffa02d;
+  text-decoration: initial;
 }
 a.thumbnail.active.orange {
   border-color: #ffa02d;
+  border-width: 3px;
+  background-color: #404040;
+}
+a.thumbnail.disabled {
+  background-color: #262626;
+  border-color: #262626;
+}
+a.thumbnail.disabled:hover {
+  border-color: #262626;
 }
 .ng-animate.shake-add {
   -webkit-animation-name: shake;

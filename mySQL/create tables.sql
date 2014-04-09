@@ -40,3 +40,34 @@ CREATE TABLE `teams` (
   KEY `id_idx4` (`member4`),
   CONSTRAINT `id` FOREIGN KEY (`captain`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tournaments` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Game` varchar(60) NOT NULL,
+  `Name` varchar(60) NOT NULL,
+  `isPlaying` int(3) DEFAULT '0',
+  `jsonName` varchar(45) DEFAULT NULL,
+  `bracketCloudId` int(10) DEFAULT NULL,
+  `isTeamOnly` bit(1) DEFAULT b'0',
+  `minTeamMembers` int(2) DEFAULT '0',
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `Id_UNIQUE` (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tournament_users` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `UserId` int(11) NOT NULL,
+  `TournamentId` int(11) NOT NULL,
+  `isAdmin` bit(1) NOT NULL DEFAULT b'0',
+  `isPresent` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `Id_UNIQUE` (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tournament_teams` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `TeamId` int(11) NOT NULL,
+  `TournamentId` int(11) NOT NULL,
+  `isPresent` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

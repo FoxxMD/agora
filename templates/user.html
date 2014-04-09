@@ -115,7 +115,7 @@
     </div>
     <div class="col-md-4 col-sm-12">
         <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12" ng-if="admin"> <!--TODO wait until tournaments included -->
+            <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="lead">
                     <fieldset>
                         <legend>Team Membership</legend>
@@ -132,6 +132,21 @@
                         <ul>
                             <li ng-repeat="membership in user.memberList">
                                 <a ui-sref="team({teamId: membership.ID})">{{membership.name}}</a>
+                            </li>
+                        </ul>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="lead">
+                    <fieldset>
+                        <legend>Tournament Participation</legend>
+                        <p style="font-size:14px;" ng-if="user.tournaments.length == 0 && ownProfile">
+                            You are not participating in any tournaments.
+                        </p>
+                        <ul>
+                            <li ng-repeat="tour in user.tournaments">
+                                <a ui-sref="tourDetail({gameId: tour.jsonName, tourId: tour.Id})">{{tour.Game}} {{tour.Name}}</a>
                             </li>
                         </ul>
                     </fieldset>

@@ -1,12 +1,16 @@
 {
     "title": "Halo 3",
     "overview": "/content/games/halo.html",
+    "img": "halo3-trans.png",
     "rules": ["No coaching or excessive commentating during the match. You may be asked to leave if you violate this rule.",
         "Participants are encouraged to bring a copy of the game, we have stations but few games.",
         "Each player must bring his or her own unmodified controller."],
     "tourney": [
         {
             "title": "2v2",
+            "id": "1",
+            "when": "14:00-21:00, Saturday",
+            "where": "Klaus Atrium 1116 E",
             "prizes": [
                 {
                     "place": "1st",
@@ -22,6 +26,9 @@
         },
         {
             "title": "4v4",
+            "id": "2",
+            "when": "14:00-21:00, Saturday",
+            "where": "Klaus Atrium 1116 E",
             "prizes": [
                 {
                     "place": "1st",

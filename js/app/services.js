@@ -16,7 +16,9 @@ angular.module('app.services', [])
                 justPaid: false,
                 alreadyPaid: false,
                 role: 0,
-                remind: true
+                remind: true,
+                captainOf: [],
+                tournaments: []
             },
             isInit = false,
             adminMode = false;
@@ -76,6 +78,8 @@ angular.module('app.services', [])
                     user.steam = response.steam;
                     user.bn = response.bn;
                     user.role = response.role;
+                    user.captainOf = response.captainList;
+                    user.tournaments = response.tournaments;
                     adminMode = (response.role == 1 || response.role == 2) ? (($localStorage.adminMode != undefined) ? $localStorage.adminMode : false) : false;
                     user.paid = (response.paid == 1);
                     //store important user config to localstorage to ensure directly accessing a page creates the expected behavior if latest response hasn't been returned in time
@@ -84,11 +88,19 @@ angular.module('app.services', [])
                     isInit = true;
                     deferred.resolve();
                 });
+
             }
             else {
                 deferred.resolve();
             }
 
+            return deferred;
+        };
+
+        this.getTeamsCaptained = function(id) {
+            $http({method: 'GET', url: '/php/users.php', params: {mode: 'getTeamsCaptained', userId: id}}).success(function (response) {
+                deferred.resolve(response);
+            });
             return deferred;
         };
 
@@ -363,4 +375,248 @@ angular.module('app.services', [])
             return deferred;
         };
 
+    }])
+    .service('tourService', ['$http','$q', function($http, $q) {
+
+        this.registerUser = function(userId, tourId)
+        {
+            var deferred = $q.defer();
+            //TODO Implement bracketcloud
+            var postData = {
+                userId: userId,
+                tourId: tourId
+            };
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'registerPlayer'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            }).error(function (response) {
+                deferred.reject(response);
+            });
+            return deferred;
+        };
+
+        this.registerTeam = function(teamId, tourId)
+        {
+            var deferred = $q.defer();
+            //TODO Implement bracketcloud
+            var postData = {
+                teamId: teamId,
+                tourId: tourId
+            };
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'registerTeam'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+                else {
+                    deferred.reject(response.message);
+                }
+            }).error(function (response) {
+                deferred.reject(response);
+            });
+            return deferred;
+        };
+
+        this.removeUser = function(userId, tourId)
+        {
+            var postData = {
+                userId: userId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'leavePlayer'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+
+            return deferred;
+        };
+
+        this.removeTeam = function(teamId, tourId)
+        {
+            var postData = {
+                teamId: teamId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'leaveTeam'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
+
+        this.makeUserPresent = function(userId, tourId)
+        {
+            var postData = {
+                userId: userId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'makePlayerPresent'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+
+            return deferred;
+        };
+
+        this.makeTeamPresent = function(teamId, tourId)
+        {
+            var postData = {
+                teamId: teamId,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'makeTeamPresent'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
+        this.setPlayers = function(numPlayers, tourId)
+        {
+            var postData = {
+                numPlayers: numPlayers,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'setPlayers'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
+        this.setEntrantType = function(etype, tourId)
+        {
+            var postData = {
+                entrantType: etype,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'setEntrantType'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
+        this.setTourStatus = function(status, tourId)
+        {
+            var postData = {
+                status: status,
+                tourId: tourId
+            };
+            var deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'setTourStatus'}}).success(function (response) {
+                if (response.success != undefined && response.success) {
+                    deferred.resolve();
+                }
+            });
+            return deferred;
+        };
+
+        this.getUsers = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getUsers', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                deferred.reject('Error getting users for this tournament.');
+            });
+            return deferred;
+        };
+
+        this.getTeams = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getTeams', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            }).error(function (response) {
+                deferred.reject('Error getting teams for this tournament.');
+            });
+            return deferred;
+        };
+
+        this.getTournamentInfo = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getTournamentInfo', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            });
+            return deferred;
+        };
+        this.getLimitedTournamentInfo = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getLimitedTournamentInfo', tourneyId: id}}).success(function (response) {
+                deferred.resolve(response);
+            });
+            return deferred;
+        };
+        this.getAllTournamentInfo = function(id)
+        {
+            var deferred = $q.defer();
+
+            $http({method: 'GET', url: '/php/tournaments.php', params: {mode: 'getAllTournamentInfo'}}).success(function (response) {
+
+                var newarray = response.map(function(item) {
+                return hydrateGameContent(item);
+                });
+                deferred.resolve(newarray);
+            });
+            return deferred;
+        };
+
+        function hydrateGameContent(item) {
+            var baseUrl = '/img/game_logos/';
+            switch (item.jsonName) {
+                case "halo":
+                    item.logo = baseUrl + 'halo3-trans.png';
+                    break;
+                case "lol":
+                    item.logo = baseUrl + 'lol-trans.png';
+                    break;
+                case 'ssb':
+                    item.logo = baseUrl + 'ssbbrawl-trans.png';
+                    break;
+                case 'poke':
+                    item.logo = baseUrl + 'pokemonxy-trans.png';
+                    break;
+                case 'sc2':
+                    item.logo = baseUrl + 'starcraft2-trans.png';
+                    break;
+                case 'dota':
+                    item.logo = baseUrl + 'dota-2-trans.png';
+                    break;
+                case 'mtg':
+                    item.logo = baseUrl + 'magic-the-gathering-trans.png';
+                    break;
+                case 'csgo':
+                    item.logo = baseUrl + 'csgo-trans.png';
+                    break;
+                case 'mvc':
+                    item.logo = baseUrl + 'marvelcapcom-trans.png';
+                    break;
+                case 'ptcg':
+                    item.logo = baseUrl + 'Pokemon_Trading_Card_Game-trans.png';
+                    break;
+                case 'hs':
+                    item.logo = baseUrl + 'Hearthstone_Logo.png';
+                    break;
+            }
+            return item;
+        }
     }]);

@@ -1,75 +1,57 @@
-<div class="panel">
-    <div class="panel-body">
-        <tabset justified="true">
-            <tab heading="Overview">
+<tabset>
+    <tab ng-repeat="tour in tabs" heading="{{tour.title}}"
+         ng-click="openTourney(tour.id); hideTour(false);" active="tour.active">
+    </tab>
+    <tab ng-if="gameInfo.server !== undefined" heading="Servers"></tab>
+    <tab heading="Overview" ng-click="hideTour(true);">
+        <div class="row">
+            <div class="col-md-4">
+                <img ng-src="{{gameImg}}" style="max-width:370px;">
+            </div>
+            <div class="col-md-8" style="padding-top:30px;">
                 <ng-include src="gameInfo.overview"></ng-include>
-            </tab>
-            <tab heading="Tournaments, Prizes, and Rules">
-                <div class="panel" ng-if="gameInfo.rules !== undefined">
-                    <div class="panel-heading">
-                        <h3 class="text-center">Rules</h3>
-                    </div>
-                    <div class="panel-body">
-                        <ul>
-                            <li ng-repeat="rule in gameInfo.rules" ng-bind-html="rule"></li>
-                        </ul>
-                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 generalRulesTabs">
+                <div class="col-md-6">
+                    <h2>Ground Rules</h2>
+                    <ul>
+                        <li>Each participant must follow the instructions from Admins and Sudo, security guards, GTPD
+                            and any emergency personnel (even if these instructions go against the tournament rules.)
+                        </li>
+                        <li> Alcohol and drugs in any form are not allowed. Intoxicated and unruly individuals will not
+                            be allowed onto the premises.
+                        </li>
+                        <li>You may not bring any high watt consuming or heat producing appliances.</li>
+                        <li>Do not remove furniture from room without admin approval.</li>
+                        <li>Notify Admins about damages and/or malfunctions.</li>
+                        <li>Throw all trash into proper disposal containers, notify admins of spills and other
+                            dangers.
+                        </li>
+                        <li>All connected computers and devices will abide by the Georgia Tech Computer and Network
+                            Usage and Security Policy http://lawn.gatech.edu/policy/index.html
+                        </li>
+                    </ul>
                 </div>
-                <div class="row" ng-if="gameInfo.tourney !== undefined">
-                    <h3 class="text-center">Tournaments</h3>
-
-                    <div class="panel-group" id="tourneyAccordion">
-                        <div class="panel panel-default noborder" ng-repeat="tour in gameInfo.tourney">
-                            <a data-toggle="collapse" data-parent="#tourneyAccordion" href="#collapsetour{{$index}}">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        {{tour.title}}
-                                    </h4>
-                                </div>
-                            </a>
-                            <div id="collapsetour{{$index}}" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <div class="panel panel-default consecutive-panel" ng-if="tour.rules !== undefined">
-                                        <div class="panel-heading">
-                                            Rules
-                                        </div>
-                                        <div class="panel-body tournamentRulesSection">
-                                            <ul>
-                                                <li ng-repeat="rule in tour.rules track by $index" ng-bind-html="rule"></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default consecutive-panel"
-                                         ng-if="tour.prizes !== undefined">
-                                        <div class="panel-heading">
-                                            Prizes
-                                        </div>
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li ng-repeat="prize in tour.prizes">{{prize.place}} -- <a ng-if="prize.href != undefined"
-                                                        ng-href="{{prize.href}}">{{prize.title}}</a> <span ng-if="prize.href == undefined">{{prize.title}}</span></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default consecutive-panel" ng-if="tour.maps !== undefined">
-                                        <div class="panel-heading">
-                                            Maps
-                                        </div>
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li ng-repeat="map in tour.maps"><a ng-if="map.href != undefined"
-                                                        ng-href="{{map.href}}">{{map.title}}</a>
-                                                <span ng-if="map.href == undefined">{{map.title}}</span></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-6">
+                    <h2>Tournament General Rules</h2>
+                    <ul>
+                        <li>All players must be physically present to advance to finals and be awarded prizes.</li>
+                        <li>Bring all disputes, questions and technical issues to Admins.</li>
+                        <li>Admins (not staff) have final say, rules subject to change.</li>
+                        <li>Teams will be allowed to substitute players only with admin approval.</li>
+                        <li>All team members must have registered and paid before joining the tournament.</li>
+                        <li>All teams must notify the admin of attendance. Team leaders are responsible of making sure
+                            his team is in the bracket at the start of the tournament.
+                        </li>
+                    </ul>
                 </div>
-            </tab>
-            <tab ng-if="gameInfo.server !== undefined" heading="Servers"></tab>
-        </tabset>
+            </div>
+        </div>
+    </tab>
+</tabset>
+<div ng-hide="hideTourPane">
+    <div ui-view>
     </div>
 </div>

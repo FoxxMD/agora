@@ -1,6 +1,7 @@
 <?php
 
     require_once('./lib.php');
+    require_once('./teamlib.php');
 
     $postData = file_get_contents('php://input');
     $data = json_decode($postData);
@@ -54,7 +55,7 @@
             $result = deleteTeam($data -> id, $authUser, $isAdmin, $isGameAdmin);
             break;
         case "add":
-            $result = addTeamMember($data);
+            $result = addTeamMember($data, $authUser);
             break;
     }
         }else{

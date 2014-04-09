@@ -1,6 +1,7 @@
 {
     "title": "DOTA2",
     "overview": "/content/games/dota.html",
+    "img": "dota-2-trans.png",
     "rules": [
         "Admin must be notified of ALL pauses. Pause abuse will result in disqualification.",
         "If your game is to be shoutcasted, you must accommodate for the caster in your lobby.",
@@ -11,6 +12,9 @@
     "tourney": [
         {
             "title": "5v5 Captain's Mode",
+            "id": "10",
+            "when": "14:00, Saturday",
+            "where": "CULC 144 & Atrium (for Overflow)",
             "prizes": [
                 {
                     "place": "1st",

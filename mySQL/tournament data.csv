@@ -1,0 +1,16 @@
+Id,Game,Name,isPlaying,jsonName,bracketCloudId,isTeamOnly,minTeamMembers
+1,"Halo 3",2v2,0,halo,4989,0,0
+2,"Halo 3",4v4,0,halo,4991,0,0
+3,LoL,"5v5 Howling Abyss",0,lol,4992,0,0
+4,LoL,"5v5 Summoner's Rift",0,lol,4993,0,0
+5,SSB,"Brawl 1v1",0,ssb,4994,0,0
+6,SSB,"Melee 1v1",0,ssb,4995,0,0
+7,"Pokemon X/Y","Doubles 1v1",0,poke,4996,0,0
+8,"Starcraft II",1v1,0,sc2,4997,0,0
+9,"Starcraft II",2v2,0,sc2,4998,0,0
+10,"DOTA 2","5v5 Captain's Mode",0,dota,4999,0,0
+11,"Magic The Gathering","Booster Draft",0,mtg,5000,0,0
+12,CS:GO,5v5,0,csgo,5001,0,0
+13,"Marvel vs Capcom","1v1 Tournament",0,mvc,5002,0,0
+14,"Pokemon TCG",Tournament,0,ptcg,5003,0,0
+15,Hearthstone,Tournament,0,hs,5004,0,0

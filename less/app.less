@@ -13,23 +13,53 @@
       background-color: inherit;
     }
     .gamesSection {
-
+      .col-md-1{
+        padding-left:2px;
+        padding-right:2px;
+      }
       .thumbnail{
-        //min-height:130px;
-        height:140px;
+        height:60px;
         img{
-          max-height:130px;
+          //max-height:60px;
+        }
+      }
+    }
+
+      .thumbnail {
+        //min-height:130px;
+        height:300px;
+        img{
+          //height:140px;
+        }
+        .caption{
+          h2.tourneyName{
+            font-size:25px;
+          }
+          &:hover{
+            text-decoration:none;
+          }
+          /*height:50%;*/
         }
       }
       @media(max-width:992px) {
         .thumbnail{
-          min-height:80px;
+          //min-height:60px;
           height:auto;
           img{
-            max-height:80px;
-            max-width:200px;
+            max-height:50px;
+            //max-width:200px;
           }
         }
+        .tourneyThumb {
+          img{
+            max-height:150px;
+          }
+        }
+      }
+
+    #tourInfoPane {
+      button {
+        margin: 10px 0 10px 0;
       }
     }
 
@@ -40,17 +70,22 @@
       border: 1px solid #e8e8e8;
     }
   }
-  .nav-tabs li a {
-    color: @text-color;
-    &:hover {
-      background-color: @gray-dark;
+  .nav-tabs
+  {
+    li{
+      float:right;
+      a {
+        color: @text-color;
+        &:hover {
+          background-color: @gray-dark;
+        }
+      }
     }
   }
-  .generalRulesTabs{
+
     .tab-content{
       padding-top:20px;
     }
-  }
   .panel {
     background-color: transparent;
     &.panel-default {
@@ -444,9 +479,19 @@ form[name="paymentForm"] {
 a.thumbnail {
   &:hover {
     border-color: @orange;
+    text-decoration: initial;
   }
   &.active.orange {
     border-color: @orange;
+    border-width: 3px;
+    background-color: lighten(@gray-dark,5%);
+  }
+  &.disabled{
+    &:hover{
+      border-color:darken(@gray-dark,5%);
+    }
+    background-color: darken(@gray-dark,5%);
+    border-color:darken(@gray-dark,5%);
   }
 }
 

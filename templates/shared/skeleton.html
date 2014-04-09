@@ -17,6 +17,7 @@
                 <li><a href="http://streams.gtgamefest.com">Streams</a></li>
                 <li ng-if="isLoggedIn"><a ui-sref="users"><strong>Users</strong></a></li>
                 <li ng-if="isLoggedIn"><a ui-sref="teams"><strong>Teams</strong></a></li>
+                <li ng-if="isLoggedIn"><a ui-sref="tournaments"><strong>Tournaments</strong></a></li>
                 <li><a ui-sref="about">About Us</a></li>
             </ul>
             <ul ng-if="!isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right">
@@ -48,9 +49,12 @@
     </span>
 </div>
 <div class="contentPane container" style="position:relative;">
-    <div ng-if="siteError != undefined && siteError != null" class="alert alert-danger alert-dismissable"> <!--style="margin-top:60px;"-->
+    <div ng-show="(siteError != undefined && siteError != null) || (siteSuccess != undefined && siteSuccess != null) || (siteInfo != undefined && siteInfo != null)" class="alert alert-dismissable" ng-class="{'alert-danger': (siteError != undefined && siteError != null), 'alert-success': (siteSuccess != undefined && siteSuccess != null), 'alert-info': (siteInfo != undefined && siteInfo != null) }"> <!--style="margin-top:60px;"-->
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <strong>{{siteError}}</strong>
+        <i ng-if="(siteInfo != undefined && siteInfo != null)" class="glyphicon glyphicon-info-sign"></i>
+        <i ng-if="(siteSuccess != undefined && siteSuccess != null)" class="glyphicon glyphicon-ok-sign"></i>
+        <i ng-if="(siteError != undefined && siteError != null)" class="glyphicon glyphicon-exclamation-sign"></i><strong>
+            {{siteError}}{{siteSuccess}}{{siteInfo}}</strong>
     </div>
     <div ui-view autoscroll='false'></div> <!-- class="animate-fade" Decided against, it messes with repeat animations and make the footer unsticky. -->
 </div>
