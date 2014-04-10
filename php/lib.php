@@ -314,7 +314,7 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
     {
         require_once("./Stripe.php");
 
-        Stripe::setApiKey("sk_live_EQe99LHgK8Pk8qSwT7xCqEIz");
+        Stripe::setApiKey("sk_live_c3DX07FPOXWKvXaAHLb7g2mB");
         $response = new stdClass();
         $response -> success = false;
         if(property_exists($authUser,"email"))
