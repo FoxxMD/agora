@@ -483,6 +483,7 @@ angular.module('app.directives', [])
                         tourService.registerUser(userService.getProfile().id, $stateParams.tourId).promise.then(function () {
                             $scope.tourUsers.push(userService.getProfile());
                             $scope.foundPlayer = userService.getProfile().id;
+                            userService.initUser(true);
                         });
                     };
                     $scope.tryLeavePlayer = function (userId) {
@@ -494,6 +495,7 @@ angular.module('app.directives', [])
                                 }
                             });
                             $scope.foundPlayer = undefined;
+                            userService.initUser(true);
                         });
                     };
                     $scope.tryLeaveTeam = function (teamId) {
@@ -505,6 +507,7 @@ angular.module('app.directives', [])
                                 }
                             });
                             $scope.foundTeam = undefined;
+                            userService.initUser(true);
                         });
                     };
 
@@ -591,6 +594,7 @@ angular.module('app.directives', [])
                             tourService.registerTeam($scope.selectedTeam.ID, $stateParams.tourId).promise.then(function () {
                                 $tourScope.foundTeam = $scope.selectedTeam.ID;
                                 $tourScope.tourTeams.push($scope.selectedTeam);
+                                userService.initUser(true);
                                 $modalInstance.close();
                             });
                         };
