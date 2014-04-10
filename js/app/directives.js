@@ -189,6 +189,78 @@ angular.module('app.directives', [])
             }
         }
     }])
+    .directive('usersDir',['userService', '$state','ngTableParams','$filter', function (userService, $state, ngTableParams, $filter) {
+        return {
+            restrict: 'AE',
+            templateUrl:'/templates/users.html',
+            controller: function($scope) {
+                $scope.showOptionalFields = true;
+                $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
+
+                $scope.paid = [{value: 1, text:"Yes"},
+                    {value: 0, text:"No"}];
+                $scope.entered = [{value: 1, text:"Yes"},
+                    {value: 0, text:"No"}];
+
+                userService.getUsers().promise.then(function (data) {
+                    //$scope.users = userArray;
+
+                    $scope.tableParams = new ngTableParams({
+                        page: 1,            // show first page
+                        count: 10          // count per page
+                        /*                filter: {
+                         alias:''       // initial filter
+                         }*/
+                    }, {
+                        total: data.length, // length of data
+                        getData: function($defer, params) {
+                            // use build-in angular filter
+                            var orderedData = params.filter() ?
+                                $filter('filter')(data, params.filter()) :
+                                data;
+
+                            $scope.users = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
+
+                            params.total(orderedData.length); // set total for recalc pagination
+                            $defer.resolve($scope.users);
+                        }
+                    });
+
+                });
+
+                $scope.columns= [
+                    {title:'Alias', field:'alias', visible: true, filter:{'alias':'text'}},
+                    {title:'Steam Handle', field:'steam', visible: true, filter:{'steam':'text'}},
+                    {title:'Xbox Handle', field:'xbox', visible: true, filter:{'xbox':'text'}},
+                    {title:'IGN', field:'ign', visible: true, filter:{'ign':'text'}},
+                    {title:'LoL Handle', field:'lol', visible: true, filter:{'lol':'text'}},
+                    {title:'Battle.net', field:'bn', visible: true, filter:{'bn':'text'}},
+                    {title:'Email', field:'email', visible: false, filter:{'email':'text'}},
+                    {title:'PW Attempt', field:'attempt', visible: false, filter:{'attempt':'text'}},
+                    {title:'Locktime', field:'locktime', visible: false},
+                    {title:'Auth Expire', field:'authExpire', visible: false},
+                    {title:'Role', field:'role', visible: false},
+                    {title:'Paid', field:'paid', visible: false},
+                    {title:'Entered', field:'entered', visible: false}];
+
+                $scope.interactiveFilter = function(column)
+                {
+                    return column.field != 'role' && column.field != 'paid' && column.field != 'entered';
+                };
+
+                $scope.updateUser = function (userId, element, updateVal) {
+                    return userService.updateUser(userId, element, updateVal);
+                };
+
+                $scope.goToUser = function (id) {
+                    $state.go('user', {userId: id});
+                }
+            },
+            link: function (scope, element, attrs) {
+
+            }
+        }
+    }])
     .directive('teamDir', ['userService', 'teamService', '$stateParams', '$filter', '$state', '$rootScope', function (userService, teamService, $stateParams, $filter, $state, $rootScope) {
         return {
             restrict: 'A',

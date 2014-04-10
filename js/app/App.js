@@ -65,10 +65,9 @@ app.config(['$stateProvider', '$urlRouterProvider','$locationProvider', '$httpPr
                 authenticated: true
             })
             .state('users', {
-                templateUrl: '/templates/users.html',
+                template:'<div users-dir></div>',
                 url: '/users',
                 parent: 'index',
-                controller: 'usersctrl',
                 authenticated: true
             })
             .state('team', {
@@ -336,48 +335,6 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 that.formData.passwordConfirm = null;
                 that.passwordChangeForm.$setPristine();
             });
-        }
-    }])
-    .controller('usersctrl', ['$scope', 'userService', '$state','ngTableParams','$filter', function ($scope, userService, $state, ngTableParams, $filter) {
-        $scope.admin = userService.adminMode() && userService.getProfile().role == 1;
-
-        $scope.paid = [{value: 1, text:"Yes"},
-            {value: 0, text:"No"}];
-        $scope.entered = [{value: 1, text:"Yes"},
-            {value: 0, text:"No"}];
-
-        userService.getUsers().promise.then(function (data) {
-            //$scope.users = userArray;
-
-            $scope.tableParams = new ngTableParams({
-                page: 1,            // show first page
-                count: 10          // count per page
-                /*                filter: {
-                 alias:''       // initial filter
-                 }*/
-            }, {
-                total: data.length, // length of data
-                getData: function($defer, params) {
-                    // use build-in angular filter
-                    var orderedData = params.filter() ?
-                        $filter('filter')(data, params.filter()) :
-                        data;
-
-                    $scope.users = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count());
-
-                    params.total(orderedData.length); // set total for recalc pagination
-                    $defer.resolve($scope.users);
-                }
-            });
-
-        });
-
-        $scope.updateUser = function (userId, element, updateVal) {
-            return userService.updateUser(userId, element, updateVal);
-        };
-
-        $scope.goToUser = function (id) {
-            $state.go('user', {userId: id});
         }
     }])
     .controller('teamsctrl', ['$scope', 'teamService', '$state', '$modal','ngTableParams','$filter', function ($scope, teamService, $state, $modal, ngTableParams, $filter) {

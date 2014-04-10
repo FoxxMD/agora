@@ -1,12 +1,27 @@
+<div class="checkbox pull-right">
+    <label>
+        <input ng-show="admin" type="checkbox" ng-model="showOptionalFields">Show Optional Fields?
+    </label>
+</div>
 <table ng-table="tableParams" show-filter="true" class="table table-hover">
+<!--    <thead>
+    <tr>
+        <th ng-repeat="column in columns" ng-show="column.visible" class="text-center">
+            {{column.title}}
+        </th>
+    </tr>
+    </thead>-->
     <tbody>
     <tr ng-repeat="user in $data" style="cursor:pointer" ng-class="{'animate-repeat': !admin}">
+<!--        <td ng-repeat="column in columns | filter:interactiveFilter" filter="{{column.filter}}" ng-show="column.visible">
+            {{user[column.field]}}
+        </td>-->
         <td ng-click="goToUser(user.id)" data-title="'Alias'" filter="{'alias':'text'}">{{user.alias}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'Steam Tag'" filter="{'steam':'text'}">{{user.steam}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'Xbox Tag'" filter="{'xbox':'text'}">{{user.xbox}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'IGN'" filter="{'ign':'text'}">{{user.ign}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'LoL Tag'" filter="{'lol':'text'}">{{user.lol}}</td>
-        <td ng-click="goToUser(user.id)" data-title="'Battle.net Tag'" filter="{'bn':'text'}">{{user.bn}}</td>
+        <td ng-click="goToUser(user.id)" ng-show="showOptionalFields" data-title="'Steam Tag'" filter="{'steam':'text'}">{{user.steam}}</td>
+        <td ng-click="goToUser(user.id)" ng-show="showOptionalFields" data-title="'Xbox Tag'" filter="{'xbox':'text'}">{{user.xbox}}</td>
+        <td ng-click="goToUser(user.id)" ng-show="showOptionalFields" data-title="'IGN'" filter="{'ign':'text'}">{{user.ign}}</td>
+        <td ng-click="goToUser(user.id)" ng-show="showOptionalFields" data-title="'LoL Tag'" filter="{'lol':'text'}">{{user.lol}}</td>
+        <td ng-click="goToUser(user.id)" ng-show="showOptionalFields" data-title="'Battle.net Tag'" filter="{'bn':'text'}">{{user.bn}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'Email'" filter="{'email':'text'}">{{user.email}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'PW Attempt'">{{user.attempt}}</td>
         <td ng-click="goToUser(user.id)" ng-show="admin" data-title="'Locktime'">{{user.locktime}}</td>
