@@ -36,6 +36,7 @@
 
                 //$sql = "select ID, name from teams where captain=".$userObj -> id;
                 $sql = "CALL getTeamsByCaptain(".$userObj -> id.")";
+
                 if($result = $db -> query($sql))
                 {
                     $captainInfo = new stdClass();
@@ -55,7 +56,23 @@
                   {
                       $db -> next_result();
                   }
+                  for($i = 0, $length = count($userObj -> captainList); $i < $length; $i++)
+                  {
+                    //$sql = "select COUNT(*) FROM tournament_teams where TeamId=".$userObj -> captainList[$i] -> ID;
+                    $sql = "select * FROM tournament_teams where TeamId=".$userObj -> captainList[$i] -> ID;
+                    if($anyRegistered = $db -> query($sql))
+                    {
+                        if($anyRegistered -> num_rows == 0)
+                        {
+                            $userObj -> captainList[$i] -> inTournament = false;
+                        }
+                        else{
+                            $userObj -> captainList[$i] -> inTournament = true;
+                        }
+                    }
+                  }
                 }
+
                 $sql = "select ID, name from teams where member1=".$userObj -> id." or member2=".$userObj -> id." or member3=".$userObj -> id." or member4=".$userObj -> id;
                 if($result = $db -> query($sql))
                 {

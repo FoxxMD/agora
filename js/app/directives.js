@@ -631,8 +631,8 @@ angular.module('app.directives', [])
                         $scope.loading = true;
 
                         $scope.modifiedTeams = yourTeams.map(function (item) {
-                            item.valid = true,
-                                item.duplicateUser = false;
+                            item.valid = true;
+                            item.duplicateUser = false;
                             var realmems = [];
                             for (var y = 0; y < item.members.length; y++) {
                                 if (item.members[y] != undefined && item.members[y] != 0) {
@@ -653,7 +653,7 @@ angular.module('app.directives', [])
 
                         $scope.selectedTeam = null;
                         $scope.selectTeam = function (team) {
-                            if (team.valid && !team.duplicateUser) {
+                            if (team.valid && !team.duplicateUser && !team.inTournament) {
                                 $scope.selectedTeam = team;
                             }
                         };

@@ -182,12 +182,13 @@
             <img style="margin-left:35%;" ng-show="loading" src="/img/loading-cylon-red.svg" width="256" height="32"
                  alt="Loading..."/>
             <div ng-repeat="team in modifiedTeams" class="col-md-6">
-                <a class="thumbnail" ng-class="{active: $parent.selectedTeam == team, orange: $parent.selectedTeam == team, disabled: !team.valid}" ng-click="$parent.selectTeam(team)">
+                <a class="thumbnail" ng-class="{active: $parent.selectedTeam == team, orange: $parent.selectedTeam == team, disabled: !team.valid || team.inTournament || team.duplicateUser}" ng-click="$parent.selectTeam(team)">
                     <div class="caption">
                         <address>{{team.name}}<br/>
                             Members: {{team.members.length}}</address>
                         <p class="text-danger" ng-if="!team.valid">Team is full!</p>
                         <p class="text-danger" ng-if="team.duplicateUser">User is already on this team!</p>
+                        <p class="text-danger" ng-if="team.inTournament">Team is already registered for a tournament!</p>
                     </div>
                 </a>
             </div>
