@@ -276,11 +276,9 @@ angular.module('app.directives', [])
                 }
                 $scope.games = [
                     {value: 'Starcraft 2', text: 'Starcraft 2'},
-                    {value: 'League of Legends SR', text: 'League of Legends SR'},
-                    {value: 'League of Legends ARAM', text: 'League of Legends ARAM'},
+                    {value: 'League of Legends', text: 'League of Legends'},
                     {value: 'CS:GO', text: 'CS:GO'},
-                    {value: 'Halo 3 2v2', text: 'Halo 3 2v2'},
-                    {value: 'Halo 3 3v3', text: 'Halo 3 3v3'},
+                    {value: 'Halo 3', text: 'Halo 3'},
                     {value: 'SSB:Brawl', text: 'SSB:Brawl'},
                     {value: 'SSB:Melee', text: 'SSB:Melee'},
                     {value: 'DOTA 2', text: 'DOTA 2'}

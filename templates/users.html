@@ -1,6 +1,6 @@
-<div class="checkbox pull-right">
+<div ng-show="admin" class="checkbox pull-right">
     <label>
-        <input ng-show="admin" type="checkbox" ng-model="showOptionalFields">Show Optional Fields?
+        <input type="checkbox" ng-model="showOptionalFields">Show Optional Fields?
     </label>
 </div>
 <table ng-table="tableParams" show-filter="true" class="table table-hover">
