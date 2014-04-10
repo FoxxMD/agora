@@ -58,7 +58,6 @@
                   }
                   for($i = 0, $length = count($userObj -> captainList); $i < $length; $i++)
                   {
-                    //$sql = "select COUNT(*) FROM tournament_teams where TeamId=".$userObj -> captainList[$i] -> ID;
                     $sql = "select * FROM tournament_teams where TeamId=".$userObj -> captainList[$i] -> ID;
                     if($anyRegistered = $db -> query($sql))
                     {
@@ -83,14 +82,37 @@
                     {
                         $userObj -> memberList[$count] = $memberInfo;
                         $count = ++$count;
+
+                        $sql = "CALL getTournamentsByTeamId(".$memberInfo -> ID.")";
+                        if($tourQuery = $db -> query($sql))
+                        {
+                            $tourCount = 0;
+                            $userObj -> tournaments = array();
+                            while($tourResult = $tourQuery -> fetch_object())
+                            {
+                                $userObj -> tournaments[$tourCount] = $tourResult;
+                                $tourCount = ++$tourCount;
+                            }
+                          if($db -> more_results())
+                          {
+                              $db -> next_result();
+                          }
+                        }
                     }
                 }
                 $sql = "CALL getTournamentsByUserId(".$userObj -> id.")";
                 if($result = $db -> query($sql))
                 {
-                    $userObj -> tournaments = array();
+                    if(property_exists($userObj, "tournaments"))
+                    {
+                        $count = count($userObj -> tournaments);
+                    }
+                    else{
+                        $userObj -> tournaments = array();
+                        $count = 0;
+                    }
                     $tourney = new stdClass();
-                    $count = 0;
+
                     while($tourney = $result -> fetch_object())
                     {
                         $userObj -> tournaments[$count] = $tourney;
