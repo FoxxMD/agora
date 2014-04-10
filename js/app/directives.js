@@ -61,7 +61,7 @@ angular.module('app.directives', [])
             restrict: 'A',
             templateUrl: '/templates/pay.html',
             link: function (scope, elem, attrs) {
-                Stripe.setPublishableKey('pk_live_YwddUwRH90xpNcHRNewOjZhG'); //live key
+                Stripe.setPublishableKey('pk_live_X00767uQ61g1q0SEv2490xhV'); //live key
             },
             controller: function ($scope) {
 
