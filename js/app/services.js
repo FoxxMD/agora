@@ -139,6 +139,7 @@ angular.module('app.services', [])
                         user.id = response.id;
                         user.alias = response.alias;
                         user.email = data.email;
+                        user.remind = $localStorage.remind == undefined ? user.remind : $localStorage.remind;
                         $http.defaults.headers.common.Authentication = response.authtoken;
                         $localStorage.token = response.authtoken;
                         $localStorage.alias = response.alias;
@@ -262,6 +263,7 @@ angular.module('app.services', [])
         };
 
         this.logoff = function () {
+           var tempremind = $localStorage.remind;
             $localStorage.$reset();
             user = {
                 id: 0,
@@ -275,8 +277,10 @@ angular.module('app.services', [])
                 xbox: null,
                 ign: null,
                 token: null,
-                tokenExpire: null
+                tokenExpire: null,
+                remind: true
             };
+            $localStorage.remind = tempremind;
             $rootScope.$broadcast('loginChange');
         };
 
