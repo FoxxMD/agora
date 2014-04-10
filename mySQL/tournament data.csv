@@ -1,4 +1,3 @@
-Id,Game,Name,isPlaying,jsonName,bracketCloudId,isTeamOnly,minTeamMembers
 1,"Halo 3",2v2,0,halo,4989,0,0
 2,"Halo 3",4v4,0,halo,4991,0,0
 3,LoL,"5v5 Howling Abyss",0,lol,4992,0,0

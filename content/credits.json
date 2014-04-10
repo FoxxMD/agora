@@ -16,7 +16,15 @@
             },
             {
                 "name": "(Jack) Zhiwei Chen",
-                "title": "Sergeant-at-Arms"
+                "title": "Tournaments"
+            },
+            {
+                "name": "Valerie Reiss",
+                "title": "Marketing"                
+            },
+            {
+                "name": "Marco Cognetta",
+                "title": "Community"                
             }
         ]
     },
@@ -24,8 +32,8 @@
         "title":"Game Administrators",
         "people":[
             {
-                "name":"Marco Cognetta",
-                "title":"PC Overseer"
+                "name":"Michael Lu",
+                "title":"CS:GO"
             },
             {
                 "name": "Caleb Ditchfield",
@@ -44,20 +52,33 @@
                 "title": "Halo"
             },
             {
-                "name":"Benjamin Sauk",
-                "title":"League of Legends"
+                "name":"Roarke Tholen",
+                "title":"Pokemon"
             },
             {
                 "name": "Will Jones",
                 "title": "League of Legends"
-            }]
+            },
+            {
+                "name": "Cam Adkins",
+                "title": "Magic The Gathering"                
+            },
+            {
+                "name": "Dahoon Baek",
+                "title": "Hearthstone"                
+            }
+        ]
     },
     {
         "title":"Casters",
         "people":[
             {
-                "name":"Phillip Nguyen",
-                "title":"League of Legends"
+                "name":"Marco Cognetta",
+                "title":"Shoutcast Manager"
+            },           
+            {
+                "name": "Dylan Hornibrook",
+                "title": "Lead, League of Legends"
             },
             {
                 "name": "Timothy Li",
@@ -68,13 +89,30 @@
                 "title": "League of Legends"
             },
             {
-                "name": "Patrick Steele",
-                "title": "League of Legends"
+                "name": "Oleg Eduardovich Filatov",
+                "title": "DOTA 2"
             },
             {
-                "name": "Josh Cavender",
-                "title": "DOTA 2 - English"
-            }]
+                "name": "Kevin Cox",
+                "title": "DOTA 2"
+            },
+            {
+                "name": "(Holmes) Yuanda Zhu",
+                "title": "DOTA 2 - Mandarin"
+            },
+            {
+                "name": "Mark Lu",
+                "title": "DOTA 2 - Mandarin"
+            },
+            {
+                "name": "Yun Sin",
+                "title": "Starcraft II"
+            },
+            {
+                "name": "Dahoon Baek",
+                "title": "Hearthstone"
+            }
+        ]
     },
     {
         "title":"Designers",
@@ -88,8 +126,8 @@
                 "title": "Web Backend"
             },
             {
-                "name": "Lisa Xia",
-                "title": "Graphics — Print Media"
+                "name": "Melissa Miller",
+                "title": "Graphics"
             },
             {
                 "name": "Michael Smith",
@@ -98,6 +136,11 @@
             {
                 "name": "Joseph Benamy",
                 "title": "Late-night Infrastructure Monkey"
-            }]
+            },
+            {
+                "name": "Henry Mei",
+                "title": "Late-night Infrastructure Monkey"
+            }
+        ]
     }
 ]
