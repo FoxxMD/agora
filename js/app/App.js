@@ -388,7 +388,7 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
                 teamService.createTeam(this.formData).promise.then(function () {
                     $modalInstance.close('created');
                 }, function (response) {
-                    alert("Team creation failed: " + response.message);
+                    $scope.teamCreateError = response;
                 });
             };
             $scope.close = function () {

@@ -312,11 +312,11 @@ angular.module('app.services', [])
         this.createTeam = function (postData) {
             var deferred = $q.defer();
 
-            $http({method: 'POST', url: '/php/teams.php', data: postData, params: {mode: 'create'}}).success(function (response) {
+            $http({method: 'POST', url: '/php/teams.php', data: postData, params: {mode: 'create'}, preventError: true}).success(function (response) {
                 if (response.success)
                     deferred.resolve();
                 else
-                    deferred.reject(response);
+                    deferred.reject(response.message);
             }).error(function (response) {
                     deferred.reject('Error creating team');
                 });

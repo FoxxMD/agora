@@ -6,6 +6,20 @@
         $db = getDB();
         $response = new stdClass();
 
+        $sql = "select * from teams where name=?";
+        $statement1 = $db -> prepare($sql);
+        $statement1 -> bind_param('s',$data -> name);
+        if($statement1 -> execute())
+        {
+            $statement1 -> store_result();
+            if($statement1 -> num_rows > 0)
+            {
+                $response -> success = false;
+                $response -> message = "Team name is taken. Please choose another name.";
+                return $response;
+            }
+        }
+
         $sql = "insert into teams values (NULL, ?,?,?,?,'',?,0,0,0,0)";
 
         $statement = $db -> prepare($sql);
@@ -193,6 +207,21 @@
             {
                 $response -> message = "The field name provided was not valid.";
                 return $response;
+            }
+            if($fixedParam == "name")
+            {
+                $sql = "select * from teams where name=?";
+                $statement1 = $db -> prepare($sql);
+                $statement1 -> bind_param('s',$data -> updatevalue);
+                if($statement1 -> execute())
+                {
+                    $statement1 -> store_result();
+                    if($statement1 -> num_rows > 0)
+                    {
+                        $response -> message = "Team name is taken. Please choose another name.";
+                        return $response;
+                    }
+                }
             }
             $sql = "update teams set ".$fixedParam."=? where id=?";
             if($statement = $db -> prepare($sql))
