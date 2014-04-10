@@ -137,11 +137,17 @@ angular.module('app.directives', [])
             controller: function ($scope, $element, $stateParams) {
                 $http.get('/content/games/' + $stateParams.gameId + '.json').success(function (data) {
                     $scope.gameInfo = data;
-                    $scope.tabs = data.tourney.map(function (item) {
-                        return { "title": item.title,
-                            "id": item.id,
-                            "active": $stateParams.tourId === item.id};
-                    });
+                    if(data.tourney !== undefined){
+                        $scope.tabs = data.tourney.map(function (item) {
+                            return { "title": item.title,
+                                "id": item.id,
+                                "active": $stateParams.tourId === item.id};
+                        });
+                    }
+                    else{
+                        $scope.tabs = null;
+                    }
+
                     $scope.gameImg = '/img/game_logos/' + data.img;
                 });
 
