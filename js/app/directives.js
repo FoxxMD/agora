@@ -113,19 +113,18 @@ angular.module('app.directives', [])
             templateUrl: '/templates/games.html',
             link: function (scope, element, attrs) {
 
+                $(element).find('.thumbnail').removeClass('active orange');
+                $(element).find('#chooseHeader').show();
+
                 if ($stateParams.gameId !== undefined) {
                     $('#gameSelect' + $stateParams.gameId).addClass('active orange');
+                    $(element).find('#chooseHeader').hide();
                 }
 
                 $(element).find('.thumbnail').on('click', function (ev, target) {
                     $(element).find('.thumbnail').removeClass('active orange');
                     $(this).addClass('active orange');
-
-                    //don't think animation is necessary here anymore
-                    /*                    var anchor = $(this).attr('href');
-                     $(document.body).animate({
-                     'scrollTop': $('.gamesDirSection').offset().top
-                     }, 1000, 'swing');*/
+                    $(element).find('#chooseHeader').hide();
                 });
             }
         }

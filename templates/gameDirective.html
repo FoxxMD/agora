@@ -2,7 +2,6 @@
     <tab ng-repeat="tour in tabs" heading="{{tour.title}}"
          ng-click="openTourney(tour.id); hideTour(false);" active="tour.active">
     </tab>
-    <tab ng-if="gameInfo.server !== undefined" heading="Servers"></tab>
     <tab heading="Overview" ng-click="hideTour(true);">
         <div class="row">
             <div class="col-md-4">
@@ -12,6 +11,17 @@
                 <ng-include src="gameInfo.overview"></ng-include>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h2 class="text-center">Game Rules</h2>
+                <ul>
+                    <li ng-repeat="rule in gameInfo.rules track by $index" ng-bind-html="rule">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </tab>
+    <tab heading="General Rules">
         <div class="row">
             <div class="col-md-12 generalRulesTabs">
                 <div class="col-md-6">
