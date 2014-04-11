@@ -144,3 +144,45 @@ left join player_counts p on t.Id = p.Id;
 
 END$$
 DELIMITER ;
+
+-- To check a team name for duplicates
+DELIMITER $$
+CREATE PROCEDURE `checkTeamName`(IN namecheck varchar(25))
+BEGIN
+
+drop temporary table if exists teamNamenospace;
+create temporary table teamNamenospace
+(
+TeamName varchar(100)
+)engine=memory;
+
+insert into teamNamenospace(TeamName)
+select replace(name, ' ', '') name from teams;
+
+Select * from teamNamenospace where TeamName=namecheck;
+
+drop temporary table if exists teamNamenospace;
+
+END$$
+DELIMITER ;
+
+-- To check alias for duplicates
+DELIMITER $$
+CREATE PROCEDURE `checkAlias`(IN aliascheck varchar(25))
+BEGIN
+
+drop temporary table if exists aliasnospace;
+create temporary table aliasnospace
+(
+Alias varchar(100)
+)engine=memory;
+
+insert into aliasnospace(Alias)
+select replace(alias, ' ', '') alias from users;
+
+Select * from aliasnospace where Alias=aliascheck;
+
+drop temporary table if exists aliasnospace;
+
+END$$
+DELIMITER ;

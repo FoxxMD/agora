@@ -171,6 +171,8 @@ angular.module('app.services', [])
             user.alias = data.alias;
 
             $http.post('/php/register.php', data, {preventError: true}).success(function (response) {
+                if(response.success !== undefined && response.success == true)
+                {
                     var loginData = {email: user.email, password: data.password};
                     that.login(loginData).promise.then(function () {
 
@@ -180,6 +182,10 @@ angular.module('app.services', [])
 
                         deferred.reject(response);
                     });
+                }
+                else{
+                    deferred.reject(response.message);
+                }
             }).error(function (response) {
                     deferred.reject(response.message);
                 });

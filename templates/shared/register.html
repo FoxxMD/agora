@@ -4,7 +4,7 @@
                 ng-click="close()">&times;</button>
         <h4 class="modal-title">Register</h4>
     </div>
-    <form role="form" name="registerForm" novalidate ng-submit="registerForm.$valid && submitRegistration()">
+    <form role="form" name="registerForm" novalidate ng-submit="submitRegistration(registerForm.$valid)">
     <div class="modal-body">
         <div ng-if="formErrorMessage != undefined" class="alert alert-warning">
             <strong>{{formErrorMessage}}</strong>
@@ -16,27 +16,35 @@
                     <i class="glyphicon glyphicon-eye-open"></i>
                 </div>
             </div>
-        <div class="alert alert-danger" ng-show="registerForm.alias.$error.maxlength">
-            Your alias is too long, max 20 characters.
+        <div class="alert alert-danger" ng-show="(!registerForm.alias.$valid && !registerForm.alias.$pristine) || (submitted &&!registerForm.alias.$valid)">
+            <span ng-show="registerForm.alias.$error.maxlength">Your alias is too long, max 20 characters.</span>
+            <span ng-show="registerForm.alias.$error.required">Alias is required!.</span>
         </div>
             <div class="form-group">
                 <label class="control-label" for="email">Email</label>
                 <div class="left-inner-addon">
-                    <input type="email" class="form-control"  ng-model="formData.email"  id="email" placeholder="Email" required/>
+                    <input type="email" class="form-control"  ng-model="formData.email" name="email"  id="email" placeholder="Email" required/>
                     <i class="glyphicon glyphicon-envelope"></i>
                 </div>
             </div>
+        <div class="alert alert-danger" ng-show="(!registerForm.email.$pristine && !registerForm.email.$valid) || (submitted && !registerForm.email.$valid)">
+            <span ng-show="registerForm.email.$error.required">Email is required!.</span>
+            <span ng-show="registerForm.email.$error.email">Not a real email address!.</span>
+        </div>
             <div class="form-group">
                 <label class="control-label" for="password">Password</label>
                 <div class="left-inner-addon">
-                    <input type="Password" id="password" ng-model="formData.password" class="form-control" placeholder="Password" required/>
+                    <input type="Password" id="password" ng-model="formData.password" name="password" class="form-control" placeholder="Password" required/>
                     <i class="glyphicon glyphicon-lock"></i>
                 </div>
             </div>
+        <div class="alert alert-danger" ng-show="(!registerForm.password.$pristine && !registerForm.password.$valid) || (submitted && !registerForm.password.$valid)">
+            <span ng-show="registerForm.password.$error.required">Password is required!.</span>
+        </div>
             <div class="form-group">
                 <label class="control-label" for="passwordConfirm">Confirm Password</label>
                 <div class="left-inner-addon">
-                    <input type="Password" id="passwordConfirm" ng-model="passwordConfirm" password-match="formData.password" class="form-control" placeholder="Password" required/>
+                    <input type="Password" id="passwordConfirm" ng-model="passwordConfirm" name="confirmPassword" password-match="formData.password" class="form-control" placeholder="Password" required/>
                     <i class="glyphicon glyphicon-lock"></i>
                 </div>
             </div>

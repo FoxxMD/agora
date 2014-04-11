@@ -187,27 +187,50 @@
             case "steam":
                 $fixedParam = "steam";
                 break;
-            }
-            if($param2 == "paid" || $param2 == "email" || $param2 == "entered" && $isAdmin) {
-                switch($param2)
-                {
-                case "paid":
-                    $fixedParam = "paid";
-                    break;
-                case "email":
-                    $fixedParam = "email";
-                    break;
-                case "entered":
-                    $fixedParam = "entered";
-                    break;
+            default:
+                if($param2 == "paid" || $param2 == "email" || $param2 == "entered" && $isAdmin) {
+                    switch($param2)
+                    {
+                    case "paid":
+                        $fixedParam = "paid";
+                        break;
+                    case "email":
+                        $fixedParam = "email";
+                        break;
+                    case "entered":
+                        $fixedParam = "entered";
+                        break;
+                    }
                 }
-            }
-            else{
-                $response -> success = false;
-                $response -> message = "Unauthorized";
+                else{
+                    $response -> success = false;
+                    $response -> message = "Unauthorized";
+                }
             }
             if($fixedParam != "")
             {
+                if($fixedParam == "alias")
+                {
+                    $alias = preg_replace('/\s+/', '', $param3);
+                    $sql = "CALL checkAlias(?)";
+                    $statementAlias = $db -> prepare($sql);
+                    $statementAlias -> bind_param('s', $alias);
+
+                    if($statementAlias -> execute())
+                    {
+                        $statementAlias -> store_result();
+                        if($statementAlias -> num_rows != 0)
+                        {
+                            $response -> success = false;
+                            $response -> message = "Alias is not unique.";
+                            return $response;
+                        }
+                        if($db -> more_results())
+                        {
+                            $db -> next_result();
+                        }
+                    }
+                }
                 $sql = "update users set ".$fixedParam."=? where id=?";
 
                 $statement = $db -> prepare($sql);

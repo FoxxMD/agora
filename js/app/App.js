@@ -238,16 +238,21 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
         });
 
         var ModalRegisterCtrl = function ($scope, $modalInstance) {
-            $scope.submitRegistration = function () {
+            $scope.submitted = false;
+            $scope.submitRegistration = function (isValid) {
                 var that = this;
-                userService.register(this.formData).promise.then(function () {
-                    if (that.payNow) {
-                        $state.go('pay');
-                    }
-                    $modalInstance.close('registered');
-                }, function (response) {
-                    $scope.formErrorMessage = "There was a problem with registration: " + response;
-                });
+                if(isValid)
+                {
+                    userService.register(this.formData).promise.then(function () {
+                        if (that.payNow) {
+                            $state.go('pay');
+                        }
+                        $modalInstance.close('registered');
+                    }, function (response) {
+                        $scope.formErrorMessage = "There was a problem with registration: " + response;
+                    });
+                }
+               $scope.submitted = true;
             };
             $scope.close = function () {
                 $modalInstance.dismiss('canceled');
@@ -301,10 +306,18 @@ app.controller('cnc', ['$scope', '$state', '$modal', '$rootScope', 'userService'
             }
             if($stateParams.userId != undefined)
             {
-                return userService.updateUser($stateParams.userId, element, updateVal);
+                return userService.updateUser($stateParams.userId, element, updateVal).promise.then(function(){
+
+                },function(){
+                    return false;
+                });
             }
             else{
-                return userService.updateUser(userService.getProfile().id , element, updateVal);
+                return userService.updateUser(userService.getProfile().id , element, updateVal).promise.then(function(){
+
+                },function(){
+                    return false;
+                });
             }
 
         };

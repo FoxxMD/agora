@@ -6,17 +6,23 @@
         $db = getDB();
         $response = new stdClass();
 
-        $sql = "select * from teams where name=?";
-        $statement1 = $db -> prepare($sql);
-        $statement1 -> bind_param('s',$data -> name);
-        if($statement1 -> execute())
+        $alias = preg_replace('/\s+/', '', $data -> name);
+        $sql = "CALL checkTeamName(?)";
+        $statementAlias = $db -> prepare($sql);
+        $statementAlias -> bind_param('s', $alias);
+
+        if($statementAlias -> execute())
         {
-            $statement1 -> store_result();
-            if($statement1 -> num_rows > 0)
+            $statementAlias -> store_result();
+            if($statementAlias -> num_rows != 0)
             {
                 $response -> success = false;
                 $response -> message = "Team name is taken. Please choose another name.";
                 return $response;
+            }
+            if($statementAlias -> more_results())
+            {
+                $statementAlias -> next_result();
             }
         }
 
@@ -210,18 +216,25 @@
             }
             if($fixedParam == "name")
             {
-                $sql = "select * from teams where name=?";
-                $statement1 = $db -> prepare($sql);
-                $statement1 -> bind_param('s',$data -> updatevalue);
-                if($statement1 -> execute())
+            $alias = preg_replace('/\s+/', '', $data -> updatevalue);
+            $sql = "CALL checkTeamName(?)";
+            $statementAlias = $db -> prepare($sql);
+            $statementAlias -> bind_param('s', $alias);
+
+            if($statementAlias -> execute())
+            {
+                $statementAlias -> store_result();
+                if($statementAlias -> num_rows != 0)
                 {
-                    $statement1 -> store_result();
-                    if($statement1 -> num_rows > 0)
-                    {
-                        $response -> message = "Team name is taken. Please choose another name.";
-                        return $response;
-                    }
+                    $response -> success = false;
+                    $response -> message = "Team name is taken. Please choose another name.";
+                    return $response;
                 }
+                if($db -> more_results())
+                {
+                    $db -> next_result();
+                }
+            }
             }
             $sql = "update teams set ".$fixedParam."=? where id=?";
             if($statement = $db -> prepare($sql))

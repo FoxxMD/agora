@@ -10,7 +10,7 @@
     $response = new stdClass();
     $db = getDB();
 
-    if(!checkDuplicate($user -> email)) {
+    if(checkDuplicate($user -> email, $user -> alias)) {
 
         $phpassHash = new \Phpass\Hash;
         $pwHash = $phpassHash -> hashPassword($user -> password);
@@ -50,7 +50,7 @@
     } else
     {
         $response -> success = false;
-        $response -> message = "Duplicate email detected.";
+        $response -> message = "Duplicate email or alias was detected.";
     }
         echo json_encode($response);
 ?>

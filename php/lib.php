@@ -8,27 +8,42 @@ include 'ChromePhp.php'; //using for logging into chrome dev console because set
 
 
     function getDB() {
-        $db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
-        //$db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
+        //$db = new mysqli("localhost:3306","matt","preparis", "gtgamefest_db"); //for my local
+        $db = new mysqli("localhost","gtgamefe_beta","G=C?r.%Kd0np", "gtgamefe_beta"); //for beta
         //$db = new mysqli("localhost","gtgamefe_live","3{{(a=lc?JFN", "gtgamefe_live"); //for live
         return $db;
     }
 
-    function checkDuplicate($value) {
+    function checkDuplicate($email, $alias) {
         $db = getDB();
-        $sql = "select * from users where email=?";
+        $alias = preg_replace('/\s+/', '', $alias);
+        $sql = "select email from users where email=?";
         $statement = $db -> prepare($sql);
-        $statement -> bind_param('s',$value);
+        $statement -> bind_param('s',$email);
 
         if($statement -> execute())
         {
             $statement -> store_result();
             if($statement -> num_rows == 0)
             {
-                return false;
+                $sql = "CALL checkAlias(?)";
+                $statement1 = $db -> prepare($sql);
+                $statement1 -> bind_param('s',$alias);
+                if($statement1 -> execute())
+                {
+                    $statement1 -> store_result();
+                    if($statement1 -> num_rows == 0)
+                    {
+                        return true;
+                    }
+                    if($db -> more_results())
+                    {
+                        $db -> next_result();
+                    }
+                }
             }
             else{
-                return true;
+                return false;
             }
         }
     }
