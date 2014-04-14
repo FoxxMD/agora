@@ -20,9 +20,9 @@
                 $response -> message = "Team name is taken. Please choose another name.";
                 return $response;
             }
-            if($statementAlias -> more_results())
+            if($db -> more_results())
             {
-                $statementAlias -> next_result();
+                $db -> next_result();
             }
         }
 

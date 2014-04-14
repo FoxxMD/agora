@@ -23,13 +23,13 @@
                     <label class="control-label">Description:</label>
                     <a editable-text="team.des" onbeforesave="updateTeam('des',$data)">{{team.des || 'Not Set' }}</a>
                 </div>
-                <div class="form-group">
+<!--                <div class="form-group">
                     <label class="control-label">Game:</label>
                     <a editable-select="team.game" e-ng-options="s.value as s.text for s in games"
                        onbeforesave="updateTeam('game',$data)">
                         {{ showGames() }}
                     </a>
-                </div>
+                </div>-->
                 <!--                <div class="form-group">
                                     <label class="control-label">Logo:</label>
                                     <a editable-text="team.ign" onbeforesave="updateTeam('logo',$data)">{{team.logo || 'Not Set' }}</a>
@@ -58,10 +58,6 @@
                 <div class="form-group">
                     <label class="control-label">Description:</label>
                     {{team.des || 'Not Set' }}
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Game:</label>
-                    {{team.game || 'Not Set' }}
                 </div>
             </fieldset>
         </div>
