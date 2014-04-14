@@ -6,7 +6,7 @@
 </div>
 <table ng-table="tableParams" show-filter="true" class="table table-hover">
     <tbody>
-    <tr ng-repeat="user in $data" style="cursor:pointer" ng-class="{'animate-repeat': !admin}">
+    <tr ng-repeat="user in $data" style="cursor:pointer">
         <td ng-click="goToUser(user.id)" data-title="'Alias'" filter="{'alias':'text'}">{{user.alias}}</td>
         <td ng-click="goToUser(user.id)" ng-show="showOptionalFields" data-title="'Steam Tag'" filter="{'steam':'text'}">{{user.steam}}</td>
         <td ng-click="goToUser(user.id)" ng-show="showOptionalFields" data-title="'Xbox Tag'" filter="{'xbox':'text'}">{{user.xbox}}</td>

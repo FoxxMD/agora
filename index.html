@@ -48,6 +48,7 @@
 </script>
 <![endif]-->
 <title>GT Gamefest</title>
+
 </head>
 <body class="gtgamefest">
 <div ui-view autoscroll='false'></div>
@@ -77,9 +78,6 @@
             'js/app/directives.js',
             'js/app/services.js'
         ], 'angular');
-        $script(['js/jquery-2.0.3.min.js'],function(){
-            $script(['js/bootstrap.min.js'],'bootstrap');
-        });
         $script(['js/modernizr-2.7.1.min.js'],'modernizer');
         $script(['https://js.stripe.com/v2/'],'stripe');
 
@@ -95,4 +93,6 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-49571228-1', 'gtgamefest.com');
 </script>
+<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 </html>
