@@ -103,7 +103,7 @@
             <p class="lead" ng-if="tourTeams.length == 0">No Teams currently competing!</p>
         </fieldset>
     </div>
-    <div id="playerPane" ng-show="userService.isLoggedIn()" ng-class="{'col-md-6': tourInfo.isTeamOnly, 'co-md-12': !tourInfo.isTeamOnly}">
+    <div id="playerPane" ng-show="userService.isLoggedIn()" ng-class="{'col-md-6': tourInfo.isTeamOnly, 'col-md-12': !tourInfo.isTeamOnly}">
         <fieldset>
             <legend ng-if="!tourInfo.isTeamOnly">Player Roster</legend>
             <legend ng-if="tourInfo.isTeamOnly">Waiting List</legend>
