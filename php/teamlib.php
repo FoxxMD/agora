@@ -334,7 +334,7 @@
         if($statement1 -> execute())
         {
             $statement1 -> store_result();
-            if($statement -> num_rows == 0)
+            if($statement1 -> num_rows == 0)
                 {
                     $response -> message = "No team found with that Team Id!";
                     return $response;
