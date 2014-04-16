@@ -682,16 +682,18 @@ angular.module('app.directives', [])
             },
             link: function (scope, element, attrs) {
 
-                scope.makePlayerPresent = function (userId) {
-                    tourService.makePlayerPresent(userId, $stateParams.tourId).promise.then(function () {
-                        $(element).find('#presentPlayer' + userId).remove();
-                    });
+                scope.togglePlayerPresent = function (player) {
+
+                        tourService.togglePlayerPresent(player.id, $stateParams.tourId, (player.isPresent != 1)).promise.then(function () {
+                            player.isPresent == 1 ? player.isPresent = 0 : player.isPresent = 1;
+                        });
                 };
 
-                scope.makeTeamPresent = function (teamId) {
-                    tourService.makeTeamPresent(teamId, $stateParams.tourId).promise.then(function () {
-                        $(element).find('#presentTeam' + teamId).remove();
-                    });
+                scope.toggleTeamPresent = function (team) {
+
+                        tourService.toggleTeamPresent(team.ID, $stateParams.tourId, (team.isPresent != 1)).promise.then(function () {
+                            team.isPresent == 1 ? team.isPresent = 0 : team.isPresent = 1;
+                        });
                 };
             }
         }

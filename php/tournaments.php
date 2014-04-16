@@ -101,10 +101,10 @@
             //}
             break;
 
-        case "makeTeamPresent":
+        case "toggleTeamPresent":
             if($isGameAdmin)
             {
-                $result = makeTeamPresent($data);
+                $result = toggleTeamPresent($data);
             }
             else {
                 $result -> success = false;
@@ -112,10 +112,10 @@
             }
             break;
 
-        case "makePlayerPresent":
+        case "togglePlayerPresent":
             if($isGameAdmin)
             {
-                $result = makePlayerPresent($data);
+                $result = togglePlayerPresent($data);
             }
             else {
                 $result -> success = false;

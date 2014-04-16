@@ -114,13 +114,20 @@
             return $response;
         }
 
-        function makePlayerPresent($data) {
+        function togglePlayerPresent($data) {
 
             $response = new stdClass();
             $response -> success = false;
 
             $db = getDB();
-            $sql = "update tournament_users set isPresent=1 where TournamentId=? and UserId=?";
+
+            if($data -> isPresent)
+            {
+                $sql = "update tournament_users set isPresent=1 where TournamentId=? and UserId=?";
+            }
+            else{
+                $sql = "update tournament_users set isPresent=0 where TournamentId=? and UserId=?";
+            }
             $statement = $db -> prepare($sql);
             $statement -> bind_param('ii', $data -> tourId, $data -> userId);
 
@@ -134,13 +141,19 @@
             return $response;
         }
 
-        function makeTeamPresent($data) {
+        function toggleTeamPresent($data) {
 
             $response = new stdClass();
             $response -> success = false;
 
             $db = getDB();
-            $sql = "update tournament_teams set isPresent=1 where TournamentId=? and TeamId=?";
+            if($data -> isPresent)
+            {
+                $sql = "update tournament_teams set isPresent=1 where TournamentId=? and TeamId=?";
+            }
+            else{
+                $sql = "update tournament_teams set isPresent=0 where TournamentId=? and TeamId=?";
+            }
             $statement = $db -> prepare($sql);
             $statement -> bind_param('ii',$data -> tourId, $data -> teamId);
 

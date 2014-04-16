@@ -461,14 +461,15 @@ angular.module('app.services', [])
             return deferred;
         };
 
-        this.makeUserPresent = function(userId, tourId)
+        this.togglePlayerPresent = function(userId, tourId, isPresent)
         {
             var postData = {
                 userId: userId,
-                tourId: tourId
-            };
-            var deferred = $q.defer();
-            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'makePlayerPresent'}}).success(function (response) {
+                tourId: tourId,
+                isPresent: isPresent
+            },
+                deferred = $q.defer();
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'togglePlayerPresent'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     deferred.resolve();
                 }
@@ -477,14 +478,16 @@ angular.module('app.services', [])
             return deferred;
         };
 
-        this.makeTeamPresent = function(teamId, tourId)
+        this.toggleTeamPresent = function(teamId, tourId, isPresent)
         {
             var postData = {
                 teamId: teamId,
-                tourId: tourId
-            };
-            var deferred = $q.defer();
-            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'makeTeamPresent'}}).success(function (response) {
+                tourId: tourId,
+                isPresent: isPresent
+                },
+                deferred = $q.defer();
+
+            $http({method: 'POST', url: '/php/tournaments.php', data: postData, params: {mode: 'toggleTeamPresent'}}).success(function (response) {
                 if (response.success != undefined && response.success) {
                     deferred.resolve();
                 }
