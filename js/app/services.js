@@ -629,6 +629,8 @@ angular.module('app.services', [])
                 case 'hs':
                     item.logo = baseUrl + 'Hearthstone_Logo.png';
                     break;
+                case 'smite':
+                    item.logo = baseUrl + 'smite-trans.png';
             }
             return item;
         }

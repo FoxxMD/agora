@@ -11,7 +11,7 @@
                 <ng-include src="gameInfo.overview"></ng-include>
             </div>
         </div>
-        <div class="row">
+        <div class="row" ng-if="gameInfo.rules != undefined">
             <div class="col-md-8 col-md-offset-2">
                 <h2 class="text-center">Game Rules</h2>
                 <ul>
