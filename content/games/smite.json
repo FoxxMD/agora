@@ -1,0 +1,7 @@
+{
+    "title": "Smite",
+    "overview": "content/games/smite.html", //An html fragment that is an overview for this game
+    "rules": ["rule 1",
+        "rule 2",
+        "rule 3"]
+}
