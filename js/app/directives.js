@@ -64,6 +64,9 @@ angular.module('app.directives', [])
                 Stripe.setPublishableKey('pk_live_X00767uQ61g1q0SEv2490xhV'); //live key
             },
             controller: function ($scope) {
+                $state.go('home');
+                $rootScope.siteInfo = "Registration is closed! You can't pay for any events right now.";
+
 
                 var payed = false;
 

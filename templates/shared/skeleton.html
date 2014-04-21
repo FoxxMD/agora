@@ -21,7 +21,7 @@
                 <li><a ui-sref="about">About Us</a></li>
             </ul>
             <ul ng-show="!isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right">
-                <li><a ng-click="openRegistration()">Register</a></li>
+                <!--<li><a ng-click="openRegistration()">Register</a></li>-->
                 <li><a ng-click="openLogin()">Login</a></li>
             </ul>
             <ul ng-show="isLoggedIn" class="nav navbar-nav navbar-right" id="main-menu-right-login">
@@ -38,16 +38,15 @@
         </div>
     </div>
 </div>
-<div ng-cloak ng-if="isLoggedIn && !userService.getProfile().paid && userService.getRemind()"
+<!-- <div ng-cloak ng-if="isLoggedIn && !userService.getProfile().paid && userService.getRemind()"
      class="payReminder alert alert-warning alert-dismissable">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <!--ng-click="dismissPaid = true"-->
     <strong>Hey! Listen!</strong><span style="margin-left:15px; font-size:18px;"
                                        class="glyphicon glyphicon-info-sign"></span>
     <span class="fulltext">
        <p style="margin-bottom:5px;">If you want to compete in a tournament you need to pay an entree fee! Complete registration by paying now. </p><button type="button" ng-click="openPay()" class="btn btn-info">Pay Now!</button> <buttton type="button" ng-click="stopReminder()" class="btn btn-danger">Don't Ask Again</buttton>
     </span>
-</div>
+</div> -->
 <div class="contentPane container" style="position:relative;">
     <div ng-show="(siteError != undefined && siteError != null) || (siteSuccess != undefined && siteSuccess != null) || (siteInfo != undefined && siteInfo != null)" class="alert alert-dismissable" ng-class="{'alert-danger': (siteError != undefined && siteError != null), 'alert-success': (siteSuccess != undefined && siteSuccess != null), 'alert-info': (siteInfo != undefined && siteInfo != null) }"> <!--style="margin-top:60px;"-->
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>

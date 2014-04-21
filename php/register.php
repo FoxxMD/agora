@@ -10,7 +10,7 @@
     $response = new stdClass();
     $db = getDB();
 
-    if(checkDuplicate($user -> email, $user -> alias)) {
+    /* if(checkDuplicate($user -> email, $user -> alias)) {
 
         $phpassHash = new \Phpass\Hash;
         $pwHash = $phpassHash -> hashPassword($user -> password);
@@ -51,6 +51,9 @@
     {
         $response -> success = false;
         $response -> message = "Duplicate email or alias was detected.";
-    }
+    } */
+
+    $response -> success = false;
+    $response -> message = "Registration is closed.";
         echo json_encode($response);
 ?>
