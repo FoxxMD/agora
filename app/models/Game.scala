@@ -17,4 +17,4 @@ object GameType extends Enumeration {
   }
 }
 
-class Game(val id: Int,val name: String,val publisher: String,val website: String,val gameType: GameType.Value)
+class Game(val name: String,val publisher: String,val website: String,val gameType: GameType.Value)

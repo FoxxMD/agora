@@ -21,7 +21,7 @@ object BracketType extends Enumeration {
   }
 }
 
-class Tournament(val id: Int, val bracketType: BracketType.Value, val registrationType: JoinType.Value, val game: Game,
+class Tournament(val bracketType: BracketType.Value, val registrationType: JoinType.Value, val game: Game,
                   val event: Event, val users: Set[TournamentUser], val teams: Set[TournamentTeam]) {
 
 }

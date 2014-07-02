@@ -2,6 +2,7 @@ package dao
 
 import play.db._
 import com.googlecode.mapperdao.utils.Setup
+import com.googlecode.mapperdao.utils.Helpers
 import com.googlecode.mapperdao.jdbc.Transaction
 import com.googlecode.mapperdao.utils.{SurrogateIntIdAll, TransactionalSurrogateIntIdCRUD}
 import com.googlecode.mapperdao.{NoId, QueryDao, MapperDao}
@@ -12,7 +13,7 @@ object Daos {
 /*  val (jbdc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEntity, UserDetailsEntity, TeamEntity, TeamUserEntity,
     GameEntity, TournamentEntity, TournamentDetailsEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity,
   EventUserEntity, EventDetailsEntity))*/
-val (jbdc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEntity, TeamEntity, TeamUserEntity,
+val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEntity, TeamEntity, TeamUserEntity,
   GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity,
   EventUserEntity))
 

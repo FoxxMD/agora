@@ -9,4 +9,4 @@ playScalaSettings
 libraryDependencies++= List(
   javaJdbc,
   "com.googlecode.mapperdao" %% "mapperdao" % "1.0.1",
-  "mysql" % "mysql-connector-java" % "5.1.21")
+  "mysql" % "mysql-connector-java" % "5.1.18")
