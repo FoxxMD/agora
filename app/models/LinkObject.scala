@@ -12,6 +12,7 @@ class EventUser(val event: Event, val user: User, val isPresent: Boolean){
 class TournamentTeam(val tournament: Tournament, val team: Team, val isPresent: Boolean){
 
 }
+
 class TournamentUser(val tournament: Tournament, val user: User, val isPresent: Boolean){
 
 }
