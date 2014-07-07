@@ -1,11 +1,7 @@
 package dao
 
-import play.db._
-import com.googlecode.mapperdao.utils.Setup
-import com.googlecode.mapperdao.utils.Helpers
-import com.googlecode.mapperdao.jdbc.Transaction
-import com.googlecode.mapperdao.utils.{SurrogateIntIdAll, TransactionalSurrogateIntIdCRUD}
-import com.googlecode.mapperdao.{NoId, QueryDao, MapperDao}
+import com.googlecode.mapperdao.NoId
+import com.googlecode.mapperdao.utils._
 import models._
 
 object Daos {
@@ -32,6 +28,12 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEn
     val txManager = Daos.txManager
     val mapperDao = Daos.mapperDao
   }*/
+
+  val userIdentityDao = new UserIdentityDao {
+    val entity = UserIdentityEntity
+    val queryDao = Daos.queryDao
+    val mapperDao = Daos.mapperDao
+  }
 
   val teamDao = new TeamDao {
     val entity = TeamEntity
@@ -106,6 +108,7 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEn
 
 abstract class UserDao extends TransactionalSurrogateIntIdCRUD[User] with SurrogateIntIdAll[User]
 //abstract class UserDetailsDao extends TransactionalSurrogateIntIdCRUD[UserDetails] with NoId[UserDetail]
+abstract class UserIdentityDao extends CRUD[Int, NoId, UserIdentity] with All[Int, NoId, UserIdentity]
 abstract class TeamDao extends TransactionalSurrogateIntIdCRUD[Team] with SurrogateIntIdAll[Team]
 abstract class TeamUserDao extends TransactionalSurrogateIntIdCRUD[TeamUser] with SurrogateIntIdAll[TeamUser]
 abstract class GameDao extends TransactionalSurrogateIntIdCRUD[Game] with SurrogateIntIdAll[Game]

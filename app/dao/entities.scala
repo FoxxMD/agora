@@ -1,8 +1,8 @@
 package dao
 
 import com.googlecode.mapperdao._
-import com.googlecode.mapperdao.utils.{TransactionalSurrogateIntIdCRUD, SurrogateIntIdAll, SurrogateIntIdCRUD}
 import models._
+import securesocial.core.{AuthenticationMethod, PasswordInfo, OAuth2Info}
 
 
 /**
@@ -13,26 +13,48 @@ object UserEntity extends Entity[Int, SurrogateIntId, User]("users") {
   val email = column("email") to (_.email)
   val createdDate = column("createdDate") to (_.createdDate)
   val role = column("role") to (_.role)
-  val details = onetoonereverse(UserDetailsEntity) to (_.details)
+  val firstName = column("firstName") option (_.firstName)
+  val lastName = column("lastName") option (_.lastName)
+  val globalHandle = column("globalHandle") option (_.globalHandle)
+  val identities = onetomany(UserIdentityEntity) to (_.identities)
+  val gameProfiles = onetomany(UserPlatformProfileEntity) to (_.gameProfiles)
   val teams = onetomany(TeamUserEntity) foreignkey "teamId" to (_.teams)
   val tournaments = onetomany(TournamentUserEntity) foreignkey "tournamentId" to (_.tournaments)
   val events = onetomany(EventUserEntity) foreignkey "eventId" to (_.events)
 
-  def constructor(implicit m: ValuesMap) = new User(email, createdDate, role, details, teams, events, tournaments) with Stored {
-    val id: Int = UserEntity.id
+  def constructor(implicit m: ValuesMap) = new User(email, createdDate, role, firstName, lastName, globalHandle,
+                      identities, gameProfiles, teams, events, tournaments) with Stored {
+    override val id: Int = UserEntity.id.asInstanceOf[Int]
   }
 }
 
+object UserPlatformProfileEntity extends Entity[Int, NoId, UserPlatformProfile]("userplatformprofile") {
+  val user = manytoone(UserEntity) foreignkey "userId" to (_.user)
+  val platform = column("platform") to (platform => Platform.toString(platform.platform))
+  val identifier = column("identifier") to (_.identifier)
 
-object UserDetailsEntity extends Entity[Int, NoId, UserDetails]("userdetails") {
-  val user = onetoone(UserEntity) foreignkey "userId" to (_.user)
-  val firstName = column("firstName") option (_.firstName)
-  val lastName = column("lastName") option (_.lastName)
-  val global = column("globalHandle") to (_.globalHandle)
-  val password = column("password") to (_.password)
-  val salt = column("salt") to (_.salt)
+  def constructor(implicit m: ValuesMap) = {
+    val plat = Platform.fromString(m(platform))
+    new UserPlatformProfile(user, plat, identifier) with Stored
+  }
+}
 
-  def constructor(implicit m: ValuesMap) = new UserDetails(user, firstName, lastName, global, password, salt) with Stored
+object UserIdentityEntity extends Entity[Int, NoId, UserIdentity]("useridentity") {
+  val user = manytoone(UserEntity) foreignkey "userId" to (_.user)
+  val userId = column("userIdentifier") to (_.userId)
+  val providerId = column("providerId") to (_.providerId)
+  val aMethod = column("aMethod") to (_.aMethod.toString)
+  val email = column("email") to (_.email)
+  val oAccessToken = column("oAccessToken") option (_.oauth.map(b => b.accessToken))
+  val password = column("password") option (_.pwInfo.map(b => b.password))
+  val salt = column("salt") option (_.pwInfo.map(b => b.salt))
+
+  def constructor(implicit m: ValuesMap) = {
+    val oauth = new OAuth2Info(oAccessToken)
+    val pwInfo = new PasswordInfo("hasher", m(password), m(salt))
+    val am = AuthenticationMethod(m(aMethod))
+    new UserIdentity(user, userId, providerId, email, am, Option(oauth), Option(pwInfo)) with Stored
+  }
 }
 
 object TeamEntity extends Entity[Int, SurrogateIntId, Team]("teams") {

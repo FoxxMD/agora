@@ -3,25 +3,37 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `createdDate` datetime NOT NULL,
   `lastLogin` datetime DEFAULT NULL,
+  `firstName` varchar(45) DEFAULT NULL,
+  `lastName` varchar(45) DEFAULT NULL,
+  `globalHandle` varchar(45) DEFAULT NULL,
   `role` varchar(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `useridentity` (
+  `userId` int(11) NOT NULL,
+  `userIdentifier` varchar(50) NOT NULL,
+  `providerId` varchar(45) NOT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  `aMethod` varchar(45) NOT NULL,
+  `oAccessToken` varchar(45) DEFAULT NULL,
+  `password` varchar(45) DEFAULT NULL,
+  `salt` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`userId`),
+  CONSTRAINT `user_identity_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `userdetails` (
-  `firstName` varchar(50) NOT NULL,
-  `lastName` varchar(50) DEFAULT NULL,
-  `globalHandle` varchar(50) DEFAULT NULL,
-  `avatarUrl` varchar(100) DEFAULT NULL,
-  `userId` int(11) DEFAULT NULL,
-  `steamId` varchar(45) DEFAULT NULL,
-  `password` varchar(100) NOT NULL,
-  `salt` varchar(100) NOT NULL,
-  PRIMARY KEY (`firstName`),
-  KEY `user_details_idx` (`userId`),
-  CONSTRAINT `userdetails_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+CREATE TABLE `userplatformprofile` (
+  `userId` int(11) NOT NULL,
+  `platform` varchar(45) NOT NULL,
+  `identifier` varchar(45) NOT NULL,
+  PRIMARY KEY (`userId`),
+  KEY `user_platform_id_idx` (`userId`),
+  CONSTRAINT `user_platform_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
