@@ -27,8 +27,6 @@ object Platform extends Enumeration {
 class User(val email: String, val createdDate: DateTime, val role: String, val firstName: Option[String], val lastName: Option[String],
            val globalHandle: Option[String],  val identities: Set[UserIdentity], val gameProfiles: Set[UserPlatformProfile],
            val teams: Set[TeamUser], val events: Set[EventUser], val tournaments: Set[TournamentUser]) {
-
-  val id: Option[Int] = None
 }
 
 class UserIdentity(val user: User, var userId: String,  var providerId: String, var email: Option[String], val aMethod: AuthenticationMethod, var oauth: Option[OAuth2Info],
@@ -48,7 +46,7 @@ class UserIdentity(val user: User, var userId: String,  var providerId: String, 
 
   override def avatarUrl: Option[String] = ???
 
-  override def authMethod: AuthenticationMethod = authMethod
+  override def authMethod: AuthenticationMethod = aMethod
 
   override def passwordInfo: Option[PasswordInfo] = pwInfo
 }

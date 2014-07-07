@@ -23,8 +23,6 @@ import play.api.{Application, Logger}
 import securesocial.core.providers.Token
 import securesocial.core.{Identity, IdentityId, UserServicePlugin}
 
-import scala.concurrent.Future
-
 
 class gtUserService(application: Application) extends UserServicePlugin(application) {
   val logger = Logger("application.controllers.gtUserService")
@@ -34,12 +32,12 @@ class gtUserService(application: Application) extends UserServicePlugin(applicat
   //private var identities = Map[String, BasicProfile]()
   private var tokens = Map[String, Token]()
 
-  def find(id: IdentityId): Future[Option[UserIdentity]] = {
+  def find(id: IdentityId): Option[UserIdentity] = {
 /*    if ( logger.isDebugEnabled ) {
       logger.debug("users = %s".format(users))
     }*/
 
-    val result = Daos.userIdentityDao.queryDao.query(select from uie where uie.providerId === id.providerId and uie.userId === id.userId)
+    val result = Daos.queryDao.query(select from uie where uie.providerId === id.providerId and uie.userId === id.userId)
 
 /*    val result = for (
       user <- users.values ;
@@ -47,25 +45,27 @@ class gtUserService(application: Application) extends UserServicePlugin(applicat
     ) yield {
       basicProfile
     }*/
-    Future.successful(result.headOption)
+    //Future.successful(result.headOption)
+    result.headOption
   }
 
-  def findByEmailAndProvider(email: String, providerId: String): Future[Option[UserIdentity]] = {
+  def findByEmailAndProvider(email: String, providerId: String): Option[UserIdentity] = {
     if ( logger.isDebugEnabled ) {
       logger.debug("users = %s".format(users))
     }
-    val someEmail = Some(email)
-    val result = Daos.userIdentityDao.queryDao.query(select from uie where uie.providerId === providerId and uie.email === someEmail)
+    //val someEmail = Some(email)
+    val result = Daos.queryDao.query(select from uie where uie.providerId === providerId and uie.email === email)
 /*    val result = for (
       user <- users.values ;
       basicProfile <- user.identities.find(su => su.providerId == providerId && su.email == someEmail)
     ) yield {
       basicProfile
     }*/
-    Future.successful(result.headOption)
+    //Future.successful(result.headOption)
+    result.headOption
   }
 
-  def save(user: Identity): Future[Identity] = {
+  def save(user: Identity): Identity = {
 /*    isSignUp match {
       case true =>
         val newUser = user
@@ -78,7 +78,7 @@ class gtUserService(application: Application) extends UserServicePlugin(applicat
       case (key, value) if Daos.userIdentityDao.queryDao.query(select from uie where uie.providerId === user.providerId and uie.userId === user.userId) => true //value.identities.exists(su => su.providerId == user.providerId && su.userId == user.userId ) => true
       case _ => false
     }*/
-    val maybeUser = Daos.userIdentityDao.queryDao.query(select from uie where uie.providerId === user.identityId.providerId and uie.userId === user.identityId.userId).headOption
+    val maybeUser = Daos.queryDao.query(select from uie where uie.providerId === user.identityId.providerId and uie.userId === user.identityId.userId).headOption
 
     maybeUser match {
       case Some(existingUser) =>
@@ -90,13 +90,15 @@ class gtUserService(application: Application) extends UserServicePlugin(applicat
         val updatedList = identities.patch( identities.indexWhere( i => i.providerId == user.providerId && i.userId == user.userId ), Seq(user), 1)
         val updatedUser = existingUser._2.copy(identities = updatedList)
         users = users + (existingUser._1 -> updatedUser)*/
-        Future.successful(updated)
+        //Future.successful(updated)
+        updated
 
       case None =>
         user match {
           case fuser: UserIdentity => {
             val inserted = Daos.userIdentityDao.create(fuser)
-            Future.successful(inserted)
+            //Future.successful(inserted)
+            inserted
           }
         }
         //val inserted = Daos.userIdentityDao.create(user)
@@ -117,26 +119,27 @@ class gtUserService(application: Application) extends UserServicePlugin(applicat
     }
   }*/
 
-  def save(token: Token): Future[Token] = {
-    Future.successful {
+  def save(token: Token) = {
+    //Future.successful {
       tokens += (token.uuid -> token)
-      token
-    }
+      //token
+    //}
   }
 
-  def findToken(token: String): Future[Option[Token]] = {
-    Future.successful { tokens.get(token) }
+  def findToken(token: String): Option[Token] = {
+    //Future.successful { tokens.get(token) }
+    tokens.get(token)
   }
 
-  def deleteToken(uuid: String): Future[Option[Token]] = {
-    Future.successful {
+  def deleteToken(uuid: String) = {
+    //Future.successful {
       tokens.get(uuid) match {
         case Some(token) =>
           tokens -= uuid
           Some(token)
         case None => None
       }
-    }
+    //}
   }
 
 //  def deleteTokens(): Future {

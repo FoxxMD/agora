@@ -24,7 +24,7 @@ object UserEntity extends Entity[Int, SurrogateIntId, User]("users") {
 
   def constructor(implicit m: ValuesMap) = new User(email, createdDate, role, firstName, lastName, globalHandle,
                       identities, gameProfiles, teams, events, tournaments) with Stored {
-    override val id: Int = UserEntity.id.asInstanceOf[Int]
+    val id: Int = UserEntity.id
   }
 }
 
@@ -44,14 +44,14 @@ object UserIdentityEntity extends Entity[Int, NoId, UserIdentity]("useridentity"
   val userId = column("userIdentifier") to (_.userId)
   val providerId = column("providerId") to (_.providerId)
   val aMethod = column("aMethod") to (_.aMethod.toString)
-  val email = column("email") to (_.email)
+  val email = column("email") option (_.email)
   val oAccessToken = column("oAccessToken") option (_.oauth.map(b => b.accessToken))
   val password = column("password") option (_.pwInfo.map(b => b.password))
   val salt = column("salt") option (_.pwInfo.map(b => b.salt))
 
   def constructor(implicit m: ValuesMap) = {
     val oauth = new OAuth2Info(oAccessToken)
-    val pwInfo = new PasswordInfo("hasher", m(password), m(salt))
+    val pwInfo = new PasswordInfo("bcrypt", m(password), m(salt))
     val am = AuthenticationMethod(m(aMethod))
     new UserIdentity(user, userId, providerId, email, am, Option(oauth), Option(pwInfo)) with Stored
   }
