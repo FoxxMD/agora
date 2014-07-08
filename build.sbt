@@ -1,15 +1,19 @@
-import play.Project._
+name := """play-scala"""
 
-name := "GameFest"
+version := "1.0-SNAPSHOT"
 
-version := "1.0"
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-playScalaSettings
+scalaVersion := "2.11.1"
 
-libraryDependencies++= List(
+libraryDependencies ++= Seq(
+  jdbc,
   javaJdbc,
-  "ws.securesocial" %% "securesocial" % "2.1.3",
+  cache,
+  ws,
+  "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
   "com.googlecode.mapperdao" %% "mapperdao" % "1.0.1",
-  "mysql" % "mysql-connector-java" % "5.1.18")
+  "mysql" % "mysql-connector-java" % "5.1.18"
+)
 
-resolvers += Resolver.sonatypeRepo("releases")
+resolvers += "sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"

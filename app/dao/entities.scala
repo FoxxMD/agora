@@ -2,7 +2,7 @@ package dao
 
 import com.googlecode.mapperdao._
 import models._
-import securesocial.core.{AuthenticationMethod, PasswordInfo, OAuth2Info}
+import securesocial.core.{AuthenticationMethod, OAuth2Info, PasswordInfo}
 
 
 /**
@@ -42,18 +42,20 @@ object UserPlatformProfileEntity extends Entity[Int, NoId, UserPlatformProfile](
 object UserIdentityEntity extends Entity[Int, NoId, UserIdentity]("useridentity") {
   val user = manytoone(UserEntity) foreignkey "userId" to (_.user)
   val userId = column("userIdentifier") to (_.userId)
+  val firstName = column("firstName") option (_.firstName)
+  val lastName = column("lastName") option (_.lastName)
   val providerId = column("providerId") to (_.providerId)
-  val aMethod = column("aMethod") to (_.aMethod.toString)
+  val aMethod = column("aMethod") to (_.authMethod.toString)
   val email = column("email") option (_.email)
-  val oAccessToken = column("oAccessToken") option (_.oauth.map(b => b.accessToken))
-  val password = column("password") option (_.pwInfo.map(b => b.password))
-  val salt = column("salt") option (_.pwInfo.map(b => b.salt))
+  val oAccessToken = column("oAccessToken") option (_.oAuth2Info.map(b => b.accessToken))
+  val password = column("password") option (_.passwordInfo.map(b => b.password))
+  val salt = column("salt") option (_.passwordInfo.map(b => b.salt))
 
   def constructor(implicit m: ValuesMap) = {
     val oauth = new OAuth2Info(oAccessToken)
     val pwInfo = new PasswordInfo("bcrypt", m(password), m(salt))
     val am = AuthenticationMethod(m(aMethod))
-    new UserIdentity(user, userId, providerId, email, am, Option(oauth), Option(pwInfo)) with Stored
+    new UserIdentity(user, userId, providerId, firstName, lastName, Option(firstName + " " + lastName), email, None, am, None, Option(oauth), Option(pwInfo)) with Stored
   }
 }
 

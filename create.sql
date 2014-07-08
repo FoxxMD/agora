@@ -20,10 +20,11 @@ CREATE TABLE `useridentity` (
   `oAccessToken` varchar(45) DEFAULT NULL,
   `password` varchar(45) DEFAULT NULL,
   `salt` varchar(45) DEFAULT NULL,
+  `firstName` varchar(45) DEFAULT NULL,
+  `lastName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`userId`),
   CONSTRAINT `user_identity_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE `userplatformprofile` (
   `userId` int(11) NOT NULL,
