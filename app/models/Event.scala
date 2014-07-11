@@ -17,11 +17,11 @@ object JoinType extends Enumeration {
 }
 
 class Event(val id: Int, val name: String, val eventType: JoinType.Value, val details: EventDetails, val users: Set[EventUser],
-            val tournaments: Set[Tournament], val games: Set[Game]) {
+            val tournaments: Set[Tournament]) {
 
 }
 
-class EventDetails(var event: Event, val address: Option[String], val city: Option[String], val state: Option[String], val description: Option[String], val rules: Option[String], val prizes: Option[String],
+class EventDetails(var event: Event, var address: Option[String], val city: Option[String], val state: Option[String], val description: Option[String], val rules: Option[String], val prizes: Option[String],
                    val streams: Option[String], val servers: Option[String], val timeStart: DateTime, val timeEnd: DateTime)
 {
 

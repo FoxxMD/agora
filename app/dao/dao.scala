@@ -1,6 +1,5 @@
 package dao
 
-import com.googlecode.mapperdao.NoId
 import com.googlecode.mapperdao.utils._
 import models._
 
@@ -108,7 +107,7 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEn
 
 abstract class UserDao extends TransactionalSurrogateIntIdCRUD[User] with SurrogateIntIdAll[User]
 //abstract class UserDetailsDao extends TransactionalSurrogateIntIdCRUD[UserDetails] with NoId[UserDetail]
-abstract class UserIdentityDao extends CRUD[Int, NoId, UserIdentity] with All[Int, NoId, UserIdentity]
+abstract class UserIdentityDao extends SurrogateIntIdCRUD[UserIdentity] with SurrogateIntIdAll[UserIdentity]
 abstract class TeamDao extends TransactionalSurrogateIntIdCRUD[Team] with SurrogateIntIdAll[Team]
 abstract class TeamUserDao extends TransactionalSurrogateIntIdCRUD[TeamUser] with SurrogateIntIdAll[TeamUser]
 abstract class GameDao extends TransactionalSurrogateIntIdCRUD[Game] with SurrogateIntIdAll[Game]
