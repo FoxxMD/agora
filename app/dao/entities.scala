@@ -43,15 +43,15 @@ object UserIdentityEntity extends Entity[Int, SurrogateIntId, UserIdentity]("use
   val firstName = column("firstName") option (_.firstName)
   val lastName = column("lastName") option (_.lastName)
   val providerId = column("providerId") to (_.providerId)
-  val aMethod = column("aMethod") to (_.authMethod.toString)
+  val aMethod = column("aMethod") to (_.authMethod.method)
   val email = column("email") option (_.email)
   val oAccessToken = column("oAccessToken") option (_.oAuth2Info.map(b => b.accessToken))
   val password = column("password") option (_.passwordInfo.map(b => b.password))
-  val salt = column("salt") option (_.passwordInfo.map(b => b.salt))
+  //val salt = column("salt") option (_.passwordInfo.map(b => b.salt))
 
   def constructor(implicit m: ValuesMap) = {
     val oauth = new OAuth2Info(oAccessToken)
-    val pwInfo = new PasswordInfo("bcrypt", m(password), m(salt))
+    val pwInfo = new PasswordInfo("bcrypt", m(password), None)
     val am = AuthenticationMethod(m(aMethod))
     new UserIdentity(user, userId, providerId, firstName, lastName, Option(firstName + " " + lastName), email, None, am, None, Option(oauth), Option(pwInfo)) with Stored
     {

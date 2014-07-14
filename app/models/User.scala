@@ -32,7 +32,7 @@ class User(
   extends UserT {
 
   val createdDate: DateTime = cDate.getOrElse(DateTime.now())
-  var gameProfiles = None
+  var gameProfiles = List[UserPlatformProfile]()
 
   def getTournaments: List[Tournament] = ???
   def getEvents: List[Event] = ???

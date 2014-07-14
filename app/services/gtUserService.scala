@@ -40,14 +40,22 @@ class gtUserService extends UserService[User] {
       logger.debug("users = %s".format(users))
     }*/
 
-    val result = Daos.queryDao.query(select from uie where uie.providerId === providerId and uie.userId === userId)
+    val result = Daos.queryDao.querySingleResult(select from uie where uie.providerId === providerId and uie.userId === userId)
 /*    val result = for (
       user <- users.values ;
       basicProfile <- user.identities.find(su => su.providerId == providerId && su.userId == userId)
     ) yield {
       basicProfile
     }*/
-    Future.successful(Option(result.head.getBasicProfile))
+    result match {
+      case Some(user) => Future.successful(Option(user.getBasicProfile))
+      case None => Future.successful(None)
+    }
+/*    result match {
+      case Some(user: UserIdentity) => Future.successful(Option(user.getBasicProfile))
+      case None => Future.successful(None)
+    }*/
+    //Future.successful(result.headOption..getBasicProfile)
     //Future.successful(Option(result.head))
     //result.headOption
   }
@@ -68,53 +76,38 @@ class gtUserService extends UserService[User] {
   }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
-/*    isSignUp match {
-      case true =>
-        val newUser = user
-        users = users + ((user.identities.last.providerId, user.id.toString) -> newUser)
-      case false =>
 
-    }*/
-    // first see if there is a user with this BasicProfile already.
-/*    val maybeUser = users.find {
-      case (key, value) if Daos.userIdentityDao.queryDao.query(select from uie where uie.providerId === user.providerId and uie.userId === user.userId) => true //value.identities.exists(su => su.providerId == user.providerId && su.userId == user.userId ) => true
-      case _ => false
-    }*/
     val maybeUser = Daos.queryDao.querySingleResult(select from uie where uie.providerId === profile.providerId and uie.userId === profile.userId)
 
-    maybeUser match {
-      case Some(existingUser) =>
-        val updatedIdent = existingUser.copy(passwordInfo = profile.passwordInfo, oAuth2Info = profile.oAuth2Info)
-        val updated = Daos.userIdentityDao.update(existingUser, updatedIdent)
-        Future.successful(updated.user)
+    mode match {
+      case SaveMode.SignUp =>
+        val newuser = Daos.userDao.create(new User(profile.email.get,"user",profile.firstName,profile.lastName,None,None))
 
-      case None =>
-
-           val newuser = Daos.userDao.create(new User(profile.email.get,"user",None,None,None,None))
-
-            val added = new UserIdentity(
-              newuser,
-              profile.providerId,
-              profile.userId,
-              profile.firstName,
-              profile.lastName,
-              None,
-              profile.email,
-              None,
-              profile.authMethod,
-              None,
-              profile.oAuth2Info,
-              profile.passwordInfo)
+        val added = new UserIdentity(
+          newuser,
+          profile.providerId,
+          profile.userId,
+          profile.firstName,
+          profile.lastName,
+          None,
+          profile.email,
+          None,
+          profile.authMethod,
+          None,
+          profile.oAuth2Info,
+          profile.passwordInfo)
 
 
-            val inserted = Daos.userIdentityDao.create(added)
-            Future.successful(inserted.user)
-            //inserted.user
+        val inserted = Daos.userIdentityDao.create(added)
+        Future.successful(inserted.user)
 
-        //val inserted = Daos.userIdentityDao.create(user)
-        //val newUser = DemoUser(user, List(user))
-        //users = users + ((user.providerId, user.userId) -> newUser)
-
+      case SaveMode.LoggedIn =>
+        maybeUser match {
+          case Some(existingUser) =>
+            Future.successful(existingUser.user)
+          case None =>
+            Future.successful(maybeUser.get.user)
+        }
     }
   }
 

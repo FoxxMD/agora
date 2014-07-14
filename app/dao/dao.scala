@@ -10,7 +10,7 @@ object Daos {
   EventUserEntity, EventDetailsEntity))*/
 val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEntity, TeamEntity, TeamUserEntity,
   GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity,
-  EventUserEntity))
+  EventUserEntity, UserIdentityEntity))
 
   //val txManager = Transaction.transactionManager(jbdc)
 
