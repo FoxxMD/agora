@@ -1,14 +1,9 @@
 package controllers
 
-import play.api.libs.json.Json
-import play.api.mvc._
-import securesocial.controllers.MailTokenBasedOperations
-import securesocial.core._
-import securesocial.core.providers.UsernamePasswordProvider
-import securesocial.core.services.SaveMode
-
-import scala.concurrent.Future
-
+/*class MyRegisterApi(implicit val bindingModule: BindingModule) extends Controller with  BaseRegistrationApi[BasicProfile] with Injectable {
+  val env = inject [RuntimeEnvironment]
+}*/
+/*
 class MyRegisterApi(override implicit val env: RuntimeEnvironment[BasicProfile]) extends BaseRegistrationApi[BasicProfile]
 
 case class regInfo(token: String, firstName: Option[String], lastName: Option[String], password: String, globalHandle: Option[String])
@@ -62,4 +57,4 @@ trait BaseRegistrationApi[U] extends MailTokenBasedOperations[U] {
       case None => Future.successful(BadRequest(Json.toJson(Map("error" -> "Malformed JSON"))))
     }
   }
-}
+}*/

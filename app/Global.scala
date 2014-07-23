@@ -16,14 +16,16 @@
  */
 
 import java.lang.reflect.Constructor
-import models.User
+
 import securesocial.controllers.{MailTemplates, ViewTemplates}
 import securesocial.core._
-import securesocial.core.authenticator.{HttpHeaderAuthenticatorBuilder, AuthenticatorStore, CookieAuthenticatorBuilder, IdGenerator}
+import models.User
+import securesocial.core.authenticator.{AuthenticatorStore, CookieAuthenticatorBuilder, HttpHeaderAuthenticatorBuilder, IdGenerator}
 import securesocial.core.providers._
-import securesocial.core.providers.utils.{PasswordValidator, PasswordHasher, Mailer}
+import securesocial.core.providers.utils.{Mailer, PasswordHasher, PasswordValidator}
 import securesocial.core.services._
 import service.gtUserService
+
 import scala.collection.immutable.ListMap
 
 object Global extends play.api.GlobalSettings {
@@ -36,6 +38,22 @@ object Global extends play.api.GlobalSettings {
     override lazy val userService: gtUserService = new gtUserService()
     /*override lazy val eventListeners = List(new MyEventListener())*/
   }
+
+/*  object SSConfig extends NewBindingModule({ module =>
+  import module._
+
+     bind [RuntimeEnvironment] toSingle new GT[User] {
+       override lazy val userService: gtUserService = new gtUserService()
+     }
+    bind [controllers.MyRegisterApi] toModuleSingle { implicit module => new controllers.MyRegisterApi }
+  })
+
+  object Context extends Injectable {
+    implicit val bindingModule = SSConfig  // use the standard config by default
+
+    val application = inject[controllers.MyRegisterApi]
+    val applicationClass = classOf[controllers.MyRegisterApi]
+  }*/
 
   /**
    * An implementation that checks if the controller expects a RuntimeEnvironment and
@@ -56,6 +74,14 @@ object Global extends play.api.GlobalSettings {
     }
     instance.getOrElse(super.getControllerInstance(controllerClass))
   }
+/*  override def getControllerInstance[A](controllerClass: Class[A]): A = {
+
+    controllerClass match {
+      case Context.applicationClass => Context.application.asInstanceOf[A]
+      case _ => throw new IllegalArgumentException
+
+    }
+  }*/
 }
 
 object RuntimeEnvironment {
