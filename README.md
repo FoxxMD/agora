@@ -20,16 +20,16 @@ Configuration
 ### MySQL
 
 1. Create a new database schema using MySQL Workbench (installed when you install MySQL server).
-2. In `PROJECTROOT/conf/application.conf` find the Database Configuration section and replace values as needed
+2. In `src/main/resources/jdbc.mysql.properties` find the Database Configuration section and replace values as needed
 
 ```
-db.default.driver=com.mysql.jdbc.Driver
-db.default.url="jdbc:mysql://localhost/[your_database_name]"
-db.default.user="[database_user]"
-db.default.password="[database_password]"
+driverClassName=com.mysql.jdbc.Driver
+url=jdbc:mysql://localhost/[your_database_name]
+username=[database_user]
+password=[database_password]
 ```
 
-3 . Open `create.sql` located at `PROJECTROOT` in MySQL Workbench and execute it against your database.
+3 . Open `create.sql` located at the directory root in MySQL Workbench and execute it against your database.
 
 ### PATH Variables
 
@@ -48,41 +48,21 @@ C:\Program Files\Java\jdk1.8.0_05\bin\java.exe;
 C:\Program Files\Java\jdk1.8.0_05\bin;
 ```
 
-### SecureSocial (Optional)
-
-This configuration is only needed if you plan on registering new users.
-
-1. In `PROJECTROOT/conf/securesocial.conf` find the settings for smtp and replace values as is necessary
-
-
 First Run
 ------
 
-1. Open a terminal in your PROJECTROOT and run the command `activator` . This will initialize SBT which will then resolve dependencies for the project.
+1. Open a terminal in the directory root
 2. Run `npm install` to download the components needed by npm for the app. This will install `grunt`, a front-end task-runner, and `karma`, a unit testing suite.
 3. Run `bower install` to download the components needed to serve the front-end. `bower` is a front-end package manager. It will download bootstrap, angular, etc.
 
-How To Run Server/Develop with Activator
+How To Run Server and Debug
 ------
 
-There are two options for running the web server, either can be used depending on the style of development you want.
+1. Open a terminal in the directory root
+  * Running *nix run `./sbt`
+  * Running windows you need to start SBT from the location you installed it earlier. If you used the default directory this should work `java -Dsbt.log.noformat=true -Djline.terminal=jline.UnsupportedTerminal -Xmx512M -XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar "C:\Program Files (x86)\sbt\bin\sbt-launch.jar" `
+2. Run `container:start` to start the Jetty container -- this is the back-end server. Once this is started you can access the API service.
+3. Run `grunt server` to start the front-end server. This serves up the client-side app and proxies to the API service.
 
-### Activator GUI
+To stop Jetty use `container:stop` or kill the SBT process. PROTIP: You can simple stop/start the jetty container when you want to recompile.
 
-Use this method if you do not have an IDE
-
-1. Open a terminal in your PROJECTROOT and run the command `activator ui`  
-2. From the window opened in your browser use the *Run* option to start the webserver.
-3. Navigate to http://localhost:9000 to compile the app and initiate execution. 
-
-From the Activator GUI you also have the option to inspect, edit, and test code. It's a very basic IDE but it works well.
-
-### Activator CLI
-
-Use this method if you are hooked into an IDE like Sublime or don't want to use the GUI.
-
-1. Open a terminal in your PROJECTROOT and run the command `activator` 
-2. Once Activator has finished loading the project execute the command `run` to start the webserver.
-3. Navigate to http://localhost:9000 to compile the app and initiate execution.
-
-**Regardless of which method you use the webserver is designed to recompile/refresh on any file changes**. This allows you to develop in whatever style you'd like.

@@ -17,8 +17,6 @@ CREATE TABLE `useridentity` (
   `userIdentifier` varchar(50) NOT NULL,
   `providerId` varchar(45) NOT NULL,
   `email` varchar(45) DEFAULT NULL,
-  `aMethod` varchar(45) NOT NULL,
-  `oAccessToken` varchar(45) DEFAULT NULL,
   `password` varchar(45) DEFAULT NULL,
   `salt` varchar(45) DEFAULT NULL,
   `firstName` varchar(45) DEFAULT NULL,
@@ -170,3 +168,10 @@ CREATE TABLE `user_tournaments` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tokens` (
+  `id` INT NOT NULL,
+  `token` VARCHAR(100) NOT NULL,
+  `issuedOn` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `token_UNIQUE` (`token` ASC));

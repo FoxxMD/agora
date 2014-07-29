@@ -1,24 +1,5 @@
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+addSbtPlugin("com.mojolly.scalate" % "xsbt-scalate-generator" % "0.4.2")
 
-resolvers += Resolver.sonatypeRepo("snapshots")
+addSbtPlugin("org.scalatra.sbt" % "scalatra-sbt" % "0.1.1")
 
-// The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.2")
-
-// web plugins
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescript" % "1.0.0")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.0")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-jshint" % "1.0.0")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.1")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.0.0")
-
-addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.0.0")
-
-addSbtPlugin("com.tuplejump" % "sbt-yeoman" % "0.7.1-SNAPSHOT")
-
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.2")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.9.2")
