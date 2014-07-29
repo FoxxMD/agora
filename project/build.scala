@@ -4,6 +4,13 @@ import org.scalatra.sbt._
 import sbt.Keys._
 import sbt._
 
+/* This is the "manifest" for the whole application. Here you specify project wide settings
+ * and, more importantly, tell SBT what dependencies your project uses. SBT stands for Simple Build Tool and it's what
+ * most Scala projects use as their base. Find out more about how SBT works in the docs http://www.scala-sbt.org/0.12.4/docs/index.html .
+ *
+ * The only thing you might want to change in here are the libraryDepdencies -- if you want to use another module or dependency you would add it here.
+ * */
+
 object ScalatraBuild extends Build {
   val Organization = "com.esports.gtplatform"
   val Name = "gtfest"

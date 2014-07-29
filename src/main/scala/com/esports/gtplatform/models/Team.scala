@@ -5,6 +5,8 @@ import org.joda.time.DateTime
 /**
  * Created by Matthew on 6/30/2014.
  */
+
+/* Not sure if I will use this method. Can safely ignore for now.*/
 trait TeamT {
   val name:String
   val createdDate: DateTime
@@ -37,5 +39,5 @@ extends TeamT {
   }
   def getCaptain = teamPlayers.find(u => u.isCaptain).get.user
   def getPlayers = teamPlayers.map(u => u.user)
-  def getTournaments = ???
+  def getTournaments = ??? //You can use ??? to let Scala throw a NotImplementedException, this acts as a stub
 }

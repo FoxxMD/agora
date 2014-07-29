@@ -13,6 +13,37 @@ import org.slf4j.LoggerFactory
 /**
  * Created by Matthew on 7/28/2014.
  */
+
+/* This is a bit of a mess, I will be changing things soon.
+*
+* A brief fly-over:
+*
+* Scalatra let's us implement our own authentication using two Traits -- ScentrySupport and ScentryStrategy
+*
+* ScentrySupport determines which strategy for authentication is used as well as storing/retrieving from session
+* ScentryStrategy implements the actual authentication. It takes an input and returns a User based on some method (or not if invalid!)
+*
+*
+* TokenStrategy gets a string from the request headers under the key "Authorization" and checks it against the token table in the DB.
+* If it finds a token it returns the corresponding User to the controller using a low-level join on the token Id column. This is what will be used for the majority of
+* auth in the application. The client app will set the token in the header after recieving it upon login and then send it with every request.
+*
+* TokenOptStrategy does the same thing but does not send a 401 response if not authenticated. This is helpful if we still want to identify the user(if there is one) to provide
+* extra information(such as for an admin, or less info if they are anonymous)
+*
+* UserPasswordStrategy gets "email" and "password" parameters from the request and checks them against UserIdentities in the DB.
+* If it finds one it first checks the token table for an existing token, if it doesn't find one it creates a new token and adds an entry in the tokens DB. It then
+* adds the token to the response headers and returns the User to the controller. The client app recieves the response and saves the token from headers. Whicch then gets used with
+* the TokenStrategy from above.
+*
+* To use authentication mixin one of the AuthController traits into your controller or use StandardController with these methods:
+* authToken() -- Mandatory authentication
+* authOptToken -- Optional authentication
+* authUserPass -- Should only be used for login
+*
+* All three return a User object you can then use in your controller(if authentication succeeds)
+*
+* */
 trait AuthenticationSupport extends ScentrySupport[User] {
   self: ScalatraBase =>
 

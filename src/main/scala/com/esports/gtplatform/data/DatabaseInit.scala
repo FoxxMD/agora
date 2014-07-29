@@ -5,7 +5,11 @@ import java.util.Properties
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import org.apache.commons.dbcp.BasicDataSourceFactory
 import org.slf4j.LoggerFactory
-
+/*Not using this right, IGNORE ME
+*
+*
+*
+* */
 trait DatabaseInit {
   val logger = LoggerFactory.getLogger(getClass)
 

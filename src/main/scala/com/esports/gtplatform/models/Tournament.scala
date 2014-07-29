@@ -5,7 +5,7 @@ import org.joda.time.DateTime
 /**
  * Created by Matthew on 6/30/2014.
  */
-
+/* This will eventually be fleshed out into a full bracket system. Need to get the basics down first though!*/
 object BracketType extends Enumeration {
   type BracketType = Value
   val Elimination, RoundRobin = Value

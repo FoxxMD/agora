@@ -10,46 +10,44 @@ import org.scalatra.json._
  * Created by Matthew on 7/24/2014.
  */
 
-/*class MapperSerializer extends CustomSerializer[T with SurrogateIntId](format => (
-  {
-    PartialFunction.empty
-  },
-  {
-    case x: T with SurrogateIntId =>
-      ("id" -> x.id) ~
-        ("thing" -> Extraction.decompose(x.))
-  }
-  ))*/
-
-/*case object MapperSerializer extends CustomSerializer[SurrogateIntId](format =>
-{
-  case JString(s) => s.toInt
-  case JNull => null
-},
-{
-  case x: Int => JString(x.toString)
-}
-)*/
-
+/*Traits are the shit. They are similar to interfaces except they can have properties and defined methods.
+* Use traits to build characteristics for a class or object. They can be mixed in using "extend" and then "with" for multiple mixins.
+*
+* In this file we are building the characteristics that we will make up a controller. */
 
 trait RESTController extends ScalatraServlet with JacksonJsonSupport with MethodOverride with Injectable {
+  /*ScalatraServlet = base for HTTP interaction in Scalatra
+  * JacksonJsonSupport = Provide support for converting responses into JSON and conversion between JSON
+  * MethodOverride = Add support for non-standard PUT/PATCH verbs
+  * Injectable = Support for injecting dependencies using subcut */
 
-  protected implicit val jsonFormats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType)
+  //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
+  //Eventually will have to add support for all Enumeration types used.
+   protected implicit val jsonFormats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType)
   before() {
+    //Lets the controller know to format the response in json so we don't have to specify on each action.
     contentType = formats("json")
   }
 }
 
-trait StandardController extends RESTController with AuthenticationSupport with CorsSupport
+/*Add support for Authentication and CORS.
 
+ * Authentication can be accessed by using one of the authentication methods in AuthStrategy -- authToken, authOptToken, or authUserPass
+ *
+ * The reason these two are the same is that we will eventually remove CorsSupport
+ * so only APIControllers can be accessed outside of the domain. For dev it's easier to have both totally open.
+ *
+*/
+trait StandardController extends RESTController with AuthenticationSupport with CorsSupport
 trait APIController extends RESTController with AuthenticationSupport with CorsSupport
 
+//Provide support for user-aware auth on every action
 trait StandardWithOptAuth extends StandardController {
   before() {
     var rUser = authOptToken()
   }
 }
-
+//Add mandatory authentication on every action
 trait StandardWithAuth extends StandardController {
   before() {
     var rUser = authToken()

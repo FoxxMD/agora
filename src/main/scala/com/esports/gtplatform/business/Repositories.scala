@@ -7,6 +7,18 @@ import dao.Daos._
 /**
  * Created by Matthew on 7/29/2014.
  */
+
+/* More fun with traits!
+*
+* Here we are building traits for use with subcut for dependency injection. On the application layer our controllers
+* will inject one of the traits below to receive a repository object. The traits below make heavy use of Generic Parameters and upper/lower bounds
+* to build a generic repository implemented by MapperDao.
+*
+* Eventually more specific traits will have to be built for each domain object as they need more specific methods. For right now this covers most everything.
+* Remember that in this instance a trait should be a descriptor of a method -- only describing the input and output of the method. Until you get to the
+* concrete class implementation they should stay relatively agnostic so that they can be reused by (future) other implementations.
+* */
+
 trait GenericRepo[T] {
 
   def get(id: Int) : Option[T]
@@ -21,6 +33,8 @@ trait GenericRepo[T] {
   def querySingle(qi : WithQueryInfo[Int,Persisted, T]): Option[T with Persisted]
 }
 
+//This trait is implementing methods because it's a builder for the concrete class below. Think of it as building block for the class rather
+//than a repository itself. (You will notice it is not injected in ScalatraBootstrap, only GenericRepo is)
 trait GenericMDaoTypedRepo[T] extends GenericRepo[T]{
 
   val returnEntity: Entity[Int,Persisted,T]
