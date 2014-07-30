@@ -5,36 +5,20 @@ import org.joda.time.DateTime
 /**
  * Created by Matthew on 6/30/2014.
  */
-//Can ignore this trait for now
-trait UserT {
-
-  var email:String
-  val createdDate: DateTime
-  var role: String
-  var firstName: Option[String]
-  var lastName: Option[String]
-  var globalHandle: Option[String]
-  var gameProfiles: List[UserPlatformProfile]
-
-  def getTournaments: List[Tournament]
-  def getEvents: List[Event]
-  def getTeams: List[Team]
-}
 
 /* I would like User to be a case class but I'm not sure how unwieldy it will be. Once I start implementing business logic for Users
  * it will be easier to tell if this can be a case class or if it must stay mutable.
  *
  * The main user class holds only a small amount of information in order to facilitate decoupling between related objects.
  */
-class User(
-           var email: String,
-           var role: String,
-           var firstName: Option[String],
-           var lastName: Option[String],
-           var globalHandle: Option[String],
-           val cDate: Option[DateTime])
-  extends UserT {
-  val id: Int = 0
+case class User(
+           email: String,
+           role: String,
+           firstName: Option[String],
+           lastName: Option[String],
+           globalHandle: Option[String],
+           cDate: Option[DateTime],
+           id: Int = 0) {
   val createdDate: DateTime = cDate.getOrElse(DateTime.now())
   var gameProfiles = List[UserPlatformProfile]()
 

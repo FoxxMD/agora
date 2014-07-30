@@ -12,10 +12,9 @@ import org.scalatra.Ok
 /* I would suggest reading the comments in all other files as these comments only make sense once
  * you've got a grasp on the other components
  * */
-
+//
 class GameController(implicit val bindingModule: BindingModule) extends StandardController { //Extends traits for Authentication, CORS, JSON support, and DI
 //bindingModule for injection
-
   //inject repository implementation into GenericRepo trait
   val gameRepo = inject[GenericRepo[Game]]
 
@@ -36,18 +35,20 @@ get("/") {
   *
   * Sorry bout it! We'll figure it out eventually. And even if not it's not the biggest problem in the world(though it surely annoys me)
   * */
+
   Ok(games.map(x => x.copy()))
 }
 
 post("/") {
 
- //Extracting JSON to a domain object ONLY WORKS IF THE OBJECT IS A CASE CLASS. Otherwise we must provide a custom serializer.
- //Just another reason to make all domain objects case classes.
- val newgame = parsedBody.extract[Game]
+  //Extracting JSON to a domain object ONLY WORKS IF THE OBJECT IS A CASE CLASS. Otherwise we must provide a custom serializer.
+  //Just another reason to make all domain objects case classes.
+  val newgame = parsedBody.extract[Game]
 
   val newInserted = gameRepo.create(newgame)
 
   Ok(newInserted.copy())
+
 }
 
 }

@@ -16,7 +16,7 @@ object ScalatraBuild extends Build {
   val Name = "gtfest"
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.10.2"
-  val ScalatraVersion = "2.2.2"
+  val ScalatraVersion = "2.3.0"
 
   lazy val project = Project (
     "gamefest-platform",
@@ -32,11 +32,12 @@ object ScalatraBuild extends Build {
         "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
         "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
         "org.scalatra" %% "scalatra-auth" % "2.3.0",
-        "org.scalatra" %% "scalatra-json" % "2.2.2",
-        "org.json4s"   %% "json4s-jackson" % "3.2.6",
-        "org.json4s" % "json4s-ext_2.10" % "3.2.6",
+        "org.scalatra" %% "scalatra-json" % "2.3.0",
+        "org.json4s"   %% "json4s-jackson" % "3.2.10",
+        "org.json4s" % "json4s-ext_2.10" % "3.2.10",
+        "org.json4s" % "json4s-core_2.10" % "3.2.10",
         "com.escalatesoft.subcut" % "subcut_2.10" % "2.0",
-        "ch.qos.logback" % "logback-classic" % "1.0.6" % "runtime",
+        "ch.qos.logback" % "logback-classic" % "1.0.13" % "runtime",
         "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container;compile",
         "org.apache.derby" % "derby" % "10.10.1.1",
         "c3p0" % "c3p0" % "0.9.1.2",

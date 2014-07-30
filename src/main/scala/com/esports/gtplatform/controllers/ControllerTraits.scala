@@ -1,10 +1,12 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.Injectable
+import com.fasterxml.jackson.core.JsonParseException
 import models.GameType
 import org.json4s.{DefaultFormats, Formats}
-import org.scalatra.{MethodOverride, CorsSupport, ScalatraServlet}
+import org.scalatra._
 import org.scalatra.json._
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Matthew on 7/24/2014.
@@ -15,7 +17,23 @@ import org.scalatra.json._
 *
 * In this file we are building the characteristics that we will make up a controller. */
 
-trait RESTController extends ScalatraServlet with JacksonJsonSupport with MethodOverride with Injectable {
+trait BasicServletWithLogging extends ScalatraServlet {
+
+  val logger = LoggerFactory.getLogger(getClass)
+  error {
+    case p: JsonParseException =>
+      logger.error(p.getMessage, p)
+      halt(400, "Request data was malformed. Make sure JSON is formatted properly.")
+    case m: org.json4s.MappingException =>
+      logger.error(m.getMessage, m)
+      halt(400, "Request data did not map to an object.")
+    case t: Throwable =>
+      logger.error(t.getMessage, t)
+      halt(500, "Something went wrong!")
+  }
+}
+
+trait RESTController extends BasicServletWithLogging with JacksonJsonSupport with MethodOverride with Injectable {
   /*ScalatraServlet = base for HTTP interaction in Scalatra
   * JacksonJsonSupport = Provide support for converting responses into JSON and conversion between JSON
   * MethodOverride = Add support for non-standard PUT/PATCH verbs
@@ -23,8 +41,9 @@ trait RESTController extends ScalatraServlet with JacksonJsonSupport with Method
 
   //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
   //Eventually will have to add support for all Enumeration types used.
-   protected implicit val jsonFormats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType)
+  protected implicit val jsonFormats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType)
   before() {
+
     //Lets the controller know to format the response in json so we don't have to specify on each action.
     contentType = formats("json")
   }

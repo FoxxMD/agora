@@ -22,7 +22,7 @@
             <level>INFO</level>
         </filter>
         <encoder>
-            <pattern>%d{HH:mm:ss.SS} %-5level %logger{36} : %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SS} %-5level %logger{36} : %msg%n %ex{20}</pattern>
         </encoder>
     </appender>
     <appender name="DEBUGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -41,7 +41,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
-            <pattern>%d{HH:mm:ss.SS} %-5level %logger{36} : %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SS} %-5level %logger{36} : %msg%n %ex{20}</pattern>
         </encoder>
     </appender>
     <appender name="HTML" class="ch.qos.logback.core.FileAppender">
