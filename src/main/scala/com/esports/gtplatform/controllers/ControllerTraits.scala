@@ -1,8 +1,8 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.Injectable
+import com.esports.gtplatform.business._
 import com.fasterxml.jackson.core.JsonParseException
-import models.GameType
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
@@ -27,6 +27,9 @@ trait BasicServletWithLogging extends ScalatraServlet {
     case m: org.json4s.MappingException =>
       logger.error(m.getMessage, m)
       halt(400, "Request data did not map to an object.")
+    case n: NotImplementedError =>
+      logger.error(n.getMessage, n)
+      halt(500, "We forgot to implement something...")
     case t: Throwable =>
       logger.error(t.getMessage, t)
       halt(500, "Something went wrong!")
@@ -41,7 +44,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
   //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
   //Eventually will have to add support for all Enumeration types used.
-  protected implicit val jsonFormats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType)
+  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers
   before() {
 
     //Lets the controller know to format the response in json so we don't have to specify on each action.

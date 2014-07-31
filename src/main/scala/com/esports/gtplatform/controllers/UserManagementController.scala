@@ -12,29 +12,28 @@ import org.scalatra.Ok
 /* I would suggest reading the comments in all other files as these comments only make sense once
  * you've got a grasp on the other components
  * */
-class UserManagementController(implicit val bindingModule : BindingModule) extends StandardController {
+
+//Mounted at /
+class UserManagementController(implicit val bindingModule: BindingModule) extends StandardController {
 
   post("/login") {
     //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
     Ok(authUserPass().get)
   }
-  post("/register"){
+  post("/register") {
     //you can get any parameters in the queryString of a POST or GET using params("key")
     val email = params("email")
     val password = params("password")
 
-    val newuser = new User(email,"user",None,None,None,None)
+    val newuser = new User(email, "user", None, None, None, None)
 
     /*Option is Scala's way of dealing with empty results or null. Rather than returning nothing or null you can
     * return an Option type. Option contains either Some(data) or None. You can also wrap a value in Option()*/
-    val userIdent = UserIdentity(newuser,"userpass",email,None,None,None,Option(email),None,password,"fsdf")
+    val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, password, "fsdf")
 
     //inject the GenericRepo trait with a concrete implementation of a repository for UserIdentity(MapperDao in this instance)
     val userRepo = inject[GenericRepo[UserIdentity]]
 
-    val inserted = userRepo.create(userIdent)
-
-    //See GameController for why you need to use copy()
-    Ok(inserted.copy())
+    Ok(userRepo.create(userIdent))
   }
 }

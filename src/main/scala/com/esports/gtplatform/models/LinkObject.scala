@@ -10,9 +10,10 @@ package models
   *
   * These really should be case classes but ATM they are easier to handle as mutable datas.*/
 
-class TeamUser(val team: Team, val user: User, var isCaptain: Boolean) {
+case class TeamUser(team: Team, user: User, var isCaptain: Boolean) {
 
 }
+
 class EventUser(val event: Event, val user: User, val isPresent: Boolean){
 
 }
@@ -20,7 +21,7 @@ class TournamentTeam(val tournament: Tournament, val team: Team, val isPresent: 
 
 }
 
-class TournamentUser(val tournament: Tournament,
-                     val user: User,
-                     val isPresent: Boolean){
+case class TournamentUser(tournament: Tournament,
+                     user: User,
+                     isPresent: Boolean){
 }

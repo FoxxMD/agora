@@ -36,7 +36,8 @@ get("/") {
   * Sorry bout it! We'll figure it out eventually. And even if not it's not the biggest problem in the world(though it surely annoys me)
   * */
 
-  Ok(games.map(x => x.copy()))
+  //Ok(games.map(x => x.copy()))
+  Ok(games)
 }
 
 post("/") {

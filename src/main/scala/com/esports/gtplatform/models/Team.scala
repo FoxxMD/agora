@@ -22,10 +22,10 @@ trait TeamT {
 case class Team(
             name: String,
             createdDate: DateTime,
-            game: Game,
+            games: List[Game],
             teamPlayers: Set[TeamUser],
             id: Int = 0)
-extends TeamT {
+{
 
   def setCaptain(newCap:User) = {
     val tu = teamPlayers.find(u => u.user.equals(newCap)).headOption

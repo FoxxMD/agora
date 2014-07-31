@@ -12,13 +12,14 @@ import org.joda.time.DateTime
  * The main user class holds only a small amount of information in order to facilitate decoupling between related objects.
  */
 case class User(
-           email: String,
-           role: String,
-           firstName: Option[String],
-           lastName: Option[String],
-           globalHandle: Option[String],
-           cDate: Option[DateTime],
-           id: Int = 0) {
+                 email: String,
+                 role: String,
+                 firstName: Option[String],
+                 lastName: Option[String],
+                 globalHandle: Option[String],
+                 cDate: Option[DateTime],
+                 id: Int = 0,
+                 teams: List[TeamUser] = List()) {
   val createdDate: DateTime = cDate.getOrElse(DateTime.now())
   var gameProfiles = List[UserPlatformProfile]()
 
@@ -27,9 +28,13 @@ case class User(
   * */
 
   def getTournaments: List[Tournament] = ???
+
   def getEvents: List[Event] = ???
-  def getTeams: List[Team] = ???
+
+  //TODO work on related entities
+  //def getTeams: List[TeamUser] = queryDao.query(select from TeamUserEntity where TeamUserEntity.user. === this.id).map(x => x.team)
 }
+
 
 /* UserIdentity is a descriptor for a user's login credentials. It's separated from the main user because blah blah decoupling.
 *
