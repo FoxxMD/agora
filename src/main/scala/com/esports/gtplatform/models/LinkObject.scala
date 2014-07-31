@@ -10,14 +10,14 @@ package models
   *
   * These really should be case classes but ATM they are easier to handle as mutable datas.*/
 
-case class TeamUser(team: Team, user: User, var isCaptain: Boolean) {
+case class TeamUser(team: Team, user: User, isCaptain: Boolean) {
 
 }
 
-class EventUser(val event: Event, val user: User, val isPresent: Boolean){
+case class EventUser(event: Event, user: User, isPresent: Boolean){
 
 }
-class TournamentTeam(val tournament: Tournament, val team: Team, val isPresent: Boolean){
+case class TournamentTeam(tournament: Tournament, team: Team, isPresent: Boolean){
 
 }
 

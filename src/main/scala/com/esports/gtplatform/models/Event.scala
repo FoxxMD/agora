@@ -16,8 +16,8 @@ object JoinType extends Enumeration {
   }
 }
 
-class Event(val name: String, val eventType: JoinType.Value, val details: EventDetails, val users: Set[EventUser],
-            val tournaments: Set[Tournament],val id: Int = 0) {
+case class Event(name: String, eventType: JoinType.Value, details: EventDetails, users: Set[EventUser],
+            tournaments: Set[Tournament],id: Int = 0) {
 
 }
 
@@ -26,8 +26,8 @@ class Event(val name: String, val eventType: JoinType.Value, val details: EventD
  * I would like to have description be Markdown, but will need to implement a system where the DB stores both the raw Markdown and a copy of the formatted HTML
  * so it doesn't have to be rendered on every page load.
  * */
-class EventDetails(var event: Event, var address: Option[String], val city: Option[String], val state: Option[String], val description: Option[String], val rules: Option[String], val prizes: Option[String],
-                   val streams: Option[String], val servers: Option[String], val timeStart: DateTime, val timeEnd: DateTime)
+case class EventDetails(event: Event, address: Option[String], city: Option[String], state: Option[String], description: Option[String], rules: Option[String], prizes: Option[String],
+                   streams: Option[String], servers: Option[String], timeStart: DateTime, timeEnd: DateTime)
 {
 
 }
