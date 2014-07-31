@@ -56,22 +56,38 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
  * Authentication can be accessed by using one of the authentication methods in AuthStrategy -- authToken, authOptToken, or authUserPass
  *
- * The reason these two are the same is that we will eventually remove CorsSupport
- * so only APIControllers can be accessed outside of the domain. For dev it's easier to have both totally open.
+ * Eventually there will be an API key stategy as well
  *
 */
-trait StandardController extends RESTController with AuthenticationSupport with CorsSupport
-trait APIController extends RESTController with AuthenticationSupport with CorsSupport
-
+trait StandardController extends RESTController with AuthenticationSupport with CorsSupport {
+  before() {
+    if (request.headers("Origin") != "http://localhost:9000") {
+      //If not from origin then halt immediately.
+      logger.info("Non-Origin request")
+      //halt(401)
+    }
+  }
+}
 //Provide support for user-aware auth on every action
 trait StandardWithOptAuth extends StandardController {
   before() {
-    var rUser = authOptToken()
+    var authUser = authOptToken()
   }
 }
+
 //Add mandatory authentication on every action
 trait StandardWithAuth extends StandardController {
   before() {
-    var rUser = authToken()
+    var authUser = authToken()
   }
 }
+
+trait APIController extends RESTController with AuthenticationSupport with CorsSupport {
+  before() {
+    if (request.headers("Origin") != "http://localhost:9000") {
+      //If not from origin then it's an API request and we need to authenticate their key before doing anything
+      //val apiUser = authApi()
+    }
+  }
+}
+

@@ -31,7 +31,7 @@ case class Team(
     val tu = teamPlayers.find(u => u.user.equals(newCap)).headOption
    if(tu.isDefined)
    {
-     tu.get.isCaptain = true
+     //tu.get.isCaptain = true
      true
    }
     else
