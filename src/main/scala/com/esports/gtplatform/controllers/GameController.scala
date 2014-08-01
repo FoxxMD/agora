@@ -13,32 +13,33 @@ import org.scalatra.Ok
  * you've got a grasp on the other components
  * */
 //
-class GameController(implicit val bindingModule: BindingModule) extends StandardController { //Extends traits for Authentication, CORS, JSON support, and DI
-//bindingModule for injection
+class GameController(implicit val bindingModule: BindingModule) extends StandardController {
+  //Extends traits for Authentication, CORS, JSON support, and DI
+  //bindingModule for injection
   //inject repository implementation into GenericRepo trait
   val gameRepo = inject[GenericRepo[Game]]
 
-get("/") {
-//Full path is "/games/" because of relative mounting
+  get("/") {
+    //Full path is "/games/" because of relative mounting
 
-  //Optional Authentication and return a User
-  val anyuser = authOptToken()
+    //Optional Authentication and return a User
+    authOptToken()
+val u = user
+    val games = gameRepo.getAll
 
-  val games = gameRepo.getAll
+    Ok(games)
+  }
 
-  Ok(games)
-}
+  post("/") {
 
-post("/") {
+    //Extracting JSON to a domain object ONLY WORKS IF THE OBJECT IS A CASE CLASS. Otherwise we must provide a custom serializer.
+    //Just another reason to make all domain objects case classes.
+    val newgame = parsedBody.extract[Game]
 
-  //Extracting JSON to a domain object ONLY WORKS IF THE OBJECT IS A CASE CLASS. Otherwise we must provide a custom serializer.
-  //Just another reason to make all domain objects case classes.
-  val newgame = parsedBody.extract[Game]
+    val newInserted = gameRepo.create(newgame)
 
-  val newInserted = gameRepo.create(newgame)
+    Ok(newInserted)
 
-  Ok(newInserted)
-
-}
+  }
 
 }

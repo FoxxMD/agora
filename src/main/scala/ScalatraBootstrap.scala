@@ -40,8 +40,8 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
     implicit val bindingModule = StandardConfiguration
 
     //This is how we mount individual controllers to a route. Each controller's url argument is relative to this path.
-    context.mount(new UserManagementController,"/")
-    context.mount(new GameController,"/game")
+    context.mount(new UserManagementController,"/api/")
+    context.mount(new GameController,"/api/games")
     context.mount(new TeamController,"/team")
 
   }

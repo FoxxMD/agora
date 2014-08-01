@@ -61,9 +61,9 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 */
 trait StandardController extends RESTController with AuthenticationSupport with CorsSupport {
   before() {
-    if (request.headers("Origin") != "http://localhost:9000") {
+    if (request.headers("Host") != "http://localhost:9000") {
       //If not from origin then halt immediately.
-      logger.info("Non-Origin request")
+      logger.info("Non-Origin request from " + request.headers("Host"))
       //halt(401)
     }
   }
