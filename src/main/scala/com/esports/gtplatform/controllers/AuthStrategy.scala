@@ -63,14 +63,15 @@ trait AuthenticationSupport extends ScentrySupport[User] {
     scentry.register("UserPassword", app => new UserPasswordStrategy(app))
     scentry.register("Token", app => new TokenStrategy(app))
     scentry.register("TokenOpt", app => new TokenOptStrategy(app))
+    scentry.register("Api", app => new ApiStrategy(app))
   }
 
   // verifies if the request is a Bearer request
   protected def authToken()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
-    val baReq = new TokenAuthRequest(request)
+/*    val baReq = new TokenAuthRequest(request)
     if(!baReq.providesAuth) {
       halt(401, "Unauthenticated")
-    }
+    }*/
     /*    if(!baReq.isTokenAuth) {
           halt(400, "Bad Request")
         }*/
@@ -83,12 +84,15 @@ trait AuthenticationSupport extends ScentrySupport[User] {
   protected def authUserPass()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
     scentry.authenticate("UserPassword")
   }
-
+  protected def authApi()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
+    scentry.authenticate("Api")
+  }
 }
 
 class TokenStrategy (protected override val app: ScalatraBase) extends ScentryStrategy[User]{
 
-  implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r)
+  private val keys = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+  implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r, keys)
 
   protected def getUserId(user: User): Int = user.id
 
@@ -120,9 +124,37 @@ class TokenOptStrategy (protected override val app: ScalatraBase) extends TokenS
   }
 }
 
-class TokenAuthRequest(r: HttpServletRequest) {
+class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStrategy[User]{
 
-  private val AUTHORIZATION_KEYS = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+  private val keys = List("ApiKey", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+  implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r, keys)
+
+  protected def getUserId(user: User): Int = user.id
+
+  override def isValid(implicit request: HttpServletRequest) = request.providesAuth//request.isBearerAuth && request.providesAuth
+
+  // catches the case that we got none user
+  override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
+    app halt Unauthorized()
+  }
+
+  // overwrite required authentication request
+  def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request.token)
+
+  protected def validate(token: String): Option[User] = {
+    queryDao.lowLevelQuery(UserEntity,
+      """
+        |select u.*
+        |from users u
+        |inner join apikeys k on k.id=u.id
+        |where k.apiToken=?
+      """.stripMargin,List(token)).headOption
+  }
+}
+
+class TokenAuthRequest(r: HttpServletRequest, KeyList: List[String]) {
+
+  private val AUTHORIZATION_KEYS = KeyList//List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
   def parts = authorizationKey map { r.getHeader(_).split(" ", 2).toList } getOrElse Nil
   //def scheme: Option[String] = parts.headOption.map(sch => sch.toLowerCase(Locale.ENGLISH))
   def token : String = parts.lastOption getOrElse ""

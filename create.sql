@@ -175,3 +175,12 @@ CREATE TABLE `tokens` (
   `issuedOn` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `token_UNIQUE` (`token` ASC));
+
+CREATE TABLE `apikeys` (
+  `id` int(11) NOT NULL,
+  `apiToken` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `apiToken_UNIQUE` (`apiToken`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  CONSTRAINT `api_key_id` FOREIGN KEY (`id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

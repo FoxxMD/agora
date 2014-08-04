@@ -7,6 +7,7 @@ import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 import org.slf4j.LoggerFactory
+import models.User
 
 /**
  * Created by Matthew on 7/24/2014.
@@ -60,34 +61,35 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
  *
 */
 trait StandardController extends RESTController with AuthenticationSupport with CorsSupport {
+  var authUser: Option[User] = None
+  def doAuthCheck():Unit = None//halt(401)
+
   before() {
-    if (request.headers("Host") != "http://localhost:9000") {
+    if (request.headers("Host") != "127.0.0.1:9000") {
       //If not from origin then halt immediately.
       logger.info("Non-Origin request from " + request.headers("Host"))
-      //halt(401)
+      doAuthCheck()
     }
-  }
-}
-//Provide support for user-aware auth on every action
-trait StandardWithOptAuth extends StandardController {
-  before() {
-    var authUser = authOptToken()
+
   }
 }
 
 //Add mandatory authentication on every action
 trait StandardWithAuth extends StandardController {
   before() {
-    var authUser = authToken()
+    authUser = authToken()
+  }
+}
+//Provide support for user-aware auth on every action
+trait StandardWithOptAuth extends StandardController {
+  before() {
+    authUser = authOptToken()
   }
 }
 
-trait APIController extends RESTController with AuthenticationSupport with CorsSupport {
-  before() {
-    if (request.headers("Origin") != "http://localhost:9000") {
-      //If not from origin then it's an API request and we need to authenticate their key before doing anything
-      //val apiUser = authApi()
-    }
+trait APIController extends RESTController with StandardController {
+  override def doAuthCheck() = {
+    authUser = authApi()
   }
 }
 
