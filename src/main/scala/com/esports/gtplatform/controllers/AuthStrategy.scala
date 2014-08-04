@@ -142,6 +142,7 @@ class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStra
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request.token)
 
   protected def validate(token: String): Option[User] = {
+    //TODO actually validate with HMAC function
     queryDao.lowLevelQuery(UserEntity,
       """
         |select u.*
