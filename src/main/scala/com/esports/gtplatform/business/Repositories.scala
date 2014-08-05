@@ -22,6 +22,7 @@ import dao.Daos._
 trait GenericRepo[T] {
 
   def get(id: Int) : Option[T]
+  def getPaginated(pageNo: Long, pageSize: Long = 50): List[T]
   def getAll : List[T]
   def update[U <: T with Persisted](obj: U, newObj: U) : T with Persisted
   def updateMutable[U <: T with Persisted](obj: U) : T with Persisted
@@ -32,6 +33,7 @@ trait GenericRepo[T] {
   //NEVER USE THESE
   def query[U <: T with Persisted](qi : WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted]
   def querySingle(qi : WithQueryInfo[Int,Persisted, T]): Option[T with Persisted]
+  def queryPaginated[U <: T with Persisted](pageNo: Long, pageSize: Long, qi: WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted]
 }
 
 //This trait is implementing methods because it's a builder for the concrete class below. Think of it as building block for the class rather
@@ -41,6 +43,7 @@ trait GenericMDaoTypedRepo[T] extends GenericRepo[T]{
   val returnEntity: Entity[Int,Persisted,T]
 
   def get(id: Int) : Option[T with Persisted] = mapperDao.select(returnEntity, id)
+  def getPaginated(pageNo: Long, pageSize: Long): List[T] = queryDao.query(QueryConfig.pagination(pageNo,pageSize), select from returnEntity)
   def getAll : List[T with Persisted] = queryDao.query(select from returnEntity)
   def update[U <: T with Persisted](obj: U, newObj: U) : T with Persisted with Persisted = mapperDao.update(returnEntity, obj, newObj)
   def updateMutable[U <: T with Persisted](obj: U) : T with Persisted with Persisted = mapperDao.update(returnEntity, obj)
@@ -54,5 +57,5 @@ class GenericMDaoTypedRepository[T](val returnEntity: Entity[Int,Persisted,T]) e
 
   def query[U <: T with Persisted](qi : WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted] = queryDao.query(qi)
   def querySingle(qi : WithQueryInfo[Int,Persisted, T]): Option[T with Persisted] = queryDao.querySingleResult(qi)
-
+  def queryPaginated[U <: T with Persisted](pageNo: Long, pageSize: Long, qi: WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted] = queryDao.query(QueryConfig.pagination(pageNo, pageSize), qi)
 }

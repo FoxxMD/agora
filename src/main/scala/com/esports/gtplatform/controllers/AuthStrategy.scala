@@ -66,6 +66,24 @@ trait AuthenticationSupport extends ScentrySupport[User] {
     scentry.register("Api", app => new ApiStrategy(app))
   }
 
+  protected def authTokenThenApi()(implicit request: HttpServletRequest, response: HttpServletResponse): Unit =
+  {
+    //TODO refactor this to use only scentry support. this is messy.
+    val tokenKeys = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+    val tokenReq = new TokenAuthRequest(request, tokenKeys)
+    if(tokenReq.providesAuth)
+      scentry.authenticate("Token")
+    else
+    {
+      val apiKeys = List("ApiKey", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+      val apiReq = new TokenAuthRequest(request, apiKeys)
+      if(apiReq.providesAuth)
+        scentry.authenticate("Api")
+      else
+        halt(401)
+    }
+  }
+
   // verifies if the request is a Bearer request
   protected def authToken()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
 /*    val baReq = new TokenAuthRequest(request)

@@ -3,20 +3,26 @@ package dao
 import java.util.Properties
 
 import com.googlecode.mapperdao.utils._
+import com.mchange.v2.c3p0.ComboPooledDataSource
 import models._
-import org.apache.commons.dbcp.BasicDataSourceFactory
 
 /*Here we initialize the DAOs(Data Access Objects) we will use to interact with the database using MapperDao's DSL(domain specific language).
 * It's basically a way to write queries/interactions with MySQL without having to write actual MySQL -- you use instead these objects and in application objects to construct queries.
 * */
 object Daos {
 
-  val properties = new Properties
+  private[this] val properties = new Properties
+  private[this] val ds = new ComboPooledDataSource
+
   properties.load(getClass.getResourceAsStream("/jdbc.mysql.properties")) //get datasource properties
-  val dataSource = BasicDataSourceFactory.createDataSource(properties) //dat datasource
+  ds.setDriverClass(properties.getProperty("driveClassName"))
+  ds.setJdbcUrl(properties.getProperty("url"))
+  ds.setUser(properties.getProperty("username"))
+  ds.setPassword(properties.getProperty("password"))
+
 
 //Initialize components of MapperDao DAOs. Setup.mysql is the actual statement for opening a connection and forming objects.
-val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(dataSource, List(UserEntity, TeamEntity, TeamUserEntity,
+val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, TeamEntity, TeamUserEntity,
   GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity,
   EventUserEntity, UserIdentityEntity)) //All entities must be listed here
 

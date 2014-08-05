@@ -25,6 +25,9 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   //TODO move database configuration and init into this module
   module.bind[GenericRepo[Game]] toSingle new GenericMDaoTypedRepository[Game](GameEntity)
   module.bind[GenericRepo[UserIdentity]] toSingle new GenericMDaoTypedRepository[UserIdentity](UserIdentityEntity)
+  module.bind[GenericRepo[Team]] toSingle new GenericMDaoTypedRepository[Team](TeamEntity)
+  module.bind[GenericRepo[TeamUser]] toSingle new GenericMDaoTypedRepository[TeamUser](TeamUserEntity)
+  module.bind[GenericRepo[User]] toSingle new GenericMDaoTypedRepository[User](UserEntity)
 
     }
   )
@@ -42,7 +45,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
     //This is how we mount individual controllers to a route. Each controller's url argument is relative to this path.
     context.mount(new UserManagementController,"/api/")
     context.mount(new GameController,"/api/games")
-    context.mount(new TeamController,"/team")
+    context.mount(new TeamController,"/teams")
 
   }
   

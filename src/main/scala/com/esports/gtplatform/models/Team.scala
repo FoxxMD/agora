@@ -23,7 +23,7 @@ case class Team(
             name: String,
             createdDate: DateTime,
             games: List[Game],
-            teamPlayers: Set[TeamUser],
+            teamPlayers: List[TeamUser] = List(),
             id: Int = 0)
 {
 
