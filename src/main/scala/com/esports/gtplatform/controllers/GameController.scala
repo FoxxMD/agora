@@ -24,10 +24,8 @@ class GameController(implicit val bindingModule: BindingModule) extends Standard
 
     //Optional Authentication and return a User
     authOptToken()
-val u = user
-    val games = gameRepo.getAll
 
-    Ok(games)
+    Ok(gameRepo.getAll)
   }
 
   post("/") {

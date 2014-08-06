@@ -16,9 +16,13 @@ import org.scalatra.Ok
 //Mounted at /
 class UserManagementController(implicit val bindingModule: BindingModule) extends StandardController {
 
-  post("/login") {
+  get("/login") {
     //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
-    Ok(authUserPass().get)
+    if(request.header("Authorization") == None)
+      authUserPass()
+    else
+      authToken()
+    Ok()
   }
   post("/register") {
     //you can get any parameters in the queryString of a POST or GET using params("key")
