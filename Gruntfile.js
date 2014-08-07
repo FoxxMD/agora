@@ -42,8 +42,8 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/css/**/*',
           '<%= yeoman.app %>/js/**/*',
           '<%= yeoman.app %>/views/**/*'
-        ]
-        //tasks: ['sync:dist']
+        ],
+        tasks: ['refresh']
       }
     },
     connect: {
@@ -99,6 +99,16 @@ module.exports = function (grunt) {
           src: '**'
         }]
       },
+    dev:{
+        files:[
+            {
+                expand:true,
+                cwd:'<%= yeoman.app %>',
+                src:['js/gtresources/**'],
+                dest:'<%= yeoman.app %>/build'
+            }
+        ]
+    },
     },
     // Test settings
     karma: {
@@ -136,17 +146,29 @@ module.exports = function (grunt) {
           options:{
               assetsDir:['<%= yeoman.app %>/public']
           }
+      },
+      ngAnnotate: {
+          default:{
+              files:[{
+                  expand:true,
+                  cwd:'<%= yeoman.app %>/js/',
+                  src:['**/*.js','!**/gtresources/**'],
+                  dest:'<%= yeoman.app %>/build/js'
+              }]
+          }
       }
   });
 
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-wiredep');
+    grunt.loadNpmTasks('grunt-ng-annotate');
 
   grunt.registerTask('server', function (target) {
     grunt.task.run([
-      //'copy:dist',
+      'copy:dev',
         'wiredep',
         'less:development',
+        'ngAnnotate',
         //'usemin',
       //'configureProxies:server',
         'configureProxies',
@@ -154,4 +176,11 @@ module.exports = function (grunt) {
       'watch'
     ]);
   });
+    //TODO make this more efficient
+    grunt.registerTask('refresh', function(target){
+        grunt.task.run([
+            'copy:dev',
+            'ngAnnotate'
+        ])
+    })
 };
