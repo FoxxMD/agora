@@ -1,8 +1,9 @@
 angular.module('gtfest')
-    .controller('HomeController', HomeController);
+    .controller('CNCController', CNCController);
 
 // @ngInject
-function HomeController(Restangular){
+function CNCController(Restangular, Account){
+
     var d = new Date();
     var team = {
         "name":"a team",

@@ -11,17 +11,17 @@ angular.module('gtfest')
         /* Use this method to determine whether the client has a stored authtoken and validate it.
          */
             var deferred = $q.defer();
-            if($localStorage.authToken !== null)
+            if($localStorage.authToken == undefined)
             {
-                Restangular.one('login').post(null,[{"Authorization":$localStorage.authToken},{'ignoreError':true}])
-                    .then(function(){
+            Restangular.one('login').get(null,[{"Authorization":$localStorage.authToken}])
+                   .then(function(something){
                         console.log('Auth token valid.');
                         Restangular.setDefaultHeaders({Authorization:$localStorage.authToken});
                         deferred.resolve();
                     },function(response){
                         console.log('Auth token invalid.');
                         deferred.reject();
-                    })
+                    });
             }
             else{
                 deferred.reject();
@@ -39,10 +39,10 @@ angular.module('gtfest')
         };
         this.login = function(email, password) {
             var deferred = $q.defer();
-            Restangular.one('login').get([{'email':email},{'password':password}],{'ignoreError':true})
+            Restangular.one('login').get([{'email':email},{'password':password}])
                 .then(function(response){
                 //correctly logged in
-                    // Restangular.setDefaultHeaders({Authorization:request.getHeader('Authorization')}); ???
+                    Restangular.setDefaultHeaders({Authorization:response.getHeader('Authorization')});
                     deferred.resolve();
             }, function(response){
                 //failed to log in

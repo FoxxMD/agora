@@ -18,14 +18,16 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
 
   get("/login") {
     //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
+    response.addHeader("ignoreError","true")
     if(request.header("Authorization") == None)
-      authUserPass()
+      authUserPass() //TODO This isn't halting on unauthenticated
     else
       authToken()
     Ok()
   }
   post("/register") {
     //you can get any parameters in the queryString of a POST or GET using params("key")
+    response.addHeader("ignoreError","true")
     val email = params("email")
     val password = params("password")
 

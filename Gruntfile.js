@@ -74,6 +74,7 @@ module.exports = function (grunt) {
                     middleware: function (connect) {
                         return [
                             proxySnippet,
+                            modRewrite (['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.gif\\.jpg$ /index.html [L]']),
                             connect.static(require('path').resolve('src/main/webapp'))
                         ];
                     }
@@ -162,6 +163,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-wiredep');
     grunt.loadNpmTasks('grunt-ng-annotate');
+    var modRewrite = require('connect-modrewrite');
 
   grunt.registerTask('server', function (target) {
     grunt.task.run([
@@ -170,7 +172,6 @@ module.exports = function (grunt) {
         'less:development',
         'ngAnnotate',
         //'usemin',
-      //'configureProxies:server',
         'configureProxies',
       'connect:livereload',
       'watch'
@@ -179,6 +180,7 @@ module.exports = function (grunt) {
     //TODO make this more efficient
     grunt.registerTask('refresh', function(target){
         grunt.task.run([
+            'less:development',
             'copy:dev',
             'ngAnnotate'
         ])

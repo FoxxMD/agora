@@ -7,7 +7,7 @@
     width: 100%;
     /*background: #f6f6f6;*/
     background: #47a3da;
-    z-index: 10000;
+    z-index: 2000;
     height: 200px;
     overflow: visible;
     -webkit-transition: height 0.3s;

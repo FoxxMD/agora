@@ -5,6 +5,9 @@
 body {
   margin-top: 15em;
 }
+body a {
+  cursor: pointer;
+}
 /*
 .headerWrapper {
   position:fixed;
