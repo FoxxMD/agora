@@ -23,7 +23,7 @@ class GameController(implicit val bindingModule: BindingModule) extends Standard
     //Full path is "/games/" because of relative mounting
 
     //Optional Authentication and return a User
-    authOptToken()
+    authOpt()
 
     Ok(gameRepo.getAll)
   }

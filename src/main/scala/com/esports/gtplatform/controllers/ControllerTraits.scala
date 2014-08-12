@@ -77,19 +77,19 @@ trait StandardController extends RESTController with AuthenticationSupport with 
 //Add mandatory authentication on every action
 trait StandardWithAuth extends StandardController {
   before() {
-    authUser = authToken()
+    auth()
   }
 }
 //Provide support for user-aware auth on every action
 trait StandardWithOptAuth extends StandardController {
   before() {
-    authUser = authOptToken()
+    authOpt()
   }
 }
 
 trait APIController extends RESTController with StandardController {
   override def doAuthCheck() = {
-    authUser = authApi()
+    authApi()
   }
 }
 

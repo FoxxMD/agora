@@ -4,22 +4,22 @@
 angular.module('gtfest')
     .service('Account', ['Restangular', '$localStorage', '$q', function (Restangular, $localStorage, $q) {
 
-        var privUser = {};
+        var privUser = undefined;
         this.user = function() { return privUser; };
+        this.isLoggedIn = function() { return privUser !== undefined };
+        this.isAdmin = function() { return privUser.role == "admin"};
 
         this.validateToken = function() {
         /* Use this method to determine whether the client has a stored authtoken and validate it.
          */
             var deferred = $q.defer();
-            if($localStorage.authToken == undefined)
+            if($localStorage.authToken !== undefined)
             {
-            Restangular.one('login').get(null,[{"Authorization":$localStorage.authToken}])
+            Restangular.one('login').get({},{Authorization:$localStorage.authToken})
                    .then(function(something){
-                        console.log('Auth token valid.');
                         Restangular.setDefaultHeaders({Authorization:$localStorage.authToken});
                         deferred.resolve();
                     },function(response){
-                        console.log('Auth token invalid.');
                         deferred.reject();
                     });
             }
@@ -31,18 +31,19 @@ angular.module('gtfest')
 
         this.initUser = function() {
             var deferred = $q.defer();
-            Restangular.one('me').get().then(function(returnedUser){
-                privUser = returnedUser.$object;
+            Restangular.all('users').one('me').get().then(function(returnedUser){
+                privUser = returnedUser.plain();
                 deferred.resolve();
             });
             return deferred;
         };
         this.login = function(email, password) {
             var deferred = $q.defer();
-            Restangular.one('login').get([{'email':email},{'password':password}])
+            Restangular.one('login').get({email:email,password:password})
                 .then(function(response){
                 //correctly logged in
-                    Restangular.setDefaultHeaders({Authorization:response.getHeader('Authorization')});
+                    Restangular.setDefaultHeaders(response);
+                    $localStorage.authToken = response;
                     deferred.resolve();
             }, function(response){
                 //failed to log in

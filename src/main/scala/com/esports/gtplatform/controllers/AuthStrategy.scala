@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory
 * the TokenStrategy from above.
 *
 * To use authentication mixin one of the AuthController traits into your controller or use StandardController with these methods:
-* authToken() -- Mandatory authentication
-* authOptToken -- Optional authentication
+* auth() -- Mandatory authentication
+* authOpt -- Optional authentication
 * authUserPass -- Should only be used for login
 *
 * All three return a User object you can then use in your controller(if authentication succeeds)
@@ -53,62 +53,45 @@ trait AuthenticationSupport extends ScentrySupport[User] {
   val realm = "Token Authentication"
   protected val scentryConfig = new ScentryConfig {}.asInstanceOf[ScentryConfiguration]
 
-  /*override protected def configureScentry() = {
+  override protected def configureScentry() = {
     scentry.unauthenticated {
-      scentry.strategies("Bearer").unauthenticated()
+      scentry.strategies("Token").unauthenticated()
     }
-  }*/
+  }
 
   override protected def registerAuthStrategies() = {
     scentry.register("UserPassword", app => new UserPasswordStrategy(app))
     scentry.register("Token", app => new TokenStrategy(app))
-    scentry.register("TokenOpt", app => new TokenOptStrategy(app))
     scentry.register("Api", app => new ApiStrategy(app))
-  }
-
-  protected def authTokenThenApi()(implicit request: HttpServletRequest, response: HttpServletResponse): Unit =
-  {
-    //TODO refactor this to use only scentry support. this is messy.
-    val tokenKeys = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
-    val tokenReq = new TokenAuthRequest(request, tokenKeys)
-    if(tokenReq.providesAuth)
-      scentry.authenticate("Token")
-    else
-    {
-      val apiKeys = List("ApiKey", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
-      val apiReq = new TokenAuthRequest(request, apiKeys)
-      if(apiReq.providesAuth)
-        scentry.authenticate("Api")
-      else
-        halt(401)
-    }
+    scentry.register("TokenOpt", app => new TokenOptStrategy(app))
   }
 
   // verifies if the request is a Bearer request
-  protected def authToken()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
-/*    val baReq = new TokenAuthRequest(request)
-    if(!baReq.providesAuth) {
-      halt(401, "Unauthenticated")
-    }*/
-    /*    if(!baReq.isTokenAuth) {
-          halt(400, "Bad Request")
-        }*/
-    scentry.authenticate("Token")
+  protected def auth()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
+    scentry.authenticate("Token","Api")
+    scentry.authenticate("Api")
+    if(!scentry.isAuthenticated)
+      Unauthorized()
+
   }
 
-  protected def authOptToken()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
+  protected def authOpt()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
     scentry.authenticate("TokenOpt")
   }
   protected def authUserPass()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
-    scentry.authenticate("UserPassword")
+    scentry.authenticate("UserPassword","Token")
+    if(!scentry.isAuthenticated)
+      scentry.strategies("UserPassword").unauthenticated()
   }
   protected def authApi()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
     scentry.authenticate("Api")
+    if(!scentry.isAuthenticated)
+      scentry.strategies("Api").unauthenticated()
   }
 }
 
 class TokenStrategy (protected override val app: ScalatraBase) extends ScentryStrategy[User]{
-
+  val logger = LoggerFactory.getLogger("TokenStrategy")
   private val keys = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
   implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r, keys)
 
@@ -125,13 +108,19 @@ class TokenStrategy (protected override val app: ScalatraBase) extends ScentrySt
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request.token)
 
   protected def validate(token: String): Option[User] = {
+    logger.info("attempting authentication")
   queryDao.lowLevelQuery(UserEntity,
       """
         |select u.*
         |from users u
         |inner join tokens t on t.id=u.id
         |where t.token=?
-      """.stripMargin,List(token)).headOption
+      """.stripMargin,List(token)).headOption match {
+    case Some(i: User) =>
+      logger.info("authenticaion succeeded for " + i.email)
+      Option(i)
+    case None => None
+  }
   }
 }
 
@@ -185,26 +174,6 @@ class TokenAuthRequest(r: HttpServletRequest, KeyList: List[String]) {
 
 }
 
-trait LoginSupport extends ScentrySupport[User] {
-  self: ScalatraBase =>
-
-  protected def fromSession = { case id: String =>  queryDao.querySingleResult(select from UserEntity where UserEntity.id === id.toInt).get }
-  protected def toSession   = { case usr: User => usr.id.toString }
-
-  val realm = "Login Authentication"
-  protected val scentryConfig = new ScentryConfig {}.asInstanceOf[ScentryConfiguration]
-
-  override protected def registerAuthStrategies() = {
-    scentry.register("UserPassword", app => new UserPasswordStrategy(app))
-  }
-
-  // verifies if the request is a Bearer request
-  protected def auth()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
-    scentry.authenticate("UserPassword")
-  }
-}
-
-
 class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: HttpServletRequest, response: HttpServletResponse)
   extends ScentryStrategy[User] {
 
@@ -255,8 +224,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
     }
   }
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
-    //app.redirect("/login")
-    app halt Unauthorized()
+    app halt Unauthorized("Username or Password incorrect or no token provided.")
   }
 
 }

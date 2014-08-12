@@ -7,6 +7,10 @@ function smartMenu(){
         templateUrl:'/views/shared/smartMenu.html',
         restrict: 'E',
         scope: true,
+        controllerAs:'smartMenu',
+        controller: function(Account){
+            this.account = Account;
+        },
         link: function(scope, elem, attrs, control)
         {
             var offset = 0;

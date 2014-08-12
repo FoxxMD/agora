@@ -10,6 +10,7 @@ class UserController(implicit val bindingModule: BindingModule) extends Standard
 
   get("/me")
   {
-    Ok(authToken().get)
+    auth()
+    Ok(user)
   }
 }

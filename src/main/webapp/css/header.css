@@ -1,9 +1,9 @@
 /* From http://tympanus.net/codrops/2013/06/06/on-scroll-animated-header/
 */
 .cbp-af-header {
-    position: fixed;
+   /* position: fixed;
     top: 0;
-    left: 0;
+    left: 0;*/
     width: 100%;
     /*background: #f6f6f6;*/
     background: #47a3da;
@@ -83,7 +83,8 @@
 }
 
 /* Example Media Queries */
-@media screen and (max-width: 55em) {
+/*@media screen and (max-width: 55em) {*/
+    @media screen and (max-width: 992px) {
 
     .cbp-af-header .cbp-af-inner {
         width: 100%;
@@ -97,9 +98,13 @@
         float: none;
     }
 
-    .cbp-af-header h1,
+    .cbp-af-header h1
+    {
+        line-height:70px;
+        font-size:2em;
+    }
     .cbp-af-header nav a.topLink {
-        line-height: 100px;
+        line-height: 50px;
     }
 
     .cbp-af-header nav a {
@@ -117,6 +122,12 @@
 
     .cbp-af-header.cbp-af-header-shrink nav a {
         font-size: 1em;
+    }
+}
+
+@media screen and (max-width: 992px){
+    .cbp-af-header h1 {
+        font-size:2.5em;
     }
 }
 

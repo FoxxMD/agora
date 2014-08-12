@@ -15,7 +15,7 @@ class TeamController(implicit val bindingModule: BindingModule) extends APIContr
     Ok(teamRepo.getPaginated(params.getOrElse("page", "1").toLong))
   }
   post("/") {
-    authTokenThenApi()
+    auth()
     val newteam = parsedBody.extract[Team]
     val teamUserRepo = inject[GenericRepo[TeamUser]]
     var userFT:User = ???

@@ -49,9 +49,10 @@ Main components
   box-shadow: 0 0 10px rgba(232, 74, 100, 0.4);
   background: white;
   visibility: hidden;
+    list-style-type:none;
   /* remove overflow:hidden if you want to create a drop-down menu - but then remember to fix/eliminate the list items animation */
   overflow: hidden;
-  z-index: 1;
+  z-index: 9900;
   /* Force Hardware Acceleration in WebKit */
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -219,7 +220,7 @@ Main components
   overflow: hidden;
   text-indent: 100%;
   white-space: nowrap;
-  z-index: 2;
+  z-index: 9950;
 }
 .cd-nav-trigger span {
   /* the span element is used to create the menu icon */

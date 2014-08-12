@@ -1,27 +1,35 @@
-<script src="js/gtresources/cbpAnimatedHeader.js"></script>
-<script src="js/gtresources/cbpHorizontalSlideOutMenu.js"></script>
+<div class="headerWrapper">
 <div class="cbp-af-header cbp-hsmenu-wrapper" id="cbp-hsmenu-wrapper">
     <div class="cbp-af-inner">
         <h1>{{eventCtrl.name}}</h1>
 
         <nav>
             <ul class="cbp-hsmenu">
-                <li><a href="#" class="topLink">Schedule</a></li>
-                <li><a href="#" class="topLink">Tournaments</a>
+                <li><a class="topLink">Schedule</a></li>
+                <li><a class="topLink">Tournaments</a>
                     <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                         <li ng-repeat="t in eventCtrl.tourneyNames">
                             <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
                         </li>
                     </ul>
                 </li>
-                <li><a href="#" class="topLink">Games</a></li>
-                <li><a href="#" class="topLink">About</a></li>
-                <li><a href="#" class="topLink">Register</a></li>
-                <li><a href="#" class="topLink">Login</a></li>
+                <li><a class="topLink">Games</a>
+                    <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
+                        <li ng-repeat="t in eventCtrl.tourneyNames">
+                            <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
+                        </li>
+                    </ul></li>
+                <li ng-show="eventCtrl.account.isLoggedIn()"><a class="topLink">Users</a></li>
+                <li ng-show="eventCtrl.account.isLoggedIn()"><a class="topLink">Teams</a></li>
+                <li><a class="topLink">About</a></li>
+                <li ng-hide="eventCtrl.account.isLoggedIn()"><a class="topLink">Register</a></li>
+                <li ng-hide="eventCtrl.account.isLoggedIn()"><a class="topLink">Login</a></li>
+                <li ng-show="eventCtrl.account.isLoggedIn()"><a class="topLink">Logout</a></li>
             </ul>
         </nav>
-
     </div>
+</div>
+    <div style="position:relative;" ng-hide="eventCtrl.account.isLoggedIn()"><login></login></div>
 </div>
 <section>
     <div><p>Raw denim selvage typewriter, thundercats viral craft beer beard keffiyeh meh. 3 wolf moon american apparel mlkshk street art single-origin coffee. Semiotics art party tote bag, wayfarers banh mi messenger bag Odd Future seitan photo booth. Twee vinyl fingerstache, freegan narwhal semiotics irony sustainable vegan 3 wolf moon ethnic selfies fixie kale chips. Odd Future chillwave twee Tonx kale chips, quinoa disrupt selfies art party Williamsburg Vice. Asymmetrical narwhal Godard, artisan single-origin coffee Bushwick hashtag semiotics literally disrupt pork belly trust fund fashion axe typewriter +1. Master cleanse raw denim trust fund bitters, gluten-free farm-to-table tousled plaid biodiesel actually pork belly roof party polaroid.</p></div>
@@ -74,3 +82,4 @@
 <script>
     var menu = new cbpHorizontalSlideOutMenu( document.getElementById( 'cbp-hsmenu-wrapper' ) );
 </script>
+<script src="../../build/js/gtresources/cbpAnimatedHeader.js"></script>

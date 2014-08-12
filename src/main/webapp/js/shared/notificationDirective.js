@@ -3,7 +3,7 @@
  */
 angular.module('gtfest')
 .directive('notify', notify);
-
+// @ngInject
 function notify($rootScope)
 {
     return {

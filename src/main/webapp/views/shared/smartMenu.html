@@ -2,12 +2,23 @@
 <div id="cd-nav">
     <a class="cd-nav-trigger">Menu<span></span></a>
     <nav id="cd-main-nav">
-        <ul>
+        <ul ng-show="smartMenu.account.isLoggedIn()">
             <li><a>Gamefest Home</a></li>
             <li><a>Events</a></li>
+            <li><a>Users</a></li>
+            <li><a>Teams</a></li>
             <li><a>Friends</a></li>
             <li><a>Profile</a></li>
             <li><a>Settings</a></li>
+            <li><a>Logout</a></li>
+        </ul>
+        <ul ng-show="!smartMenu.account.isLoggedIn()">
+            <li><a>Gamefest Home</a></li>
+            <li><a>Events</a></li>
+            <li><a>Users</a></li>
+            <li><a>Teams</a></li>
+            <li><a>Register</a></li>
+            <li><a>Login</a></li>
         </ul>
     </nav>
 </div>

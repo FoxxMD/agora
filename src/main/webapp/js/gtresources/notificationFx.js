@@ -91,7 +91,7 @@
 
 		// dismiss after [options.ttl]ms
 		var self = this;
-		this.dismissttl = setTimeout( function() {
+		this.dismissttl = this.options.ttl == 0 ? setTimeout(null,0) :setTimeout( function() {
 			if( self.active ) {
 				self.dismiss();
 			}

@@ -23,24 +23,6 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular','ui.router
             $locationProvider.html5Mode(true);
             RestangularProvider.setBaseUrl('/api');
 
-/*            RestangularProvider.setErrorInterceptor(function(response, deferred, responseHandler){
-                if(response.status === 401) {
-                    if(response.headers.ignoreError == "true")
-                        return true;
-                    //TODO redirect user to login page
-                    $rootScope.$broadcast('notify','notice','You need to be logged in to do that!');
-                    return false;
-                }
-                else if(response.status === 403){
-                    $rootScope.$broadcast('notify','warning',response.body);
-                    //TODO inform user they don't have correct privileges for that request
-                    return false;
-                }
-                else if(response.status === 500){
-                    $rootScope.$broadcast('notify','error',response.body);
-                    return false;
-                }
-            });*/
         });
 
 angular.module('gtfest').run(function($rootScope, Restangular, Account){
@@ -63,7 +45,7 @@ angular.module('gtfest').run(function($rootScope, Restangular, Account){
         }
     });
     //on startup let's try and get the user from memory
-    Account.validateToken().resolve(function(){
+    Account.validateToken().promise.then(function(){
         Account.initUser();
     });
 });

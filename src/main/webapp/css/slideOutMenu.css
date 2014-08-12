@@ -220,7 +220,8 @@
 	}
 }*/
 
-@media screen and (max-width: 55em){
+/*@media screen and (max-width: 55em){*/
+@media screen and (max-width: 992px){
 	.cbp-hsmenu-wrapper {
 		font-size: 100%;
 	}

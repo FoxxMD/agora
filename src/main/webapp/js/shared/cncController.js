@@ -10,10 +10,13 @@ function CNCController(Restangular, Account){
         "createdDate": d.getTime()
 
     };
-    Restangular.all('teams').post(team).then(function(zeteam)
+/*    Restangular.all('teams').post(team).then(function(zeteam)
     {
         console.log(zeteam);
-    })
+    })*/
+/*    Restangular.all('games').getList().then(function(games){
+       console.log(games);
+    });*/
 }
 
 

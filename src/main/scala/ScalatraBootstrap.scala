@@ -46,6 +46,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
     context.mount(new UserManagementController,"/api/")
     context.mount(new GameController,"/api/games")
     context.mount(new TeamController,"/api/teams")
+    context.mount(new UserController,"/api/users")
 
   }
   

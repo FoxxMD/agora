@@ -1,0 +1,14 @@
+<div class="alert loginContainer alert-block">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <div class="inner">
+        <form name="loginForm" ng-submit="loginCtrl.tryLogin()" class="form-inline">
+            <input type="text" class="input-small" placeholder="Email" ng-model="loginCtrl.formData.email" required />
+            <input type="password" class="input-small" placeholder="Password" ng-model="loginCtrl.formData.password" required />
+            <label class="checkbox">
+                <input type="checkbox"> Remember me
+            </label>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <p ng-show="loginCtrl.error">Username or Password incorrect.</p>
+    </div>
+</div>
