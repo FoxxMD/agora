@@ -1,0 +1,31 @@
+<div class="headerWrapper">
+    <div class="cbp-af-header cbp-hsmenu-wrapper" id="cbp-hsmenu-wrapper">
+        <div class="cbp-af-inner">
+            <h1>{{eventCtrl.name}}</h1>
+            <nav>
+                <ul class="cbp-hsmenu">
+                    <li><a class="topLink">Schedule</a></li>
+                    <li><a class="topLink">Tournaments</a>
+                        <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
+                            <li ng-repeat="t in eventCtrl.tourneyNames">
+                                <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a class="topLink">Games</a>
+                        <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
+                            <li ng-repeat="t in eventCtrl.tourneyNames">
+                                <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
+                            </li>
+                        </ul></li>
+                    <li ng-show="eventCtrl.account.isLoggedIn()"><a class="topLink">Users</a></li>
+                    <li ng-show="eventCtrl.account.isLoggedIn()"><a class="topLink">Teams</a></li>
+                    <li><a class="topLink">About</a></li>
+                    <li ng-hide="eventCtrl.account.isLoggedIn()"><a class="topLink">Register</a></li>
+                    <li ng-hide="eventCtrl.account.isLoggedIn()"><a class="topLink">Login</a></li>
+                    <li ng-show="eventCtrl.account.isLoggedIn()" ng-click="eventCtrl.account.logout()"><a class="topLink">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

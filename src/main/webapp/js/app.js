@@ -7,16 +7,26 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular','ui.router
                     abstract:true,
                     controller: 'CNCController'
                 })
+                .state('globalSkeleton', {
+                    template:'<div class="container"><div ui-view></div></div>',
+                    abstract:true,
+                    parent:'index'
+                })
                 .state('portal', {
                     url:'/',
                     templateUrl:'/views/home/home.html',
+                    parent:'globalSkeleton'
+                })
+                .state('eventSkeleton', {
+                    templateUrl:'/views/event/skeleton.html',
+                    abstract: true,
+                    controller:'SampleEventController as eventCtrl',
                     parent:'index'
                 })
                 .state('sampleEvent',{
                     url:'/sampleEvent',
-                    controller:'SampleEventController as eventCtrl',
-                    templateUrl:'/views/event/skeleton.html',
-                    parent:'index'
+                    templateUrl:'/views/event/eventHome.html',
+                    parent:'eventSkeleton'
                 });
             //TODO make 404 page
             $urlRouterProvider.otherwise('/');
