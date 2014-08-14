@@ -30,3 +30,32 @@ body a {
   margin-left: auto;
   margin-right: auto;
 }
+.st-menu .subsection {
+  overflow: hidden;
+  height: 150px;
+  margin: 2em 1em 0 1em;
+  -webkit-transition: height 0.3s;
+  -moz-transition: height 0.3s;
+  -ms-transition: height 0.3s;
+  -o-transition: height 0.3s;
+  transition: height 0.3s;
+}
+.st-menu .subsection.ng-hide-add-active,
+.st-menu .subsection.ng-hide-add .st-menu .subsection.ng-hide-remove {
+  margin: 2em 1em 0 1em !important;
+  display: block !important;
+  overflow: hidden;
+}
+.st-menu .subsection.ng-hide {
+  height: 0px;
+  display: block !important;
+  overflow: hidden;
+  margin: 0;
+}
+.form-group .help-block {
+  font-weight: bold;
+  display: none;
+}
+.form-group.has-error .help-block {
+  display: block;
+}

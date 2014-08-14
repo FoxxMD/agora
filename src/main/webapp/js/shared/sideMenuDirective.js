@@ -5,15 +5,16 @@ angular.module('gtfest')
 .directive('sidebar', sidebar);
 
 // @ngInject
-function sidebar($rootScope, $timeout){
+function sidebar($rootScope, $timeout, Account){
     return {
         templateUrl:'views/shared/sidebar.html',
         restrict:'E',
         controllerAs: 'sidebar',
         controller: function(){
-
+            this.account = Account;
+            this.loginVisible = false;
         },
-        link: function(scope, elem, attrs)
+        link: function($scope, elem, attrs)
         {
             $rootScope.toggleMenu = function () {
                 var container = $(document).find('.st-container');
@@ -28,6 +29,20 @@ function sidebar($rootScope, $timeout){
 
                 }
             };
+            $rootScope.openLogin = function() {
+                $scope.sidebar.loginVisible = true;
+                $rootScope.toggleMenu();
+            };
+            $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+                switch(toParams.opt)
+                {
+                    case('login'):
+                        $rootScope.openLogin();
+                        break;
+                    case('register'):
+                        break;
+                }
+            });
         }
     }
 }

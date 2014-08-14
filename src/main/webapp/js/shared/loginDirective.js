@@ -3,21 +3,25 @@
  */
 angular.module('gtfest')
     .directive('login', login);
+
 // @ngInject
-function login() {
+function login(Account) {
     return {
         templateUrl: '/views/shared/login.html',
         restrict: 'E',
-        controllerAs: 'loginCtrl',
-        controller: function (Account) {
-            var that = this;
-            this.tryLogin = function () {
-                Account.login(this.formData.email, this.formData.password).promise.then(
-                    function () {
-                        Account.initUser();
-                    }, function (response) {
-                        that.error = true;
-                    });
+        scope:'true',
+        controllerAs: 'loginCon',
+        controller: function ($scope) {
+            $scope.tryLogin = function () {
+                $scope.$broadcast('show-errors-check-validity');
+                if ($scope.loginForm.$valid) {
+                    Account.login($scope.formData.email, $scope.formData.password).promise.then(
+                        function () {
+                            Account.initUser();
+                        }, function (response) {
+                            $scope.error = true;
+                        });
+                }
             }
         }
     }
