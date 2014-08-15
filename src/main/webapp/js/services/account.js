@@ -57,8 +57,20 @@ angular.module('gtfest')
                     deferred.resolve();
                 }, function (response) {
                     //failed to log in
-                    deferred.reject();
+                    deferred.reject(response);
                 });
             return deferred;
         };
+        //eventId is OPTIONAL
+        this.register = function(email, password, eventId) {
+            var deferred = $q.defer();
+            Restangular.all('register').post({email: email, password: password, eventId: eventId}).then(function(response)
+            {
+                deferred.resolve(response);
+            },
+            function(response){
+               return deferred.reject(response);
+            });
+            return deferred;
+        }
     }]);

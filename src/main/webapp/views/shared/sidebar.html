@@ -5,14 +5,20 @@
             <li><a ng-show="sidebar.account.isLoggedIn()"><i class="fa fa-arrow-left fa-fw">Friends</i></a></li>
             <li><a ui-sref="settings"><i class="fa fa-gears fa-fw"></i>Settings</a></li>
             <li><a ui-sref="about"><i class="fa fa-question fa-fw"></i>About</a></li>
-            <li><a ng-show="sidebar.account.isLoggedIn()">Logout</a></li>
+            <li><a ng-show="sidebar.account.isLoggedIn()" ng-click="sidebar.account.logout()">Logout</a></li>
             <li><a ng-click="sidebar.loginVisible = !sidebar.loginVisible" ng-hide="sidebar.account.isLoggedIn()">
                 <i class="fa fa-arrow-right fa-fw"></i>Login</a>
-                <div ng-show="sidebar.loginVisible && sidebar.account.isLoggedIn()" class="subsection">
+
+                <div ng-show="sidebar.loginVisible && !sidebar.account.isLoggedIn()" class="subsection">
                     <login></login>
                 </div>
             </li>
-            <li><a ng-hide="sidebar.account.isLoggedIn()"><i class="fa fa-pencil-square-o fa-fw"></i>Register</a></li>
+            <li><a ng-hide="sidebar.account.isLoggedIn()" ng-click="sidebar.registerVisible = !sidebar.registerVisible"><i class="fa fa-pencil-square-o fa-fw"></i>Register</a>
+
+                <div ng-show="sidebar.registerVisible && !sidebar.account.isLoggedIn()" class="subsection register">
+                    <register></register>
+                </div>
+            </li>
         </ul>
     </div>
 </div>

@@ -18,8 +18,12 @@ function login(Account) {
                     Account.login($scope.formData.email, $scope.formData.password).promise.then(
                         function () {
                             Account.initUser();
+                            $scope.$broadcast('show-errors-reset');
+                            $scope.error = false;
+                            $scope.formData = {};
                         }, function (response) {
-                            $scope.error = true;
+                            $scope.$broadcast('notify','error',response.data, 4000);
+                            //$scope.error = true;
                         });
                 }
             }

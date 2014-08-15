@@ -1,8 +1,10 @@
 package com.esports.gtplatform.business
-import com.googlecode.mapperdao._
 import com.googlecode.mapperdao.Query._
+import com.googlecode.mapperdao._
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
 import dao.Daos._
+import dao.UserEntity
+import models.User
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -59,3 +61,25 @@ class GenericMDaoTypedRepository[T](val returnEntity: Entity[Int,Persisted,T]) e
   def querySingle(qi : WithQueryInfo[Int,Persisted, T]): Option[T with Persisted] = queryDao.querySingleResult(qi)
   def queryPaginated[U <: T with Persisted](pageNo: Long, pageSize: Long, qi: WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted] = queryDao.query(QueryConfig.pagination(pageNo, pageSize), qi)
 }
+
+/* We are creating interfaces for specific domain object repositories because we need more specialized queries/views for the data.
+ * Best practice is to create generic methods which use only domain objects so that we can switch providers or change
+ * implementation of the methods later without having to refactor much.
+ *
+ * The trick is finding a balance between making the method generic enough that it can provide broad functionality but
+ * still perform the action you want. Eventually many of these specific methods will be refactored into an intermediate
+ * generic trait that provides functionality for several domain objects. At which point we can factor out the specific
+ * implementations in our classes to keep them clean and lean.
+ *
+ * EX
+  * sendInvite(to: Invitable, from: Invitor, type: IType, msg: String) for use with Teams, Users, Events, and Tournaments
+*/
+trait UserRepo extends GenericRepo[User] {
+  def getByEmail(email: String): Option[User]
+}
+
+class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericMDaoTypedRepository[User](returnEntity) with UserRepo
+{
+  def getByEmail(email: String):Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.email === email)
+}
+

@@ -13,6 +13,7 @@ function sidebar($rootScope, $timeout, Account){
         controller: function(){
             this.account = Account;
             this.loginVisible = false;
+            this.registerVisible = false;
         },
         link: function($scope, elem, attrs)
         {
@@ -29,10 +30,17 @@ function sidebar($rootScope, $timeout, Account){
 
                 }
             };
+            //TODO these should probably be using $on to watch for a broadcast event so $rootScope doesn't get polluted...
             $rootScope.openLogin = function() {
-                $scope.sidebar.loginVisible = true;
                 $rootScope.toggleMenu();
+                $scope.sidebar.loginVisible = true;
             };
+            $rootScope.openRegister = function() {
+                $rootScope.toggleMenu();
+                $scope.sidebar.registerVisible = true;
+            };
+            //Watches for URL change and if it finds
+            // /login or /register at the end of the URL opens the sidemenu and respective action
             $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
                 switch(toParams.opt)
                 {
@@ -40,6 +48,7 @@ function sidebar($rootScope, $timeout, Account){
                         $rootScope.openLogin();
                         break;
                     case('register'):
+                        $rootScope.openRegister();
                         break;
                 }
             });

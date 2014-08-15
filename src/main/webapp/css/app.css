@@ -32,13 +32,16 @@ body a {
 }
 .st-menu .subsection {
   overflow: hidden;
-  height: 150px;
+  height: 180px;
   margin: 2em 1em 0 1em;
   -webkit-transition: height 0.3s;
   -moz-transition: height 0.3s;
   -ms-transition: height 0.3s;
   -o-transition: height 0.3s;
   transition: height 0.3s;
+}
+.st-menu .subsection.register {
+  height: 270px;
 }
 .st-menu .subsection.ng-hide-add-active,
 .st-menu .subsection.ng-hide-add .st-menu .subsection.ng-hide-remove {
@@ -58,4 +61,14 @@ body a {
 }
 .form-group.has-error .help-block {
   display: block;
+}
+.ns-box.ns-bar.ns-type-warning {
+  background: rgba(221, 135, 4, 0.96);
+}
+.ns-box.ns-bar.ns-type-notice {
+  /*  Not sure this actually needs a color, regular black is fine. */
+  /* background: rgba(28, 128, 9, 0.85);*/
+}
+.ns-box.ns-bar.ns-type-error {
+  background: rgba(114, 9, 9, 0.96);
 }

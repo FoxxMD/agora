@@ -11,6 +11,7 @@ import org.joda.time.DateTime
  *
  * The main user class holds only a small amount of information in order to facilitate decoupling between related objects.
  */
+//TODO add isActive so we can confirm email
 case class User(
                  email: String,
                  role: String,

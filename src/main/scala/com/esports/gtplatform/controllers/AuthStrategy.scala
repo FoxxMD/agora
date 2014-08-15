@@ -101,7 +101,7 @@ class TokenStrategy (protected override val app: ScalatraBase) extends ScentrySt
 
   // catches the case that we got none user
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
-    app halt Unauthorized()
+    app halt Unauthorized("Could not authorize request, either no token was provided or the token was invalid.")
   }
 
   // overwrite required authentication request
@@ -142,7 +142,7 @@ class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStra
 
   // catches the case that we got none user
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
-    app halt Unauthorized()
+    app halt Unauthorized("Could not authorize request, either not API key was provided or the key was invalid.")
   }
 
   // overwrite required authentication request
@@ -224,7 +224,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
     }
   }
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
-    app halt Unauthorized("Username or Password incorrect or no token provided.")
+    app halt Unauthorized("Username or Password incorrect.")
   }
 
 }

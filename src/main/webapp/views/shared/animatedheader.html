@@ -21,7 +21,7 @@
                     <li ng-show="eventCtrl.account.isLoggedIn()"><a class="topLink">Users</a></li>
                     <li ng-show="eventCtrl.account.isLoggedIn()"><a class="topLink">Teams</a></li>
                     <li><a class="topLink">About</a></li>
-                    <li ng-hide="eventCtrl.account.isLoggedIn()"><a class="topLink">Register</a></li>
+                    <li ng-hide="eventCtrl.account.isLoggedIn()" ng-click="openRegister()"><a class="topLink">Register</a></li>
                     <li ng-hide="eventCtrl.account.isLoggedIn()"><a ng-click="openLogin()" class="topLink">Login</a></li>
                     <li ng-show="eventCtrl.account.isLoggedIn()" ng-click="eventCtrl.account.logout()"><a class="topLink">Logout</a></li>
                 </ul>

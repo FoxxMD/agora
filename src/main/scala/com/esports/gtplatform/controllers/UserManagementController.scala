@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.GenericRepo
+import com.esports.gtplatform.business.{GenericRepo, UserRepo}
 import models.{User, UserIdentity}
 import org.scalatra.Ok
 
@@ -18,25 +18,34 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
 
   get("/login") {
     //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
-    response.addHeader("ignoreError","true")
+    response.addHeader("ignoreError", "true")
     authUserPass()
     Ok(response.getHeader("Authorization"))
   }
   post("/register") {
     //you can get any parameters in the queryString of a POST or GET using params("key")
-    response.addHeader("ignoreError","true")
-    val email = params("email")
-    val password = params("password")
 
-    val newuser = new User(email, "user", None, None, None, None)
+    //creating a user repository so we can check if this email address is already in use
+    val userRepo = inject[UserRepo]
 
-    /*Option is Scala's way of dealing with empty results or null. Rather than returning nothing or null you can
+    //Use this method to extract values from a JSON object in the request
+    val email = parsedBody.\("email").extract[String]
+    val password = parsedBody.\("password").extract[String]
+
+    //Dont't create a new user if they already exist.
+    if (!userRepo.getByEmail(email).isDefined) {
+      val newuser = new User(email, "user", None, None, None, None)
+
+      /*Option is Scala's way of dealing with empty results or null. Rather than returning nothing or null you can
     * return an Option type. Option contains either Some(data) or None. You can also wrap a value in Option()*/
-    val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, password, "fsdf")
+      val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, password, "fsdf")
 
-    //inject the GenericRepo trait with a concrete implementation of a repository for UserIdentity(MapperDao in this instance)
-    val userRepo = inject[GenericRepo[UserIdentity]]
+      //inject the GenericRepo trait with a concrete implementation of a repository for UserIdentity(MapperDao in this instance)
+      val userIdentRepo = inject[GenericRepo[UserIdentity]]
+      userIdentRepo.create(userIdent)
 
-    Ok(userRepo.create(userIdent))
+      //TODO add email confirmation.
+      Ok("Registration successful. Please check your email for a confirmation link.")
+    }
   }
 }

@@ -11,14 +11,15 @@ function notify($rootScope)
         restrict:'E',
         link: function(scope,elem,attrs)
         {
-            $rootScope.$on('notify',function(event, type, message)
+            //time is measured in milliseconds
+            $rootScope.$on('notify',function(event, type, message, time)
             {
                 var notification = new NotificationFx({
                     message : '<span class="icon icon-megaphone"></span><p>'+ message +'</p>',
                     layout : 'bar',
                     effect : 'slidetop',
                     type : type, // notice, warning or error,
-                    ttl:10000
+                    ttl: time == undefined ? 6000 : time
                 });
                 // show the notification
                 notification.show();

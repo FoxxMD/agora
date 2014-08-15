@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngCookies', 'ngStorage', 'ui.bootstrap.showErrors', 'ngAnimate'],
+angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngCookies', 'ngStorage', 'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate'],
     function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -44,21 +44,20 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
 
 angular.module('gtfest').run(function ($rootScope, Restangular, Account, $urlRouter, $location, $state) {
     Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
+        if(response.status === 400) {
+            $rootScope.$broadcast('notify','warning', response.data, 6000);
+        }
         if (response.status === 401) {
             if (response.headers('ignoreError') == "true")
                 return true;
             //TODO redirect user to login page
-            $rootScope.$broadcast('notify', 'notice', 'You need to be logged in to do that!');
-            return false;
+            $rootScope.$broadcast('notify', 'notice', 'You need to be logged in to do that!', 4000);
         }
         else if (response.status === 403) {
-            $rootScope.$broadcast('notify', 'warning', response.body);
-            //TODO inform user they don't have correct privileges for that request
-            return false;
+            $rootScope.$broadcast('notify', 'error', response.data, 4000);
         }
         else if (response.status === 500) {
-            $rootScope.$broadcast('notify', 'error', response.body);
-            return false;
+            $rootScope.$broadcast('notify', 'error', response.data, 5000);
         }
     });
     //on startup let's try and get the user from memory

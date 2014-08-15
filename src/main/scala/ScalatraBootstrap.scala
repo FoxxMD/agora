@@ -1,7 +1,7 @@
 import javax.servlet.ServletContext
 
 import com.escalatesoft.subcut.inject.NewBindingModule
-import com.esports.gtplatform.business.{GenericMDaoTypedRepository, GenericRepo}
+import com.esports.gtplatform.business.{UserRepository, UserRepo, GenericMDaoTypedRepository, GenericRepo}
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.data.DatabaseInit
 import dao._
@@ -28,6 +28,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   module.bind[GenericRepo[Team]] toSingle new GenericMDaoTypedRepository[Team](TeamEntity)
   module.bind[GenericRepo[TeamUser]] toSingle new GenericMDaoTypedRepository[TeamUser](TeamUserEntity)
   module.bind[GenericRepo[User]] toSingle new GenericMDaoTypedRepository[User](UserEntity)
+  module.bind[UserRepo] toSingle new UserRepository(UserEntity)
 
     }
   )
