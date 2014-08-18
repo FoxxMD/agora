@@ -1,0 +1,74 @@
+.myClass {
+  background-color: red;
+  font-size: 16px;
+}
+body {
+  /*margin-top:15em;*/
+}
+body a {
+  cursor: pointer;
+}
+.headerWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2000;
+}
+.loginContainer {
+  background: darkgray;
+  position: absolute;
+  top: 0;
+  margin-bottom: 0px;
+  width: 100%;
+  z-index: 9000;
+  border-radius: 0px;
+}
+.loginContainer .inner {
+  max-width: 600px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.st-menu .subsection {
+  overflow: hidden;
+  height: 180px;
+  margin: 2em 1em 0 1em;
+  -webkit-transition: height 0.3s;
+  -moz-transition: height 0.3s;
+  -ms-transition: height 0.3s;
+  -o-transition: height 0.3s;
+  transition: height 0.3s;
+}
+.st-menu .subsection.register {
+  height: 270px;
+}
+.st-menu .subsection.ng-hide-add-active,
+.st-menu .subsection.ng-hide-add .st-menu .subsection.ng-hide-remove {
+  margin: 2em 1em 0 1em !important;
+  display: block !important;
+  overflow: hidden;
+}
+.st-menu .subsection.ng-hide {
+  height: 0px;
+  display: block !important;
+  overflow: hidden;
+  margin: 0;
+}
+.form-group .help-block {
+  font-weight: bold;
+  display: none;
+}
+.form-group.has-error .help-block {
+  display: block;
+}
+.ns-box.ns-bar.ns-type-warning {
+  background: rgba(221, 135, 4, 0.96);
+}
+.ns-box.ns-bar.ns-type-notice {
+  /*  Not sure this actually needs a color, regular black is fine. */
+  /* background: rgba(28, 128, 9, 0.85);*/
+}
+.ns-box.ns-bar.ns-type-error {
+  background: rgba(114, 9, 9, 0.96);
+}
