@@ -2,6 +2,7 @@ package com.esports.gtplatform.controllers
 
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
+import com.esports.gtplatform.Utilities.ApiSecurity
 import com.googlecode.mapperdao.Query._
 import dao.Daos._
 import dao.{UserEntity, UserIdentityEntity}
@@ -142,14 +143,16 @@ class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStra
 
   // catches the case that we got none user
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
-    app halt Unauthorized("Could not authorize request, either not API key was provided or the key was invalid.")
+    app halt Unauthorized("Could not authorize request, either API key was not provided or the key was invalid.")
   }
 
   // overwrite required authentication request
-  def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request.token)
+  def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request, request.token)
 
-  protected def validate(token: String): Option[User] = {
-    //TODO actually validate with HMAC function
+  protected def validate(implicit request: HttpServletRequest, token: String): Option[User] = {
+  //TODO move secret to config file and change applicationName to something more dynamic to increase security strength
+    if(ApiSecurity.checkHMAC("gamefestSecret","gamefest", request.getRemoteHost, token))
+    {
     queryDao.lowLevelQuery(UserEntity,
       """
         |select u.*
@@ -157,6 +160,9 @@ class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStra
         |inner join apikeys k on k.id=u.id
         |where k.apiToken=?
       """.stripMargin,List(token)).headOption
+    }
+    else
+      None
   }
 }
 

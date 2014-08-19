@@ -35,7 +35,6 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl: '/views/event/eventHome.html',
                 parent: 'eventSkeleton'
             });
-        //TODO make 404 page
         $urlRouterProvider.otherwise('index');
         $locationProvider.html5Mode(true);
         RestangularProvider.setBaseUrl('/api');

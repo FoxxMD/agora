@@ -1,5 +1,6 @@
 package models
 
+import com.esports.gtplatform.models.{Requestable, Inviteable, Invitee}
 import org.joda.time.DateTime
 
 /**
@@ -24,7 +25,7 @@ case class Team(
             createdDate: DateTime,
             games: List[Game],
             teamPlayers: List[TeamUser] = List(),
-            id: Int = 0)
+            id: Int = 0) extends Invitee with Inviteable with Requestable
 {
 
   def setCaptain(newCap:User) = {

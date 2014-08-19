@@ -1,4 +1,6 @@
 package models
+
+import com.esports.gtplatform.models.{Requestable, Inviteable}
 import org.joda.time.DateTime
 
 object JoinType extends Enumeration {
@@ -17,7 +19,7 @@ object JoinType extends Enumeration {
 }
 
 case class Event(name: String, eventType: JoinType.Value, details: EventDetails, users: Set[EventUser],
-            tournaments: Set[Tournament],id: Int = 0) {
+            tournaments: Set[Tournament],id: Int = 0) extends Inviteable with Requestable {
 
 }
 

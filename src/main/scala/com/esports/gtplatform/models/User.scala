@@ -1,5 +1,6 @@
 package models
 
+import com.esports.gtplatform.models.Invitee
 import org.joda.time.DateTime
 
 /**
@@ -11,7 +12,6 @@ import org.joda.time.DateTime
  *
  * The main user class holds only a small amount of information in order to facilitate decoupling between related objects.
  */
-//TODO add isActive so we can confirm email
 case class User(
                  email: String,
                  role: String,
@@ -20,7 +20,7 @@ case class User(
                  globalHandle: Option[String],
                  cDate: Option[DateTime],
                  id: Int = 0,
-                 teams: List[TeamUser] = List()) {
+                 teams: List[TeamUser] = List()) extends Invitee {
   val createdDate: DateTime = cDate.getOrElse(DateTime.now())
   var gameProfiles = List[UserPlatformProfile]()
 
