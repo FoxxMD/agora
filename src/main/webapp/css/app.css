@@ -72,3 +72,8 @@ body a {
 .ns-box.ns-bar.ns-type-error {
   background: rgba(114, 9, 9, 0.96);
 }
+.st-menu small {
+  color: rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  font-weight: 300;
+}

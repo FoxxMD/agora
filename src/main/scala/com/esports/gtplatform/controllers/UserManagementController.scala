@@ -40,11 +40,14 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
       /*Option is Scala's way of dealing with empty results or null. Rather than returning nothing or null you can
        * return an Option type. Option contains either Some(data) or None. You can also wrap a value in Option()
        * */
-      val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, PasswordSecurity.createHash(password))
+      val salted = PasswordSecurity.createHash(password)
+       val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, salted)
 
       //inject the GenericRepo trait with a concrete implementation of a repository for UserIdentity(MapperDao in this instance)
       val userIdentRepo = inject[GenericRepo[UserIdentity]]
+
       userIdentRepo.create(userIdent)
+      logger.info("User successfully created: " + email)
 
       //TODO add email confirmation.
       Ok("Registration successful. Please check your email for a confirmation link.")

@@ -15,13 +15,13 @@ function register(Account, $stateParams) {
             $scope.tryRegister = function () {
                 $scope.$broadcast('show-errors-check-validity');
                 if ($scope.registerForm.$valid) {
-                   Account.register($scope.formData.email, $scope.formData.password, $stateParams.eventId).promise.then(
+                   Account.register($scope.registerformData.email, $scope.registerformData.password, $stateParams.eventId).promise.then(
                         function (response) {
                             $scope.sidebar.registerVisible = false;
                             $scope.$broadcast('notify', 'notice', response, 5000);
                             $scope.$broadcast('show-errors-reset');
                             $scope.error = false;
-                            $scope.formData = {};
+                            $scope.registerformData = {};
                         });
                 }
             }

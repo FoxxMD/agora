@@ -3,13 +3,13 @@
         <form class="form" name="loginForm" ng-submit="tryLogin()" novalidate>
             <div class="form-group" show-errors>
                 <input type="email" name="email" placeholder="Email Address" class="input-small"
-                       ng-model="formData.email" required />
+                       ng-model="loginformData.email" required />
                 <p class="help-block" ng-show="loginForm.email.$error.required">Email is required.</p>
                 <p class="help-block" ng-show="loginForm.email.$error.email">Not a valid email address.</p>
             </div>
             <div class="form-group" show-errors>
                 <input type="password" name="password" placeholder="Password" class="input-small"
-                       ng-model="formData.password" required />
+                       ng-model="loginformData.password" required />
                 <p class="help-block" ng-show="loginForm.password.$error.required">Password is required.</p>
             </div>
             <div class="form-group" ng-class="{'has-error':error != undefined}">
