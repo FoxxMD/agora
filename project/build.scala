@@ -17,11 +17,14 @@ object ScalatraBuild extends Build {
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.10.2"
   val ScalatraVersion = "2.3.0"
+  val port = SettingKey[Int]("port")
+  val Conf = config("container")
 
   lazy val project = Project (
     "gamefest-platform",
     file("."),
     settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+      port in Conf := 8080,
       organization := Organization,
       name := Name,
       version := Version,

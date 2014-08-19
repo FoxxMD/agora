@@ -1,7 +1,7 @@
 import javax.servlet.ServletContext
 
 import com.escalatesoft.subcut.inject.NewBindingModule
-import com.esports.gtplatform.business.{UserRepository, UserRepo, GenericMDaoTypedRepository, GenericRepo}
+import com.esports.gtplatform.business.{GenericMDaoTypedRepository, GenericRepo, UserRepo, UserRepository}
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.data.DatabaseInit
 import dao._

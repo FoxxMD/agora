@@ -6,13 +6,12 @@ Prerequisites
 
 You have have these installed and configured before running the app:
 
-* [Java JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Java JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 * [Scala](http://www.scala-lang.org/)
 * [SBT](http://www.scala-sbt.org/)
 * [MySQL Server](http://dev.mysql.com/downloads/mysql/)
 * [NodeJS Server](http://nodejs.org/download/)
     * [npm](https://www.npmjs.org/)
-    * [bower](http://bower.io/) -- Installed thru npm
 
 Configuration
 ------
@@ -52,8 +51,10 @@ First Run
 ------
 
 1. Open a terminal in the directory root
-2. Run `npm install` to download the components needed by npm for the app. This will install `grunt`, a front-end task-runner, and `karma`, a unit testing suite.
-3. Run `bower install` to download the components needed to serve the front-end. `bower` is a front-end package manager. It will download bootstrap, angular, etc.
+2. Install Grunt for the command line -- `npm install grunt-cli -g` (use `sudo` if on *nix)
+3. Install Bower -- `npm install bower -g` (use `sudo` if on *nix)
+2. Run `npm install` to download the components needed by npm for the app.
+3. Run `bower install` to download the components needed to serve the front-end.
 
 How To Run Server and Debug
 ------

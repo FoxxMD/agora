@@ -65,9 +65,9 @@ trait StandardController extends RESTController with AuthenticationSupport with 
   def doAuthCheck():Unit = None//halt(401)
 
   before() {
-    if (request.headers("Host") != "127.0.0.1:9000") {
+    if (request.getRemoteHost != "127.0.0.1") {
       //If not from origin then halt immediately.
-      logger.info("Non-Origin request from " + request.headers("Host"))
+      logger.info("Non-Origin request from " + request.getRemoteHost)
       doAuthCheck()
     }
 
