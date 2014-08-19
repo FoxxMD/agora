@@ -1,6 +1,5 @@
 package dao
 
-import com.esports.gtplatform.models.{EventInvite, TeamInvite, InviteT}
 import com.googlecode.mapperdao._
 import models._
 
@@ -59,10 +58,9 @@ object UserIdentityEntity extends Entity[Int, SurrogateIntId, UserIdentity]("use
   val providerId = column("providerId") to (_.providerId)
   val email = column("email") option (_.email)
   val password = column("password") to (_.password)
-  val salt = column("salt") to (_.salt)
 
   def constructor(implicit m: ValuesMap) = {
-    new UserIdentity(user, userId, providerId, firstName, lastName, Option(firstName + " " + lastName), email, None, password, salt, id) with Stored
+    new UserIdentity(user, userId, providerId, firstName, lastName, Option(firstName + " " + lastName), email, None, password, id) with Stored
 /*    {
       val id: Int = UserIdentityEntity.id
     }*/

@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import com.esports.gtplatform.Utilities.ApiSecurity
+import com.esports.gtplatform.Utilities.{PasswordSecurity, ApiSecurity}
 import com.googlecode.mapperdao.Query._
 import dao.Daos._
 import dao.{UserEntity, UserIdentityEntity}
@@ -48,8 +48,13 @@ import org.slf4j.LoggerFactory
 trait AuthenticationSupport extends ScentrySupport[User] {
   self: ScalatraBase =>
 
-  protected def fromSession = { case id: String =>  queryDao.querySingleResult(select from UserEntity where UserEntity.id === id.toInt).get }
-  protected def toSession   = { case usr: User => usr.id.toString }
+  protected def fromSession = {
+    case id: String => queryDao.querySingleResult(select from UserEntity where UserEntity.id === id.toInt).get
+  }
+
+  protected def toSession = {
+    case usr: User => usr.id.toString
+  }
 
   val realm = "Token Authentication"
   protected val scentryConfig = new ScentryConfig {}.asInstanceOf[ScentryConfiguration]
@@ -69,9 +74,9 @@ trait AuthenticationSupport extends ScentrySupport[User] {
 
   // verifies if the request is a Bearer request
   protected def auth()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
-    scentry.authenticate("Token","Api")
+    scentry.authenticate("Token", "Api")
     scentry.authenticate("Api")
-    if(!scentry.isAuthenticated)
+    if (!scentry.isAuthenticated)
       Unauthorized()
 
   }
@@ -79,26 +84,29 @@ trait AuthenticationSupport extends ScentrySupport[User] {
   protected def authOpt()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
     scentry.authenticate("TokenOpt")
   }
+
   protected def authUserPass()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
-    scentry.authenticate("UserPassword","Token")
-    if(!scentry.isAuthenticated)
+    scentry.authenticate("UserPassword", "Token")
+    if (!scentry.isAuthenticated)
       scentry.strategies("UserPassword").unauthenticated()
   }
+
   protected def authApi()(implicit request: HttpServletRequest, response: HttpServletResponse) = {
     scentry.authenticate("Api")
-    if(!scentry.isAuthenticated)
+    if (!scentry.isAuthenticated)
       scentry.strategies("Api").unauthenticated()
   }
 }
 
-class TokenStrategy (protected override val app: ScalatraBase) extends ScentryStrategy[User]{
+class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStrategy[User] {
   val logger = LoggerFactory.getLogger("TokenStrategy")
   private val keys = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+
   implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r, keys)
 
   protected def getUserId(user: User): Int = user.id
 
-  override def isValid(implicit request: HttpServletRequest) = request.providesAuth//request.isBearerAuth && request.providesAuth
+  override def isValid(implicit request: HttpServletRequest) = request.providesAuth //request.isBearerAuth && request.providesAuth
 
   // catches the case that we got none user
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
@@ -110,36 +118,38 @@ class TokenStrategy (protected override val app: ScalatraBase) extends ScentrySt
 
   protected def validate(token: String): Option[User] = {
     logger.info("attempting authentication")
-  queryDao.lowLevelQuery(UserEntity,
+    queryDao.lowLevelQuery(UserEntity,
       """
         |select u.*
         |from users u
         |inner join tokens t on t.id=u.id
         |where t.token=?
-      """.stripMargin,List(token)).headOption match {
-    case Some(i: User) =>
-      logger.info("authenticaion succeeded for " + i.email)
-      Option(i)
-    case None => None
-  }
+      """.stripMargin, List(token)).headOption match {
+      case Some(i: User) =>
+        logger.info("authenticaion succeeded for " + i.email)
+        Option(i)
+      case None => None
+    }
   }
 }
 
-class TokenOptStrategy (protected override val app: ScalatraBase) extends TokenStrategy(app) with ScentryStrategy[User] {
+class TokenOptStrategy(protected override val app: ScalatraBase) extends TokenStrategy(app) with ScentryStrategy[User] {
   override def isValid(implicit request: HttpServletRequest) = true
+
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
 
   }
 }
 
-class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStrategy[User]{
+class ApiStrategy(protected override val app: ScalatraBase) extends ScentryStrategy[User] {
 
   private val keys = List("ApiKey", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+
   implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r, keys)
 
   protected def getUserId(user: User): Int = user.id
 
-  override def isValid(implicit request: HttpServletRequest) = request.providesAuth//request.isBearerAuth && request.providesAuth
+  override def isValid(implicit request: HttpServletRequest) = request.providesAuth //request.isBearerAuth && request.providesAuth
 
   // catches the case that we got none user
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
@@ -150,16 +160,15 @@ class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStra
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request, request.token)
 
   protected def validate(implicit request: HttpServletRequest, token: String): Option[User] = {
-  //TODO move secret to config file and change applicationName to something more dynamic to increase security strength
-    if(ApiSecurity.checkHMAC("gamefestSecret","gamefest", request.getRemoteHost, token))
-    {
-    queryDao.lowLevelQuery(UserEntity,
-      """
-        |select u.*
-        |from users u
-        |inner join apikeys k on k.id=u.id
-        |where k.apiToken=?
-      """.stripMargin,List(token)).headOption
+    //TODO move secret to config file and change applicationName to something more dynamic to increase security strength
+    if (ApiSecurity.checkHMAC("gamefestSecret", "gamefest", request.getRemoteHost, token)) {
+      queryDao.lowLevelQuery(UserEntity,
+        """
+          |select u.*
+          |from users u
+          |inner join apikeys k on k.id=u.id
+          |where k.apiToken=?
+        """.stripMargin, List(token)).headOption
     }
     else
       None
@@ -168,10 +177,15 @@ class ApiStrategy (protected override val app: ScalatraBase) extends ScentryStra
 
 class TokenAuthRequest(r: HttpServletRequest, KeyList: List[String]) {
 
-  private val AUTHORIZATION_KEYS = KeyList//List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
-  def parts = authorizationKey map { r.getHeader(_).split(" ", 2).toList } getOrElse Nil
+  private val AUTHORIZATION_KEYS = KeyList
+
+  //List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
+  def parts = authorizationKey map {
+    r.getHeader(_).split(" ", 2).toList
+  } getOrElse Nil
+
   //def scheme: Option[String] = parts.headOption.map(sch => sch.toLowerCase(Locale.ENGLISH))
-  def token : String = parts.lastOption getOrElse ""
+  def token: String = parts.lastOption getOrElse ""
 
   private def authorizationKey = AUTHORIZATION_KEYS.find(r.getHeader(_) != null)
 
@@ -188,10 +202,11 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
   override def name: String = "UserPassword"
 
   private def login = app.params.getOrElse("email", "")
+
   private def password = app.params.getOrElse("password", "")
 
 
-  /***
+  /** *
     * Determine whether the strategy should be run for the current request.
     */
   override def isValid(implicit request: HttpServletRequest) = {
@@ -201,34 +216,51 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = {
     val uie = UserIdentityEntity
     logger.info("attempting authentication")
-    val maybeUser = queryDao.querySingleResult(select from uie where uie.providerId === "userpass" and uie.userId === login and uie.password === password)
+    val maybeUser = queryDao.querySingleResult(select from uie where uie.providerId === "userpass" and uie.userId === login)
+
     maybeUser match {
+        //We found a user with this email!
       case Some(ident: UserIdentity) =>
-        logger.info("authentication succeeded for " + ident.email.get)
-        val possibleToken = jdbc.queryForMap("""
-                           |select t.*
-                           |from tokens t
-                           |where t.id=?
-                         """.stripMargin,ident.user.id).map {m => m.string("token")}
-        possibleToken match {
-          case Some(token: String) =>
-            //TODO token issueDate refresh
-            response.addHeader("Authorization", token)
-          case None =>
-            val newToken = java.util.UUID.randomUUID.toString
-            jdbc.update(
-              """
-                |INSERT INTO tokens VALUES(?,?,NULL)
-              """.stripMargin,List(ident.user.id,newToken))
-            //TODO ensure this udpate occurs before sending token
-            response.addHeader("Authorization", newToken)
+        /* Hash the provided password and check against the stored hash of the valid password for this identity.
+        *  We do this here because the checking method uses a technique to prevent against timing attacks and is
+        *  inherently slower because of it. Putting it in the query would slow down query time which would increase blocking.
+        * */
+        if (!PasswordSecurity.validatePassword(password, ident.password))
+          None
+        else {
+          logger.info("authentication succeeded for " + ident.email.get)
+          //Check to see if this user has a token already
+          val possibleToken = jdbc.queryForMap(
+            """
+              |select t.*
+              |from tokens t
+              |where t.id=?
+            """.stripMargin
+            , ident.user.id).map { m => m.string("token")}
+          possibleToken match {
+            case Some(token: String) =>
+              //They have a token, return it in the header
+              //TODO token issueDate refresh
+              response.addHeader("Authorization", token)
+            case None =>
+              //They don't have a token, create a new one and return it in the header
+              val newToken = java.util.UUID.randomUUID.toString
+              jdbc.update(
+                """
+                  |INSERT INTO tokens VALUES(?,?,NULL)
+                """.stripMargin, List(ident.user.id, newToken))
+              //TODO ensure this udpate occurs before sending token
+              response.addHeader("Authorization", newToken)
+          }
+          Option(ident.user)
         }
-        Option(ident.user)
       case None =>
+        //Did not match an email
         logger.info("authentication failed")
         None
     }
   }
+
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
     app halt Unauthorized("Username or Password incorrect.")
   }

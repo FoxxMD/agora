@@ -50,7 +50,6 @@ case class UserIdentity(
                          email: Option[String],
                          avatarUrl: Option[String],
                          password: String,
-                         salt: String,
                          id: Int = 0)
 
 /* Right now more of a placeholder than anything. This will eventually serve as a list linked popular game profiles for this user

@@ -9,7 +9,7 @@ CREATE TABLE `users` (
   `role` varchar(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `useridentity` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -17,14 +17,14 @@ CREATE TABLE `useridentity` (
   `userIdentifier` varchar(50) NOT NULL,
   `providerId` varchar(45) NOT NULL,
   `email` varchar(45) DEFAULT NULL,
-  `password` varchar(45) DEFAULT NULL,
-  `salt` varchar(45) DEFAULT NULL,
+  `password` varchar(100) DEFAULT NULL,
   `firstName` varchar(45) DEFAULT NULL,
   `lastName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `user_identity_id` (`userId`),
   CONSTRAINT `user_identity_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `userplatformprofile` (
   `userId` int(11) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `events` (
   `eventType` varchar(15) NOT NULL,
   `name` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `eventdetails` (
@@ -67,16 +67,16 @@ CREATE TABLE `games` (
   `website` varchar(100) DEFAULT NULL,
   `gameType` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `teams` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `createdDate` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tournament` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -85,10 +85,12 @@ CREATE TABLE `tournament` (
   `tournamentType` varchar(15) NOT NULL,
   `gameId` int(11) NOT NULL,
   `eventId` int(11) NOT NULL,
-  CONSTRAINT `tournament_event_id` FOREIGN KEY (`gameId`) REFERENCES `games` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `tournament_game_id` FOREIGN KEY (`eventId`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `tournament_event_id` (`gameId`),
+  KEY `tournament_game_id` (`eventId`),
+  CONSTRAINT `tournament_event_id` FOREIGN KEY (`gameId`) REFERENCES `games` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `tournament_game_id` FOREIGN KEY (`eventId`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tournamentdetails` (
@@ -113,8 +115,8 @@ CREATE TABLE `games_events` (
   `eventId` int(11) NOT NULL,
   KEY `game_event_id_idx` (`gameId`),
   KEY `event_game_id_idx` (`eventId`),
-  CONSTRAINT `game_event_id` FOREIGN KEY (`gameId`) REFERENCES `games` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `event_game_id` FOREIGN KEY (`eventId`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `event_game_id` FOREIGN KEY (`eventId`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `game_event_id` FOREIGN KEY (`gameId`) REFERENCES `games` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `teams_tournaments` (
@@ -122,38 +124,38 @@ CREATE TABLE `teams_tournaments` (
   `teamId` int(11) NOT NULL,
   `tournamentId` int(11) NOT NULL,
   `isPresent` binary(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `team_tournament_id_idx` (`teamId`),
   KEY `tournament_team_id_idx` (`tournamentId`),
   CONSTRAINT `team_tournament_id` FOREIGN KEY (`teamId`) REFERENCES `teams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `tournament_team_id` FOREIGN KEY (`tournamentId`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+  CONSTRAINT `tournament_team_id` FOREIGN KEY (`tournamentId`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `teams_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `teamId` int(11) NOT NULL,
-  `userId` int(11) NOT NULL,
-  `isCaptain` binary(1) NOT NULL DEFAULT '0',
-  KEY `team_id_idx` (`teamId`),
-  KEY `user_id_idx` (`userId`),
-  CONSTRAINT `team_id` FOREIGN KEY (`teamId`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `user_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  `teams_Id` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
+  `isCaptain` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `team_id_idx` (`teams_Id`),
+  KEY `user_id_idx` (`users_id`),
+  CONSTRAINT `team_id` FOREIGN KEY (`teams_Id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `user_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `user_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `eventId` int(11) NOT NULL,
   `isPresent` binary(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `user_event_id_idx` (`userId`),
   KEY `event_user_id_idx` (`eventId`),
-  CONSTRAINT `user_event_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `event_user_id` FOREIGN KEY (`eventId`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+  CONSTRAINT `user_event_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `user_tournaments` (
@@ -161,20 +163,21 @@ CREATE TABLE `user_tournaments` (
   `userId` int(11) NOT NULL,
   `tournamentId` int(11) NOT NULL,
   `isPresent` binary(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `user_tournament_id_idx` (`userId`),
   KEY `tournament_user_id_idx` (`tournamentId`),
-  CONSTRAINT `user_tournament_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tournament_user_id` FOREIGN KEY (`tournamentId`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+  CONSTRAINT `user_tournament_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tokens` (
-  `id` INT NOT NULL,
-  `token` VARCHAR(100) NOT NULL,
+  `id` int(11) NOT NULL,
+  `token` varchar(100) NOT NULL,
   `issuedOn` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `token_UNIQUE` (`token` ASC));
+  UNIQUE KEY `token_UNIQUE` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `apikeys` (
   `id` int(11) NOT NULL,

@@ -1,6 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
+import com.esports.gtplatform.Utilities.PasswordSecurity
 import com.esports.gtplatform.business.{GenericRepo, UserRepo}
 import models.{User, UserIdentity}
 import org.scalatra.Ok
@@ -34,11 +35,12 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
 
     //Dont't create a new user if they already exist.
     if (!userRepo.getByEmail(email).isDefined) {
-      val newuser = new User(email, "user", None, None, None, None)
+      val newuser = User(email, "user", None, None, None, None)
 
       /*Option is Scala's way of dealing with empty results or null. Rather than returning nothing or null you can
-    * return an Option type. Option contains either Some(data) or None. You can also wrap a value in Option()*/
-      val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, password, "fsdf")
+       * return an Option type. Option contains either Some(data) or None. You can also wrap a value in Option()
+       * */
+      val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, PasswordSecurity.createHash(password))
 
       //inject the GenericRepo trait with a concrete implementation of a repository for UserIdentity(MapperDao in this instance)
       val userIdentRepo = inject[GenericRepo[UserIdentity]]
