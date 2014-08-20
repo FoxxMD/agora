@@ -41,6 +41,8 @@ object ScalatraBuild extends Build {
         "org.json4s" %% "json4s-core" % "3.2.10",
         "com.github.jarlakxen" %% "scalatra-rest" % "1.4",
         "com.escalatesoft.subcut" % "subcut_2.10" % "2.0",
+        "org.skinny-framework" % "skinny-mailer_2.10" % "1.2.9",
+        "com.typesafe" % "config" % "1.2.1",
         "ch.qos.logback" % "logback-classic" % "1.0.13" % "runtime",
         "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container;compile",
         "org.apache.derby" % "derby" % "10.10.1.1",

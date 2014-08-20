@@ -1,10 +1,9 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.Utilities.PasswordSecurity
-import com.esports.gtplatform.business.{GenericRepo, UserRepo}
-import models.{User, UserIdentity}
-import org.scalatra.Ok
+import com.esports.gtplatform.Utilities.Mailer
+import com.esports.gtplatform.business.services.NewUserService
+import org.scalatra.{BadRequest, Ok}
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -24,33 +23,34 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
     Ok(response.getHeader("Authorization"))
   }
   post("/register") {
+    val nuservice = new NewUserService
     //you can get any parameters in the queryString of a POST or GET using params("key")
-
-    //creating a user repository so we can check if this email address is already in use
-    val userRepo = inject[UserRepo]
 
     //Use this method to extract values from a JSON object in the request
     val email = parsedBody.\("email").extract[String]
     val password = parsedBody.\("password").extract[String]
 
-    //Dont't create a new user if they already exist.
-    if (!userRepo.getByEmail(email).isDefined) {
-      val newuser = User(email, "user", None, None, None, None)
+    val newuser = nuservice.newUserPass("another handle", email, password)
 
-      /*Option is Scala's way of dealing with empty results or null. Rather than returning nothing or null you can
-       * return an Option type. Option contains either Some(data) or None. You can also wrap a value in Option()
-       * */
-      val salted = PasswordSecurity.createHash(password)
-       val userIdent = UserIdentity(newuser, "userpass", email, None, None, None, Option(email), None, salted)
-
-      //inject the GenericRepo trait with a concrete implementation of a repository for UserIdentity(MapperDao in this instance)
-      val userIdentRepo = inject[GenericRepo[UserIdentity]]
-
-      userIdentRepo.create(userIdent)
-      logger.info("User successfully created: " + email)
-
-      //TODO add email confirmation.
-      Ok("Registration successful. Please check your email for a confirmation link.")
+    if(nuservice.isUnique(newuser)) {
+      val token = nuservice.create(newuser)
+      val m = new Mailer()
+      m.sendConfirm("matt.duncan13@gmail.com","New Guy", token)
+      logger.info("Non-active user successfully created: " + email)
+    }
+    Ok("Registration successful. Please check your email for a confirmation link.")
+  }
+  get("/confirmRegistration"){
+    val nuservice = new NewUserService
+    val token = request.parameters.get("token")
+    token match {
+      case Some(t: String) =>
+        if(nuservice.confirmNewUser(t))
+          Ok()
+        else
+          BadRequest("Could not find the provided token.")
+      case None =>
+        BadRequest("No token provided.")
     }
   }
 }

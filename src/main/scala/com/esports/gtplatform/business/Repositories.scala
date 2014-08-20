@@ -1,10 +1,12 @@
 package com.esports.gtplatform.business
+
 import com.googlecode.mapperdao.Query._
-import com.googlecode.mapperdao._
+import com.googlecode.mapperdao.jdbc.JdbcMap
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
+import com.googlecode.mapperdao.{Entity, Persisted, QueryConfig}
 import dao.Daos._
-import dao.UserEntity
-import models.User
+import dao.{NonActiveUserEntity, NonActiveUserIdentityEntity, UserEntity}
+import models.{User, UserIdentity}
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -21,7 +23,13 @@ import models.User
 * concrete class implementation they should stay relatively agnostic so that they can be reused by (future) other implementations.
 * */
 
-trait GenericRepo[T] {
+trait SqlAccess {
+  def lowLevelQuery(query: String, args: List[Any]): Option[JdbcMap]
+  def lowLevelUpdate(query: String, args: List[Any]): Int
+
+}
+
+trait GenericRepo[T] extends SqlAccess {
 
   def get(id: Int) : Option[T]
   def getPaginated(pageNo: Long, pageSize: Long = 50): List[T]
@@ -55,7 +63,12 @@ trait GenericMDaoTypedRepo[T] extends GenericRepo[T]{
 
 }
 
-class GenericMDaoTypedRepository[T](val returnEntity: Entity[Int,Persisted,T]) extends GenericMDaoTypedRepo[T] {
+class SqlAccessRepository extends SqlAccess{
+  def lowLevelQuery(query: String, args: List[Any]): Option[JdbcMap] = jdbc.queryForMap(query, args)
+  def lowLevelUpdate(query: String, args: List[Any]): Int = jdbc.update(query, args).rowsAffected
+}
+
+class GenericMDaoTypedRepository[T](val returnEntity: Entity[Int,Persisted,T]) extends SqlAccessRepository with GenericMDaoTypedRepo[T] {
 
   def query[U <: T with Persisted](qi : WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted] = queryDao.query(qi)
   def querySingle(qi : WithQueryInfo[Int,Persisted, T]): Option[T with Persisted] = queryDao.querySingleResult(qi)
@@ -82,4 +95,10 @@ class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericM
 {
   def getByEmail(email: String):Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.email === email)
 }
+
+trait NonActiveUserIdentityRepo extends GenericRepo[UserIdentity]
+trait NonActiveUserRepo extends UserRepo
+
+class NonActiveUserIdentityRepository extends GenericMDaoTypedRepository(NonActiveUserIdentityEntity) with NonActiveUserIdentityRepo
+class NonActiveUserRepository extends UserRepository(NonActiveUserEntity) with NonActiveUserRepo
 

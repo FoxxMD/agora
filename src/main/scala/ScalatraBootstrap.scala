@@ -1,7 +1,7 @@
 import javax.servlet.ServletContext
 
 import com.escalatesoft.subcut.inject.NewBindingModule
-import com.esports.gtplatform.business.{GenericMDaoTypedRepository, GenericRepo, UserRepo, UserRepository}
+import com.esports.gtplatform.business._
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.data.DatabaseInit
 import dao._
@@ -23,13 +23,16 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
  *  GenericMDaoTypedRepository is the concrete implementation with Game as the generic parameter -- we also pass the corresponding mapperDao entity so it knows what to do later
  */
   //TODO move database configuration and init into this module
+  module.bind[SqlAccess] toSingle new SqlAccessRepository
   module.bind[GenericRepo[Game]] toSingle new GenericMDaoTypedRepository[Game](GameEntity)
   module.bind[GenericRepo[UserIdentity]] toSingle new GenericMDaoTypedRepository[UserIdentity](UserIdentityEntity)
   module.bind[GenericRepo[Team]] toSingle new GenericMDaoTypedRepository[Team](TeamEntity)
   module.bind[GenericRepo[TeamUser]] toSingle new GenericMDaoTypedRepository[TeamUser](TeamUserEntity)
   module.bind[GenericRepo[User]] toSingle new GenericMDaoTypedRepository[User](UserEntity)
   module.bind[UserRepo] toSingle new UserRepository(UserEntity)
-
+  //Created a separate set of tables/repositories for non-confirmed users.
+  module.bind[NonActiveUserIdentityRepo] toSingle new NonActiveUserIdentityRepository
+  module.bind[NonActiveUserRepo] toSingle new NonActiveUserRepository
     }
   )
 

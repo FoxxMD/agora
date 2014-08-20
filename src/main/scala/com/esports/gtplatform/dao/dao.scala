@@ -24,7 +24,7 @@ object Daos {
 //Initialize components of MapperDao DAOs. Setup.mysql is the actual statement for opening a connection and forming objects.
 val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, TeamEntity, TeamUserEntity,
   GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity,
-  EventUserEntity, UserIdentityEntity)) //All entities must be listed here
+  EventUserEntity, UserIdentityEntity, NonActiveUserEntity, NonActiveUserIdentityEntity)) //All entities must be listed here
   //InviteEntity
 
   /*Still kind of figuring out how these totally work.
@@ -103,6 +103,12 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, Te
     val txManager = Daos.txManager
     val mapperDao = Daos.mapperDao
   }
+  val nonActiveUserIdentityDao = new NonActiveUserIdentityDao {
+    val entity = NonActiveUserIdentityEntity
+    val queryDao = Daos.queryDao
+    val txManager = Daos.txManager
+    val mapperDao = Daos.mapperDao
+  }
 /*  val inviteDao = new InviteEntityDao {
     val entity = InviteEntity
     val queryDao = Daos.queryDao
@@ -117,8 +123,10 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, Te
 * the Id type is Int, we want to implement CRUD(create,update,delete) capabilities, with the domain object User
 * */
 abstract class UserDao extends TransactionalSurrogateIntIdCRUD[User] with SurrogateIntIdAll[User]
+abstract class NonActiveUserDao extends TransactionalSurrogateIntIdCRUD[User] with SurrogateIntIdAll[User]
 //abstract class UserDetailsDao extends TransactionalSurrogateIntIdCRUD[UserDetails] with NoId[UserDetail]
 abstract class UserIdentityDao extends SurrogateIntIdCRUD[UserIdentity] with SurrogateIntIdAll[UserIdentity]
+abstract class NonActiveUserIdentityDao extends SurrogateIntIdCRUD[UserIdentity] with SurrogateIntIdAll[UserIdentity]
 abstract class TeamDao extends TransactionalSurrogateIntIdCRUD[Team] with SurrogateIntIdAll[Team]
 abstract class TeamUserDao extends TransactionalSurrogateIntIdCRUD[TeamUser] with SurrogateIntIdAll[TeamUser]
 //abstract class GameDao extends TransactionalSurrogateIntIdCRUD[Game] with SurrogateIntIdAll[Game]
