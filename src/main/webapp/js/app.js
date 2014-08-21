@@ -35,6 +35,29 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl: '/views/event/eventHome.html',
                 parent: 'eventSkeleton'
             });
+
+        //Account related states
+        $stateProvider
+            .state('registrationConfirm',{
+                url:'/confirmRegistration?token',
+                params:{
+                    token: {}
+                },
+                controller: function($scope, Account, $stateParams,$location){
+                    Account.confirmRegistration($stateParams.token).then(function(response){
+                        if(response !== undefined)
+                            $location.url('/event/' + response);
+                        else
+                            $location.url('/');
+                        $scope.$broadcast('notify','notice','Account confirmation is complete! Please login.')
+                    },function()
+                    {
+                    $state.go('portal');
+                    });
+                },
+                parent:'globalSkeleton'
+            });
+
         $urlRouterProvider.otherwise('index');
         $locationProvider.html5Mode(true);
         RestangularProvider.setBaseUrl('/api');

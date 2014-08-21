@@ -26,7 +26,6 @@ import models.{User, UserIdentity}
 trait SqlAccess {
   def lowLevelQuery(query: String, args: List[Any]): Option[JdbcMap]
   def lowLevelUpdate(query: String, args: List[Any]): Int
-
 }
 
 trait GenericRepo[T] extends SqlAccess {
@@ -59,7 +58,7 @@ trait GenericMDaoTypedRepo[T] extends GenericRepo[T]{
   def updateMutable[U <: T with Persisted](obj: U) : T with Persisted with Persisted = mapperDao.update(returnEntity, obj)
   def create(obj: T) : T with Persisted = mapperDao.insert(returnEntity, obj)
   def delete(id: Int) = mapperDao.delete(returnEntity, id)
-  def delete[U <: T with Persisted](obj: U) = mapperDao.delete(returnEntity, obj)
+  def delete[U <: T with Persisted](obj: U) = { mapperDao.delete(returnEntity,obj)}
 
 }
 
@@ -87,16 +86,18 @@ class GenericMDaoTypedRepository[T](val returnEntity: Entity[Int,Persisted,T]) e
  * EX
   * sendInvite(to: Invitable, from: Invitor, type: IType, msg: String) for use with Teams, Users, Events, and Tournaments
 */
-trait UserRepo extends GenericRepo[User] {
+trait UserRepo extends GenericMDaoTypedRepo[User] {
   def getByEmail(email: String): Option[User]
+  def getByHandle(handle: String): Option[User]
 }
 
 class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericMDaoTypedRepository[User](returnEntity) with UserRepo
 {
   def getByEmail(email: String):Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.email === email)
+  def getByHandle(handle: String): Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.globalHandle === handle)
 }
 
-trait NonActiveUserIdentityRepo extends GenericRepo[UserIdentity]
+trait NonActiveUserIdentityRepo extends GenericMDaoTypedRepo[UserIdentity]
 trait NonActiveUserRepo extends UserRepo
 
 class NonActiveUserIdentityRepository extends GenericMDaoTypedRepository(NonActiveUserIdentityEntity) with NonActiveUserIdentityRepo

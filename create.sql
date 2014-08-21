@@ -217,7 +217,8 @@ CREATE TABLE `nonactiveuseridentity` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `confirmationtokens` (
-  `userIdentId` int(11) NOT NULL,
-  `token` varchar(50) NOT NULL,
-  PRIMARY KEY (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+`userIdentId` int(11) NOT NULL,
+`token` varchar(50) NOT NULL,
+`eventId` int(11) DEFAULT NULL,
+PRIMARY KEY (`userIdentId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

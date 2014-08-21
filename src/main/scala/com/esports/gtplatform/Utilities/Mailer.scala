@@ -26,4 +26,22 @@ class Mailer(eventName: String = "Gamefest") {
         | -$eventName Staff
       """.stripMargin).deliver()
   }
+  def sendAlreadyRegistered(toAddress: String) = {
+    val mail = new MyMailer
+
+    mail.
+      to(toAddress).
+      subject("Confirm your registration for " + eventName).
+      body(
+        s"""Hello,
+        |
+        | Someone tried to use your email address to register for $eventName, but this address is already associated
+        | to an account! If you have forgotten your password please visit http://gtgamefest.com/resetPassword to start
+        | the reset process. If you feel this email is an error please contact our staff.
+        |
+        | Thanks!
+        |
+        | -$eventName Staff
+      """.stripMargin).deliver()
+  }
 }

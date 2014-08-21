@@ -17,7 +17,7 @@ case class User(
                  role: String,
                  firstName: Option[String],
                  lastName: Option[String],
-                 globalHandle: Option[String],
+                 globalHandle: String,
                  cDate: Option[DateTime],
                  id: Int = 0,
                  teams: List[TeamUser] = List()) extends Invitee {

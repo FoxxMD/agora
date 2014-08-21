@@ -19,7 +19,7 @@ function login(Account) {
                         function () {
                             Account.initUser();
                             $scope.$broadcast('show-errors-reset');
-                            $scope.error = false;
+                            //$scope.error = false;
                             $scope.loginformData = {};
                         }, function (response) {
                             $scope.$broadcast('notify','error',response.data, 4000);

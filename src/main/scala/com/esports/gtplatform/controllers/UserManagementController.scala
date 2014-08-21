@@ -27,26 +27,43 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
     //you can get any parameters in the queryString of a POST or GET using params("key")
 
     //Use this method to extract values from a JSON object in the request
-    val email = parsedBody.\("email").extract[String]
-    val password = parsedBody.\("password").extract[String]
+      val email = parsedBody.\("email").extract[String]
+      val password = parsedBody.\("password").extract[String]
+      val handle = parsedBody.\("handle").extract[String]
+      val eventId = parsedBody.\("eventId").extractOpt[String]
 
-    val newuser = nuservice.newUserPass("another handle", email, password)
-
-    if(nuservice.isUnique(newuser)) {
+    val newuser = nuservice.newUserPass(handle, email, password)
+    val m = new Mailer()
+    nuservice.isUnique(newuser) match {
+      case Some(s: String) =>
+        if(s == "handle")
+          BadRequest("Username is already taken.")
+        else if(s == "email")
+        {
+          m.sendAlreadyRegistered(email)
+          /* This method is safer than notifying the user that an email address is already in use. We don't want to
+          * give away that information so instead we say "OK sent." and then notify that email address that it is already
+          * registered.
+          */
+          Ok("Registration successful. Please check your email for a confirmation link.")
+        }
+      case None =>
       val token = nuservice.create(newuser)
-      val m = new Mailer()
-      m.sendConfirm("matt.duncan13@gmail.com","New Guy", token)
+        if(eventId.isDefined)
+          nuservice.associateEvent(token, eventId.get.toInt)
       logger.info("Non-active user successfully created: " + email)
+      m.sendConfirm("matt.duncan13@gmail.com",handle, token)
+      Ok("Registration successful. Please check your email for a confirmation link.")
     }
-    Ok("Registration successful. Please check your email for a confirmation link.")
   }
   get("/confirmRegistration"){
     val nuservice = new NewUserService
     val token = request.parameters.get("token")
     token match {
       case Some(t: String) =>
-        if(nuservice.confirmNewUser(t))
-          Ok()
+        val confirmed = nuservice.confirmNewUser(t)
+        if(confirmed._1)
+          Ok(confirmed._2)
         else
           BadRequest("Could not find the provided token.")
       case None =>

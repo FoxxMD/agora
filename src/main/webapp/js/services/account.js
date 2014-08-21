@@ -62,9 +62,9 @@ angular.module('gtfest')
             return deferred;
         };
         //eventId is OPTIONAL
-        this.register = function(email, password, eventId) {
+        this.register = function(handle, email, password, eventId) {
             var deferred = $q.defer();
-            Restangular.all('register').post({email: email, password: password, eventId: eventId}).then(function(response)
+            Restangular.all('register').post({handle: handle, email: email, password: password, eventId: eventId}).then(function(response)
             {
                 deferred.resolve(response);
             },
@@ -72,5 +72,8 @@ angular.module('gtfest')
                return deferred.reject(response);
             });
             return deferred;
+        };
+        this.confirmRegistration = function(token) {
+           return Restangular.one('confirmRegistration').get({token:token});
         }
     }]);

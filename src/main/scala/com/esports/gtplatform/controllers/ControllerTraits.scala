@@ -27,7 +27,7 @@ trait BasicServletWithLogging extends ScalatraServlet {
       halt(400, "Request data was malformed. Make sure JSON is formatted properly.")
     case m: org.json4s.MappingException =>
       logger.error(m.getMessage, m)
-      halt(400, "Request data did not map to an object.")
+      halt(400, "Request was badly formed, are you missing a parameter?")
     case n: NotImplementedError =>
       logger.error(n.getMessage, n)
       halt(500, "We forgot to implement something...")

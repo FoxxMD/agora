@@ -2,6 +2,11 @@
     <div class="col-sm-12">
         <form class="form" name="registerForm" ng-submit="tryRegister()" novalidate>
             <div class="form-group" show-errors>
+                <input type="text" name="handle" placeholder="Username" class="input-small"
+                       ng-model="registerformData.handle" required />
+                <p class="help-block" ng-show="registerForm.handle.$error.required">Username is required.</p>
+            </div>
+            <div class="form-group" show-errors>
                 <input type="email" name="email" placeholder="Email Address" class="input-small"
                        ng-model="registerformData.email" required />
                 <p class="help-block" ng-show="registerForm.email.$error.required">Email is required.</p>

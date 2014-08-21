@@ -15,7 +15,7 @@ function register(Account, $stateParams) {
             $scope.tryRegister = function () {
                 $scope.$broadcast('show-errors-check-validity');
                 if ($scope.registerForm.$valid) {
-                   Account.register($scope.registerformData.email, $scope.registerformData.password, $stateParams.eventId).promise.then(
+                   Account.register($scope.registerformData.handle, $scope.registerformData.email, $scope.registerformData.password, $stateParams.eventId).promise.then(
                         function (response) {
                             $scope.sidebar.registerVisible = false;
                             $scope.$broadcast('notify', 'notice', response, 5000);

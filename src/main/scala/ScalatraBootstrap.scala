@@ -4,6 +4,8 @@ import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.data.DatabaseInit
+import com.googlecode.mapperdao.jdbc.Transaction
+import dao.Daos._
 import dao._
 import models._
 import org.scalatra.LifeCycle
@@ -33,6 +35,8 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   //Created a separate set of tables/repositories for non-confirmed users.
   module.bind[NonActiveUserIdentityRepo] toSingle new NonActiveUserIdentityRepository
   module.bind[NonActiveUserRepo] toSingle new NonActiveUserRepository
+
+  module.bind[Transaction] toSingle { Transaction.default(Transaction.transactionManager(jdbc)) }
     }
   )
 
