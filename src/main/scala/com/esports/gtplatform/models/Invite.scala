@@ -12,12 +12,18 @@ trait Invitee
 
 trait Requestable
 
-abstract class InviteT[T <% Inviteable, U <% Invitee] extends AppliedActivityT[T, U] {
+/*abstract class InviteT[T <% Inviteable, U <% Invitee] extends AppliedActivityT[T, U] {
   val message: String
+}*/
+abstract class InviteT  {
+  val Author: Inviteable
+  val Receiver: Invitee
+  val message: String
+  val Time: DateTime
 }
 
 
-abstract class InviteOnBehalfT[T <% Inviteable, U <% Invitee, V <% Invitee] extends InviteT[T, U] {
+abstract class InviteOnBehalfT[T <% Inviteable, U <% Invitee, V <% Invitee] extends InviteT {
   val Mediator: V
 }
 
@@ -30,7 +36,7 @@ case class TeamInvite(
                        Receiver: User,
                        message: String = null,
                        Time: DateTime
-                       ) extends InviteT[Team, User]
+                       ) extends InviteT//[Team, User]
 
 case class TournamentUserInvite(
                                  Author: Tournament,
@@ -54,7 +60,7 @@ case class EventInvite(
                         //Mediator: User,
                         message: String = null,
                         Time: DateTime
-                        ) extends InviteT[Event, User]
+                        ) extends InviteT//[Event, User]
 
 case class TeamRequest(
                         Author: User,

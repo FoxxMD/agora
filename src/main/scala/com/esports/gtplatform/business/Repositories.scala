@@ -47,7 +47,7 @@ trait GenericRepo[T] extends SqlAccess {
 
 //This trait is implementing methods because it's a builder for the concrete class below. Think of it as building block for the class rather
 //than a repository itself. (You will notice it is not injected in ScalatraBootstrap, only GenericRepo is)
-trait GenericMDaoTypedRepo[T] extends GenericRepo[T]{
+trait GenericMRepo[T] extends GenericRepo[T]{
 
   val returnEntity: Entity[Int,Persisted,T]
 
@@ -67,7 +67,7 @@ class SqlAccessRepository extends SqlAccess{
   def lowLevelUpdate(query: String, args: List[Any]): Int = jdbc.update(query, args).rowsAffected
 }
 
-class GenericMDaoTypedRepository[T](val returnEntity: Entity[Int,Persisted,T]) extends SqlAccessRepository with GenericMDaoTypedRepo[T] {
+class GenericMRepository[T](val returnEntity: Entity[Int,Persisted,T]) extends SqlAccessRepository with GenericMRepo[T] {
 
   def query[U <: T with Persisted](qi : WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted] = queryDao.query(qi)
   def querySingle(qi : WithQueryInfo[Int,Persisted, T]): Option[T with Persisted] = queryDao.querySingleResult(qi)
@@ -86,20 +86,20 @@ class GenericMDaoTypedRepository[T](val returnEntity: Entity[Int,Persisted,T]) e
  * EX
   * sendInvite(to: Invitable, from: Invitor, type: IType, msg: String) for use with Teams, Users, Events, and Tournaments
 */
-trait UserRepo extends GenericMDaoTypedRepo[User] {
+trait UserRepo extends GenericMRepo[User] {
   def getByEmail(email: String): Option[User]
   def getByHandle(handle: String): Option[User]
 }
 
-class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericMDaoTypedRepository[User](returnEntity) with UserRepo
+class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericMRepository[User](returnEntity) with UserRepo
 {
   def getByEmail(email: String):Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.email === email)
   def getByHandle(handle: String): Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.globalHandle === handle)
 }
 
-trait NonActiveUserIdentityRepo extends GenericMDaoTypedRepo[UserIdentity]
+trait NonActiveUserIdentityRepo extends GenericMRepo[UserIdentity]
 trait NonActiveUserRepo extends UserRepo
 
-class NonActiveUserIdentityRepository extends GenericMDaoTypedRepository(NonActiveUserIdentityEntity) with NonActiveUserIdentityRepo
+class NonActiveUserIdentityRepository extends GenericMRepository(NonActiveUserIdentityEntity) with NonActiveUserIdentityRepo
 class NonActiveUserRepository extends UserRepository(NonActiveUserEntity) with NonActiveUserRepo
 

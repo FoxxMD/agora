@@ -65,24 +65,24 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
 class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
   case g: Game =>
-    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType)
+    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(g.copy())
   case u : User =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType)
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(u.copy()) removeField {
       case ("User", _) => true
       case _ => false }
   case t : Team =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType)
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(t.copy()) removeField {
       case ("Team", _) => true
       case _ => false }
   case e: Event =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType)
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(e.copy())
     //TODO prevent users from being serialized. For basic info that is way too much data and should be its own request.
   case t: Tournament =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType)
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(t.copy()) removeField {
       case ("Tournament", _) => true
       case _ => false }

@@ -2,6 +2,7 @@ package dao
 
 import java.util.Properties
 
+import com.esports.gtplatform.models.InviteT
 import com.googlecode.mapperdao.utils._
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import models._
@@ -24,8 +25,7 @@ object Daos {
 //Initialize components of MapperDao DAOs. Setup.mysql is the actual statement for opening a connection and forming objects.
 val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, TeamEntity, TeamUserEntity,
   GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity,
-  EventUserEntity, UserIdentityEntity, NonActiveUserEntity, NonActiveUserIdentityEntity)) //All entities must be listed here
-  //InviteEntity
+  EventUserEntity, UserIdentityEntity, NonActiveUserEntity, NonActiveUserIdentityEntity, InviteEntity)) //All entities must be listed here
 
   /*Still kind of figuring out how these totally work.
   * But basically you only need to use mapperDao or queryDao in the rest of the Application,
@@ -109,12 +109,12 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, Te
     val txManager = Daos.txManager
     val mapperDao = Daos.mapperDao
   }
-/*  val inviteDao = new InviteEntityDao {
+  val inviteDao = new InviteEntityDao {
     val entity = InviteEntity
     val queryDao = Daos.queryDao
     val txManager = Daos.txManager
     val mapperDao = Daos.mapperDao
-  }*/
+  }
 }
 
 /* Each of these abstract classes creates the DAO infrastructure for interacting with Entities from the DB.
@@ -138,4 +138,4 @@ abstract class TournamentTeamDao extends TransactionalSurrogateIntIdCRUD[Tournam
 abstract class EventDao extends TransactionalSurrogateIntIdCRUD[Event] with SurrogateIntIdAll[Event]
 //abstract class EventDetailsDao extends TransactionalSurrogateIntIdCRUD[EventDetails] with SurrogateIntIdAll[EventDetails]
 abstract class EventUserDao extends TransactionalSurrogateIntIdCRUD[EventUser] with SurrogateIntIdAll[EventUser]
-/*abstract class InviteEntityDao extends TransactionalSurrogateIntIdCRUD[InviteT] with SurrogateIntIdAll[InviteT]*/
+abstract class InviteEntityDao extends TransactionalSurrogateIntIdCRUD[InviteT] with SurrogateIntIdAll[InviteT]

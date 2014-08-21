@@ -1,7 +1,8 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.GenericRepo
+import com.esports.gtplatform.business.GenericMRepo
+import com.googlecode.mapperdao.jdbc.Transaction
 import models._
 import org.scalatra.Ok
 
@@ -10,41 +11,34 @@ import org.scalatra.Ok
  */
 class TeamController(implicit val bindingModule: BindingModule) extends APIController {
 
-  private[this] val teamRepo = inject[GenericRepo[Team]]
+  private[this] val teamRepo = inject[GenericMRepo[Team]]
   get("/") {
-    Ok(teamRepo.getPaginated(params.getOrElse("page", "1").toLong))
+    val teams = teamRepo.getPaginated(params.getOrElse("page", "1").toLong)
+    Ok(teams)
   }
   post("/") {
     auth()
     val newteam = parsedBody.extract[Team]
-    val teamUserRepo = inject[GenericRepo[TeamUser]]
-    var userFT:User = ???
-    var tid = 0
+    val teamUserRepo = inject[GenericMRepo[TeamUser]]
+    var userFT:User = user
     params.get("captainId") match {
       case Some(a:String) =>
         if (user.role == "admin") {
-          val personRepo = inject[GenericRepo[User]]
+          val personRepo = inject[GenericMRepo[User]]
           val thisUser = personRepo.get(a.toInt)
           if (thisUser == None)
-            halt(400, "No user found with that Id", reason = "No user with ID REASON")
+            halt(400, "No user found with that Id")
           userFT = thisUser.get
-          //val insertedTeam = teamRepo.create(newteam)
-          //tid = insertedTeam.id
-          //val tu = TeamUser(insertedTeam, thisUser.head, isCaptain = true)
-          //teamUserRepo.create(tu)
         } else
           halt(401)
-      case None =>
-        userFT = user
-        //val insertedTeam = teamRepo.create(newteam)
-        //tid = insertedTeam.id
-        //val tu = TeamUser(insertedTeam, user, isCaptain = true)
-        //teamUserRepo.create(tu)
     }
-    val insertedTeam = teamRepo.create(newteam)
-    tid = insertedTeam.id
-    val tu = TeamUser(insertedTeam, userFT, isCaptain = true)
-    teamUserRepo.create(tu)
-    Ok(teamRepo.get(tid).get)
+    val tx = inject[Transaction]
+    val tid = tx { () =>
+      val insertedTeam = teamRepo.create(newteam)
+      val tu = TeamUser(insertedTeam, userFT, isCaptain = true)
+      teamUserRepo.create(tu)
+      insertedTeam.id
+    }
+    Ok(tid)
   }
 }

@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.GenericRepo
+import com.esports.gtplatform.business.GenericMRepo
 import models.Game
 import org.scalatra.Ok
 
@@ -17,7 +17,7 @@ class GameController(implicit val bindingModule: BindingModule) extends Standard
   //Extends traits for Authentication, CORS, JSON support, and DI
   //bindingModule for injection
   //inject repository implementation into GenericRepo trait
-  val gameRepo = inject[GenericRepo[Game]]
+  val gameRepo = inject[GenericMRepo[Game]]
 
   get("/") {
     //Full path is "/games/" because of relative mounting

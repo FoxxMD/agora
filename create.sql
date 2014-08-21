@@ -222,3 +222,24 @@ CREATE TABLE `confirmationtokens` (
 `eventId` int(11) DEFAULT NULL,
 PRIMARY KEY (`userIdentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `invites` (
+  `id` int(11) NOT NULL,
+  `author` int(11) NOT NULL,
+  `receiver` int(11) DEFAULT NULL,
+  `message` text,
+  `createdOn` datetime NOT NULL,
+  `tournament_id` int(11) DEFAULT NULL,
+  `event_id` int(11) DEFAULT NULL,
+  `team_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tour_invite_id_idx` (`tournament_id`),
+  KEY `event_invite_id_idx` (`event_id`),
+  KEY `team_invite_id_idx` (`team_id`),
+  KEY `user_invite_id_idx` (`user_id`),
+  CONSTRAINT `tour_invite_id` FOREIGN KEY (`tournament_id`) REFERENCES `tournament` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `event_invite_id` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `team_invite_id` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `user_invite_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
