@@ -79,11 +79,14 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       case _ => false }
   case e: Event =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all
-    Extraction.decompose(e.copy())
+    Extraction.decompose(e.copy()).replace(List("users"), e.users.size)
     //TODO prevent users from being serialized. For basic info that is way too much data and should be its own request.
   case t: Tournament =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
-    Extraction.decompose(t.copy()) removeField {
+    Extraction.decompose(t.copy())
+      .replace(List("users"),t.users.size)
+      .replace(List("teams"),t.teams.size)
+      .removeField {
       case ("Tournament", _) => true
       case _ => false }
 }

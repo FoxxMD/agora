@@ -10,18 +10,18 @@ package models
   *
   * These really should be case classes but ATM they are easier to handle as mutable datas.*/
 
-case class TeamUser(team: Team, user: User, isCaptain: Boolean) {
+case class TeamUser(team: Team, user: User, isCaptain: Boolean = false) {
 
 }
 
-case class EventUser(event: Event, user: User, isPresent: Boolean){
+case class EventUser(event: Event, user: User, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false){
 
 }
-case class TournamentTeam(tournament: Tournament, team: Team, isPresent: Boolean){
+case class TournamentTeam(tournament: Tournament, team: Team, isPresent: Boolean = false){
 
 }
 
 case class TournamentUser(tournament: Tournament,
                      user: User,
-                     isPresent: Boolean){
+                     isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false){
 }

@@ -15,7 +15,7 @@ object ScalatraBuild extends Build {
   val Organization = "com.esports.gtplatform"
   val Name = "gtfest"
   val Version = "0.1.0-SNAPSHOT"
-  val ScalaVersion = "2.10.2"
+  val ScalaVersion = "2.11.1"
   val ScalatraVersion = "2.3.0"
   val port = SettingKey[Int]("port")
   val Conf = config("container")
@@ -29,8 +29,10 @@ object ScalatraBuild extends Build {
       name := Name,
       version := Version,
       scalaVersion := ScalaVersion,
-      resolvers += "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
+      resolvers ++= Seq("Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
+                        "RoundEights" at "http://maven.spikemark.net/roundeights"),
       libraryDependencies ++= Seq(
+        "org.scala-lang" % "scala-compiler" % "2.11.1",
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
         "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
@@ -39,9 +41,12 @@ object ScalatraBuild extends Build {
         "org.json4s"   %% "json4s-jackson" % "3.2.10",
         "org.json4s" %% "json4s-ext" % "3.2.10",
         "org.json4s" %% "json4s-core" % "3.2.10",
-        "com.github.jarlakxen" %% "scalatra-rest" % "1.4",
-        "com.escalatesoft.subcut" % "subcut_2.10" % "2.0",
-        "org.skinny-framework" % "skinny-mailer_2.10" % "1.2.9",
+        //"com.github.jarlakxen" %% "scalatra-rest" % "1.4",
+        "com.roundeights" % "mailgun-scala_2.11" % "0.1",
+        "com.roundeights" %% "scalon" % "0.2",
+        "net.databinder.dispatch" %% "dispatch-core" % "0.11.1",
+        "com.escalatesoft.subcut" %% "subcut" % "2.1",
+        "org.skinny-framework" %% "skinny-mailer" % "1.2.9",
         "com.typesafe" % "config" % "1.2.1",
         "ch.qos.logback" % "logback-classic" % "1.0.13" % "runtime",
         "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container;compile",

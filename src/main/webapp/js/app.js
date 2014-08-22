@@ -1,16 +1,18 @@
 // Declare app level module which depends on filters, and services
-angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngCookies', 'ngStorage', 'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate'],
+angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngCookies', 'ngStorage',
+        'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table'],
     function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
                 abstract: true,
-                controller: 'CNCController',
-                template: '<div ui-view></div>'
+                controller: 'CNCController as cncCtrl',
+                template:'<div ui-view></div>'
             })
             .state('globalSkeleton', {
-                template: '<div class="container"><div ui-view></div></div>',
+                templateUrl: '/views/shared/skeleton.html',
                 abstract: true,
-                parent: 'index'
+                parent: 'index',
+                controller:'GlobalController as globalCtrl'
             })
             .state('portal', {
                 url: '/{opt:(?:login|register)}',
@@ -21,19 +23,27 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 parent: 'globalSkeleton'
             })
             .state('eventSkeleton', {
-                templateUrl: '/views/event/skeleton.html',
+                templateUrl: '/views/shared/skeleton.html',
+                url: '/event/{eventId:[0-9]}',
+                params:{
+                    eventId: {}
+                },
                 abstract: true,
-                controller: 'SampleEventController as eventCtrl',
+                controller: 'EventController as eventCtrl',
                 parent: 'index'
             })
-            .state('event', {
-                url: '/event/{eventId:[0-9]}/{opt:(?:login|register)}',
+            .state('eventSkeleton.event', {
+                url:'/{opt:(?:login|register)}',
                 params:{
                     opt: {value:null},
                     eventId: {}
                 },
-                templateUrl: '/views/event/eventHome.html',
-                parent: 'eventSkeleton'
+                templateUrl: '/views/event/eventHome.html'
+            })
+            .state('eventSkeleton.EventTeams',{
+                url:'/teams',
+                parent: 'eventSkeleton',
+                templateUrl:'/views/teams/teamHome.html'
             });
 
         //Account related states

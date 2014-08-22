@@ -15,7 +15,8 @@
     "ngstorage": "~0.3.0",
     "angular-bootstrap-show-errors": "~1.0.3",
     "angular-animate": "~1.2.22",
-    "angular-ui-utils": "bower"
+    "angular-ui-utils": "bower",
+    "angular-smart-table": "*"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.13",

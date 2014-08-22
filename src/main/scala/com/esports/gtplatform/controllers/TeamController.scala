@@ -4,7 +4,7 @@ import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.business.GenericMRepo
 import com.googlecode.mapperdao.jdbc.Transaction
 import models._
-import org.scalatra.Ok
+import org.scalatra.{BadRequest, Ok}
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -21,6 +21,7 @@ class TeamController(implicit val bindingModule: BindingModule) extends APIContr
     val newteam = parsedBody.extract[Team]
     val teamUserRepo = inject[GenericMRepo[TeamUser]]
     var userFT:User = user
+
     params.get("captainId") match {
       case Some(a:String) =>
         if (user.role == "admin") {
@@ -31,6 +32,7 @@ class TeamController(implicit val bindingModule: BindingModule) extends APIContr
           userFT = thisUser.get
         } else
           halt(401)
+      case None =>
     }
     val tx = inject[Transaction]
     val tid = tx { () =>
@@ -40,5 +42,13 @@ class TeamController(implicit val bindingModule: BindingModule) extends APIContr
       insertedTeam.id
     }
     Ok(tid)
+  }
+  get("/:id"){
+    val teamId = params.getOrElse("id", halt(401, "Id parameter is missing"))
+
+    teamRepo.get(teamId.toInt) match {
+      case Some(t: Team) => Ok(t)
+      case None => BadRequest("No team exists with the Id " + teamId)
+    }
   }
 }

@@ -186,8 +186,10 @@ object TournamentUserEntity extends Entity[Int, SurrogateIntId, TournamentUser](
   val tournament = manytoone(TournamentEntity) foreignkey "tournamentId" to (_.tournament)
   val user = manytoone(UserEntity) foreignkey "userId" to (_.user)
   val isPresent = column("isPresent") to (_.isPresent)
+  val isAdmin = column("isAdmin") to (_.isAdmin)
+  val isModerator = column("isModerator") to (_.isModerator)
 
-  def constructor(implicit m: ValuesMap) = new TournamentUser(tournament, user, isPresent) with Stored
+  def constructor(implicit m: ValuesMap) = new TournamentUser(tournament, user, isPresent, isAdmin, isModerator) with Stored
   {
     val id: Int = TournamentUserEntity.id
   }
@@ -238,8 +240,10 @@ object EventUserEntity extends Entity[Int, SurrogateIntId, EventUser]("user_even
   val event = manytoone(EventEntity) foreignkey "eventId" to (_.event)
   val user = manytoone(UserEntity) foreignkey "userId" to (_.user)
   val isPresent = column("isPresent") to (_.isPresent)
+  val isAdmin = column("isAdmin") to (_.isAdmin)
+  val isModerator = column("isModerator") to (_.isModerator)
 
-  def constructor(implicit m: ValuesMap) = new EventUser(event, user, isPresent) with Stored
+  def constructor(implicit m: ValuesMap) = new EventUser(event, user, isPresent, isAdmin, isModerator) with Stored
   {
     val id: Int = EventUserEntity.id
   }
@@ -282,6 +286,7 @@ object InviteEntity extends Entity[Int, SurrogateIntId, InviteT]("invites") {
     case (Some(u: User), None, Some(e: Event), None) => new EventInvite(e, u, message, time) with Stored {
       val id: Int = InviteEntity.id
     }
+    case _ => throw new Exception("Invite Entity construction is fuckin up.")
 /*    case (Some(u: User), None, None, Some(t: Tournament)) => new TournamentUserInvite(t, u, message, time) with Stored {
       val id: Int = InviteEntity.id
     }*/

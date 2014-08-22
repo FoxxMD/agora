@@ -28,8 +28,8 @@ case class Event(name: String, eventType: JoinType.Value, details: EventDetails,
  * I would like to have description be Markdown, but will need to implement a system where the DB stores both the raw Markdown and a copy of the formatted HTML
  * so it doesn't have to be rendered on every page load.
  * */
-case class EventDetails(event: Event, address: Option[String], city: Option[String], state: Option[String], description: Option[String], rules: Option[String], prizes: Option[String],
-                   streams: Option[String], servers: Option[String], timeStart: DateTime, timeEnd: DateTime)
+case class EventDetails(event: Event, address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
+                   streams: Option[String] = None, servers: Option[String] = None, timeStart: DateTime, timeEnd: DateTime)
 {
 
 }

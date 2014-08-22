@@ -45,6 +45,11 @@ trait GenericRepo[T] extends SqlAccess {
   def queryPaginated[U <: T with Persisted](pageNo: Long, pageSize: Long, qi: WithQueryInfo[Int, T with Persisted, T]): List[T with Persisted]
 }
 
+trait GenericAttendingRepo[T] extends GenericRepo[T] {
+  def getByEvent(id: Int): List[T]
+  def getByTournament(id: Int): List[T]
+}
+
 //This trait is implementing methods because it's a builder for the concrete class below. Think of it as building block for the class rather
 //than a repository itself. (You will notice it is not injected in ScalatraBootstrap, only GenericRepo is)
 trait GenericMRepo[T] extends GenericRepo[T]{
@@ -93,8 +98,10 @@ trait UserRepo extends GenericMRepo[User] {
 
 class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericMRepository[User](returnEntity) with UserRepo
 {
+
   def getByEmail(email: String):Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.email === email)
   def getByHandle(handle: String): Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.globalHandle === handle)
+  //def getByEvent(id: Int): List[User] = queryDao.query(select from EventUserEntity where EventUserEntity.event.id === id)
 }
 
 trait NonActiveUserIdentityRepo extends GenericMRepo[UserIdentity]
