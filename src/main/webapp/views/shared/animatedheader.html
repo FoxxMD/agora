@@ -6,14 +6,14 @@
                 <ul class="cbp-hsmenu">
                     <!-- Event Header Links -->
                     <li ng-if="eventCtrl != undefined"><a class="topLink">Schedule</a></li>
-                    <li ng-if="eventCtrl != undefined"><a class="topLink">Tournaments</a>
+                    <li ng-show="eventCtrl != undefined"><a class="topLink">Tournaments</a>
                         <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                             <li ng-repeat="t in eventCtrl.tourneyNames">
                                 <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
                             </li>
                         </ul>
                     </li>
-                    <li ng-if="eventCtrl != undefined"><a class="topLink">Games</a>
+                    <li ng-show="eventCtrl != undefined"><a class="topLink">Games</a>
                         <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                             <li ng-repeat="t in eventCtrl.tourneyNames">
                                 <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>

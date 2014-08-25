@@ -63,7 +63,7 @@ How To Run Server and Debug
   * Running *nix run `./sbt`
   * Running windows you need to start SBT from the location you installed it earlier. If you used the default directory this should work `java -Dsbt.log.noformat=true -Djline.terminal=jline.UnsupportedTerminal -Xmx512M -XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar "C:\Program Files (x86)\sbt\bin\sbt-launch.jar" `
 2. Run `container:start` to start the Jetty container -- this is the back-end server. Once this is started you can access the API service.
-3. Run `grunt server` to start the front-end server. This serves up the client-side app and proxies to the API service.
+3. Run `grunt server:dev` to start the front-end server. This serves up the client-side app and proxies to the API service.
 
 To stop Jetty use `container:stop` or kill the SBT process. PROTIP: You can simple stop/start the jetty container when you want to recompile.
 

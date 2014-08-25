@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngCookies', 'ngStorage',
+angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table'],
     function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider

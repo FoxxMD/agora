@@ -86,7 +86,6 @@
 		_initEvents : function() {
 			
 			var self = this;
-
 			Array.prototype.slice.call( this.menuItems ).forEach( function( el, i ) {
 				var trigger = el.querySelector( 'a' );
 				if( self.touch ) {
