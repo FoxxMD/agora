@@ -33,7 +33,7 @@ trait GenericRepo[T] extends SqlAccess {
   def get(id: Int) : Option[T]
   def getPaginated(pageNo: Long, pageSize: Long = 50): List[T]
   def getAll : List[T]
-  def update[U <: T with Persisted](obj: U, newObj: U) : T with Persisted
+  def update[U <: T with Persisted](obj: U, newObj: T) : T with Persisted
   def updateMutable[U <: T with Persisted](obj: U) : T with Persisted
   def create(obj: T) : T
   def delete(id: Int)
@@ -59,7 +59,7 @@ trait GenericMRepo[T] extends GenericRepo[T]{
   def get(id: Int) : Option[T with Persisted] = mapperDao.select(returnEntity, id)
   def getPaginated(pageNo: Long, pageSize: Long): List[T] = queryDao.query(QueryConfig.pagination(pageNo,pageSize), select from returnEntity)
   def getAll : List[T with Persisted] = queryDao.query(select from returnEntity)
-  def update[U <: T with Persisted](obj: U, newObj: U) : T with Persisted with Persisted = mapperDao.update(returnEntity, obj, newObj)
+  def update[U <: T with Persisted](obj: U, newObj: T) : T with Persisted with Persisted = mapperDao.update(returnEntity, obj, newObj)
   def updateMutable[U <: T with Persisted](obj: U) : T with Persisted with Persisted = mapperDao.update(returnEntity, obj)
   def create(obj: T) : T with Persisted = mapperDao.insert(returnEntity, obj)
   def delete(id: Int) = mapperDao.delete(returnEntity, id)
