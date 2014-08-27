@@ -32,8 +32,8 @@ case class Tournament(bracketType: BracketType.Value,
                  id: Int = 0) extends Inviteable with Requestable {
 }
 
-case class TournamentDetails(tournament: Tournament, name: Option[String], gamePlayed: Option[String], description: Option[String], rules: Option[String], prizes: Option[String],
-                        streams: Option[String], servers: Option[String], timeStart: DateTime, timeEnd: DateTime)
+case class TournamentDetails(tournament: Tournament, name: Option[String] = None, gamePlayed: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
+                        streams: Option[String] = None, servers: Option[String] = None, timeStart: DateTime, timeEnd: DateTime)
 {
 
 }

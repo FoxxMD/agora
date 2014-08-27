@@ -5,8 +5,8 @@ import com.googlecode.mapperdao.jdbc.JdbcMap
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
 import com.googlecode.mapperdao.{Entity, Persisted, QueryConfig}
 import dao.Daos._
-import dao.{NonActiveUserEntity, NonActiveUserIdentityEntity, UserEntity}
-import models.{User, UserIdentity}
+import dao._
+import models._
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -102,6 +102,30 @@ class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericM
   def getByEmail(email: String):Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.email === email)
   def getByHandle(handle: String): Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.globalHandle === handle)
   //def getByEvent(id: Int): List[User] = queryDao.query(select from EventUserEntity where EventUserEntity.event.id === id)
+}
+
+trait TeamRepo extends GenericMRepo[Team]
+{
+  def getByName(name: String): Option[Team]
+}
+class TeamRepository(returnEntity: Entity[Int,Persisted, Team]) extends GenericMRepository[Team](returnEntity) with TeamRepo{
+  def getByName(name: String): Option[Team] = queryDao.querySingleResult(select from TeamEntity where TeamEntity.name === name)
+}
+
+trait GameRepo extends GenericMRepo[Game]
+{
+  def getByName(name: String): Option[Game]
+}
+class GameRepository(returnEntity: Entity[Int,Persisted, Game]) extends GenericMRepository[Game](returnEntity) with GameRepo{
+  def getByName(name: String): Option[Game] = queryDao.querySingleResult(select from GameEntity where GameEntity.name === name)
+}
+
+trait EventRepo extends GenericMRepo[Event]
+{
+  def getByName(name: String): Option[Event]
+}
+class EventRepository(returnEntity: Entity[Int,Persisted, Event]) extends GenericMRepository[Event](returnEntity) with EventRepo{
+  def getByName(name: String): Option[Event] = queryDao.querySingleResult(select from EventEntity where EventEntity.name === name)
 }
 
 trait NonActiveUserIdentityRepo extends GenericMRepo[UserIdentity]

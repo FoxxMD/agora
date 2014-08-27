@@ -1,72 +1,25 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.GenericMRepo
+import com.esports.gtplatform.business.{GenericMRepo, UserRepo}
 import com.googlecode.mapperdao.jdbc.Transaction
-import models.{EventUser, Event}
-import org.scalatra.{Ok, NotImplemented}
+import models.JoinType.JoinType
+import models._
+import org.scalatra.{BadRequest, NotImplemented, Ok}
 
 /**
  * Created by Matthew on 8/22/2014.
  */
-class EventController(implicit val bindingModule: BindingModule) extends APIController {
-
-  private[this] val eventRepo = inject[GenericMRepo[Event]]
-
+class EventController(implicit val bindingModule: BindingModule) extends APIController with EventControllerT {
 
   get("/") {
-    NotImplemented
-  }
-  get("/:id") {
-    val eventId = params.getOrElse("id", halt(401, "Missing event id"))
-
-    eventRepo.get(eventId.toInt)
-    match {
-      case Some(e: Event) => Ok(e)
-      case None => halt(401, "An event with that Id does not exist.")
-    }
-  }
-  get("/:id/teams") {
-    // Not sure I want to implement this.
-    // It doesn't make business sense to have non-tangible teams have a relationship to a tangle event.
-    NotImplemented
-  }
-  get("/:id/users") {
-    val eventId = params.getOrElse("id", halt(401, "Missing event id"))
-
-    eventRepo.get(eventId.toInt) match {
-      case Some(e: Event) =>
-
-        params.get("pageNo") match {
-          case Some(p: String) =>
-            Ok(e.users.slice(pageSize * (p.toInt - 1), pageSize * p.toInt))
-          case None =>
-            Ok(e.users.take(pageSize))
-        }
-
-      case None => halt(401, "An event with that Id does not exist.")
-    }
-  }
-
-  get("/:id/tournaments"){
-    val eventId = params.getOrElse("id", halt(401, "Missing event id"))
-
-    eventRepo.get(eventId.toInt) match {
-      case Some(e: Event) =>
-
-        params.get("pageNo") match {
-          case Some(p: String) =>
-            Ok(e.tournaments)
-          case None =>
-            Ok(e.tournaments)
-        }
-
-      case None => halt(401, "An event with that Id does not exist.")
-    }
+    Ok(eventRepo.getPaginated(params.getOrElse("page", "1").toInt))
   }
   post("/") {
     auth()
     val newEvent = parsedBody.extract[Event]
+    if (eventRepo.getByName(newEvent.name).isDefined)
+      halt(400, "Event with this name already exists.")
     val userEvent = EventUser(newEvent, user, isPresent = false, isAdmin = true, isModerator = true)
     val tx = inject[Transaction]
     val eventUserRepo = inject[GenericMRepo[EventUser]]
@@ -77,4 +30,79 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     Ok(inserted.event.id)
   }
 
+  get("/:id") {
+    Ok(requestEvent.get)
+  }
+  post("/:id") {
+    auth()
+    eventRepo.update(requestEvent.get, requestEvent.get.copy(name = parsedBody.\("name").extract[String],
+      eventType = parsedBody.\("eventType").extract[JoinType]))
+  }
+  get("/:id/teams") {
+    // Not sure I want to implement this.
+    // It doesn't make business sense to have non-tangible teams have a relationship to a tangle event.
+    NotImplemented
+  }
+  get("/:id/users") {
+    params.get("pageNo") match {
+      case Some(p: String) =>
+        Ok(requestEvent.get.users.slice(pageSize * (p.toInt - 1), pageSize * p.toInt))
+      case None =>
+        Ok(requestEvent.get.users.take(pageSize))
+    }
+  }
+  post("/:id/users") {
+    val userId = parsedBody.\("userId").extractOpt[Int]
+    auth()
+    if (requestEvent.get.eventType == JoinType.Invite && user.role != "admin")
+      halt(403, "This event is invite only. In order to join a moderator must invite you or accept your join request.")
+    userId match {
+      case Some(uid: Int) =>
+        if (user.role != "admin")
+          halt(403, "You do not have permission to add users to this event.")
+        val userRepo = inject[UserRepo]
+        userRepo.get(uid) match {
+          case Some(u: User) =>
+            eventRepo.update(requestEvent.get, requestEvent.get.addUser(u))
+            Ok()
+          case None =>
+            BadRequest("No user exists with that Id")
+        }
+      case None =>
+        eventRepo.update(requestEvent.get, requestEvent.get.addUser(user))
+        Ok()
+    }
+  }
+  delete("/:id/users") {
+    val userId = parsedBody.\("userId").extractOpt[Int]
+    auth()
+    userId match {
+      case Some(uid: Int) =>
+        if (user.role != "admin" || !requestEvent.get.isModerator(user))
+          halt(403, "You do not have permission to remove users to this event.")
+        val userRepo = inject[UserRepo]
+        userRepo.get(uid) match {
+          case Some(u: User) =>
+            eventRepo.update(requestEvent.get, requestEvent.get.removeUser(u))
+            Ok()
+          case None =>
+            BadRequest("No user exists with that Id")
+        }
+      case None =>
+        eventRepo.update(requestEvent.get, requestEvent.get.removeUser(user))
+        Ok()
+    }
+  }
+
+  get("/:id/tournaments") {
+    params.get("pageNo") match {
+      case Some(p: String) =>
+        Ok(requestEvent.get.tournaments)
+      case None =>
+        Ok(requestEvent.get.tournaments)
+    }
+  }
+  post("/:id/tournaments") {
+    NotImplemented
+  }
 }

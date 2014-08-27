@@ -27,8 +27,10 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   //TODO move database configuration and init into this module
   module.bind[SqlAccess] toSingle new SqlAccessRepository
   module.bind[GenericMRepo[Game]] toSingle new GenericMRepository[Game](GameEntity)
+  module.bind[GameRepo] toSingle new GameRepository(GameEntity)
   module.bind[GenericMRepo[UserIdentity]] toSingle new GenericMRepository[UserIdentity](UserIdentityEntity)
   module.bind[GenericMRepo[Team]] toSingle new GenericMRepository[Team](TeamEntity)
+  module.bind[TeamRepo] toSingle new TeamRepository(TeamEntity)
   module.bind[GenericMRepo[TeamUser]] toSingle new GenericMRepository[TeamUser](TeamUserEntity)
   module.bind[GenericMRepo[User]] toSingle new GenericMRepository[User](UserEntity)
   module.bind[UserRepo] toSingle new UserRepository(UserEntity)

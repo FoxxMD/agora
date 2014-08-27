@@ -3,11 +3,12 @@ package com.esports.gtplatform.controllers
 import com.escalatesoft.subcut.inject.Injectable
 import com.esports.gtplatform.business._
 import com.fasterxml.jackson.core.JsonParseException
+import com.googlecode.mapperdao.Persisted
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 import org.slf4j.LoggerFactory
-import models.User
+import models._
 
 /**
  * Created by Matthew on 7/24/2014.
@@ -19,6 +20,14 @@ import models.User
 * In this file we are building the characteristics that we will make up a controller. */
 
 trait BasicServletWithLogging extends ScalatraServlet {
+
+  def toInt(s: String): Option[Int] = {
+    try {
+      Some(s.toInt)
+    } catch {
+      case e: Exception => None
+    }
+  }
 
   val logger = LoggerFactory.getLogger(getClass)
   val pageSize = 300
@@ -46,7 +55,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
   //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
   //Eventually will have to add support for all Enumeration types used.
-  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers  ++ org.json4s.ext.JodaTimeSerializers.all
+  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers ++ org.json4s.ext.JodaTimeSerializers.all
   before() {
 
     //Lets the controller know to format the response in json so we don't have to specify on each action.
@@ -63,7 +72,11 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 */
 trait StandardController extends RESTController with AuthenticationSupport with CorsSupport {
   var authUser: Option[User] = None
-  def doAuthCheck():Unit = None//halt(401)
+
+  def doAuthCheck(): Unit = None
+
+  var idType: String = ""
+  var paramId: Option[Int] = None
 
   before() {
     if (request.getRemoteHost != "127.0.0.1") {
@@ -71,7 +84,11 @@ trait StandardController extends RESTController with AuthenticationSupport with 
       logger.info("Non-Origin request from " + request.getRemoteHost)
       doAuthCheck()
     }
-
+  }
+  before("/:id/?*") {
+    val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+    val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+    paramId = Some(i)
   }
 }
 
@@ -81,6 +98,7 @@ trait StandardWithAuth extends StandardController {
     auth()
   }
 }
+
 //Provide support for user-aware auth on every action
 trait StandardWithOptAuth extends StandardController {
   before() {
@@ -94,3 +112,42 @@ trait APIController extends RESTController with StandardController {
   }
 }
 
+trait TeamControllerT extends StandardController {
+  idType = "Team"
+  val teamRepo = inject[TeamRepo]
+  var requestTeam: Option[Team with Persisted] = None
+
+  before("/:id/?*") {
+    teamRepo.get(paramId.get) match {
+      case Some(t: Team with Persisted) =>
+        requestTeam = Some(t)
+      case None => halt(400, "No team exists with the Id " + paramId.get)
+    }
+  }
+}
+trait GameControllerT extends StandardController {
+  idType = "Game"
+  val gameRepo = inject[GameRepo]
+  var requestGame: Option[Game with Persisted] = None
+
+  before("/:id/?*") {
+    gameRepo.get(paramId.get) match {
+      case Some(t: Game with Persisted) =>
+        requestGame = Some(t)
+      case None => halt(400, "No game exists with the Id " + paramId.get)
+    }
+  }
+}
+trait EventControllerT extends StandardController {
+  idType = "Event"
+  val eventRepo = inject[EventRepo]
+  var requestEvent: Option[Event with Persisted] = None
+
+  before("/:id/?*") {
+    eventRepo.get(paramId.get) match {
+      case Some(t: Event with Persisted) =>
+        requestEvent = Some(t)
+      case None => halt(400, "No event exists with the Id " + paramId.get)
+    }
+  }
+}
