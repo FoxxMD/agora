@@ -150,6 +150,7 @@ module.exports = function (grunt) {
                             'images/**',
                             'fonts/**',
                             'js/dev/**',
+                            'css/dev/**',
                             'index.html'],
                         dest: '<%= yeoman.dev %>/'
                     }
@@ -178,7 +179,10 @@ module.exports = function (grunt) {
             target: {
                 src: '<%= yeoman.app %>/index.html'
             },
-            cwd: '<%= yeoman.app %>'
+            cwd: '<%= yeoman.app %>',
+            exclude:{
+                src:['<%= yeoman.app %>/lib/bootstrap-css/js/bootstrap.min.js']
+        }
         },
         useminPrepare: {
             dev: {
@@ -295,6 +299,7 @@ module.exports = function (grunt) {
             'copy:dev',
             'ngAnnotate:dev',
             'useminPrepare:dev',
+            'concat:generated',
             'cssmin:generated',
             'usemin'
         ])

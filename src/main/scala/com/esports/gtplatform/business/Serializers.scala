@@ -74,6 +74,8 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       case _ => false }
   case t : Team =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
+    /*merge
+      render("captain" -> t.getCaptain.globalHandle)*/
     Extraction.decompose(t.copy()) removeField {
       case ("Team", _) => true
       case _ => false }

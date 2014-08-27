@@ -35,13 +35,14 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/:id") {
     auth()
+    if(!requestEvent.get.isAdmin(user) || user.role != "admin")
+      halt(403, "You do not have permission to edit this event.")
+
     eventRepo.update(requestEvent.get, requestEvent.get.copy(name = parsedBody.\("name").extract[String],
       eventType = parsedBody.\("eventType").extract[JoinType]))
   }
   get("/:id/teams") {
-    // Not sure I want to implement this.
-    // It doesn't make business sense to have non-tangible teams have a relationship to a tangle event.
-    NotImplemented
+    Ok(requestEvent.get.tournaments.flatMap(x => x.teams).map(t => t.team))
   }
   get("/:id/users") {
     params.get("pageNo") match {

@@ -85,11 +85,6 @@ trait StandardController extends RESTController with AuthenticationSupport with 
       doAuthCheck()
     }
   }
-  before("/:id/?*") {
-    val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
-    val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
-    paramId = Some(i)
-  }
 }
 
 //Add mandatory authentication on every action
@@ -116,7 +111,11 @@ trait TeamControllerT extends StandardController {
   idType = "Team"
   val teamRepo = inject[TeamRepo]
   var requestTeam: Option[Team with Persisted] = None
-
+  before("/:id/?*") {
+    val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+    val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+    paramId = Some(i)
+  }
   before("/:id/?*") {
     teamRepo.get(paramId.get) match {
       case Some(t: Team with Persisted) =>
@@ -129,7 +128,11 @@ trait GameControllerT extends StandardController {
   idType = "Game"
   val gameRepo = inject[GameRepo]
   var requestGame: Option[Game with Persisted] = None
-
+  before("/:id/?*") {
+    val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+    val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+    paramId = Some(i)
+  }
   before("/:id/?*") {
     gameRepo.get(paramId.get) match {
       case Some(t: Game with Persisted) =>
@@ -142,7 +145,11 @@ trait EventControllerT extends StandardController {
   idType = "Event"
   val eventRepo = inject[EventRepo]
   var requestEvent: Option[Event with Persisted] = None
-
+  before("/:id/?*") {
+    val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+    val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+    paramId = Some(i)
+  }
   before("/:id/?*") {
     eventRepo.get(paramId.get) match {
       case Some(t: Event with Persisted) =>

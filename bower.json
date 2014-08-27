@@ -13,7 +13,6 @@
     "angular-animate": "~1.2.22",
     "angular-ui-utils": "bower",
     "angular-smart-table": "*",
-    "bootstrap-css": "~3.2.0",
     "flatstrap3": "~3.0.3"
   },
   "devDependencies": {

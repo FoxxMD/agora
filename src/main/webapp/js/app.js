@@ -22,6 +22,13 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl: '/views/home/home.html',
                 parent: 'globalSkeleton'
             })
+            .state('globalSkeleton.teams', {
+                url:'/teams',
+                template:'<teams></teams>',
+                data: {
+                    teamType:'global'
+                }
+            })
             .state('eventSkeleton', {
                 templateUrl: '/views/shared/skeleton.html',
                 url: '/event/{eventId:[0-9]}',
@@ -42,8 +49,10 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
             })
             .state('eventSkeleton.EventTeams',{
                 url:'/teams',
-                parent: 'eventSkeleton',
-                templateUrl:'/views/teams/teamHome.html'
+                template:'<teams></teams>',
+                data: {
+                    teamType:'event'
+                }
             });
 
         //Account related states

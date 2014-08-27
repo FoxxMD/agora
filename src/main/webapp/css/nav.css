@@ -15,7 +15,7 @@ body,
 
 .st-content {
   overflow-y: scroll;
-  background: white;
+  background: #494949;
   /*background: #f3efe0;*/
 }
 [mainctrl].ng-scope{
