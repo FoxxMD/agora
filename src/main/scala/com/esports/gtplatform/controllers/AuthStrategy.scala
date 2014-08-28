@@ -77,7 +77,7 @@ trait AuthenticationSupport extends ScentrySupport[User] {
     scentry.authenticate("Token", "Api")
     scentry.authenticate("Api")
     if (!scentry.isAuthenticated)
-      Unauthorized()
+      halt(401,"Unauthorized request.")
 
   }
 

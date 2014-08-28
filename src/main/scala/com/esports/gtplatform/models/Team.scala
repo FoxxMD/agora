@@ -11,7 +11,7 @@ import org.joda.time.DateTime
 
 case class Team(
             name: String,
-            createdDate: DateTime,
+            createdDate: DateTime = DateTime.now(),
             games: List[Game],
             teamPlayers: List[TeamUser] = List(),
             id: Int = 0) extends Invitee with Inviteable with Requestable with TeamT {

@@ -16,10 +16,10 @@ class TeamController(implicit val bindingModule: BindingModule) extends APIContr
     Ok(teams)
   }
   post("/") {
-    auth()
+   auth()
     val newteam = parsedBody.extract[Team]
     val teamUserRepo = inject[GenericMRepo[TeamUser]]
-    var userFT: User = user
+    var userFT: Option[User] = None
 
     if(teamRepo.getByName(newteam.name).isDefined)
       halt(400,"Team name is already in use!")
@@ -31,15 +31,16 @@ class TeamController(implicit val bindingModule: BindingModule) extends APIContr
           val thisUser = personRepo.get(a.toInt)
           if (thisUser == None)
             halt(400, "No user found with that Id")
-          userFT = thisUser.get
+          userFT = thisUser
         } else
           halt(401)
       case None =>
+        userFT = Some(user)
     }
     val tx = inject[Transaction]
     val tid = tx { () =>
       val insertedTeam = teamRepo.create(newteam)
-      val tu = TeamUser(insertedTeam, userFT, isCaptain = true)
+      val tu = TeamUser(insertedTeam, userFT.get, isCaptain = true)
       teamUserRepo.create(tu)
       insertedTeam.id
     }

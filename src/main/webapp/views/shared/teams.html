@@ -1,12 +1,31 @@
 <div class="morph-button morph-button-inflow morph-button-inflow-1">
-    <button type="button"><h2 class="morph-clone" style="line-height: 70px;font-size: 1.5em; letter-spacing: 1px;">Create A New Team</h2></button>
+    <button type="button"><h2 class="morph-clone" style="line-height: 70px;font-size: 1.5em; letter-spacing: 1px;">
+        Create A New Team</h2></button>
     <div class="morph-content">
         <div>
             <div class="content-style-form content-style-form-4">
                 <h2 class="morph-clone">Create A New Team</h2>
 
-                        <label>Name</label><input class="form-control" type="text">
-                    <p><button class="btn btn-default">Create Team</button></p>
+                <form class="form morphingButtonForm" name="createTeamForm" ng-submit="teamsCtrl.tryCreateTeam()"
+                      novalidate>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group" show-errors>
+                                <h4>Choose A Team Name</h4>
+                                <input type="text" name="name" placeholder="Team Name" class="input-small form-control"
+                                       ng-model="teamsCtrl.createTeamData.name" required/>
+
+                                <p class="help-block" ng-show="createTeamForm.name.$error.required">A name is
+                                    required.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <h4>Select Games</h4>
+                            <team-games gamearray="teamsCtrl.createTeamData.games"></team-games>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </form>
                 </form>
             </div>
         </div>

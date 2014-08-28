@@ -125,7 +125,10 @@
 		else {
 			classie.addClass( this.el, 'open' );
 		}
-	}
+	};
+    UIMorphingButton.prototype.adjustHeight = function() {
+        this.el.style.height = this.contentEl.offsetHeight + 'px';
+    }
 
 	// add to global namespace
 	window.UIMorphingButton = UIMorphingButton;

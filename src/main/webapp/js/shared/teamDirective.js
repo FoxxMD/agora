@@ -4,13 +4,14 @@
 angular.module('gtfest')
     .directive('teams', teams);
 
-function teams(Teams, $state, $stateParams) {
+function teams(Teams, Games, $state, $stateParams, $timeout) {
     return {
         templateUrl:'views/shared/teams.html',
         restrict:'E',
         scope:'true',
         controllerAs:'teamsCtrl',
         controller: function(){
+            var that = this;
             this.teamCollection = [];
             if ($state.$current.includes.globalSkeleton) {
                 this.teamCollection = Teams.getTeams();
@@ -20,7 +21,21 @@ function teams(Teams, $state, $stateParams) {
             }
         },
         link: function(scope, elem, attrs){
-                new UIMorphingButton( $(elem).find('.morph-button')[0]);
+              var teamButton = new UIMorphingButton( $(elem).find('.morph-button')[0]);
+            scope.$on('adjustMorphHeight', function(){
+                $timeout(function(){
+                    teamButton.adjustHeight();
+                },0); //TODO turn morphing button into it's own directive
+            });
+            scope.teamsCtrl.tryCreateTeam = function(){
+                Teams.createTeam(scope.teamsCtrl.createTeamData).promise.then(function(tid){
+                    teamButton.toggle();
+                    scope.teamsCtrl.createTeamData = {};
+                    scope.teamsCtrl.createTeamData.games = [];
+                    scope.$broadcast('show-errors-reset');
+                    console.log(tid);
+                });
+            }
         }
     }
 }

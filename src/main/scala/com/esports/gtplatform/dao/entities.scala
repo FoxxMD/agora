@@ -59,7 +59,7 @@ object NonActiveUserEntity extends Entity[Int, SurrogateIntId, User]("nonactiveu
 }
 
 object UserPlatformProfileEntity extends Entity[Int, NoId, UserPlatformProfile]("userplatformprofile") { //some domain objects don't need a key as they are one-to-one and always attached
-  val user = manytoone(UserEntity) foreignkey "userId" to (_.user)
+  val user = manytoone(UserEntity) to (_.user)
   val platform = column("platform") to (platform => Platform.toString(platform.platform))
   val identifier = column("identifier") to (_.identifier)
 
