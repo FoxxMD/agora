@@ -1,1 +1,0 @@
-Requires >= PHP 5.5
