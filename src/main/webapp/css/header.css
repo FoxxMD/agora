@@ -34,6 +34,9 @@
 .cbp-af-header nav a.topLink {
     line-height: 200px;
 }
+.cbp-af-header nav a.topLink.active {
+    color: #02639d;
+}
 
 .cbp-af-header h1 {
     /*text-transform: uppercase;*/

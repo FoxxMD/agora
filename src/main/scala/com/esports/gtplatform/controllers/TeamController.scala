@@ -11,7 +11,7 @@ import org.scalatra.{BadRequest, Forbidden, Ok}
  * Created by Matthew on 7/29/2014.
  */
 class TeamController(implicit val bindingModule: BindingModule) extends APIController with TeamControllerT {
-  get("/") {
+  get("/?") {
     val teams = teamRepo.getPaginated(params.getOrElse("page", "1").toLong)
     Ok(teams)
   }

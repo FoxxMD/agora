@@ -9,8 +9,8 @@ angular.module('gtfest')
         this.getTeams = function (pageNo, eventId) {
             pageNo == undefined ? pageNo = 1 : pageNo;
             if (eventId !== undefined) {
-                var eventTeams = Restangular.service('teams', Restangular.one('event', eventId));
-                return eventTeams.getList({pageNo: pageNo}).$object;
+                var eventTeams = Restangular.service('teams', Restangular.one('events', eventId));
+                return eventTeams.getList({page: pageNo}).$object;
             }
             else {
                 return teams.getList({pageNo: pageNo}).$object;

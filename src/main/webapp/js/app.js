@@ -1,6 +1,6 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
-        'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table'],
+        'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar'],
     function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -14,13 +14,17 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 parent: 'index',
                 controller:'GlobalController as globalCtrl'
             })
-            .state('portal', {
+            .state('globalSkeleton.portal', {
                 url: '/{opt:(?:login|register)}',
                 params:{
                     opt: {value:null}
                 },
-                templateUrl: '/views/home/home.html',
-                parent: 'globalSkeleton'
+                templateUrl: '/views/global/home.html'
+            })
+            .state('globalSkeleton.events', {
+                url:'/events',
+                templateUrl:'/views/global/events.html',
+                controller:'EventsController as eventsCtrl'
             })
             .state('globalSkeleton.teams', {
                 url:'/teams',
@@ -35,6 +39,19 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 params:{
                     eventId: {}
                 },
+                resolve:{
+                    eventData: function(Events, $stateParams, $state, $q) {
+                        var deferred = $q.defer();
+                        Events.getEvent($stateParams.eventId).then(function(response)
+                        {
+                            return deferred.resolve(response);
+                        }, function(error){
+                            $state.go('portal');
+                            return deferred.reject();
+                        });
+                        return deferred.promise();
+                    }
+                },
                 abstract: true,
                 controller: 'EventController as eventCtrl',
                 parent: 'index'
@@ -47,7 +64,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 },
                 templateUrl: '/views/event/eventHome.html'
             })
-            .state('eventSkeleton.EventTeams',{
+            .state('eventSkeleton.teams',{
                 url:'/teams',
                 template:'<teams></teams>',
                 data: {

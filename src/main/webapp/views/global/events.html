@@ -1,0 +1,22 @@
+<table st-table="eventsCollection" class="table table-striped">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Place</th>
+        <th>Time</th>
+        <th># of Tournaments</th>
+        <th># of Users</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in eventsCtrl.eventsCollection">
+        <td>{{row.name}}</td>
+        <td>{{row.eventType}}</td>
+        <td>{{row.details.city}}</td>
+        <td>{{row.details.timeStart}}</td>
+        <td>{{row.tournaments.length}}</td>
+        <td>{{row.users.length}}</td>
+    </tr>
+    </tbody>
+</table>

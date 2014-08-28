@@ -3,6 +3,7 @@ package com.esports.gtplatform.business
 import com.googlecode.mapperdao.{Entity, Persisted}
 import models._
 import org.json4s.JsonDSL._
+import org.json4s.jackson.JsonMethods._
 import org.json4s._
 /**
  * Created by Matthew on 7/31/2014.
@@ -76,7 +77,8 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
     /*merge
       render("captain" -> t.getCaptain.globalHandle)*/
-    Extraction.decompose(t.copy()) removeField {
+    Extraction.decompose(t.copy()) merge
+      render("captain" -> t.getCaptain.globalHandle) removeField {
       case ("Team", _) => true
       case _ => false }
   case e: Event =>

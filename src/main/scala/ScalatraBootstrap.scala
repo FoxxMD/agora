@@ -37,6 +37,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   //Created a separate set of tables/repositories for non-confirmed users.
   module.bind[NonActiveUserIdentityRepo] toSingle new NonActiveUserIdentityRepository
   module.bind[NonActiveUserRepo] toSingle new NonActiveUserRepository
+  module.bind[EventRepo] toSingle new EventRepository(EventEntity)
 
   module.bind[Transaction] toSingle { Transaction.default(Transaction.transactionManager(jdbc)) }
     }
@@ -57,6 +58,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
     context.mount(new GameController,"/api/games")
     context.mount(new TeamController,"/api/teams")
     context.mount(new UserController,"/api/users")
+    context.mount(new EventController,"/api/events")
 
   }
   

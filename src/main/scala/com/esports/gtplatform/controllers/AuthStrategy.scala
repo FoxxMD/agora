@@ -215,7 +215,6 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
 
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = {
     val uie = UserIdentityEntity
-    logger.info("attempting authentication")
     val maybeUser = queryDao.querySingleResult(select from uie where uie.providerId === "userpass" and uie.userId === login)
 
     maybeUser match {
