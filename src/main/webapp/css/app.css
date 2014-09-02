@@ -142,3 +142,31 @@ fieldset[disabled] {
   background-color: #525252;
   opacity: 1;
 }
+#loading-bar .bar {
+  background: #2ECC71;
+  height: 3px;
+}
+#loading-bar .peg {
+  height: 3px;
+}
+.st-content .has-warning input {
+  border-color: #8a6d3b;
+}
+.st-content .has-warning input:focus {
+  border-color: #66512c;
+}
+.st-content .has-error input {
+  border-color: #a94442;
+}
+.st-content .has-error input:focus {
+  border-color: #843534;
+}
+.st-content .has-success input {
+  border-color: #3c763d;
+}
+.st-content .has-success input:focus {
+  border-color: #2b542c;
+}
+.eventButton .morph-button-inflow-1 {
+  width: 600px;
+}

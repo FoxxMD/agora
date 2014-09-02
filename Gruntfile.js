@@ -55,24 +55,28 @@ module.exports = function (grunt) {
                     paths: ['<%= yeoman.app %>/less/']
                 },*/
                 files: {
-                    '<%= yeoman.app %>/css/app.css': '<%= yeoman.app %>/less/app.less',
-                    '<%= yeoman.app %>/css/flat.css': '<%= yeoman.app %>/less/flat-ui-pro.less'
+                    '<%= yeoman.app %>/css/app.css': '<%= yeoman.app %>/less/app.less'
                 }
             }
         },
         watch: {
             options: {
                 livereload: 35729
+
+                //debounceDelay: 600
             },
             src: {
                 files: [
-                    '<%= yeoman.app %>/less/**/*',
                     '<%= yeoman.app %>/*.html',
                     '<%= yeoman.app %>/css/**/*',
+                    '!<%= yeoman.app %>/css/app.css',
                     '<%= yeoman.app %>/js/**/*',
                     '<%= yeoman.app %>/views/**/*'
-                ],
-                tasks: ['refresh']
+                ]
+            },
+            pre: {
+                files:['<%= yeoman.app %>/less/**/*'],
+                tasks:['less:dev']
             }
         },
         connect: {
@@ -96,15 +100,15 @@ module.exports = function (grunt) {
             ,
             livereload: {
                 options: {
-                    open: true,
+                    open: 'gtgamefest.com:9000',
                     base: [
-                        '<%= yeoman.dev %>'
+                        '<%= yeoman.app %>'
                     ],
                     middleware: function (connect) {
                         return [
                             proxySnippet,
                             modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.gif\\.jpg$ /index.html [L]']),
-                            connect.static(require('path').resolve('src/main/webapp/build/dev'))
+                            connect.static(require('path').resolve('src/main/webapp/'))
                         ];
                     }
                 }
@@ -132,9 +136,9 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= yeoman.app %>',
                         src: [
-                            '**/views',
-                            '**/images',
-                            '**/fonts',
+                            'views/**',
+                            'images/**',
+                            'fonts/**',
                             'index.html'],
                         dest: '<%= yeoman.dist %>/'
                     }
@@ -149,9 +153,9 @@ module.exports = function (grunt) {
                             'views/**',
                             'images/**',
                             'fonts/**',
-                            'js/dev/**',
-                            'css/dev/**',
-                            'index.html'],
+                            'css/**',
+                            'index.html',
+                            'js/gtresources/**'],
                         dest: '<%= yeoman.dev %>/'
                     }
                 ]
@@ -202,20 +206,20 @@ module.exports = function (grunt) {
         usemin:{
             'dev-html':{
                 options:{
-                    assetsDirs:['<%= yeoman.dev %>'],
+                    assetsDirs:['<%= yeoman.dist %>'],
                     type:'html'
                 },
                 files:{
-                    src:['<%= yeoman.dev %>/index.html']
+                    src:['<%= yeoman.dist %>/index.html']
                 }
             },
             'dev-css':{
                 options:{
-                    assetsDirs:['<%= yeoman.dev %>'],
+                    assetsDirs:['<%= yeoman.dist %>'],
                     type:'css'
                 },
                 files:{
-                    src:['<%= yeoman.dev %>/styles/**.css']
+                    src:['<%= yeoman.dist %>/styles/**.css']
                 }
             }
         },
@@ -226,7 +230,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= yeoman.app %>/js/',
                         src: ['**/*.js', '!**/gtresources/**'],
-                        dest: '<%= yeoman.dev %>/js/'
+                        dest: '<%= yeoman.app %>/js/'
                     }
                 ]
             },
@@ -244,64 +248,31 @@ module.exports = function (grunt) {
     });
     var modRewrite = require('connect-modrewrite');
 
-    grunt.registerTask('server', function (target) {
-        if (target === 'dev') {
-            return  grunt.task.run([
-                'clean:dev',
-                'less:dev',
-                'wiredep',
-                'ngAnnotate:dev',
-                'useminPrepare:dev',
-                'concat:generated',
-                'cssmin:generated',
-                'uglify:generated',
-                'copy:dev',
-                'usemin',
-                'configureProxies',
-                'connect:livereload',
-                'watch'
-            ]);
-        }
-        if (target === 'dist') {
-            return  grunt.task.run([
-                'less:dev',
-                'copy:dist',
-                'wiredep',
-                'ngAnnotate:dist',
-                'useminPrepare:dist',
-                'configureProxies',
-                'connect:dist',
-                'watch'
-            ]);
-        }
-    });
     grunt.registerTask('server:dev', function (target) {
             return  grunt.task.run([
-                'clean:dev',
                 'less:dev',
                 'wiredep',
                 'ngAnnotate:dev',
-                'useminPrepare:dev',
-                'concat:generated',
-                'cssmin:generated',
-                'uglify:generated',
-                'copy:dev',
-                'usemin',
                 'configureProxies',
                 'connect:livereload',
                 'watch'
             ]);
     });
-    //TODO make this more efficient
-    grunt.registerTask('refresh', function (target) {
-        grunt.task.run([
+    grunt.registerTask('server:dist', function (target) {
+        return  grunt.task.run([
+            'clean:dist',
             'less:dev',
-            'copy:dev',
-            'ngAnnotate:dev',
-            'useminPrepare:dev',
+            'wiredep',
+            'ngAnnotate:dist',
+            'copy:dist',
+            'useminPrepare:dist',
             'concat:generated',
             'cssmin:generated',
-            'usemin'
-        ])
-    })
+            'uglify:generated',
+            'usemin',
+            'configureProxies',
+            'connect:dist',
+            'watch'
+        ]);
+    });
 };

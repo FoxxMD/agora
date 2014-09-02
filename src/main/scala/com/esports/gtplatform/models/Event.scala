@@ -7,20 +7,22 @@ import org.joda.time.DateTime
 
 object JoinType extends Enumeration {
   type JoinType = Value
-  val Invite, Public = Value
+  val Invite, Public, Hidden = Value
 
   def toString(j: JoinType) = j match {
-    case Invite => "I"
-    case Public => "P"
+    case Invite => "Invite"
+    case Public => "Public"
+    case Hidden => "Hidden"
   }
 
   def fromString(j: String): JoinType = j match {
-    case "I" => Invite
-    case "P" => Public
+    case "Invite" => Invite
+    case "Public" => Public
+    case "Hidden" => Hidden
   }
 }
 
-case class Event(name: String, eventType: JoinType.Value, details: EventDetails, users: Set[EventUser],
+case class Event(name: String, joinType: JoinType.Value, details: EventDetails, users: Set[EventUser],
             tournaments: Set[Tournament],id: Int = 0) extends Inviteable with Requestable with MeetingT[Event] {
 
   private[this] val UserListLens: SimpleLens[Event, Set[EventUser]] = SimpleLens[Event](_.users)((e, newUsers) => e.copy(users = newUsers))
@@ -42,8 +44,8 @@ case class Event(name: String, eventType: JoinType.Value, details: EventDetails,
  * I would like to have description be Markdown, but will need to implement a system where the DB stores both the raw Markdown and a copy of the formatted HTML
  * so it doesn't have to be rendered on every page load.
  * */
-case class EventDetails(event: Event, address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
-                   streams: Option[String] = None, servers: Option[String] = None, timeStart: DateTime, timeEnd: DateTime)
+case class EventDetails(address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
+                   streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None)
 {
 
 }

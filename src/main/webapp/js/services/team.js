@@ -2,7 +2,7 @@
  * Created by Matthew on 8/22/2014.
  */
 angular.module('gtfest')
-    .service('Teams', function (Restangular, $q, $rootScope) {
+    .service('Teams', ["Restangular", "$q", "$rootScope", function (Restangular, $q, $rootScope) {
 
         var teams = Restangular.all('teams');
 
@@ -26,6 +26,6 @@ angular.module('gtfest')
                     $rootScope.$broadcast('notify', 'warning', response, 4000);
                     deffered.reject();
                 });
-            return deferred;
+            return deferred.promise;
         }
-    });
+    }]);

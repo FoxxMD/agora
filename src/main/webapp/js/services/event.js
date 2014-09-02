@@ -2,7 +2,7 @@
  * Created by Matthew on 8/28/2014.
  */
 angular.module('gtfest')
-    .service('Events', function (Restangular, $q, $rootScope) {
+    .service('Events', ["Restangular", "$q", "$rootScope", function (Restangular, $q, $rootScope) {
 
         var events = Restangular.all('events');
 
@@ -12,5 +12,13 @@ angular.module('gtfest')
 
         this.getEvent = function(eventId) {
            return events.one(eventId).get();
+        };
+        this.createEvent = function(event) {
+            var deferred = $q.defer();
+            events.post(event).then(function(response){
+                $rootScope.$broadcast('notify', 'notice', 'The event <strong>'+event.name+'</strong> has been created!', 4000);
+                deferred.resolve(response);
+            });
+            return deferred.promise;
         }
-    });
+    }]);

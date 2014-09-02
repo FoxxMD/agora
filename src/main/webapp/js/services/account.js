@@ -36,7 +36,7 @@ angular.module('gtfest')
             else {
                 deferred.reject();
             }
-            return deferred;
+            return deferred.promise;
         };
 
         this.initUser = function () {

@@ -24,3 +24,4 @@ function smartMenu($rootScope){
         }
     }
 }
+smartMenu.$inject = ["$rootScope"];

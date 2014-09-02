@@ -21,15 +21,9 @@ function teams(Teams, Games, $state, $stateParams, $timeout) {
             }
         },
         link: function(scope, elem, attrs){
-              var teamButton = new UIMorphingButton( $(elem).find('.morph-button')[0]);
-            scope.$on('adjustMorphHeight', function(){
-                $timeout(function(){
-                    teamButton.adjustHeight();
-                },0); //TODO turn morphing button into it's own directive
-            });
             scope.teamsCtrl.tryCreateTeam = function(){
-                Teams.createTeam(scope.teamsCtrl.createTeamData).promise.then(function(tid){
-                    teamButton.toggle();
+                Teams.createTeam(scope.teamsCtrl.createTeamData).then(function(tid){
+                    scope.$broadcast('toggleMorph');
                     scope.teamsCtrl.createTeamData = {};
                     scope.teamsCtrl.createTeamData.games = [];
                     scope.$broadcast('show-errors-reset');

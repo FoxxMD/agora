@@ -55,3 +55,4 @@ function sidebar($rootScope, $timeout, Account){
         }
     }
 }
+sidebar.$inject = ["$rootScope", "$timeout", "Account"];

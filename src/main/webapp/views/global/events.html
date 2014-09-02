@@ -1,3 +1,63 @@
+<div ng-cloak ng-show="cncCtrl.account.isLoggedIn()" class="buttonWrapper eventButton">
+    <morphing-button title="Create A New Event">
+        <form class="form morphingButtonForm" name="createEventForm" ng-submit="eventsCtrl.tryCreateEvent()"
+              novalidate>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group" show-errors>
+                        <h4>Choose An Event Name</h4>
+                        <input type="text" name="name" placeholder="Event Name" class="input-small form-control"
+                               ng-model="eventsCtrl.createEventData.name" required/>
+
+                        <p class="help-block" ng-show="createEventForm.name.$error.required">A name is
+                            required.</p>
+                    </div>
+                    <h4>Choose Visibility</h4>
+
+                    <div class="btn-group">
+                        <label class="btn btn-info" ng-model="eventsCtrl.createEventData.joinType" btn-radio="'P'">Public</label>
+                        <label class="btn btn-info" ng-model="eventsCtrl.createEventData.joinType" btn-radio="'I'">Invite Only</label>
+                        <label class="btn btn-info" ng-model="eventsCtrl.createEventData.joinType" btn-radio="'H'">Hidden</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <h4>Choose a Start Date</h4>
+                    <p class="input-group">
+                        <input placeholder="TBD" type="text" datepicker-popup="{{eventsCtrl.format}}"
+                               show-button-bar="true"
+                               datepicker-append-to-body="true" class="form-control"
+                               max="eventsCtrl.createEventData.details.timeStop"
+                               ng-model="eventsCtrl.createEventData.details.timeStart"
+                               is-open="eventsCtrl.startOpened" ng-required="true" close-text="Close"/>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="eventsCtrl.openStartTime($event)"><i
+                        class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+                    </p>
+                    <h4>Choose an End Date</h4>
+                    <p class="input-group">
+                        <input placeholder="TBD" type="text" class="form-control"
+                               datepicker-popup="{{eventsCtrl.format}}" show-button-bar="true"
+                               datepicker-append-to-body="true"
+                               min="eventsCtrl.createEventData.details.timeStart"
+                               ng-model="eventsCtrl.createEventData.details.timeStop"
+                               is-open="eventsCtrl.stopOpened"
+                               ng-required="true" close-text="Close"/>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="eventsCtrl.openStopTime($event)"><i
+                        class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+                    </p>
+                </div>
+            </div>
+            <div class="row" style="margin-top:15px;">
+                <div class="col-md-12">
+            <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        </form>
+    </morphing-button>
+</div>
 <table st-table="eventsCollection" class="table table-striped">
     <thead>
     <tr>
@@ -12,11 +72,11 @@
     <tbody>
     <tr ng-repeat="row in eventsCtrl.eventsCollection">
         <td>{{row.name}}</td>
-        <td>{{row.eventType}}</td>
+        <td>{{row.joinType}}</td>
         <td>{{row.details.city}}</td>
         <td>{{row.details.timeStart}}</td>
         <td>{{row.tournaments.length}}</td>
-        <td>{{row.users.length}}</td>
+        <td>{{row.users}}</td>
     </tr>
     </tbody>
 </table>

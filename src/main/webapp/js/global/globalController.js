@@ -10,3 +10,4 @@ function GlobalController($scope, Account){
     this.account = Account;
     $scope.headerName = "GameFest";
 }
+GlobalController.$inject = ["$scope", "Account"];

@@ -28,3 +28,4 @@ function register(Account, $stateParams) {
         }
     }
 }
+register.$inject = ["Account", "$stateParams"];

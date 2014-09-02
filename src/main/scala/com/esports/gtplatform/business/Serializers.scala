@@ -29,7 +29,7 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
     implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
       ("name" -> eu.event.name) ~
       ("id" -> eu.event.id) ~
-      ("date" -> Extraction.decompose(eu.event.details.timeStart)) ~
+      //("date" -> Extraction.decompose(eu.event.details.timeStart)) ~
       ("isPresent" -> eu.isPresent) ~
       ("resource" -> "/event/")
   case tt: TournamentTeam =>
@@ -84,7 +84,7 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
   case e: Event =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(e.copy()).replace(List("users"), e.users.size)
-    //TODO prevent users from being serialized. For basic info that is way too much data and should be its own request.
+    //TODO per request serialization of tournaments
   case t: Tournament =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(t.copy())

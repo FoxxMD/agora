@@ -1,11 +1,16 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar'],
-    function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
+    ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
                 abstract: true,
                 controller: 'CNCController as cncCtrl',
+                resolve: {
+                  UAccount: function(Account){
+                      return Account;
+                  }
+                },
                 template:'<div ui-view></div>'
             })
             .state('globalSkeleton', {
@@ -49,7 +54,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                             $state.go('portal');
                             return deferred.reject();
                         });
-                        return deferred.promise();
+                        return deferred.promise;
                     }
                 },
                 abstract: true,
@@ -98,9 +103,9 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
         $locationProvider.html5Mode(true);
         RestangularProvider.setBaseUrl('/api');
 
-    });
+    }]);
 
-angular.module('gtfest').run(function ($rootScope, Restangular, Account, $urlRouter, $location, $state) {
+angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state", function ($rootScope, Restangular, Account, $urlRouter, $location, $state) {
     Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
         if(response.status === 400) {
             $rootScope.$broadcast('notify','warning', response.data, 6000);
@@ -119,7 +124,7 @@ angular.module('gtfest').run(function ($rootScope, Restangular, Account, $urlRou
         }
     });
     //on startup let's try and get the user from memory
-    Account.validateToken().promise.then(function () {
+    Account.validateToken().then(function () {
         Account.initUser();
     });
-});
+}]);

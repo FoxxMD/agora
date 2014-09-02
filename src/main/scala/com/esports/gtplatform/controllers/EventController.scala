@@ -13,10 +13,12 @@ import org.scalatra.{BadRequest, NotImplemented, Ok}
 class EventController(implicit val bindingModule: BindingModule) extends APIController with EventControllerT {
 
   get("/") {
-    Ok(eventRepo.getPaginated(params.getOrElse("page", "1").toInt))
+    val events = eventRepo.getPaginated(params.getOrElse("page", "1").toInt)
+    Ok(events)
   }
   post("/") {
     auth()
+    val data = parsedBody
     val newEvent = parsedBody.extract[Event]
     if (eventRepo.getByName(newEvent.name).isDefined)
       halt(400, "Event with this name already exists.")
@@ -39,7 +41,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
       halt(403, "You do not have permission to edit this event.")
 
     eventRepo.update(requestEvent.get, requestEvent.get.copy(name = parsedBody.\("name").extract[String],
-      eventType = parsedBody.\("eventType").extract[JoinType]))
+      joinType = parsedBody.\("eventType").extract[JoinType]))
   }
   get("/:id/teams") {
     Ok(requestEvent.get.tournaments.flatMap(x => x.teams).map(t => t.team))
@@ -55,7 +57,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   post("/:id/users") {
     val userId = parsedBody.\("userId").extractOpt[Int]
     auth()
-    if (requestEvent.get.eventType == JoinType.Invite && user.role != "admin")
+    if (requestEvent.get.joinType == JoinType.Invite && user.role != "admin")
       halt(403, "This event is invite only. In order to join a moderator must invite you or accept your join request.")
     userId match {
       case Some(uid: Int) =>

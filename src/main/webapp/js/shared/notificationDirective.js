@@ -19,7 +19,8 @@ function notify($rootScope)
                     layout : 'bar',
                     effect : 'slidetop',
                     type : type, // notice, warning or error,
-                    ttl: time == undefined ? 6000 : time
+                    ttl: time == undefined ? 6000 : time,
+                    wrapper: document.body
                 });
                 // show the notification
                 notification.show();
@@ -27,3 +28,4 @@ function notify($rootScope)
         }
     }
 }
+notify.$inject = ["$rootScope"];

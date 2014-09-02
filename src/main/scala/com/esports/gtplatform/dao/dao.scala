@@ -24,7 +24,7 @@ object Daos {
 
 //Initialize components of MapperDao DAOs. Setup.mysql is the actual statement for opening a connection and forming objects.
 val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, TeamEntity, TeamUserEntity,
-  GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity,
+  GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity, EventDetailsEntity,
   EventUserEntity, UserIdentityEntity, NonActiveUserEntity, NonActiveUserIdentityEntity, InviteEntity)) //All entities must be listed here
 
   /*Still kind of figuring out how these totally work.
@@ -136,6 +136,6 @@ abstract class TournamentDao extends TransactionalSurrogateIntIdCRUD[Tournament]
 abstract class TournamentUserDao extends TransactionalSurrogateIntIdCRUD[TournamentUser] with SurrogateIntIdAll[TournamentUser]
 abstract class TournamentTeamDao extends TransactionalSurrogateIntIdCRUD[TournamentTeam] with SurrogateIntIdAll[TournamentTeam]
 abstract class EventDao extends TransactionalSurrogateIntIdCRUD[Event] with SurrogateIntIdAll[Event]
-//abstract class EventDetailsDao extends TransactionalSurrogateIntIdCRUD[EventDetails] with SurrogateIntIdAll[EventDetails]
+abstract class EventDetailsDao extends TransactionalSurrogateIntIdCRUD[EventDetails] with SurrogateIntIdAll[EventDetails]
 abstract class EventUserDao extends TransactionalSurrogateIntIdCRUD[EventUser] with SurrogateIntIdAll[EventUser]
 abstract class InviteEntityDao extends TransactionalSurrogateIntIdCRUD[InviteT] with SurrogateIntIdAll[InviteT]

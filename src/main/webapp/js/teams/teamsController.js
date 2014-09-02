@@ -10,3 +10,4 @@ function TeamsController($scope, Account){
     this.account = Account;
     $scope.headerName = "GameFest";
 }
+TeamsController.$inject = ["$scope", "Account"];

@@ -50,3 +50,4 @@ function animatedheader($state){
         }
     }
 }
+animatedheader.$inject = ["$state"];
