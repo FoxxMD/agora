@@ -35,18 +35,6 @@ CREATE TABLE `userplatformprofile` (
   CONSTRAINT `user_platform_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-CREATE TABLE `events` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `eventType` varchar(15) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `eventdetails_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `event_details_idx` (`eventdetails_id`),
-  CONSTRAINT `event_details` FOREIGN KEY (`eventdetails_id`) REFERENCES `eventdetails` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-
 CREATE TABLE `eventdetails` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `address` varchar(45) DEFAULT NULL,
@@ -60,6 +48,17 @@ CREATE TABLE `eventdetails` (
   `streams` longtext,
   `servers` longtext,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `eventType` varchar(15) NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `eventdetails_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `event_details_idx` (`eventdetails_id`),
+  CONSTRAINT `event_details` FOREIGN KEY (`eventdetails_id`) REFERENCES `eventdetails` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `games` (

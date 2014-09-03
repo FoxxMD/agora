@@ -67,7 +67,7 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
         //need to return clean objects with IDs or else mapperDao gets cranky
         val temp = returnedUserIdentity.copy()
         val newuserIdentity = temp.copy(user = temp.user.copy())
-        val realUserIdentRepo = inject[GenericRepo[UserIdentity]]
+        val realUserIdentRepo = inject[GenericMRepo[UserIdentity]]
 
         tx { () =>
 
