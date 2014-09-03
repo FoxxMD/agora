@@ -59,7 +59,7 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
   def confirmNewUser(token: String): (Boolean, Option[Int]) = {
     val row = sql.lowLevelQuery("select * from confirmationtokens where token=?", List(token))
 
-    row.map { m => m.int("userIdentId")} match {
+    row.map { m => m.apply("userIdentId") } match {
       case Some(t: Int) =>
         logger.info("User is confirming registration with valid token")
         val returnedUserIdentity = nonActiveUserIdentRepo.get(t).get
@@ -72,21 +72,28 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
         tx { () =>
 
           realUserIdentRepo.create(newuserIdentity)
+
+
+
           nonActiveUserIdentRepo.delete(returnedUserIdentity)
           nonActiveUserRepo.delete(inactiveUserId)
           sql.lowLevelUpdate("delete from confirmationtokens where token=?", List(token))
 
           logger.info("Successfully transferred user as confirmed.")
         }
-
         //check if they have an eventId associate (so they registered for a certain event)
-        row.map { e => e.int("eventId")} match {
+        row.map { e => e.apply("eventId")} match {
           case Some(e: Int) =>
             //TODO use UserService to register them for this event
+            logger.info("Event Id found with token, registering the user for an event. EventId:"+ e)
             (true, Option(e))
-          case _ => (true, None)
+          case _ =>
+            logger.info("No event Id found with token, not registering the user for an event.")
+            (true, None)
         }
-      case None => (false, None)
+      //case None => (false, None)
+      case _ => (false, None)
     }
+
   }
 }

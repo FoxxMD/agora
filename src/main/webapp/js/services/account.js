@@ -2,7 +2,7 @@
  * Created by Matthew on 8/6/2014.
  */
 angular.module('gtfest')
-    .service('Account', ['Restangular', '$localStorage', '$q', function (Restangular, $localStorage, $q) {
+    .service('Account', ['Restangular', '$localStorage', '$q','$rootScope', function (Restangular, $localStorage, $q, $rootScope) {
 
         var privUser = undefined;
         this.user = function () {
@@ -12,12 +12,15 @@ angular.module('gtfest')
             return privUser !== undefined
         };
         this.isAdmin = function () {
+            if(!privUser)
+                return false
             return privUser.role == "admin"
         };
         this.logout = function () {
             privUser = undefined;
             delete $localStorage.authToken;
             Restangular.setDefaultHeaders({});
+            $rootScope.$broadcast('accountStatusChange');
         };
 
         this.validateToken = function () {
@@ -43,6 +46,7 @@ angular.module('gtfest')
             var deferred = $q.defer();
             Restangular.all('users').one('me').get().then(function (returnedUser) {
                 privUser = returnedUser.plain();
+                $rootScope.$broadcast('accountStatusChange');
                 deferred.resolve();
             });
             return deferred;

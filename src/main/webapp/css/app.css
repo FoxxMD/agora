@@ -170,3 +170,6 @@ fieldset[disabled] {
 .eventButton .morph-button-inflow-1 {
   width: 600px;
 }
+.smartTable tr.linkMask {
+  cursor: pointer;
+}

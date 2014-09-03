@@ -7,50 +7,49 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 abstract: true,
                 controller: 'CNCController as cncCtrl',
                 resolve: {
-                  UAccount: function(Account){
-                      return Account;
-                  }
+                    UAccount: function (Account) {
+                        return Account;
+                    }
                 },
-                template:'<div ui-view></div>'
+                template: '<div ui-view></div>'
             })
             .state('globalSkeleton', {
                 templateUrl: '/views/shared/skeleton.html',
                 abstract: true,
                 parent: 'index',
-                controller:'GlobalController as globalCtrl'
+                controller: 'GlobalController as globalCtrl',
             })
             .state('globalSkeleton.portal', {
                 url: '/{opt:(?:login|register)}',
-                params:{
-                    opt: {value:null}
+                params: {
+                    opt: {value: null}
                 },
                 templateUrl: '/views/global/home.html'
             })
             .state('globalSkeleton.events', {
-                url:'/events',
-                templateUrl:'/views/global/events.html',
-                controller:'EventsController as eventsCtrl'
+                url: '/events',
+                templateUrl: '/views/global/events.html',
+                controller: 'EventsController as eventsCtrl'
             })
             .state('globalSkeleton.teams', {
-                url:'/teams',
-                template:'<teams></teams>',
+                url: '/teams',
+                template: '<teams></teams>',
                 data: {
-                    teamType:'global'
+                    teamType: 'global'
                 }
             })
             .state('eventSkeleton', {
                 templateUrl: '/views/shared/skeleton.html',
                 url: '/event/{eventId:[0-9]}',
-                params:{
+                params: {
                     eventId: {}
                 },
-                resolve:{
-                    eventData: function(Events, $stateParams, $state, $q) {
+                resolve: {
+                    eventData: function (Events, $stateParams, $state, $q) {
                         var deferred = $q.defer();
-                        Events.getEvent($stateParams.eventId).then(function(response)
-                        {
+                        Events.getEvent($stateParams.eventId).then(function (response) {
                             return deferred.resolve(response);
-                        }, function(error){
+                        }, function (error) {
                             $state.go('portal');
                             return deferred.reject();
                         });
@@ -62,44 +61,44 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 parent: 'index'
             })
             .state('eventSkeleton.event', {
-                url:'/{opt:(?:login|register)}',
-                params:{
-                    opt: {value:null},
+                url: '/{opt:(?:login|register)}',
+                params: {
+                    opt: {value: null},
                     eventId: {}
                 },
                 templateUrl: '/views/event/eventHome.html'
             })
-            .state('eventSkeleton.teams',{
-                url:'/teams',
-                template:'<teams></teams>',
+            .state('eventSkeleton.teams', {
+                url: '/teams',
+                template: '<teams></teams>',
                 data: {
-                    teamType:'event'
+                    teamType: 'event'
                 }
             });
 
         //Account related states
         $stateProvider
-            .state('registrationConfirm',{
-                url:'/confirmRegistration?token',
-                params:{
+            .state('registrationConfirm', {
+                url: '/confirmRegistration?token',
+                params: {
                     token: {}
                 },
-                controller: function($scope, Account, $stateParams,$location){
-                    Account.confirmRegistration($stateParams.token).then(function(response){
-                        if(response !== undefined)
+                controller: function ($rootScope, Account, $stateParams, $state, $location) {
+                    Account.confirmRegistration($stateParams.token).then(function (response) {
+                        $rootScope.$broadcast('notify', 'notice', 'Account confirmation is complete! Please login.');
+                        if (response !== undefined)
                             $location.url('/event/' + response);
                         else
                             $location.url('/');
-                        $scope.$broadcast('notify','notice','Account confirmation is complete! Please login.')
-                    },function()
-                    {
-                    $state.go('portal');
+                        $rootScope.openLogin();
+                    }, function () {
+                        $location.url('/');
                     });
                 },
-                parent:'globalSkeleton'
+                parent: 'globalSkeleton'
             });
 
-        $urlRouterProvider.otherwise('index');
+        $urlRouterProvider.otherwise('/');
         $locationProvider.html5Mode(true);
         RestangularProvider.setBaseUrl('/api');
 
@@ -107,8 +106,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
 
 angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state", function ($rootScope, Restangular, Account, $urlRouter, $location, $state) {
     Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
-        if(response.status === 400) {
-            $rootScope.$broadcast('notify','warning', response.data, 6000);
+        if (response.status === 400) {
+            $rootScope.$broadcast('notify', 'warning', response.data, 6000);
         }
         if (response.status === 401) {
             if (response.headers('ignoreError') == "true")

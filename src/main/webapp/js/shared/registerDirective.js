@@ -20,8 +20,8 @@ function register(Account, $stateParams) {
                             $scope.sidebar.registerVisible = false;
                             $scope.$broadcast('notify', 'notice', response, 5000);
                             $scope.$broadcast('show-errors-reset');
-                            $scope.error = false;
                             $scope.registerformData = {};
+                            $rootScope.toggleMenu();
                         });
                 }
             }

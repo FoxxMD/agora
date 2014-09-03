@@ -31,6 +31,13 @@ function EventsController($scope, Events, $state){
             $scope.$broadcast('show-errors-reset');
             $state.go('eventSkeleton.event',{eventId:response});
         });
+    };
+    this.tableGoTo = function($event, id) {
+        if($($event.target).is('td'))
+        {
+            $state.go('eventSkeleton.event',{eventId:id.toString()})
+        }
+
     }
 }
 EventsController.$inject = ["$scope","Events","$state"];

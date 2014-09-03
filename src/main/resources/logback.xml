@@ -1,6 +1,13 @@
 <configuration>
     <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+<!--        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator> &lt;!&ndash; defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator &ndash;&gt;
+                <expression>return (logger.contains("mapperdao") &amp;&amp; level == DEBUG);</expression>
+            </evaluator>
+            <OnMismatch>NEUTRAL</OnMismatch>
+            <OnMatch>DENY</OnMatch>
+        </filter>-->
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
@@ -8,7 +15,7 @@
     </encoder>
   </appender>
 
-    <appender name="INFOFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>logs/INFO-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -22,26 +29,7 @@
             <level>INFO</level>
         </filter>
         <encoder>
-            <pattern>%d{HH:mm:ss.SS} %-5level %logger{36} : %msg%n %ex{20}</pattern>
-        </encoder>
-    </appender>
-    <appender name="DEBUGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily -->
-            <fileNamePattern>logs/DEBUG-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- or whenever the file size reaches 100MB -->
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SS} %-5level %logger{36} : %msg%n %ex{20}</pattern>
+            <pattern>%-13d{HH:mm:ss.SS} %-5level [%logger{36}]: %msg%n %ex{20}</pattern>
         </encoder>
     </appender>
     <appender name="HTML" class="ch.qos.logback.core.FileAppender">
@@ -55,8 +43,7 @@
 
   <root level="info">
     <appender-ref ref="STDOUT" />
+      <appender-ref ref="FILE"/>
       <appender-ref ref="HTML" />
-      <appender-ref ref="DEBUGFILE"/>
-      <appender-ref ref="INFOFILE"/>
   </root>
 </configuration>

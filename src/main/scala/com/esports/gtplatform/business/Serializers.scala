@@ -83,7 +83,8 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       case _ => false }
   case e: Event =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all
-    Extraction.decompose(e.copy()).replace(List("users"), e.users.size)
+    Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge
+    render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id)))
     //TODO per request serialization of tournaments
   case t: Tournament =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all

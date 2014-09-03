@@ -29,6 +29,9 @@ function sidebar($rootScope, $timeout, Account){
                     }, 0);
 
                 }
+                else{
+                    container.removeClass('st-menu-open');
+                }
             };
             //TODO these should probably be using $on to watch for a broadcast event so $rootScope doesn't get polluted...
             $rootScope.openLogin = function() {

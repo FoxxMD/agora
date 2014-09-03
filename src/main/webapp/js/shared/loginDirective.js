@@ -5,7 +5,7 @@ angular.module('gtfest')
     .directive('login', login);
 
 // @ngInject
-function login(Account) {
+function login(Account, $rootScope) {
     return {
         templateUrl: '/views/shared/login.html',
         restrict: 'E',
@@ -19,15 +19,14 @@ function login(Account) {
                         function () {
                             Account.initUser();
                             $scope.$broadcast('show-errors-reset');
-                            //$scope.error = false;
                             $scope.loginformData = {};
+                            $rootScope.toggleMenu();
                         }, function (response) {
                             $scope.$broadcast('notify','error',response.data, 4000);
-                            //$scope.error = true;
                         });
                 }
             }
         }
     }
 }
-login.$inject = ["Account"];
+login.$inject = ["Account", "$rootScope"];

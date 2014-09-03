@@ -52,6 +52,7 @@ object ScalatraBuild extends Build {
         "com.escalatesoft.subcut" %% "subcut" % "2.1",
         "com.typesafe" % "config" % "1.2.1",
         "ch.qos.logback" % "logback-classic" % "1.0.13" % "runtime",
+        "org.codehaus.janino" % "janino" % "2.6.1",
         "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container;compile",
         "org.apache.derby" % "derby" % "10.10.1.1",
         "c3p0" % "c3p0" % "0.9.1.2",

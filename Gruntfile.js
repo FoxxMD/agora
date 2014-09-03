@@ -100,7 +100,7 @@ module.exports = function (grunt) {
             ,
             livereload: {
                 options: {
-                    open: 'gtgamefest.com:9000',
+                    open: 'http://gtgamefest.com:9000',
                     base: [
                         '<%= yeoman.app %>'
                     ],
