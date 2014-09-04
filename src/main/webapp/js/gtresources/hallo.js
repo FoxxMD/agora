@@ -2814,7 +2814,7 @@
           return;
         }
         this.toolbar.css('position', 'absolute');
-        this.toolbar.css('top', this.element.offset().top - this.toolbar.outerHeight());
+        this.toolbar.css('top', this.element.offset().top - this.toolbar.outerHeight() + this.options.affixTopOffset);
         if (this.options.affix) {
           scrollTop = jQuery(window).scrollTop();
           offset = this.element.offset();

@@ -20,5 +20,8 @@ angular.module('gtfest')
                 deferred.resolve(response);
             });
             return deferred.promise;
+        };
+        this.setDescription = function(eventId, desc) {
+            return events.one(eventId).post('description',{description:desc});
         }
     }]);

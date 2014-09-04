@@ -63,6 +63,17 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
 }
   ))
 
+class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
+  {PartialFunction.empty}, {
+  case ed: EventDetails =>
+    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
+    Extraction.decompose(ed.copy())
+  case td: TournamentDetails =>
+    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
+    Extraction.decompose(td.copy())
+}
+  ))
+
 class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
   case g: Game =>
@@ -82,12 +93,12 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       case ("Team", _) => true
       case _ => false }
   case e: Event =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
     Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge
     render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id)))
     //TODO per request serialization of tournaments
   case t: Tournament =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
     Extraction.decompose(t.copy())
       .replace(List("users"),t.users.size)
       .replace(List("teams"),t.teams.size)
@@ -98,5 +109,5 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
   ))
 
 object GTSerializers {
-  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntitySerializer)
+  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntitySerializer, new EntityDetailsSerializer)
 }

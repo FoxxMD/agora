@@ -5,15 +5,19 @@
 angular.module('gtfest')
     .directive('halloEditor', halloEditor);
 
-function halloEditor() {
+function halloEditor($sanitize, $q) {
     return {
         restrict: 'A',
         require: '?ngModel',
+        scope: {
+          updateProperty: '&',
+          isClean: '='
+        },
         link: function(scope, element, attrs, ngModel) {
             if (!ngModel) {
                 return;
             }
-
+            var isModified = false;
             element.hallo({
                 plugins: {
                     'halloformat': {},
@@ -22,19 +26,34 @@ function halloEditor() {
                     'hallojustify' : {}
                 },
                 toolbar:'halloToolbarFixed',
-                options:{
-                    toolbarOptions:{
-                    }
+                toolbarOptions:{
+                    affixTopOffset: -5
                 }
             });
-
             ngModel.$render = function() {
-                element.html(ngModel.$viewValue || '');
+                element.html($sanitize(ngModel.$viewValue) || '');
             };
 
             element.on('hallodeactivated', function() {
-                ngModel.$setViewValue(element.html());
-                scope.$apply();
+                if(isModified) {
+                    var deferred = $q.defer();
+                    element.hallo({editable: false});
+                    scope.$watch('isClean', function (newVal, oldVal) {
+                        if (newVal)
+                            deferred.resolve();
+                    });
+                    scope.updateProperty({content: element.html()});
+                    deferred.promise.then(function () {
+                        ngModel.$setViewValue(element.html());
+                        element.hallo({editable: true});
+                        scope.isClean = false;
+                        isModified = false;
+                    });
+                    //scope.$apply();
+                }
+            });
+            element.on('hallomodified', function(){
+                isModified = true;
             });
         }
     };

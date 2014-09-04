@@ -26,7 +26,7 @@
                         <input placeholder="TBD" type="text" datepicker-popup="{{eventsCtrl.format}}"
                                show-button-bar="true"
                                datepicker-append-to-body="true" class="form-control"
-                               max="eventsCtrl.createEventData.details.timeStop"
+                               max="eventsCtrl.createEventData.details.timeEnd"
                                ng-model="eventsCtrl.createEventData.details.timeStart"
                                is-open="eventsCtrl.startOpened" ng-required="true" close-text="Close"/>
               <span class="input-group-btn">
@@ -40,7 +40,7 @@
                                datepicker-popup="{{eventsCtrl.format}}" show-button-bar="true"
                                datepicker-append-to-body="true"
                                min="eventsCtrl.createEventData.details.timeStart"
-                               ng-model="eventsCtrl.createEventData.details.timeStop"
+                               ng-model="eventsCtrl.createEventData.details.timeEnd"
                                is-open="eventsCtrl.stopOpened"
                                ng-required="true" close-text="Close"/>
               <span class="input-group-btn">

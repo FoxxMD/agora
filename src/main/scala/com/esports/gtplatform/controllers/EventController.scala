@@ -5,6 +5,7 @@ import com.esports.gtplatform.business.{GenericMRepo, UserRepo}
 import com.googlecode.mapperdao.jdbc.Transaction
 import models.JoinType.JoinType
 import models._
+import org.joda.time.DateTime
 import org.scalatra.{BadRequest, NotImplemented, Ok}
 
 /**
@@ -18,15 +19,19 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/") {
     auth()
-    val data = parsedBody
-    val newEvent = parsedBody.extract[Event]
+    val newEvent: Event = Event(parsedBody.\("name").extract[String],parsedBody.\("joinType").extract[JoinType])
     if (eventRepo.getByName(newEvent.name).isDefined)
       halt(400, "Event with this name already exists.")
-    val userEvent = EventUser(newEvent, user, isPresent = false, isAdmin = true, isModerator = true)
+
     val tx = inject[Transaction]
     val eventUserRepo = inject[GenericMRepo[EventUser]]
-
     val inserted = tx { () =>
+
+      val insertedEvent = eventRepo.create(newEvent)
+      val eventDetails = EventDetails(insertedEvent, timeStart = parsedBody.\("details").\("timeStart").extractOpt[DateTime],timeEnd = parsedBody.\("details").\("timeEnd").extractOpt[DateTime])
+      eventRepo.update(insertedEvent, insertedEvent.setDetails(eventDetails))
+      val userEvent = EventUser(insertedEvent, user, isPresent = false, isAdmin = true, isModerator = true)
+
       eventUserRepo.create(userEvent)
     }
     Ok(inserted.event.id)
@@ -37,11 +42,19 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/:id") {
     auth()
-    if(!requestEvent.get.isAdmin(user) || user.role != "admin")
+    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
       halt(403, "You do not have permission to edit this event.")
 
     eventRepo.update(requestEvent.get, requestEvent.get.copy(name = parsedBody.\("name").extract[String],
       joinType = parsedBody.\("eventType").extract[JoinType]))
+  }
+  post("/:id/description") {
+    auth()
+    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
+      halt(403, "You do not have permission to edit this event.")
+    val newEvent = requestEvent.get.setDescription(parsedBody.\("description").extract[String])
+    eventRepo.update(requestEvent.get, requestEvent.get.setDescription(parsedBody.\("description").extract[String]))
+    Ok()
   }
   get("/:id/teams") {
     Ok(requestEvent.get.tournaments.flatMap(x => x.teams).map(t => t.team))

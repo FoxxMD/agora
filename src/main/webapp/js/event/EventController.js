@@ -5,7 +5,9 @@ angular.module('gtfest')
     .controller('EventController', eventController);
 
 // @ngInject
-function eventController($scope, Account, $state, eventData, $rootScope){
+function eventController($scope, Account, $state, eventData, $rootScope, Events, $sanitize, $timeout){
+    var that = this;
+
     $rootScope.$on('accountStatusChange', function(){
         adminStatusChecker();
     });
@@ -21,5 +23,12 @@ function eventController($scope, Account, $state, eventData, $rootScope){
        $rootScope.$broadcast('permissionsStatusChange', status);
     }
     adminStatusChecker();
+    this.isClean = false;
+    this.tryDescUpdate = function(content)
+    {
+        Events.setDescription(eventData.id.toString(),content).then(function(){
+            that.descModified = true;
+        });
+    }
 }
-eventController.$inject = ["$scope", "Account", "$state", "eventData", "$rootScope"];
+eventController.$inject = ["$scope", "Account", "$state", "eventData", "$rootScope", "Events", "$sanitize", "$timeout"];
