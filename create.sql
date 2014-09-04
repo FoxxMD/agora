@@ -27,12 +27,12 @@ CREATE TABLE `useridentity` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `userplatformprofile` (
-  `userId` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
   `platform` varchar(45) NOT NULL,
   `identifier` varchar(45) NOT NULL,
-  PRIMARY KEY (`userId`),
-  KEY `user_platform_id_idx` (`userId`),
-  CONSTRAINT `user_platform_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`users_id`),
+  KEY `user_platform_id_idx` (`users_id`),
+  CONSTRAINT `user_platform_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `eventdetails` (
