@@ -14,8 +14,9 @@ function sidebar($rootScope, $timeout, Account){
             this.account = Account;
             this.loginVisible = false;
             this.registerVisible = false;
+            this.toggleEvents = false;
         },
-        link: function($scope, elem, attrs)
+        link: function(scope, elem, attrs)
         {
             $rootScope.toggleMenu = function () {
                 var container = $(document).find('.st-container');
@@ -32,7 +33,12 @@ function sidebar($rootScope, $timeout, Account){
                 else{
                     container.removeClass('st-menu-open');
                 }
+
+                var myEventsElem = $(elem).find('.myEvents');
+                if(myEventsElem != undefined)
+                    myEventsElem.css('height',myEventsElem[0].scrollHeight);
             };
+
             //TODO these should probably be using $on to watch for a broadcast event so $rootScope doesn't get polluted...
             $rootScope.openLogin = function() {
                 $rootScope.toggleMenu();

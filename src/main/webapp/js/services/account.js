@@ -1,8 +1,9 @@
 /**
  * Created by Matthew on 8/6/2014.
  */
+// @ngInject
 angular.module('gtfest')
-    .service('Account', ['Restangular', '$localStorage', '$q','$rootScope', function (Restangular, $localStorage, $q, $rootScope) {
+    .service('Account', ['Restangular', '$localStorage', '$q','$rootScope','Users', function (Restangular, $localStorage, $q, $rootScope, Users) {
 
         var privUser = undefined;
         this.user = function () {
@@ -13,8 +14,11 @@ angular.module('gtfest')
         };
         this.isAdmin = function () {
             if(!privUser)
-                return false
+                return false;
             return privUser.role == "admin"
+        };
+        this.isRegisteredForEvent = function(eventId) {
+            return Users.isRegisteredForEvent(privUser, eventId);
         };
         this.logout = function () {
             privUser = undefined;

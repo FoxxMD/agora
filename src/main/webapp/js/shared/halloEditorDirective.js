@@ -4,7 +4,7 @@
 
 angular.module('gtfest')
     .directive('halloEditor', halloEditor);
-
+// @ngInject
 function halloEditor($q) {
     return {
         restrict: 'A',

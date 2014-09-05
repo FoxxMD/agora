@@ -1,13 +1,13 @@
 .myClass {
-  background-color:red;
-  font-size:16px;
+  background-color: red;
+  font-size: 16px;
 }
 
 body {
   /*margin-top:15em;*/
-  a{
-    cursor:pointer;
-    color:white;
+  a {
+    cursor: pointer;
+    color: white;
   }
   .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6, p {
     color: #F1F1F1;
@@ -16,36 +16,36 @@ body {
 }
 
 .headerWrapper {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  z-index:2000;
-}
-.loginContainer{
-  background:darkgray;
-  position:absolute;
-  top:0;
-  margin-bottom:0px;
-  width:100%;
-  z-index:9000;
-  border-radius:0px;
-  .inner{
-    max-width:600px;
-    display:block;
-    margin-left:auto;
-    margin-right:auto;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2000;
 }
 
+.loginContainer {
+  background: darkgray;
+  position: absolute;
+  top: 0;
+  margin-bottom: 0px;
+  width: 100%;
+  z-index: 9000;
+  border-radius: 0px;
+  .inner {
+    max-width: 600px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
 
 .st-menu .subsection {
   &.register {
-    height:270px;
+    height: 270px;
   }
-  overflow:hidden;
-  height:180px;
-  margin: 2em 1em 0 1em;
+  overflow: hidden;
+  height: 180px;
+  //margin: 2em 1em 0 1em;
   -webkit-transition: height 0.3s;
   -moz-transition: height 0.3s;
   -ms-transition: height 0.3s;
@@ -53,50 +53,66 @@ body {
   transition: height 0.3s;
   &.ng-hide-add-active,
   &.ng-hide-add
-  &.ng-hide-remove{
-    margin: 2em 1em 0 1em !important;
-    display:block !important;
-    overflow:hidden;
+  &.ng-hide-remove {
+    //margin: 2em 1em 0 1em !important;
+    display: block !important;
+    overflow: hidden;
   }
-  &.ng-hide{
-    height:0px;
-    display:block !important;
-    overflow:hidden;
-    margin:0;
+  &.ng-hide {
+    height: 0px !important;
+    display: block !important;
+    overflow: hidden;
+    margin: 0;
   }
+  &.myEvents {
+    padding-left:40px;
+    li {
+      //margin-top: 10px;
+      .fa-li{
+        top:35%;
+      }
+    }
+  }
+}
+
+.menuItemContent {
+  margin: 2em 1em 0 1em;
 }
 
 .form-group .help-block {
-  font-weight:bold;
-   display:none;
- }
+  font-weight: bold;
+  display: none;
+}
+
 .form-group.has-error .help-block {
-  display:block;
+  display: block;
 }
 
 .morphingButtonForm {
-  padding:15px 15px 50px 15px;
+  padding: 15px 15px 50px 15px;
   background-color: rgb(119, 119, 119)
 }
-.gameItem{
-  min-height:35px;
+
+.gameItem {
+  min-height: 35px;
 }
 
 .ns-box.ns-bar {
-  &.ns-type-warning{
-  background:rgba(221, 135, 4, 0.96);
+  &.ns-type-warning {
+    background: rgba(221, 135, 4, 0.96);
   }
-  &.ns-type-notice{
-/*  Not sure this actually needs a color, regular black is fine. */
+  &.ns-type-notice {
+    /*  Not sure this actually needs a color, regular black is fine. */
     /* background: rgba(28, 128, 9, 0.85);*/
   }
-  &.ns-type-error{
-    background:rgba(114, 9, 9, 0.96);
+  &.ns-type-error {
+    background: rgba(114, 9, 9, 0.96);
   }
 }
+
 .st-menu small {
-  color: rgba(0,0,0,0.4);
-  text-shadow: 0 0 1px rgba(0,0,0,0.1);
+  color: rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
   font-weight: 300;
 }
 
@@ -105,17 +121,34 @@ body {
     background-color: #CA6842
   }
 }
+
 .table-striped tbody tr:nth-child(odd) td,
-.table-striped>tbody tr:nth-child(odd) th {
+.table-striped > tbody tr:nth-child(odd) th {
   background-color: #686868;
 }
+
 .st-content input,
 .st-menu input {
   border-radius: 2px;
   width: auto;
 }
 
-.st-content input{
+.st-menu {
+  a {
+    text-decoration: none;
+  }
+  .siteSwitcher {
+    /*margin: 0em 1em 1em 2.8em;*/
+    h3 {
+      padding: 0.5em;
+    }
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.st-content input {
   width: auto;
   color: #ffffff;
   background-color: #8a8a8a;
@@ -123,6 +156,7 @@ body {
   //border: 1px solid #8a8a8a;
   //border-radius: 2px;
 }
+
 /*.st-content input:focus {
   border-color: #66afe9;
   outline: 0;
@@ -133,15 +167,18 @@ body {
   color: #e8e8e8;
   opacity: 1;
 }
+
 .st-content input:-ms-input-placeholder {
   color: #e8e8e8;
 }
+
 .st-content input::-webkit-input-placeholder {
   color: #e8e8e8;
 }
+
 .st-content input[disabled],
 .st-content input[readonly],
-fieldset[disabled]  {
+fieldset[disabled] {
   cursor: not-allowed;
   background-color: #525252;
   opacity: 1;
@@ -149,13 +186,14 @@ fieldset[disabled]  {
 
 #loading-bar {
   .bar {
-    background:#2ECC71;
-    height:3px;
+    background: #2ECC71;
+    height: 3px;
   }
-  .peg{
-    height:3px;
+  .peg {
+    height: 3px;
   }
 }
+
 .st-content {
   .has-warning input {
     border-color: #8a6d3b;
@@ -176,13 +214,15 @@ fieldset[disabled]  {
     border-color: #2b542c;
   }
 }
+
 .eventButton {
   .morph-button-inflow-1 {
-    width:600px;
+    width: 600px;
   }
 }
-.smartTable{
-  tr.linkMask{
-    cursor:pointer;
+
+.smartTable {
+  tr.linkMask {
+    cursor: pointer;
   }
 }

@@ -1,1 +1,4 @@
-<div hallo-editor update-property="eventCtrl.tryDescUpdate(content)" ng-model="eventCtrl.frontPage"></div>
+<div ng-switch="eventCtrl.isAdmin()">
+    <div ng-switch-when="true"><div hallo-editor update-property="eventCtrl.tryDescUpdate(content)" ng-model="eventCtrl.frontPage"></div></div>
+    <div ng-switch-default ng-bind-html="eventCtrl.sce.trustAsHtml(eventCtrl.frontPage)"></div>
+</div>

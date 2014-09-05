@@ -35,7 +35,7 @@
 			this.current = -1;
 			this.touch = Modernizr.touch;
 			this.menu = this.el.querySelector( '.cbp-hsmenu' );
-			this.menuItems = this.el.querySelectorAll( '.cbp-hsmenu > li' );
+			this.menuItems = this.el.querySelectorAll( '.cbp-hsmenu > li.menuLink' );
 			this.menuBg = document.createElement( 'div' );
 			this.menuBg.className = 'cbp-hsmenubg';
 			this.el.appendChild( this.menuBg );

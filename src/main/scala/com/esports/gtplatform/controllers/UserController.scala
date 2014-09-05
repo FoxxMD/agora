@@ -8,9 +8,13 @@ import org.scalatra.Ok
  */
 class UserController(implicit val bindingModule: BindingModule) extends StandardController {
 
-  get("/me")
-  {
+  get("/me") {
     auth()
+/*    val events = render("events" -> user.getEvents(inject[EventUserRepo]).map(
+      x => ("name" -> x.name) ~ ("id" -> x.id)
+      )
+    )*/
+    //val u = Extraction.decompose(user) merge events // merge write(user.getEvents) //("events" -> Extraction.decompose(user.getEvents))
     Ok(user)
   }
 }

@@ -1,10 +1,11 @@
 package com.esports.gtplatform.business
 
+import com.escalatesoft.subcut.inject.BindingModule
 import com.googlecode.mapperdao.{Entity, Persisted}
 import models._
 import org.json4s.JsonDSL._
-import org.json4s.jackson.JsonMethods._
 import org.json4s._
+import org.json4s.jackson.JsonMethods._
 /**
  * Created by Matthew on 7/31/2014.
  */
@@ -31,6 +32,8 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("id" -> eu.event.id) ~
       //("date" -> Extraction.decompose(eu.event.details.timeStart)) ~
       ("isPresent" -> eu.isPresent) ~
+      ("isAdmin" -> eu.isAdmin) ~
+      ("isModerator" -> eu.isModerator) ~
       ("resource" -> "/event/")
   case tt: TournamentTeam =>
     implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(BracketType)
@@ -74,7 +77,7 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, 
 }
   ))
 
-class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
+class EntitySerializer[T](implicit val bindingModule: BindingModule, mt: Manifest[T]) extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
   case g: Game =>
     implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType) ++ org.json4s.ext.JodaTimeSerializers.all
@@ -83,11 +86,10 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(u.copy()) removeField {
       case ("User", _) => true
-      case _ => false }
+      case _ => false } merge render("events" -> Extraction.decompose(u.getAssociatedEvents(new EventUserRepository))//TODO Get rid of nasty coupling to repository implementation. How to mix in Injectable?
+    )
   case t : Team =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
-    /*merge
-      render("captain" -> t.getCaptain.globalHandle)*/
     Extraction.decompose(t.copy()) merge
       render("captain" -> t.getCaptain.globalHandle) removeField {
       case ("Team", _) => true
@@ -109,5 +111,5 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
   ))
 
 object GTSerializers {
-  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntitySerializer, new EntityDetailsSerializer)
+  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer)
 }

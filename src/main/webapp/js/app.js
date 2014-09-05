@@ -47,7 +47,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 resolve: {
                     eventData: function (Events, $stateParams, $state, $q) {
                         var deferred = $q.defer();
-                        Events.getEvent($stateParams.eventId).then(function (response) {
+                        Events.getEvent($stateParams.eventId.toString()).then(function (response) {
                             return deferred.resolve(response);
                         }, function (error) {
                             $state.go('portal');

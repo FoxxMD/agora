@@ -1,5 +1,6 @@
 package models
 
+import com.esports.gtplatform.business.EventUserRepo
 import com.esports.gtplatform.models.Invitee
 import org.joda.time.DateTime
 
@@ -30,7 +31,7 @@ case class User(
 
   def getTournaments: List[Tournament] = ???
 
-  def getEvents: List[Event] = ???
+  def getAssociatedEvents(repo: EventUserRepo): List[EventUser] = repo.getByUser(this)
 
   //TODO work on related entities
   //def getTeams: List[TeamUser] = queryDao.query(select from TeamUserEntity where TeamUserEntity.user. === this.id).map(x => x.team)

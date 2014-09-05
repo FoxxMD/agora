@@ -1,6 +1,7 @@
 /**
  * Created by Matthew on 8/22/2014.
  */
+// @ngInject
 angular.module('gtfest')
     .service('Teams', ["Restangular", "$q", "$rootScope", function (Restangular, $q, $rootScope) {
 

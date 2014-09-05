@@ -3,7 +3,7 @@
  */
 angular.module('gtfest')
     .directive('teams', teams);
-
+// @ngInject
 function teams(Teams, Games, $state, $stateParams, $timeout) {
     return {
         templateUrl:'views/shared/teams.html',

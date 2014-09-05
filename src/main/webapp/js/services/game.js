@@ -1,6 +1,7 @@
 /**
  * Created by Matthew on 8/28/2014.
  */
+// @ngInject
 angular.module('gtfest')
     .service('Games', ['Restangular', '$q', function (Restangular, $q) {
 

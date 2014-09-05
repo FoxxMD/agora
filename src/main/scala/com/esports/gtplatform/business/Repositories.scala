@@ -128,6 +128,14 @@ class EventRepository(returnEntity: Entity[Int,Persisted, Event]) extends Generi
   def getByName(name: String): Option[Event] = queryDao.querySingleResult(select from EventEntity where EventEntity.name === name)
 }
 
+trait EventUserRepo extends GenericMRepo[EventUser]
+{
+  def getByUser(u: User): List[EventUser]
+}
+class EventUserRepository extends GenericMRepository[EventUser](EventUserEntity) with EventUserRepo{
+  def getByUser(u: User): List[EventUser] = queryDao.query(select from EventUserEntity where EventUserEntity.user === u)
+}
+
 trait NonActiveUserIdentityRepo extends GenericMRepo[UserIdentity]
 trait NonActiveUserRepo extends UserRepo
 

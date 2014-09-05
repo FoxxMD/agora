@@ -3,7 +3,7 @@
  */
 angular.module('gtfest')
     .directive('teamGames', teamGames);
-
+// @ngInject
 function teamGames(Games, $rootScope) {
     return {
         template: '<ul class="list-unstyled"><li ng-repeat="game in gamearray" class="gameItem"><a ui-sref="game({id: game.id})">{{game.name}}</a> <button class="btn btn-sm pull-right" ng-click="tgCtrl.removeGame(game)">Remove</button></li></ul>' +

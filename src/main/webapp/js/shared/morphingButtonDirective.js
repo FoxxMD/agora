@@ -3,7 +3,7 @@
  */
 angular.module('gtfest')
 .directive('morphingButton', morphButton);
-
+// @ngInject
 function morphButton($timeout){
     return {
         templateUrl:'views/shared/morphButton.html',
