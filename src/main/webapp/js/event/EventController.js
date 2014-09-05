@@ -5,7 +5,7 @@ angular.module('gtfest')
     .controller('EventController', eventController);
 
 // @ngInject
-function eventController($scope, Account, $state, eventData, $rootScope, Events, $sanitize, $timeout){
+function eventController($scope, Account, $state, eventData, $rootScope, Events, $sanitize){
     var that = this;
 
     $rootScope.$on('accountStatusChange', function(){
@@ -16,19 +16,16 @@ function eventController($scope, Account, $state, eventData, $rootScope, Events,
     });
     this.event = eventData.plain();
     this.tourneyNames = ['Frosty 2v2','Epic 4v4','Round-Robin(20 player)','Deathmatch 100-kill Win'];
-    this.frontPage = "<p>A simple element</p>";
+    this.frontPage = that.event.details.description || "<h3>This is your description page, please edit it!</h3>";
 
     function adminStatusChecker() {
        var status = Account.isLoggedIn() && $.grep(eventData.admins, function(e) { return e.id == Account.user().id}).length == 1 ? 'A': null;
        $rootScope.$broadcast('permissionsStatusChange', status);
     }
     adminStatusChecker();
-    this.isClean = false;
     this.tryDescUpdate = function(content)
     {
-        Events.setDescription(eventData.id.toString(),content).then(function(){
-            that.descModified = true;
-        });
+        return Events.setDescription(eventData.id.toString(),content);
     }
 }
-eventController.$inject = ["$scope", "Account", "$state", "eventData", "$rootScope", "Events", "$sanitize", "$timeout"];
+eventController.$inject = ["$scope", "Account", "$state", "eventData", "$rootScope", "Events", "$sanitize"];

@@ -40,7 +40,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
             })
             .state('eventSkeleton', {
                 templateUrl: '/views/shared/skeleton.html',
-                url: '/event/{eventId:[^[0-9]+$]}',
+                url: '/event/{eventId:[0-9]+}',
                 params: {
                     eventId: {}
                 },
@@ -71,6 +71,9 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
             .state('eventSkeleton.teams', {
                 url: '/teams',
                 template: '<teams></teams>',
+                params:{
+                    eventId:{}
+                },
                 data: {
                     teamType: 'event'
                 }

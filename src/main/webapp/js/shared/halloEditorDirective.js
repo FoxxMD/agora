@@ -5,15 +5,14 @@
 angular.module('gtfest')
     .directive('halloEditor', halloEditor);
 
-function halloEditor($sanitize, $q) {
+function halloEditor($q) {
     return {
         restrict: 'A',
         require: '?ngModel',
         scope: {
-          updateProperty: '&',
-          isClean: '='
+            updateProperty: '&'
         },
-        link: function(scope, element, attrs, ngModel) {
+        link: function (scope, element, attrs, ngModel) {
             if (!ngModel) {
                 return;
             }
@@ -21,38 +20,35 @@ function halloEditor($sanitize, $q) {
             element.hallo({
                 plugins: {
                     'halloformat': {},
-                    'halloheadings': [1,2,3,4],
-                    'hallolists':{},
-                    'hallojustify' : {}
+                    'halloheadings': [1, 2, 3, 4],
+                    'hallolists': {},
+                    'hallojustify': {}
                 },
-                toolbar:'halloToolbarFixed',
-                toolbarOptions:{
+                toolbar: 'halloToolbarFixed',
+                toolbarOptions: {
                     affixTopOffset: -5
                 }
             });
-            ngModel.$render = function() {
-                element.html($sanitize(ngModel.$viewValue) || '');
+            ngModel.$render = function () {
+                element.html(ngModel.$viewValue || '');
             };
 
-            element.on('hallodeactivated', function() {
-                if(isModified) {
-                    var deferred = $q.defer();
+            element.on('hallodeactivated', function () {
+                if (isModified) {
                     element.hallo({editable: false});
-                    scope.$watch('isClean', function (newVal, oldVal) {
-                        if (newVal)
-                            deferred.resolve();
-                    });
-                    scope.updateProperty({content: element.html()});
-                    deferred.promise.then(function () {
-                        ngModel.$setViewValue(element.html());
-                        element.hallo({editable: true});
-                        scope.isClean = false;
-                        isModified = false;
-                    });
-                    //scope.$apply();
+                    scope.updateProperty({content: element.html()}).then(function () {
+                            scope.$emit('notify', 'notice', 'Update successful.', 1000);
+                            ngModel.$setViewValue(element.html());
+                            isModified = false;
+                        },
+                        function () {
+                            scope.$emit('notify', 'error', 'There was a problem updating.', 1000);
+                        }).finally(function () {
+                            element.hallo({editable: true});
+                        });
                 }
             });
-            element.on('hallomodified', function(){
+            element.on('hallomodified', function () {
                 isModified = true;
             });
         }
