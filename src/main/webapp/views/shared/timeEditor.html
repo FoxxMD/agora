@@ -1,0 +1,49 @@
+<div ng-class="{editable: iseditable, inEditMode: timeEditor.editable}">
+    <div ng-switch="timeEditor.editable">
+       <div ng-switch-default ng-click="timeEditor.tryEdit()">
+           <h4>Starts</h4>
+            <address ng-if="timestart">
+                {{timestart.toTimeString()}}<br/>
+                {{timestart.toDateString()}}<br/>
+            </address>
+            <address ng-if="!timestart">
+                TBD
+            </address>
+           <h4>Ends</h4>
+           <address ng-if="timeEnd">
+               {{timeEnd.toTimeString()}}<br/>
+               {{timeEnd.toDateString()}}<br/>
+           </address>
+            <address ng-if="!timeEnd">
+                TBD
+            </address>
+        </div>
+        <div ng-switch-when="true">
+            <h4>Starts</h4>
+                <p class="input-group">
+                    <input placeholder="TBD" type="text" datepicker-popup="{{timeEditor.format}}"
+                           show-button-bar="true" class="form-control"
+                           max="$parent.timeEnd"
+                           ng-model="$parent.timestart"
+                           is-open="timeEditor.startOpened" ng-required="true" close-text="Close"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="timeEditor.openStartTime($event)"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </p>
+            <timepicker ng-model="$parent.timestart"></timepicker>
+            <h4>Ends</h4>
+            <p class="input-group">
+                <input placeholder="TBD" type="text" datepicker-popup="{{timeEditor.format}}"
+                       show-button-bar="true" class="form-control"
+                       min="$parent.timestart"
+                       ng-model="$parent.timeEnd"
+                       is-open="timeEditor.stopOpened" ng-required="true" close-text="Close"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="timeEditor.openStopTime($event)"><i class="fa fa-calendar"></i></button>
+                    </span>
+            </p>
+            <timepicker ng-model="$parent.timeEnd"></timepicker>
+            <button class="btn btn-info pull-left" ng-click="timeEditor.updateTimeData();">Save</button>
+        </div>
+    </div>
+</div>

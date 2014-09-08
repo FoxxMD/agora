@@ -5,7 +5,7 @@ angular.module('gtfest')
     .controller('EventController', eventController);
 
 // @ngInject
-function eventController($scope, Account, $state, eventData, $rootScope, Events, $sce){
+function eventController($scope, Account, $q, eventData, $rootScope, Events, $sce){
     var that = this;
 
     $rootScope.$on('accountStatusChange', function(){
@@ -30,6 +30,13 @@ function eventController($scope, Account, $state, eventData, $rootScope, Events,
     this.tryDescUpdate = function(content)
     {
         return Events.setDescription(eventData.id.toString(),content);
+    };
+    this.tryTimeUpdate = function() {
+        var deferred = $q.defer();
+      console.log(that.event.details.timeStart);
+        deferred.resolve();
+        return deferred.promise;
+
     }
 }
-eventController.$inject = ["$scope", "Account", "$state", "eventData", "$rootScope", "Events", "$sce"];
+eventController.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$sce"];

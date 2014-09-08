@@ -2,7 +2,6 @@
   "name": "gtfest",
   "version": "0.0.0",
   "dependencies": {
-    "angular-bootstrap": "~0.10.0",
     "angular-resource": "~1.2.13",
     "angular": "~1.2.13",
     "jquery": "~2.1.0",
@@ -15,7 +14,6 @@
     "angular-smart-table": "*",
     "flatstrap3": "~3.0.3",
     "angular-loading-bar": "~0.5.1",
-    "rangy-official": "~1.3.0-alpha.20140827",
     "jquery-ui": "~1.11.1",
     "angular-sanitize": "~1.2.23"
   },

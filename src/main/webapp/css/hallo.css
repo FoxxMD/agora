@@ -34,14 +34,17 @@ textarea#source {
     font-weight: bold;
 }
 
-div[contenteditable="true"]:hover {
+div[contenteditable="true"]:hover,
+.editable:hover{
     outline-style: solid;
     outline-width: 3px;
     outline-color: #383838;
 }
 
 [contenteditable="true"].inEditMode,
-[contenteditable="true"].inEditMode:hover{
+[contenteditable="true"].inEditMode:hover,
+.inEditMode,
+.editable.inEditMode{
     outline-style: solid;
     outline-width: 3px;
     outline-color: #396c97;

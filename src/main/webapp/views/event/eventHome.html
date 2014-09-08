@@ -1,4 +1,16 @@
-<div ng-switch="eventCtrl.isAdmin()">
-    <div ng-switch-when="true"><div hallo-editor update-property="eventCtrl.tryDescUpdate(content)" ng-model="eventCtrl.frontPage"></div></div>
-    <div ng-switch-default ng-bind-html="eventCtrl.sce.trustAsHtml(eventCtrl.frontPage)"></div>
+<div class="row" ng-switch="eventCtrl.isAdmin()">
+    <div class="col-md-12" ng-switch-when="true">
+        <div hallo-editor update-property="eventCtrl.tryDescUpdate(content)" ng-model="eventCtrl.frontPage"></div>
+    </div>
+    <div class="col-md-12" ng-switch-default ng-bind-html="eventCtrl.sce.trustAsHtml(eventCtrl.frontPage)"></div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="text-center">When?</h2>
+        <div time-editor time-end="eventCtrl.event.details.timeEnd" timestart="eventCtrl.event.details.timeStart" iseditable="eventCtrl.isAdmin()" update-property="eventCtrl.tryTimeUpdate()"></div>
+    </div>
+    <div class="col-md-6 editable">
+        <h2 class="text-center">Where?</h2>
+        <h4>{{eventCtrl.eventData.details.address || "Who knows?"}}</h4>
+    </div>
 </div>
