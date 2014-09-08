@@ -34,3 +34,4 @@ function teamGames(Games, $rootScope) {
         }
     }
 }
+teamGames.$inject = ["Games", "$rootScope"];

@@ -30,3 +30,4 @@ function morphButton($timeout){
         }
     }
 }
+morphButton.$inject = ["$timeout"];

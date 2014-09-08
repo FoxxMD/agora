@@ -33,3 +33,4 @@ function teams(Teams, Games, $state, $stateParams, $timeout) {
         }
     }
 }
+teams.$inject = ["Teams", "Games", "$state", "$stateParams", "$timeout"];

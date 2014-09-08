@@ -35,7 +35,7 @@ function sidebar($rootScope, $timeout, Account){
                 }
 
                 var myEventsElem = $(elem).find('.myEvents');
-                if(myEventsElem != undefined)
+                if(myEventsElem.length != 0)
                     myEventsElem.css('height',myEventsElem[0].scrollHeight);
             };
 

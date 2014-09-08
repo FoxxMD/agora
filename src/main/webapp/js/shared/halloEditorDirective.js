@@ -54,3 +54,4 @@ function halloEditor($q) {
         }
     };
 }
+halloEditor.$inject = ["$q"];

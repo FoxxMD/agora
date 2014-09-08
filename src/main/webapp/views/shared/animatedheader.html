@@ -6,14 +6,14 @@
                 <ul class="cbp-hsmenu">
                     <!-- Event Header Links -->
                     <li ng-if="eventCtrl != undefined"><a ui-sref="eventSkeleton.schedule"  class="topLink">Schedule</a></li>
-                    <li ng-show="eventCtrl != undefined" class="menuLink"><a ui-sref="eventSkeleton.tournaments"  class="topLink">Tournaments</a>
-                        <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
+                    <li ng-show="eventCtrl != undefined" class="menuLink"><a ui-sref="eventSkeleton.tournaments"  class="topLink">Tournaments <span class="badge">{{eventCtrl.eventData.tournaments.length}}</span></a>
+<!--                        <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                             <li ng-repeat="t in eventCtrl.tourneyNames">
                                 <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
                             </li>
                         </ul>
-                    </li>
-                    <li ng-show="eventCtrl != undefined" class="menuLink"><a class="topLink">Games</a>
+                    </li>-->
+                    <li ng-show="eventCtrl != undefined" class="menuLink"><a class="topLink">Games <span class="badge">{{eventCtrl.eventData.games.length}}</span></a>
                         <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                             <li ng-repeat="t in eventCtrl.tourneyNames">
                                 <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
