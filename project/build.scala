@@ -60,7 +60,8 @@ object ScalatraBuild extends Build {
         "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar")),
         "com.googlecode.mapperdao" %% "mapperdao" % "1.0.1",
         "mysql" % "mysql-connector-java" % "5.1.18",
-        "commons-dbcp" % "commons-dbcp" % "1.4"
+        "commons-dbcp" % "commons-dbcp" % "1.4",
+        "com.stripe" % "stripe-java" % "1.18.0"
       ),
       scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
         Seq(

@@ -1,9 +1,11 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
+import com.esports.gtplatform.business.services.{PaymentService, StripePayment}
 import com.esports.gtplatform.business.{GenericMRepo, UserRepo}
 import com.googlecode.mapperdao.jdbc.Transaction
 import models.JoinType.JoinType
+import models.PaymentType.PaymentType
 import models._
 import org.joda.time.DateTime
 import org.scalatra.{BadRequest, NotImplemented, Ok}
@@ -19,7 +21,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/") {
     auth()
-    val newEvent: Event = Event(parsedBody.\("name").extract[String],parsedBody.\("joinType").extract[JoinType])
+    val newEvent: Event = Event(parsedBody.\("name").extract[String], parsedBody.\("joinType").extract[JoinType])
     if (eventRepo.getByName(newEvent.name).isDefined)
       halt(400, "Event with this name already exists.")
 
@@ -28,9 +30,9 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     val inserted = tx { () =>
 
       val insertedEvent = eventRepo.create(newEvent)
-      val eventDetails = EventDetails(insertedEvent, timeStart = parsedBody.\("details").\("timeStart").extractOpt[DateTime],timeEnd = parsedBody.\("details").\("timeEnd").extractOpt[DateTime])
+      val eventDetails = EventDetails(insertedEvent, timeStart = parsedBody.\("details").\("timeStart").extractOpt[DateTime], timeEnd = parsedBody.\("details").\("timeEnd").extractOpt[DateTime])
       eventRepo.update(insertedEvent, insertedEvent.setDetails(eventDetails))
-      val userEvent = EventUser(insertedEvent, user, isPresent = false, isAdmin = true, isModerator = true)
+      val userEvent = EventUser(insertedEvent, user, isPresent = false, isAdmin = true, isModerator = true, hasPaid = false)
 
       eventUserRepo.create(userEvent)
     }
@@ -42,7 +44,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/:id") {
     auth()
-    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
+    if (!requestEvent.get.isAdmin(user) && user.role != "admin")
       halt(403, "You do not have permission to edit this event.")
 
     eventRepo.update(requestEvent.get, requestEvent.get.copy(name = parsedBody.\("name").extract[String],
@@ -50,7 +52,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/:id/description") {
     auth()
-    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
+    if (!requestEvent.get.isAdmin(user) && user.role != "admin")
       halt(403, "You do not have permission to edit this event.")
     val newEvent = requestEvent.get.setDescription(parsedBody.\("description").extract[String])
     eventRepo.update(requestEvent.get, requestEvent.get.setDescription(parsedBody.\("description").extract[String]))
@@ -120,5 +122,49 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/:id/tournaments") {
     NotImplemented
+  }
+  post("/:id/payRegistration") {
+    import scala.collection.mutable
+    auth()
+    if ((user.role == "admin" || requestEvent.get.isAdmin(user)) && params.get("id").isDefined) {
+      val paid = params.getOrElse("paid", false) == "true"
+      val userRepo = inject[UserRepo]
+      val theuser = userRepo.get(params("id").toInt).getOrElse(halt(400, "User with that Id does not exist."))
+      eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(theuser, paid = paid, None))
+      val atype = if(user.role == "admin") "Admin" else "Event Admin"
+      logger.info("["+atype+" "+ user.id + "] Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)
+    }
+    else {
+      params.get("type") match {
+        case None =>
+          halt(400, "No payment type was specified.")
+        case Some("Stripe") =>
+          val card = parsedBody.\("card").extract[String]
+          val paymentService: PaymentService = new StripePayment(requestEvent.get)
+          paymentService.makePayment(user, mutable.Map("card" -> card)) match {
+            case (false, s: String) =>
+              BadRequest("Payment was not successful. Reason: " + s)
+            case (true, s: String) =>
+              Ok("Payment successful!")
+              eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(user, paid = true, Some(s)))
+          }
+        case Some(s: String) =>
+          NotImplemented
+        //TODO more payment types?
+      }
+    }
+  }
+  post("/:id/payments") {
+    auth()
+    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
+      halt(403, "You do not have permission to do that")
+    val ep = EventPayment(requestEvent.get,
+      parsedBody.\("payType").extract[PaymentType],
+      parsedBody.\("secretKey").extractOpt[String],
+      parsedBody.\("publicKey").extractOpt[String],
+      parsedBody.\("address").extractOpt[String],
+      parsedBody.\("amount").extract[Double])
+    eventRepo.update(requestEvent.get, requestEvent.get.addPayment(ep))
+    Ok()
   }
 }

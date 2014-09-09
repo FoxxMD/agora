@@ -14,7 +14,7 @@ case class TeamUser(team: Team, user: User, isCaptain: Boolean = false) {
 
 }
 
-case class EventUser(event: Event, user: User, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false){
+case class EventUser(event: Event, user: User, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, receiptId: Option[String] = None){
 
 }
 case class TournamentTeam(tournament: Tournament, team: Team, isPresent: Boolean = false){

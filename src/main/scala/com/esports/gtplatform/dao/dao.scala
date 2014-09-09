@@ -24,7 +24,7 @@ object Daos {
 
 //Initialize components of MapperDao DAOs. Setup.mysql is the actual statement for opening a connection and forming objects.
 val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, TeamEntity, TeamUserEntity,
-  GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity, EventDetailsEntity,
+  GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity, EventDetailsEntity, EventPaymentEntity,
   EventUserEntity, UserIdentityEntity, NonActiveUserEntity, NonActiveUserIdentityEntity, InviteEntity)) //All entities must be listed here
 
   /*Still kind of figuring out how these totally work.

@@ -22,11 +22,12 @@ object JoinType extends Enumeration {
   }
 }
 
-case class Event(name: String, joinType: JoinType.Value, details: Option[EventDetails] = None, users: Set[EventUser] = Set(),
+case class Event(name: String, joinType: JoinType.Value, details: Option[EventDetails] = None, payments: Set[EventPayment] = Set(), users: Set[EventUser] = Set(),
             tournaments: Set[Tournament] = Set(),id: Int = 0) extends Inviteable with Requestable with MeetingT[Event] {
 
   private[this] val UserListLens: SimpleLens[Event, Set[EventUser]] = SimpleLens[Event](_.users)((e, newUsers) => e.copy(users = newUsers))
   private[this] val DetailsLens: SimpleLens[Event, Option[EventDetails]] = SimpleLens[Event](_.details)((e, newDetails) => e.copy(details = newDetails))
+  private[this] val PaymentListLens: SimpleLens[Event, Set[EventPayment]] = SimpleLens[Event](_.payments)((e, newPayments) => e.copy(payments = newPayments))
  // private[this] val DetailsDescriptionLens: SimpleLens[EventDetails, Option[String]] = SimpleLens[EventDetails](_.description)((ev, newDesc) => ev.copy(description = newDesc))
   private[this] val DetailsLenser = Lenser[EventDetails]
   private[this] val DetailsDescriptionLens: SimpleLens[Option[EventDetails], Option[String]] = SimpleLens[Option[EventDetails]](_.get.description)((ev, newDesc) => Option(ev.get.copy(description = newDesc))) //DetailsLenser(_.rules)
@@ -39,27 +40,48 @@ case class Event(name: String, joinType: JoinType.Value, details: Option[EventDe
   def isAdmin(u: User): Boolean = this.users.exists(x => x.isAdmin && x.user == u)
   def isPresent(u: User): Boolean = this.users.exists(x => x.isPresent && x.user == u)
 
-  override def addUser(u: User): Event = this applyLens UserListLens modify (_.+(EventUser(this,u,false,false,false)))
-
+  override def addUser(u: User): Event = this applyLens UserListLens modify (_.+(EventUser(this,u,isPresent = false,isAdmin = false,isModerator = false)))
   override def removeUser(u: User): Event = this applyLens UserListLens modify (_.filter(x => x.user != u))
+  def setUserPayment(u: User, paid: Boolean, receipt: Option[String]): Event = {
+    val ue = this.users.find(x => x.user == u).getOrElse(throw new NoSuchElementException("User " + u.id + " does not exist in the event " + this.id))
+    this applyLens UserListLens set this.users - ue + ue.copy(hasPaid = paid, receiptId = receipt)
+  }
+  def addPayment(e: EventPayment): Event = this applyLens PaymentListLens modify(_+ e)
+  def removePayment(e: EventPayment): Event = this applyLens PaymentListLens modify(_.filter(x => x != e))
 
-  def setDetails(e: EventDetails): Event = this applyLens DetailsLens set Some(e)
+
+  def setDetails(e: EventDetails): Event = this applyLens DetailsLens set Option(e)
   def setDescription(desc: String): Event = this applyLens DetailsLens composeLens DetailsDescriptionLens set Some(desc)
   //def setRules(rules: String): Event = this applyLens DetailsLens composeLens DetailsRulesLens set Some(rules)
 }
 
 /* Rules and prizes will work very similar to the old GameFest -- they will be stored as JSON strings in the DB
  *
- * I would like to have description be Markdown, but will need to implement a system where the DB stores both the raw Markdown and a copy of the formatted HTML
- * so it doesn't have to be rendered on every page load.
  * */
 
 case class EventDetails(event: Event, address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
                         streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None)
 {
 
-}/*case class EventDetails(address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
-                   streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None, id: Int = 0)
-{
+}
 
-}*/
+object PaymentType extends Enumeration {
+  type PaymentType = Value
+  val Stripe, Bitcoin, Dogecoin, Paypal = Value
+
+  def toString(j: PaymentType) = j match {
+    case Stripe => "Stripe"
+    case Bitcoin => "Bitcoin"
+    case Dogecoin => "Dogecoin"
+    case Paypal => "Paypal"
+  }
+
+  def fromString(j: String): PaymentType = j match {
+    case "Stripe" => Stripe
+    case "Bitcoin" => Bitcoin
+    case "Dogecoin" => Dogecoin
+    case "Paypal" => Paypal
+  }
+}
+
+case class EventPayment(event: Event, payType: PaymentType.Value, secretKey: Option[String], publicKey: Option[String], address: Option[String], amount: Double, isEnabled: Boolean = true)

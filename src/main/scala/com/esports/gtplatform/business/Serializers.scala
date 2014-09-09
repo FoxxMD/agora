@@ -76,8 +76,8 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, 
     Extraction.decompose(td.copy())
 }
   ))
-
-class EntitySerializer[T](implicit val bindingModule: BindingModule, mt: Manifest[T]) extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
+//[T](mt: Manifest[T](implicit val bindingModule: BindingModule) https://github.com/dickwall/subcut/blob/master/GettingStarted.md#creating-an-injectable-class ?
+class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
   case g: Game =>
     implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType) ++ org.json4s.ext.JodaTimeSerializers.all
@@ -111,5 +111,5 @@ class EntitySerializer[T](implicit val bindingModule: BindingModule, mt: Manifes
   ))
 
 object GTSerializers {
-  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer)
+  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer)
 }
