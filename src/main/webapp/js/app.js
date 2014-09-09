@@ -77,6 +77,14 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 data: {
                     teamType: 'event'
                 }
+            })
+            .state('eventSkeleton.settings', {
+                url:'/settings',
+                templateUrl:'/views/event/settings.html',
+                params:{
+                    eventId:{}
+                },
+                controller:'EventSettingsController as eventSettings'
             });
 
         //Account related states

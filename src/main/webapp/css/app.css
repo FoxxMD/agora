@@ -25,6 +25,10 @@ body h6,
 body p {
   color: #F1F1F1;
 }
+body .well {
+  border: none;
+  background-color: #636363;
+}
 .headerWrapper {
   position: fixed;
   top: 0;

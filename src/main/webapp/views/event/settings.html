@@ -1,0 +1,33 @@
+<h2>Hello {{cncCtrl.account.user().globalHandle}}!</h2>
+<h3 style="margin-bottom:100px;">This is the control panel for your Event.</h3>
+<div class="row">
+    <div class="col-md-6">
+        <div class="well">
+            <h4>Privacy</h4>
+
+            <div class="btn-group">
+                <label class="btn btn-info" ng-model="eventSettings.privacy" btn-radio="'Public'">Public</label>
+                <label class="btn btn-info" ng-model="eventsCtrl.privacy" btn-radio="'Invite'">Invite Only</label>
+                <label class="btn btn-info" ng-model="eventsCtrl.privacy" btn-radio="'Hidden'">Hidden</label>
+            </div>
+            <div class="btn btn-info pull-right">Save</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <h4>Payment Options</h4>
+            <ul>
+                <li ng-repeat="option in eventSettings.event.payments">{{option.payType}}</li>
+            </ul>
+            <morphing-button title="Create New Payment Option">
+                <form class="form morphingButtonForm" name="createPaymentOption" ng-submit="eventSettings.tryCreatePayment()">
+                    <div class="row">
+                        <h5>Choose Payment Type</h5>
+
+                    </div>
+                </form>
+                </morphing-button>
+        </div>
+    </div>
+</div>
+<button class="btn btn-danger btn-lg pull-right">Delete Event</button>

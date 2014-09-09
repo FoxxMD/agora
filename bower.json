@@ -14,7 +14,6 @@
     "angular-smart-table": "*",
     "flatstrap3": "~3.0.3",
     "angular-loading-bar": "~0.5.1",
-    "jquery-ui": "~1.11.1",
     "angular-sanitize": "~1.2.23",
     "angular-payments": "*"
   },
