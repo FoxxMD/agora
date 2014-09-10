@@ -126,16 +126,16 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   post("/:id/payRegistration") {
     import scala.collection.mutable
     auth()
-    if ((user.role == "admin" || requestEvent.get.isAdmin(user)) && params.get("id").isDefined) {
+    if ((user.role == "admin" || requestEvent.get.isAdmin(user)) && params.get("userId").isDefined) {
       val paid = params.getOrElse("paid", false) == "true"
       val userRepo = inject[UserRepo]
-      val theuser = userRepo.get(params("id").toInt).getOrElse(halt(400, "User with that Id does not exist."))
+      val theuser = userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
       eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(theuser, paid = paid, None))
       val atype = if(user.role == "admin") "Admin" else "Event Admin"
       logger.info("["+atype+" "+ user.id + "] Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)
     }
     else {
-      params.get("type") match {
+      parsedBody.\("type").extractOpt[String] match {
         case None =>
           halt(400, "No payment type was specified.")
         case Some("Stripe") =>

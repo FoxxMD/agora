@@ -1,7 +1,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar', 'ngSanitize','angular-ladda',
-        'xeditable'],
+        'xeditable','angularPayments'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -77,6 +77,14 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 },
                 data: {
                     teamType: 'event'
+                }
+            })
+            .state('eventSkeleton.pay',{
+                url:'/pay',
+                templateUrl:'/views/event/pay.html',
+                controller:'PaymentController as payCtrl',
+                params:{
+                    eventId:{}
                 }
             })
             .state('eventSkeleton.settings', {

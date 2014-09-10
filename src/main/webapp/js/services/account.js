@@ -4,6 +4,7 @@
 // @ngInject
 angular.module('gtfest')
     .service('Account', ['Restangular', '$localStorage', '$q','$rootScope','Users', function (Restangular, $localStorage, $q, $rootScope, Users) {
+        $localStorage.reminders = $localStorage.reminders || {};
 
         var privUser = undefined;
         this.user = function () {
@@ -18,7 +19,14 @@ angular.module('gtfest')
             return privUser.role == "admin"
         };
         this.isRegisteredForEvent = function(eventId) {
+            if(!privUser)
+                return false;
             return Users.isRegisteredForEvent(privUser, eventId);
+        };
+        this.hasPaid = function(eventId) {
+            if(!privUser)
+                return false;
+            return Users.hasPaid(privUser, eventId);
         };
         this.logout = function () {
             privUser = undefined;
@@ -50,6 +58,7 @@ angular.module('gtfest')
             var deferred = $q.defer();
             Restangular.all('users').one('me').get().then(function (returnedUser) {
                 privUser = returnedUser.plain();
+                $localStorage.reminders[privUser.id] = $localStorage.reminders[privUser.id] || {};
                 $rootScope.$broadcast('accountStatusChange');
                 deferred.resolve();
             });

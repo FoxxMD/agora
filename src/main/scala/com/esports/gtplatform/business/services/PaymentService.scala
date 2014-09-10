@@ -59,12 +59,12 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
           }
       }
       val charge = mutable.Map.empty[String, String]
-      charge.put("amount", eventPayment.amount.toString)
+      charge.put("amount", (eventPayment.amount*100).toInt.toString)
       charge.put("currency","usd")
       charge.put("description", "Registration for " + event.name)
       charge.put("customer", customerId)
       charge.put("receipt_email", u.email)
-      Charge.create(charge)
+      Charge.create(charge, eventPayment.secretKey.get)
       (true, customerId)
     }
     catch {
@@ -74,6 +74,9 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
       case ir: InvalidRequestException =>
         logger.error("Stripe had a bad request", ir)
         (false, ir.getMessage)
+      case auth: AuthenticationException =>
+        logger.error("Stripe couldn't authenticate, probably API Key", auth)
+        (false, auth.getMessage)
     }
   }
 }

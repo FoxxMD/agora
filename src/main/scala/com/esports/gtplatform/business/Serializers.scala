@@ -35,7 +35,7 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("isPresent" -> eu.isPresent) ~
       ("isAdmin" -> eu.isAdmin) ~
       ("isModerator" -> eu.isModerator) ~
-      ("resource" -> "/event/")
+      ("hasPaid" -> eu.hasPaid)
   case tt: TournamentTeam =>
     implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(BracketType)
     ("Tournament" ->

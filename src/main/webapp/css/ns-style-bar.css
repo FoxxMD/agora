@@ -1,12 +1,12 @@
 .ns-box {
     position: fixed;
-    background: rgba(42,45,50,0.85);
-    padding: 22px;
+    background: rgba(42,45,50,0.95);
+    padding: 22px 22px 22px 17px;
     line-height: 1.4;
     z-index: 9000;
     pointer-events: none;
     color: rgba(250,251,255,0.95);
-    font-size: 90%;
+    font-size: 100%;
     font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
@@ -84,8 +84,14 @@
 	left: 0;
 	width: 100%;
 }
+.ns-box.ns-barBottom {
+    bottom:0;
+    left: 0;
+    width: 100%;
+}
 
-.ns-bar .ns-close {
+.ns-bar .ns-close,
+.ns-barBottom .ns-close{
 	background: transparent;
 	top: 50%;
 	right: 20px;
@@ -94,12 +100,16 @@
 }
 
 .ns-bar .ns-close::before,
-.ns-bar .ns-close::after {
+.ns-bar .ns-close::after
+.ns-barBottom .ns-close::before,
+.ns-barBottom .ns-close::after{
 	background: #b7b5b3;
 }
 
 [class^="ns-effect-"].ns-bar.ns-hide,
-[class*=" ns-effect-"].ns-bar.ns-hide {
+[class*=" ns-effect-"].ns-bar.ns-hide
+[class^="ns-effect-"].ns-barBottom.ns-hide,
+[class*=" ns-effect-"].ns-barBottom.ns-hide{
 	-webkit-animation-direction: reverse;
 	animation-direction: reverse;
 }
@@ -107,11 +117,13 @@
 /* Individual Effects */
 
 /* Slide on top */
-.ns-effect-slidetop {
+.ns-effect-slidetop,
+.ns-effect-slidebottom{
 	box-shadow: inset 4.5em 0 rgba(0,0,0,0.6);
 }
 
-.ns-effect-slidetop .icon {
+.ns-effect-slidetop .icon,
+.ns-effect-slidebottom .icon{
 	position: absolute;
 	display: block;
 	font-size: 109%;
@@ -121,25 +133,32 @@
 	transform: translate3d(0,-50%,0);
 }
 
-.ns-effect-slidetop p {
+.ns-effect-slidetop p,
+.ns-effect-slidebottom p{
 	padding: 0 3.2em;
 	font-size: 1.2em;
 	display: inline-block;
 }
 
 .ns-effect-slidetop .ns-close::before,
-.ns-effect-slidetop .ns-close::after {
+.ns-effect-slidetop .ns-close::after,
+.ns-effect-slidebottom .ns-close::before,
+.ns-effect-slidebottom .ns-close::after {
 	width: 2px;
 	background: #14151b;
 }
 
 .ns-effect-slidetop .ns-close:hover::before,
-.ns-effect-slidetop .ns-close:hover::after {
+.ns-effect-slidetop .ns-close:hover::after
+.ns-effect-slidebottom .ns-close:hover::before,
+.ns-effect-slidebottom .ns-close:hover::after{
 	background: #fff;
 }
 
 .ns-effect-slidetop.ns-show .icon,
-.ns-effect-slidetop.ns-show p {
+.ns-effect-slidetop.ns-show p,
+.ns-effect-slidebottom.ns-show .icon,
+.ns-effect-slidebottom.ns-show p{
 	-webkit-animation-name: animScaleUp;
 	animation-name: animScaleUp;
 	-webkit-animation-duration: 0.3s;
@@ -150,7 +169,8 @@
 	animation-fill-mode: both;
 }
 
-.ns-effect-slidetop.ns-show p {
+.ns-effect-slidetop.ns-show p,
+.ns-effect-slidebottom.ns-show p{
 	-webkit-animation-name: animFade;
 	animation-name: animFade;
 }
@@ -173,14 +193,30 @@
 	animation-duration: 0.3s;
 }
 
+.ns-effect-slidebottom.ns-show,
+.ns-effect-slidebottom.ns-hide {
+    -webkit-animation-name: animSlideBottom;
+    animation-name: animSlideBottom;
+    -webkit-animation-duration: 0.3s;
+    animation-duration: 0.3s;
+}
+
 @-webkit-keyframes animSlideTop {
 	0% { -webkit-transform: translate3d(0,-100%,0); }
 	100% { -webkit-transform: translate3d(0,0,0); }
+}
+@-webkit-keyframes animSlideBottom {
+    0% { -webkit-transform: translate3d(0,100%,0); }
+    100% { -webkit-transform: translate3d(0,0,0); }
 }
 
 @keyframes animSlideTop {
 	0% { -webkit-transform: translate3d(0,-100%,0); transform: translate3d(0,-100%,0); }
 	100% { -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); }
+}
+@keyframes animSlideBottom {
+    0% { -webkit-transform: translate3d(0,100%,0); transform: translate3d(0,100%,0); }
+    100% { -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); }
 }
 
 /* Expanding Loader */

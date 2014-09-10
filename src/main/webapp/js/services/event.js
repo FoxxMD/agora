@@ -45,6 +45,9 @@ angular.module('gtfest')
         this.deletePayment = function(eventId, optionId) {
             return events.one(eventId).one('payments').one(optionId).remove();
         };
+        this.payRegistration = function(eventId, payType, cardToken, userId) {
+            return events.one(eventId).post('payRegistration',{card: cardToken, type: payType})
+        };
         /*
          * User Functions
          */
@@ -53,12 +56,12 @@ angular.module('gtfest')
                 return events.one(eventId).post('users', {userId: userId});
             else
                 return events.one(eventId).post('users');
-        }
+        };
         this.leaveEvent = function(eventId, userId) {
             if(userId)
                 return events.one(eventId).one('users').remove({userId: userId});
             else
                 return events.one(eventId).one('users').remove();
-        }
+        };
 
     }]);

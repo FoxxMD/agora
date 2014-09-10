@@ -5,11 +5,24 @@ angular.module('gtfest')
     .controller('EventController', eventController);
 
 // @ngInject
-function eventController($scope, Account, $q, eventData, $rootScope, Events, $sce){
+function eventController($scope, Account, $q, eventData, $rootScope, Events, $sce, $timeout, $localStorage, $state){
     var that = this;
 
     $rootScope.$on('accountStatusChange', function(){
         adminStatusChecker();
+        if(!Account.hasPaid(that.event.id) && !$localStorage.reminders[Account.user().id][that.event.id])
+        {
+            $timeout(function(){
+                $scope.$emit('notify', 'important', 'You haven\'t pre-paid for this event yet! <a href="'+ $state.href("eventSkeleton.pay",{eventId:that.event.id})+ '" class="btn btn-info">Pay Now</a> <a style="border:solid 1px grey;" class="btn reminderButton">Don\'t Remind Me Again</a>', 0, 'barBottom');
+            },1000);
+        }
+    });
+    //This is terrible and I feel bad for doing it.
+    //So sue me.
+    $(document).on('click', '.ns-box .reminderButton', function(){
+        $localStorage.reminders[Account.user().id][that.event.id] = true;
+        $scope.$apply();
+        $scope.$emit('closeNotification');
     });
     $scope.$on('$destroy', function(){
         $rootScope.$broadcast('permissionsStatusChange', null);
@@ -51,4 +64,4 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
         });
     };
 }
-eventController.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$sce"];
+eventController.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$sce", "$timeout", "$localStorage", "$state"];

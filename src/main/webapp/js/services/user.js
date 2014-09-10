@@ -8,6 +8,9 @@ angular.module('gtfest')
     this.isRegisteredForEvent = function(user, eventId) {
         return $.grep(user.events, function(e) { return e.id == eventId}).length > 0; //or should it be == 1?
     };
+    this.hasPaid = function(user, eventId) {
+        return $.grep(user.events, function(e) { return e.id == eventId && e.hasPaid}).length > 0;
+    };
     this.getUser = function(userId) {
         return users.one(userId.toString()).get();
     }

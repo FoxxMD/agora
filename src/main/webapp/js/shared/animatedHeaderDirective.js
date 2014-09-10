@@ -49,3 +49,4 @@ function animatedheader(Events){
         }
     }
 }
+animatedheader.$inject = ["Events"];

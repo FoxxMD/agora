@@ -22,6 +22,7 @@
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.users" class="topLink">Users</a></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.teams" class="topLink">Teams</a></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.about" class="topLink">About</a></li>
+                    <li ng-show="cncCtrl.account.isLoggedIn() && eventCtrl != undefined && !cncCtrl.account.hasPaid(eventCtrl.event.id)"><a ui-sref="eventSkeleton.pay" class="topLink">Pay</a></li>
                     <li ng-show="eventCtrl != undefined && eventCtrl.isAdmin()"><a ui-sref="eventSkeleton.settings" class="topLink">Settings</a></li>
                     <li ng-if="cncCtrl.account.isLoggedIn()" ng-show="eventCtrl != undefined && !eventCtrl.isAdmin()" ng-switch="cncCtrl.account.isRegisteredForEvent(eventCtrl.event.id)">
                         <a class="topLink" ng-switch-when="false" ng-click="eventCtrl.tryJoin()">Join</a>
