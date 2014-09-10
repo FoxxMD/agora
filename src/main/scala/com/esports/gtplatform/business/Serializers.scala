@@ -1,8 +1,9 @@
 package com.esports.gtplatform.business
 
-import com.escalatesoft.subcut.inject.BindingModule
+import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
 import com.googlecode.mapperdao.{Entity, Persisted}
 import models._
+import org.json4s.JsonAST.JValue
 import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
@@ -76,6 +77,18 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, 
     Extraction.decompose(td.copy())
 }
   ))
+
+class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
+  {PartialFunction.empty}, {
+  case ep: EventPayment =>
+    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(PaymentType)
+    Extraction.decompose(ep.copy()) removeField {
+      case("secretKey", _) => true
+      case _ => false
+    }
+}
+  ))
+
 //[T](mt: Manifest[T](implicit val bindingModule: BindingModule) https://github.com/dickwall/subcut/blob/master/GettingStarted.md#creating-an-injectable-class ?
 class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
@@ -95,10 +108,11 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       case ("Team", _) => true
       case _ => false }
   case e: Event =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
-    Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge
-    render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id)))
-    //TODO per request serialization of tournaments
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new  EntityAuxillarySerializer
+    (Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge
+    render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))))
+      .replace(List("payments"), Extraction.decompose(e.payments.filter(x => x.isEnabled)))  //TODO learn json4s and remove non enabled events from JSON rather than re-rendering filtered list
+                                                                                             //TODO per request serialization of tournaments
   case t: Tournament =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
     Extraction.decompose(t.copy())
@@ -111,5 +125,5 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
   ))
 
 object GTSerializers {
-  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer)
+  val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer, new EntityAuxillarySerializer)
 }

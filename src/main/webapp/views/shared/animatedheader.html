@@ -1,19 +1,19 @@
 <div class="headerWrapper">
     <div class="cbp-af-header cbp-hsmenu-wrapper" ng-class="{'globalHeader': eventCtrl == undefined }" id="cbp-hsmenu-wrapper">
         <div class="cbp-af-inner">
-            <h1>{{eventCtrl.event.name}}</h1>
+            <h1><a ui-sref="eventSkeleton.event({eventId: eventCtrl.event.id})">{{eventCtrl.event.name}}</a></h1>
             <nav>
                 <ul class="cbp-hsmenu">
                     <!-- Event Header Links -->
                     <li ng-if="eventCtrl != undefined"><a ui-sref="eventSkeleton.schedule"  class="topLink">Schedule</a></li>
-                    <li ng-show="eventCtrl != undefined" class="menuLink"><a ui-sref="eventSkeleton.tournaments"  class="topLink">Tournaments <span class="badge">{{eventCtrl.eventData.tournaments.length}}</span></a>
+                    <li ng-show="eventCtrl != undefined" class="menuLink"><a ui-sref="eventSkeleton.tournaments"  class="topLink">Tournaments <span class="badge">{{eventCtrl.event.tournaments.length}}</span></a>
 <!--                        <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                             <li ng-repeat="t in eventCtrl.tourneyNames">
                                 <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
                             </li>
                         </ul>
                     </li>-->
-                    <li ng-show="eventCtrl != undefined" class="menuLink"><a class="topLink">Games <span class="badge">{{eventCtrl.eventData.games.length}}</span></a>
+                    <li ng-show="eventCtrl != undefined" class="menuLink"><a class="topLink">Games <span class="badge">{{eventCtrl.event.games.length}}</span></a>
                         <ul ng-if="eventCtrl.tourneyNames != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                             <li ng-repeat="t in eventCtrl.tourneyNames">
                                 <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
@@ -23,9 +23,9 @@
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.teams" class="topLink">Teams</a></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.about" class="topLink">About</a></li>
                     <li ng-show="eventCtrl != undefined && eventCtrl.isAdmin()"><a ui-sref="eventSkeleton.settings" class="topLink">Settings</a></li>
-                    <li ng-if="cncCtrl.account.isLoggedIn()" ng-show="eventCtrl != undefined && !eventCtrl.isAdmin()" ng-switch="cncCtrl.account.isRegisteredForEvent(eventCtrl.eventData.id)">
-                        <a class="topLink" ng-switch-when="false">Leave</a>
-                        <a class="topLink" ng-switch-when="true">Join</a>
+                    <li ng-if="cncCtrl.account.isLoggedIn()" ng-show="eventCtrl != undefined && !eventCtrl.isAdmin()" ng-switch="cncCtrl.account.isRegisteredForEvent(eventCtrl.event.id)">
+                        <a class="topLink" ng-switch-when="false" ng-click="eventCtrl.tryJoin()">Join</a>
+                        <a class="topLink" ng-switch-when="true" ng-click="eventCtrl.tryLeave()">Leave</a>
                     </li>
                     <!-- End Event Header Links -->
                     <!-- Global Header Links -->

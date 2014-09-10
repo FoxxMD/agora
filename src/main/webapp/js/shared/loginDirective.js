@@ -15,6 +15,7 @@ function login(Account, $rootScope) {
             $scope.tryLogin = function () {
                 $scope.$broadcast('show-errors-check-validity');
                 if ($scope.loginForm.$valid) {
+                    $scope.loginLoading = true;
                     Account.login($scope.loginformData.email, $scope.loginformData.password).promise.then(
                         function () {
                             Account.initUser();
@@ -23,6 +24,8 @@ function login(Account, $rootScope) {
                             $rootScope.toggleMenu();
                         }, function (response) {
                             $scope.$broadcast('notify','error',response.data, 4000);
+                        }).finally(function(){
+                            $scope.loginLoading = false;
                         });
                 }
             }

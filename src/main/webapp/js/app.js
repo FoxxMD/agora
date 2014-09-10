@@ -1,6 +1,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
-        'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar', 'ngSanitize'],
+        'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar', 'ngSanitize','angular-ladda',
+        'xeditable'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -17,7 +18,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl: '/views/shared/skeleton.html',
                 abstract: true,
                 parent: 'index',
-                controller: 'GlobalController as globalCtrl',
+                controller: 'GlobalController as globalCtrl'
             })
             .state('globalSkeleton.portal', {
                 url: '/{opt:(?:login|register)}',
@@ -115,7 +116,13 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
 
     }]);
 
-angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state", function ($rootScope, Restangular, Account, $urlRouter, $location, $state) {
+angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state","editableOptions", "editableThemes",
+    function ($rootScope, Restangular, Account, $urlRouter, $location, $state, editableOptions, editableThemes) {
+
+        editableThemes.bs3.inputClass = 'form-control input-sm';
+        editableThemes.bs3.buttonsClass = 'btn-sm';
+        editableOptions.theme = 'bs3';
+
     Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
         if (response.status === 400) {
             $rootScope.$broadcast('notify', 'warning', response.data, 6000);

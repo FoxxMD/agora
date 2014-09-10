@@ -68,7 +68,6 @@ CREATE TABLE `eventpayments` (
   `address` varchar(45) DEFAULT NULL,
   `amount` double NOT NULL,
   `isenabled` smallint(6) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`events_id`),
   CONSTRAINT `event_payment_id` FOREIGN KEY (`events_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

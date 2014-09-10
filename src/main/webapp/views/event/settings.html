@@ -1,32 +1,114 @@
 <h2>Hello {{cncCtrl.account.user().globalHandle}}!</h2>
 <h3 style="margin-bottom:100px;">This is the control panel for your Event.</h3>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="well">
             <h4>Privacy</h4>
 
             <div class="btn-group">
-                <label class="btn btn-info" ng-model="eventSettings.privacy" btn-radio="'Public'">Public</label>
-                <label class="btn btn-info" ng-model="eventsCtrl.privacy" btn-radio="'Invite'">Invite Only</label>
-                <label class="btn btn-info" ng-model="eventsCtrl.privacy" btn-radio="'Hidden'">Hidden</label>
+                <label class="btn btn-info" ng-model="eventSettings.event.joinType" btn-radio="'Public'"
+                       ng-click="eventSettings.privacyChange = true">Public</label>
+                <label class="btn btn-info" ng-model="eventSettings.event.joinType" btn-radio="'Invite'"
+                       ng-click="eventSettings.privacyChange = true">Invite Only</label>
+                <label class="btn btn-info" ng-model="eventSettings.event.joinType" btn-radio="'Hidden'"
+                       ng-click="eventSettings.privacyChange = true">Hidden</label>
             </div>
-            <div class="btn btn-info pull-right">Save</div>
+            <button lada="eventSettings.privacyLoading" class="btn btn-info pull-right"
+                 ng-click="eventSettings.changePrivacy()" ng-class="{disabled: !eventSettings.privacyChange}">Save
+            </button>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="well">
             <h4>Payment Options</h4>
-            <ul>
-                <li ng-repeat="option in eventSettings.event.payments">{{option.payType}}</li>
-            </ul>
-            <morphing-button title="Create New Payment Option">
-                <form class="form morphingButtonForm" name="createPaymentOption" ng-submit="eventSettings.tryCreatePayment()">
-                    <div class="row">
-                        <h5>Choose Payment Type</h5>
-
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                <th>Type</th>
+                <th>Public Key</th>
+                <th>Private Key</th>
+                <th>Address</th>
+                <th>Fee Amount</th>
+                <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="option in eventSettings.event.payments">
+                    <td>{{option.payType}}</td>
+                    <td ng-switch="option.payType">
+                        <a ng-switch-when="Stripe" editable-text="option.publicKey" onaftersave="option.changed = true">{{option.publicKey || 'N/A'}}</a>
+                        <a ng-switch-default>N/A</a>
+                    </td>
+                    <td ng-switch="option.payType">
+                        <a ng-switch-when="Stripe" editable-text="option.secretKey" onaftersave="option.changed = true">{{option.secretKey ||'New Key?'}}</a>
+                        <a ng-switch-default>N/A</a>
+                    </td>
+                    <td ng-switch="option.payType">
+                        <!--<a ng-switch-when="Bitcoin">{{option.address}}</a>-->
+                        <a ng-switch-default>N/A</a>
+                    </td>
+                    <td><a editable-text="option.amount" onaftersave="option.change = true">{{option.amount}}</a></td>
+                    <td>
+                        <div class="btn-group" dropdown>
+                        <button type="button" ng-class="{disabled: !option.changed, 'btn-info': option.changed}" ng-click="eventSettings.tryChangePayment(option)" class="btn">Save</button>
+                        <button type="button" class="btn dropdown-toggle">
+                            <span class="caret"></span>
+                            <span class="sr-only">Split button!</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a ng-click="eventSettings.tryDeletePayment(option.id)">Delete</a></li>
+                        </ul>
                     </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <morphing-button title="Create New Payment Option">
+                <form class="form morphingButtonForm" name="createPayment"
+                      ng-submit="eventSettings.tryCreatePayment()">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5>Choose Payment Type</h5>
+
+                            <div class="btn-group">
+                                <label class="btn btn-info" ng-model="eventSettings.paymentCreation.payType" btn-radio="'Stripe'">Stripe</label>
+                                <!--<label class="btn btn-info" ng-model="eventSettings.paymentChosen" btn-radio="'bitcoin'">Bitcoin</label>
+                                <label class="btn btn-info" ng-model="eventSettings.paymentChosen" btn-radio="'paypal'">Paypal</label>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:30px;">
+                        <div class="col-md-6">
+                            <div class="form-group" show-errors>
+                                <input type="text" name="secretKey" placeholder="Secret Key" class="form-control"
+                                       ng-model="eventSettings.paymentCreation.secretKey" required />
+                                <p class="help-block" ng-show="createPayment.secretKey.$error.required">Required</p>
+                            </div>
+                            <div class="form-group" show-errors>
+                                <input type="text" name="publicKey" placeholder="Public Key" class="form-control"
+                                       ng-model="eventSettings.paymentCreation.publicKey" required />
+                                <p class="help-block" ng-show="createPayment.publicKey.$error.required">Required</p>
+                            </div>
+                            </div>
+                        <div class="col-md-6">
+                            <div class="form-group" show-errors>
+                                <div class="input-group">
+                                <div class="input-group-addon">$</div>
+                                <input type="number" min="0.01" step="0.01" size="4" name="amount" placeholder="Registration Fee" class="form-control"
+                                       ng-model="eventSettings.paymentCreation.amount" required />
+                                <p class="help-block" ng-show="createPayment.amount.$error.required">Required</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                    <div class="row">
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>-->
+                    <button class="btn btn-info pull-right" type="submit">Create</button>
                 </form>
-                </morphing-button>
+            </morphing-button>
         </div>
     </div>
 </div>

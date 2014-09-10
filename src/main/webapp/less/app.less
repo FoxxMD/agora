@@ -94,12 +94,37 @@ body {
 }
 
 .morphingButtonForm {
-  padding: 15px 15px 50px 15px;
+  padding: 15px 15px 70px 15px;
   background-color: rgb(119, 119, 119)
 }
 
+.list-row {
+  min-height:30px;
+  border:solid 1px black;
+  padding:10px;
+}
+/*table.table-hover tbody {
+  tr td:hover,
+  tr:hover,
+  th:hover{
+    background-color: rgb(87, 87, 87)
+  }
+}*/
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th
+{
+  background-color: rgb(87, 87, 87);
+}
 .gameItem {
   min-height: 35px;
+}
+
+a.editable-click {
+  color:white;
+  border-bottom: dashed 1px white;
+  &:hover{
+    color:#f5f5f5;
+  }
 }
 
 .ns-box.ns-bar {

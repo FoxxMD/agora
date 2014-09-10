@@ -37,6 +37,18 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
         deferred.resolve();
         return deferred.promise;
 
-    }
+    };
+    this.tryJoin = function() {
+        Events.joinEvent(that.event.id.toString()).then(function(){
+            $scope.$emit('notify','notice','Registration successful.', 2000);
+            Account.initUser();
+        });
+    };
+    this.tryLeave = function() {
+        Events.leaveEvent(that.event.id.toString()).then(function () {
+            $scope.$emit('notify', 'notice', 'You have left successfully.', 2000);
+            Account.initUser();
+        });
+    };
 }
 eventController.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$sce"];

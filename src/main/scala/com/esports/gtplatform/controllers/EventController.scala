@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.business.services.{PaymentService, StripePayment}
-import com.esports.gtplatform.business.{GenericMRepo, UserRepo}
+import com.esports.gtplatform.business.{EntityAuxillarySerializer, GenericMRepo, UserRepo}
 import com.googlecode.mapperdao.jdbc.Transaction
 import models.JoinType.JoinType
 import models.PaymentType.PaymentType
@@ -164,7 +164,36 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
       parsedBody.\("publicKey").extractOpt[String],
       parsedBody.\("address").extractOpt[String],
       parsedBody.\("amount").extract[Double])
-    eventRepo.update(requestEvent.get, requestEvent.get.addPayment(ep))
+    val updated = eventRepo.update(requestEvent.get, requestEvent.get.addPayment(ep))
+    Ok(updated.payments.filter(x => x.isEnabled))
+  }
+  post("/:id/payments/:payId") {
+    auth()
+    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
+      halt(403, "You do not have permission to do that")
+    val ep = EventPayment(requestEvent.get,
+      parsedBody.\("payType").extract[PaymentType],
+      parsedBody.\("secretKey").extractOpt[String],
+      parsedBody.\("publicKey").extractOpt[String],
+      parsedBody.\("address").extractOpt[String],
+      parsedBody.\("amount").extract[Double],
+      parsedBody.\("isEnabled").extract[Boolean],
+      parsedBody.\("id").extract[Int])
+    val updated = eventRepo.update(requestEvent.get, requestEvent.get.changePayment(params("payId").toInt, ep))
+    Ok(updated.payments.filter(x => x.isEnabled))
+  }
+  delete("/:id/payments/:payId") {
+    auth()
+    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
+      halt(403, "You do not have permission to do that")
+    val updated = eventRepo.update(requestEvent.get, requestEvent.get.removePayment(params("payId").toInt))
+    Ok(updated.payments.filter(x => x.isEnabled))
+  }
+  post("/:id/privacy") {
+    auth()
+    if(!requestEvent.get.isAdmin(user) && user.role != "admin")
+      halt(403, "You do not have permission to do that")
+    eventRepo.update(requestEvent.get, requestEvent.get.copy(joinType = parsedBody.\("privacy").extract[JoinType]))
     Ok()
   }
 }

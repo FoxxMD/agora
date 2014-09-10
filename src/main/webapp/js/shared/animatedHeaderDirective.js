@@ -5,13 +5,12 @@ angular.module('gtfest')
 .directive('animatedheader', animatedheader);
 
 // @ngInject
-function animatedheader($state){
+function animatedheader(Events){
     return {
         templateUrl:'views/shared/animatedheader.html',
         restrict:'E',
        controllerAs:'headerCtrl',
         controller: function(){
-            /*this.state = $state;*/
         },
         link: function(scope,elem,attrs)
         {
@@ -50,4 +49,3 @@ function animatedheader($state){
         }
     }
 }
-animatedheader.$inject = ["$state"];

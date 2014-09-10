@@ -183,10 +183,10 @@ module.exports = function (grunt) {
             target: {
                 src: '<%= yeoman.app %>/index.html'
             },
-            cwd: '<%= yeoman.app %>',
-            exclude:{
-                src:['<%= yeoman.app %>/lib/bootstrap-css/js/bootstrap.min.js']
-        }
+            cwd: '<%= yeoman.app %>'
+/*            exclude:{
+                src:[]
+        }*/
         },
         useminPrepare: {
             dev: {

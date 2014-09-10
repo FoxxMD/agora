@@ -48,6 +48,8 @@ case class Event(name: String, joinType: JoinType.Value, details: Option[EventDe
   }
   def addPayment(e: EventPayment): Event = this applyLens PaymentListLens modify(_+ e)
   def removePayment(e: EventPayment): Event = this applyLens PaymentListLens modify(_.filter(x => x != e))
+  def removePayment(id: Int): Event = this applyLens PaymentListLens modify(_.filter(x => x.id != id))
+  def changePayment(id: Int, e: EventPayment): Event = this.removePayment(id).addPayment(e)
 
 
   def setDetails(e: EventDetails): Event = this applyLens DetailsLens set Option(e)
@@ -84,4 +86,4 @@ object PaymentType extends Enumeration {
   }
 }
 
-case class EventPayment(event: Event, payType: PaymentType.Value, secretKey: Option[String], publicKey: Option[String], address: Option[String], amount: Double, isEnabled: Boolean = true)
+case class EventPayment(event: Event, payType: PaymentType.Value, secretKey: Option[String], publicKey: Option[String], address: Option[String], amount: Double, isEnabled: Boolean = true, id: Int = 0)

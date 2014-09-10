@@ -5,7 +5,7 @@ angular.module('gtfest')
     .directive('register', register);
 
 // @ngInject
-function register(Account, $stateParams) {
+function register(Account, $stateParams, $rootScope) {
     return {
         templateUrl: '/views/shared/register.html',
         restrict: 'E',
@@ -28,4 +28,4 @@ function register(Account, $stateParams) {
         }
     }
 }
-register.$inject = ["Account", "$stateParams"];
+register.$inject = ["Account", "$stateParams", "$rootScope"];

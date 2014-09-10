@@ -35,7 +35,7 @@ textarea#source {
 }
 
 div[contenteditable="true"]:hover,
-.editable:hover{
+.halloEditable:hover{
     outline-style: solid;
     outline-width: 3px;
     outline-color: #383838;
@@ -44,7 +44,7 @@ div[contenteditable="true"]:hover,
 [contenteditable="true"].inEditMode,
 [contenteditable="true"].inEditMode:hover,
 .inEditMode,
-.editable.inEditMode{
+.halloEditable.inEditMode{
     outline-style: solid;
     outline-width: 3px;
     outline-color: #396c97;
