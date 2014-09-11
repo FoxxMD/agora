@@ -50,6 +50,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     eventRepo.update(requestEvent.get, requestEvent.get.copy(name = parsedBody.\("name").extract[String],
       joinType = parsedBody.\("eventType").extract[JoinType]))
   }
+  //Change the description of the event(front page)
   post("/:id/description") {
     auth()
     if (!requestEvent.get.isAdmin(user) && user.role != "admin")
@@ -58,9 +59,11 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     eventRepo.update(requestEvent.get, requestEvent.get.setDescription(parsedBody.\("description").extract[String]))
     Ok()
   }
+  //Get a list of teams that are participating in tournaments at this event
   get("/:id/teams") {
     Ok(requestEvent.get.tournaments.flatMap(x => x.teams).map(t => t.team))
   }
+  //Get a list of users for this event
   get("/:id/users") {
     params.get("pageNo") match {
       case Some(p: String) =>
@@ -69,6 +72,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         Ok(requestEvent.get.users.take(pageSize))
     }
   }
+  //Add a user to an event
   post("/:id/users") {
     val userId = parsedBody.\("userId").extractOpt[Int]
     auth()
@@ -91,6 +95,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         Ok()
     }
   }
+  //Delete a user from an event
   delete("/:id/users") {
     val userId = parsedBody.\("userId").extractOpt[Int]
     auth()
@@ -111,7 +116,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         Ok()
     }
   }
-
+  //get a list of tournaments for an event
   get("/:id/tournaments") {
     params.get("pageNo") match {
       case Some(p: String) =>
@@ -122,7 +127,9 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/:id/tournaments") {
     NotImplemented
+    //HENRY WHERE YOU AT?!
   }
+  //A user paying for registation
   post("/:id/payRegistration") {
     import scala.collection.mutable
     auth()
@@ -154,10 +161,13 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
       }
     }
   }
+  //add new payment option
   post("/:id/payments") {
     auth()
     if(!requestEvent.get.isAdmin(user) && user.role != "admin")
       halt(403, "You do not have permission to do that")
+    if(requestEvent.get.payments.exists(x => x.payType == parsedBody.\("payType").extract[PaymentType]))
+      halt(400, "You cannot add a payment type more than once.")
     val ep = EventPayment(requestEvent.get,
       parsedBody.\("payType").extract[PaymentType],
       parsedBody.\("secretKey").extractOpt[String],
@@ -167,6 +177,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     val updated = eventRepo.update(requestEvent.get, requestEvent.get.addPayment(ep))
     Ok(updated.payments.filter(x => x.isEnabled))
   }
+  //Change details of a payment option
   post("/:id/payments/:payId") {
     auth()
     if(!requestEvent.get.isAdmin(user) && user.role != "admin")
@@ -182,6 +193,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     val updated = eventRepo.update(requestEvent.get, requestEvent.get.changePayment(params("payId").toInt, ep))
     Ok(updated.payments.filter(x => x.isEnabled))
   }
+  //delete a payment option
   delete("/:id/payments/:payId") {
     auth()
     if(!requestEvent.get.isAdmin(user) && user.role != "admin")
@@ -189,6 +201,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     val updated = eventRepo.update(requestEvent.get, requestEvent.get.removePayment(params("payId").toInt))
     Ok(updated.payments.filter(x => x.isEnabled))
   }
+  //change privacy settings
   post("/:id/privacy") {
     auth()
     if(!requestEvent.get.isAdmin(user) && user.role != "admin")
