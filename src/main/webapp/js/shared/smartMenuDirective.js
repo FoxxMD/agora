@@ -2,7 +2,7 @@ angular.module('gtfest')
 .directive('smartMenu', smartMenu);
 
 // @ngInject
-function smartMenu($rootScope, Account){
+function smartMenu($rootScope, Account, Events){
     return {
         templateUrl:'/views/shared/smartMenu.html',
         restrict: 'E',
@@ -15,7 +15,12 @@ function smartMenu($rootScope, Account){
         {
             var letter = null;
             scope.permission = function(){
-               return Account.isAdmin() ? 'A' : letter;
+               if(Account.isAdmin() && Account.adminEnabled())
+                   return 'A';
+                else if(Events.getCurrentEvent() != undefined && Account.adminEnabled()) {
+                 return Account.isEventAdmin(Events.getCurrentEvent().id)
+               }
+                return false;
             };
             var navigationContainer = $('#cd-nav'),
                 mainNavigation = navigationContainer.find('#cd-main-nav ul');
@@ -25,10 +30,7 @@ function smartMenu($rootScope, Account){
             $(elem).find('.cd-nav-trigger').on('click', function(){
                $rootScope.toggleMenu();
             });
-            $rootScope.$on('permissionsStatusChange', function(event, zeletter){
-               letter = zeletter;
-            })
         }
     }
 }
-smartMenu.$inject = ["$rootScope" , "Account"];
+smartMenu.$inject = ["$rootScope" , "Account", "Events"];

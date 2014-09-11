@@ -107,7 +107,7 @@
 }
 
 [class^="ns-effect-"].ns-bar.ns-hide,
-[class*=" ns-effect-"].ns-bar.ns-hide
+[class*=" ns-effect-"].ns-bar.ns-hide,
 [class^="ns-effect-"].ns-barBottom.ns-hide,
 [class*=" ns-effect-"].ns-barBottom.ns-hide{
 	-webkit-animation-direction: reverse;

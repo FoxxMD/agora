@@ -5,7 +5,7 @@ angular.module('gtfest')
     .controller('EventsController', EventsController);
 
 // @ngInject
-function EventsController($scope, Events, $state){
+function EventsController($scope, Events, $state, Account){
     var that = this;
     this.eventsCollection = Events.getEvents();
     this.createEventData = {
@@ -27,6 +27,7 @@ function EventsController($scope, Events, $state){
 
     this.tryCreateEvent = function(){
         Events.createEvent(that.createEventData).then(function(response){
+            Account.initUser();
             that.createEventData = {};
             $scope.$broadcast('show-errors-reset');
             $state.go('eventSkeleton.event',{eventId:response});
@@ -40,4 +41,4 @@ function EventsController($scope, Events, $state){
 
     }
 }
-EventsController.$inject = ["$scope","Events","$state"];
+EventsController.$inject = ["$scope","Events","$state", "Account"];

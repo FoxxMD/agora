@@ -13,6 +13,10 @@ angular.module('gtfest')
     };
     this.getUser = function(userId) {
         return users.one(userId.toString()).get();
-    }
+    };
+    this.isEventAdmin = function(user, eventId) {
+       var validEvents = $.grep(user.events, function(e) { return e.id == eventId && (e.isAdmin || e.isModerator)});
+       return validEvents.length > 0 ? validEvents[0].isAdmin ? 'A' : 'M' : false;
+    };
 
 }]);

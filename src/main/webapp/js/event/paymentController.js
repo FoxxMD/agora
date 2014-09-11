@@ -9,6 +9,17 @@ function paymentController($scope, eventData, $state, Events, Account){
     Stripe.setPublishableKey(eventData.payments[0].publicKey);
     var that = this;
 
+    var checkPaid = function() {
+        if (Account.hasPaid(eventData.id)) {
+            $scope.$emit('notify', 'important', "You have already paid for this event!",6000);
+            $state.go('eventSkeleton.event', {eventId: eventData.id});
+        }
+    };
+    $scope.$on('accountStatusChange', function(){
+        checkPaid();
+    });
+    checkPaid();
+
     $scope.handleStripe = function(status, response) {
         if(response.error)
         {
@@ -25,3 +36,4 @@ function paymentController($scope, eventData, $state, Events, Account){
         }
     }
 }
+paymentController.$inject = ["$scope", "eventData", "$state", "Events", "Account"];

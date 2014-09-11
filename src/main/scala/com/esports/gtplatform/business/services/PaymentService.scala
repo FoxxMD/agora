@@ -24,16 +24,24 @@ abstract class PaymentService(event: Event)(implicit val bindingModule: BindingM
 
 class StripePayment(event: Event)(implicit override val bindingModule: BindingModule) extends PaymentService(event) {
   val pType = PaymentType.Stripe
-  val eventPayment = event.payments.find(x => x.payType == pType).getOrElse(throw new Exception("Event does not contain this payment type."))
+  val eventPayment = event.payments.find(x => x.payType == pType).getOrElse {
+    logger.error("Event " + event.id + "does not contain payment option of type " + pType)
+    throw new IllegalArgumentException("This event does not contain the payment type " + pType + ".")
+  }
 
    protected def checkForExistingUser(u: User): Option[String] = {
     val eventRepo = inject[EventRepo]
-    val otherEvents = eventRepo.getAll.filter(x => x.payments.exists(y => y.secretKey.contains(eventPayment.secretKey)))
+    val otherEvents = eventRepo.getAll.filter(x => x.payments.exists(y => y.secretKey == eventPayment.secretKey))
     if (otherEvents.isEmpty)
       None
     else {
       otherEvents.flatMap(x => x.users).find(y => y.user == u && y.receiptId.isDefined) match {
         case Some(ev: EventUser) =>
+          if(ev.event.id == event.id) //TODO why is ev.event not the same as event?
+          {
+            logger.error("User " + u.id + " has already paid for Event " + event.id)
+            throw new IllegalArgumentException("You have already paid for this event!")
+          }
           ev.receiptId
         case None =>
           None
@@ -55,6 +63,7 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
           else {
             info.put("email", u.email)
             info.put("description", "User " + u.id)
+            logger.info("would be creating customer")
             Customer.create(info, eventPayment.secretKey.get).getId
           }
       }
@@ -77,6 +86,8 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
       case auth: AuthenticationException =>
         logger.error("Stripe couldn't authenticate, probably API Key", auth)
         (false, auth.getMessage)
+      case ill: IllegalArgumentException =>
+        (false, ill.getMessage)
     }
   }
 }

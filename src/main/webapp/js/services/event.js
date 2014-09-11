@@ -5,14 +5,22 @@
 angular.module('gtfest')
     .service('Events', ["Restangular", "$q", "$rootScope","Account", function (Restangular, $q, $rootScope, Account) {
 
-        var events = Restangular.all('events');
+        var events = Restangular.all('events'),
+            currentEvent = undefined;
 
         this.getEvents = function(pageNo){
             return events.getList({page: pageNo}).$object;
         };
+        this.setCurrentEvent = function(eventData)
+        {
+            currentEvent = eventData;
+        };
 
         this.getEvent = function(eventId) {
            return events.one(eventId).get();
+        };
+        this.getCurrentEvent = function(){
+            return currentEvent;
         };
         this.createEvent = function(event) {
             var deferred = $q.defer();

@@ -5,16 +5,26 @@ angular.module('gtfest')
 .directive('sidebar', sidebar);
 
 // @ngInject
-function sidebar($rootScope, $timeout, Account){
+function sidebar($rootScope, $timeout, Account, Events){
     return {
         templateUrl:'views/shared/sidebar.html',
         restrict:'E',
         controllerAs: 'sidebar',
-        controller: function(){
+        controller: function($scope){
             this.account = Account;
             this.loginVisible = false;
             this.registerVisible = false;
             this.toggleEvents = false;
+            this.admin = Account.adminEnabled();
+
+            $scope.$watch('sidebar.admin', function(newVal, oldVal){
+                if(newVal != undefined)
+                    Account.toggleAdmin(newVal);
+            });
+
+            this.adminToggleVisible = function(){
+                return Account.isAdmin() || Events.getCurrentEvent() ? Account.isEventAdmin(Events.getCurrentEvent().id) : false;
+            }
         },
         link: function(scope, elem, attrs)
         {
@@ -42,11 +52,11 @@ function sidebar($rootScope, $timeout, Account){
             //TODO these should probably be using $on to watch for a broadcast event so $rootScope doesn't get polluted...
             $rootScope.openLogin = function() {
                 $rootScope.toggleMenu();
-                $scope.sidebar.loginVisible = true;
+                scope.sidebar.loginVisible = true;
             };
             $rootScope.openRegister = function() {
                 $rootScope.toggleMenu();
-                $scope.sidebar.registerVisible = true;
+                scope.sidebar.registerVisible = true;
             };
             //Watches for URL change and if it finds
             // /login or /register at the end of the URL opens the sidemenu and respective action
@@ -64,4 +74,4 @@ function sidebar($rootScope, $timeout, Account){
         }
     }
 }
-sidebar.$inject = ["$rootScope", "$timeout", "Account"];
+sidebar.$inject = ["$rootScope", "$timeout", "Account", "Events"];

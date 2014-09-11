@@ -7,10 +7,17 @@ angular.module('gtfest')
 // @ngInject
 function eventController($scope, Account, $q, eventData, $rootScope, Events, $sce, $timeout, $localStorage, $state){
     var that = this;
+    this.event = eventData.plain();
+    this.tourneyNames = ['Frosty 2v2','Epic 4v4','Round-Robin(20 player)','Deathmatch 100-kill Win'];
+    this.sce = $sce;
+    this.frontPage = that.event.details.description || "<h3>This is your description page, please edit it!</h3>";
+
+    this.isAdmin = function() {
+        return Account.isEventAdmin(that.event.id) && Account.adminEnabled();
+    };
 
     $rootScope.$on('accountStatusChange', function(){
-        adminStatusChecker();
-        if(!Account.hasPaid(that.event.id) && !$localStorage.reminders[Account.user().id][that.event.id])
+        if(Account.isLoggedIn() && !Account.hasPaid(that.event.id) && !$localStorage.reminders[Account.user().id][that.event.id])
         {
             $timeout(function(){
                 $scope.$emit('notify', 'important', 'You haven\'t pre-paid for this event yet! <a href="'+ $state.href("eventSkeleton.pay",{eventId:that.event.id})+ '" class="btn btn-info">Pay Now</a> <a style="border:solid 1px grey;" class="btn reminderButton">Don\'t Remind Me Again</a>', 0, 'barBottom');
@@ -24,22 +31,7 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
         $scope.$apply();
         $scope.$emit('closeNotification');
     });
-    $scope.$on('$destroy', function(){
-        $rootScope.$broadcast('permissionsStatusChange', null);
-    });
-    this.event = eventData.plain();
-    this.tourneyNames = ['Frosty 2v2','Epic 4v4','Round-Robin(20 player)','Deathmatch 100-kill Win'];
-    this.sce = $sce;
-    this.frontPage = that.event.details.description || "<h3>This is your description page, please edit it!</h3>";
 
-    function adminStatusChecker() {
-       var status = Account.isLoggedIn() && $.grep(eventData.admins, function(e) { return e.id == Account.user().id}).length == 1 ? 'A': null;
-        that.isAdmin = function(){
-            return status == 'A';
-        };
-       $rootScope.$broadcast('permissionsStatusChange', status);
-    }
-    adminStatusChecker();
     this.tryDescUpdate = function(content)
     {
         return Events.setDescription(eventData.id.toString(),content);

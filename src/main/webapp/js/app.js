@@ -1,7 +1,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar', 'ngSanitize','angular-ladda',
-        'xeditable','angularPayments'],
+        'xeditable','angularPayments', 'toggle-switch'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -18,7 +18,12 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl: '/views/shared/skeleton.html',
                 abstract: true,
                 parent: 'index',
-                controller: 'GlobalController as globalCtrl'
+                controller: 'GlobalController as globalCtrl',
+                resolve: {
+                    nothing: function(Events){
+                        Events.setCurrentEvent(undefined);
+                    }
+                }
             })
             .state('globalSkeleton.portal', {
                 url: '/{opt:(?:login|register)}',
@@ -49,6 +54,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     eventData: function (Events, $stateParams, $state, $q) {
                         var deferred = $q.defer();
                         Events.getEvent($stateParams.eventId.toString()).then(function (response) {
+                            Events.setCurrentEvent(response.plain());
                             return deferred.resolve(response);
                         }, function (error) {
                             $state.go('portal');
