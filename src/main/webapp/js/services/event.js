@@ -71,5 +71,11 @@ angular.module('gtfest')
             else
                 return events.one(eventId).one('users').remove();
         };
+        this.getUsers = function(eventId) {
+            return events.one(eventId).all('users').getList(); //TODO pagination
+        };
+        this.getUser = function(eventId, userId) {
+            return events.one(eventId).all('users').one(userId).get();
+        }
 
     }]);

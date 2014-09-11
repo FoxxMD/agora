@@ -17,7 +17,7 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
     };
 
     $rootScope.$on('accountStatusChange', function(){
-        if(Account.isLoggedIn() && !Account.hasPaid(that.event.id) && !$localStorage.reminders[Account.user().id][that.event.id])
+        if(Account.isLoggedIn() && Account.isRegisteredForEvent(that.event.id) && !Account.hasPaid(that.event.id) && !$localStorage.reminders[Account.user().id][that.event.id])
         {
             $timeout(function(){
                 $scope.$emit('notify', 'important', 'You haven\'t pre-paid for this event yet! <a href="'+ $state.href("eventSkeleton.pay",{eventId:that.event.id})+ '" class="btn btn-info">Pay Now</a> <a style="border:solid 1px grey;" class="btn reminderButton">Don\'t Remind Me Again</a>', 0, 'barBottom');

@@ -9,7 +9,12 @@
             </div>
         </a>
         <ul>
-            <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"><i class="fa fa-user">Profile</i></a></li>
+            <li ng-if="sidebar.event() != undefined && sidebar.account.isLoggedIn()" class="menuTopLink">
+                <a ui-sref="eventSkeleton.profile({eventId: sidebar.event().id, userId: sidebar.account.user().id})"><i class="fa fa-user">Profile</i></a>
+            </li>
+            <li ng-if="sidebar.event() == undefined && sidebar.account.isLoggedIn()" class="menuTopLink">
+                <a ui-sref="globalSkeleton.profile({userId: sidebar.account.user().id})"><i class="fa fa-user">Profile</i></a>
+            </li>
             <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"
                                        ng-click="sidebar.toggleEvents = !sidebar.toggleEvents"><i class="fa fa-gamepad">My Events</i></a>
                 <ul ng-if="sidebar.account.isLoggedIn() && sidebar.account.user().events.length > 0"
@@ -23,8 +28,8 @@
                 Tournaments</i></a></li>
             <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"><i class="fa fa-group">Friends</i></a>
             </li>
-            <li class="menuTopLink"><a ui-sref="settings"><i class="fa fa-gears"></i>Account Settings</a></li>
-            <li class="menuTopLink"><a ui-sref="about"><i class="fa fa-question"></i>About Gamefest</a></li>
+            <li ui-sref-active="active" class="menuTopLink"><a ui-sref="globalSkeleton.account"><i class="fa fa-gears"></i>Account Settings</a></li>
+            <li class="menuTopLink"><a ui-sref="globalSkeleton.about"><i class="fa fa-question"></i>About Gamefest</a></li>
             <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"
                                        ng-click="sidebar.account.logout()">Logout</a></li>
             <li class="menuTopLink"><a ng-click="sidebar.loginVisible = !sidebar.loginVisible"

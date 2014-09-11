@@ -158,3 +158,26 @@ trait EventControllerT extends StandardController {
     }
   }
 }
+
+trait UserControllerT extends StandardController {
+  idType = "User"
+  val userRepo = inject[UserRepo]
+  var requestUser: Option[User with Persisted] = None
+  before("/:id/?*") {
+    val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+    if(p == "me")
+      paramId = None
+    else{
+      val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+      paramId = Some(i)
+    }
+  }
+  before("/:id/?*") {
+    if(paramId.isDefined)
+      userRepo.get(paramId.get) match {
+        case Some(t: User with Persisted) =>
+          requestUser = Some(t)
+        case None => halt(400, "No user exists with the Id " + paramId.get)
+      }
+  }
+}

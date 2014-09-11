@@ -29,6 +29,13 @@ body .well {
   border: none;
   background-color: #636363;
 }
+body .panel.panel-default {
+  background-color: grey;
+}
+body .panel.panel-default .panel-heading {
+  background-color: grey;
+  color: white;
+}
 .headerWrapper {
   position: fixed;
   top: 0;

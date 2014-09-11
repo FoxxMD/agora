@@ -1,0 +1,114 @@
+<div class="row">
+    <div class="col-md-12" style="margin-bottom:50px;">
+        <div ng-switch="profileCtrl.isEditable()">
+            <h1 ng-switch-when="true"><a editable-text="profileCtrl.user.globalHandle" onaftersave="profileCtrl.changed = true">{{profileCtrl.user.globalHandle}}</a></h1>
+
+            <h1 ng-switch-default>{{profileCtrl.user.globalHandle}}</h1>
+        </div>
+    </div>
+    <div ng-if="profileCtrl.account.adminEnabled() && (profileCtrl.account.isAdmin() || profileCtrl.user.accountType == 'A')" class="col-md-12">
+        <div class="well">
+            <h3>Admin Panel</h3>
+
+            <div class="row">
+                <div ng-if="profileCtrl.account.isAdmin()" ng-class="profileCtrl.isEventProfile() ? 'col-md-6' : 'col-md-12'">
+                    <div class="well">
+                        <h4>Global Admin Options</h4>
+                        <button class="btn btn-danger">Delete Account</button>
+                        <button class="btn btn-warning">Reset Password</button>
+                        <button class="btn btn-info">Make Global Admin</button>
+                    </div>
+                </div>
+                <div ng-if="profileCtrl.isEventProfile()" ng-class="{'col-md-6':profileCtrl.account.isAdmin(),'col-md-12':profileCtrl.user.accountType == 'A'}">
+                    <div class="well">
+                        <h4>Event Admin Options</h4>
+
+                        <div>Set User's Payment status:
+                            <button class="btn btn-info">{{profileCtrl.Users.hasPaid(profileCtrl.user,profileCtrl.event.id) ? 'Has Paid' : 'Not Paid'}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well">
+                    <h3>Statistics</h3>
+                    <ul>
+                        <li>Joined: {{profileCtrl.user.cDate}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Teams</h4>
+                    <accordion close-other="profileCtrl.openedTeamsAccordion">
+                        <accordion-group heading="{{team.Team.name}}" ng-repeat="team in profileCtrl.user.teams">
+                            Got yer Team, {{team.Team.name}}, with the Id {{team.Team.id}} right here.
+                        </accordion-group>
+                    </accordion>
+                    {{profileCtrl.user.teams.length == 0 ? 'None to report!' : ''}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-if="profileCtrl.isEventProfile()" class="col-md-6">
+        <div class="well">
+            <h3>At This Event</h3>
+            <ul>
+                <li>Account Type: {{profileCtrl.user.accountType == 'A' ? 'Admin' : profileCtrl.user.accountType == 'M' ? 'Moderator' : 'User'}}</li>
+            </ul>
+            <h4>Tournaments</h4>
+            <accordion>
+                <accordion-group heading="1v1 Rust Me Bro">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Stats</strong>
+                            <ul class="list-unstyled">
+                                <li>Participating with <strong>Team Honkey</strong></li>
+                                <li><strong>Starts</strong> in two days at 11:45am</li>
+                                <li><strong>5 other teams are participating</strong></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Info</strong>
+                            <ul>
+                                <li><strong>Game:</strong> League of Legends</li>
+                                <li><strong>Type:</strong> Round-Robin</li>
+                                <li><strong>Roster Status:</strong> Open!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Events Participated In</h4>
+                    <accordion close-other="profileCtrl.openedEventAccordion">
+                        <accordion-group heading="{{pEvent.name}}" ng-repeat="pEvent in profileCtrl.user.events">
+                            Got yer Event, {{pEvent.name}}, with the Id {{pEvent.id}} right here.
+                        </accordion-group>
+                    </accordion>
+                    {{profileCtrl.user.events.length == 0 ? 'None to report!' :''}}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Tournaments Participated In</h4>
+                    <accordion close-other="profileCtrl.openedTournamentAccordion">
+                        <accordion-group heading="{{tour.name}}" ng-repeat="tour in profileCtrl.user.tournaments">
+                            Got yer Tournament, {{tour.name}}, with the Id {{tour.id}} right here.
+                        </accordion-group>
+                    </accordion>
+                    {{profileCtrl.user.tournaments == undefined ? 'None to report!' : ''}} <!--TODO make this .length == 0 once tournaments are included -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

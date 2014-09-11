@@ -11,8 +11,11 @@ angular.module('gtfest')
     this.hasPaid = function(user, eventId) {
         return $.grep(user.events, function(e) { return e.id == eventId && e.hasPaid}).length > 0;
     };
+    this.getUsers = function() {
+        return users.getList(); //TODO pagination
+    };
     this.getUser = function(userId) {
-        return users.one(userId.toString()).get();
+        return users.one(userId).get();
     };
     this.isEventAdmin = function(user, eventId) {
        var validEvents = $.grep(user.events, function(e) { return e.id == eventId && (e.isAdmin || e.isModerator)});

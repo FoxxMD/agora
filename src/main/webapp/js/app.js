@@ -39,10 +39,35 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
             })
             .state('globalSkeleton.teams', {
                 url: '/teams',
-                template: '<teams></teams>',
-                data: {
-                    teamType: 'global'
-                }
+                template: '<teams></teams>'
+            })
+            .state('globalSkeleton.users',{
+                url:'/users',
+                template:'<users></users>'
+            })
+            .state('globalSkeleton.users.profile', {
+                url:'/:userId',
+                params:{
+                    userId:{}
+                },
+                resolve: {
+                    userData: function(Account, Users, $stateParams, $state, $q){
+                        if(Account.isLoggedIn() && $stateParams.userId == Account.user().id)
+                            return Account.user();
+                        else {
+                            var deferred = $q.defer();
+                            Users.getUser($stateParams.userId.toString()).then(function(response){
+                                return deferred.resolve(response);
+                            }, function(error){
+                                $state.go('globalSkeleton.portal');
+                                return deferred.reject();
+                            });
+                            return deferred.promise;
+                        }
+                    }
+                },
+                templateUrl:'/views/users/profile.html',
+                controller:'ProfileController as profileCtrl'
             })
             .state('eventSkeleton', {
                 templateUrl: '/views/shared/skeleton.html',
@@ -80,10 +105,39 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 template: '<teams></teams>',
                 params:{
                     eventId:{}
-                },
-                data: {
-                    teamType: 'event'
                 }
+            })
+            .state('eventSkeleton.users',{
+                url:'/users',
+                template:'<users></users>',
+                params:{
+                    eventId:{}
+                }
+            })
+            .state('eventSkeleton.users.profile', {
+                url:'/:userId',
+                params:{
+                    eventId:{},
+                    userId:{}
+                },
+                resolve: {
+                    userData: function(Account, Events, $stateParams, $state, $q){
+                        if(Account.isLoggedIn() && $stateParams.userId == Account.user().id)
+                           return Account.user();
+                        else {
+                            var deferred = $q.defer();
+                            Events.getUser($stateParams.eventId,$stateParams.userId.toString()).then(function(response){
+                                return deferred.resolve(response);
+                            }, function(error){
+                                $state.go('eventSkeleton.event',{eventId:$stateParams.eventId});
+                                return deferred.reject();
+                            });
+                            return deferred.promise;
+                        }
+                    }
+                },
+                templateUrl:'/views/users/profile.html',
+                controller:'ProfileController as profileCtrl'
             })
             .state('eventSkeleton.pay',{
                 url:'/pay',
@@ -122,6 +176,11 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     });
                 },
                 parent: 'globalSkeleton'
+            })
+            .state('globalSkeleton.account', {
+                url:'/account',
+                templateUrl:'/views/users/account.html',
+                controller: 'AccountController as accountCtrl'
             });
 
         $urlRouterProvider.otherwise('/');

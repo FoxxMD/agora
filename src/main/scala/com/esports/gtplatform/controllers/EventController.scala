@@ -67,10 +67,15 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   get("/:id/users") {
     params.get("pageNo") match {
       case Some(p: String) =>
-        Ok(requestEvent.get.users.slice(pageSize * (p.toInt - 1), pageSize * p.toInt))
+        Ok(requestEvent.get.users) //.slice(pageSize * (p.toInt - 1), pageSize * p.toInt))
       case None =>
-        Ok(requestEvent.get.users.take(pageSize))
+        Ok(requestEvent.get.users) //.take(pageSize))
     }
+  }
+  get("/:id/users/:userId") {
+    val uid = params("userId").toInt
+    val eventUser = requestEvent.get.users.find(x => x.user.id == uid).getOrElse(halt(400, "User is not in this event."))
+    Ok(eventUser.user)
   }
   //Add a user to an event
   post("/:id/users") {

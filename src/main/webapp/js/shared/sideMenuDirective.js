@@ -12,6 +12,9 @@ function sidebar($rootScope, $timeout, Account, Events){
         controllerAs: 'sidebar',
         controller: function($scope){
             this.account = Account;
+            this.event = function() {
+                return Events.getCurrentEvent();
+            } ;
             this.loginVisible = false;
             this.registerVisible = false;
             this.toggleEvents = false;
@@ -23,7 +26,7 @@ function sidebar($rootScope, $timeout, Account, Events){
             });
 
             this.adminToggleVisible = function(){
-                return Account.isAdmin() || Events.getCurrentEvent() ? Account.isEventAdmin(Events.getCurrentEvent().id) : false;
+                return Account.isAdmin() || (Events.getCurrentEvent() != undefined ? Account.isEventAdmin(Events.getCurrentEvent().id) : false);
             }
         },
         link: function(scope, elem, attrs)
