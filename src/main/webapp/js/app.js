@@ -45,8 +45,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 url:'/users',
                 template:'<users></users>'
             })
-            .state('globalSkeleton.users.profile', {
-                url:'/:userId',
+            .state('globalSkeleton.profile', {
+                url:'/users/:userId',
                 params:{
                     userId:{}
                 },
@@ -114,8 +114,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     eventId:{}
                 }
             })
-            .state('eventSkeleton.users.profile', {
-                url:'/:userId',
+            .state('eventSkeleton.profile', {
+                url:'/users/:userId',
                 params:{
                     eventId:{},
                     userId:{}

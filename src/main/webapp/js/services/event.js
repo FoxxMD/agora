@@ -53,9 +53,9 @@ angular.module('gtfest')
         this.deletePayment = function(eventId, optionId) {
             return events.one(eventId).one('payments').one(optionId).remove();
         };
-        this.payRegistration = function(eventId, payType, cardToken, userId) {
-            return events.one(eventId).post('payRegistration',{card: cardToken, type: payType})
-        };
+        this.payRegistration = function(eventId, payType, cardToken, userId, paid, receipt) {
+            return events.one(eventId).all('users').one(userId).post('payRegistration',{card: cardToken, type: payType, paid: paid, receipt: receipt});
+        };;
         /*
          * User Functions
          */
@@ -76,6 +76,15 @@ angular.module('gtfest')
         };
         this.getUser = function(eventId, userId) {
             return events.one(eventId).all('users').one(userId).get();
-        }
+        };
+        this.setPresent = function(eventId, userId, status) {
+            return events.one(eventId).all('users').one(userId).patch({isPresent: status });
+        };
+        this.setModerator = function(eventId, userId, status) {
+            return events.one(eventId).all('users').one(userId).patch({isModerator: status });
+        };
+        this.setAdmin = function(eventId, userId, status) {
+            return events.one(eventId).all('users').one(userId).patch({isAdmin: status });
+        };
 
     }]);

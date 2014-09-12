@@ -73,9 +73,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
   }
   get("/:id/users/:userId") {
-    val uid = params("userId").toInt
-    val eventUser = requestEvent.get.users.find(x => x.user.id == uid).getOrElse(halt(400, "User is not in this event."))
-    Ok(eventUser.user)
+    Ok(requestEventUser.get.user)
   }
   //Add a user to an event
   post("/:id/users") {
@@ -106,7 +104,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     auth()
     userId match {
       case Some(uid: Int) =>
-        if (user.role != "admin" || !requestEvent.get.isModerator(user))
+        if (user.role != "admin" || !requestEvent.get.isAdmin(user))
           halt(403, "You do not have permission to remove users to this event.")
         val userRepo = inject[UserRepo]
         userRepo.get(uid) match {
@@ -120,6 +118,28 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         eventRepo.update(requestEvent.get, requestEvent.get.removeUser(user))
         Ok()
     }
+  }
+  patch("/:id/users/:userId") {
+    auth()
+    if (user.role != "admin" || !requestEvent.get.isAdmin(user))
+      halt(403, "You do not have permission to edit users at this event.")
+
+    val present = parsedBody.\("isPresent").extractOpt[Boolean]
+    val admin = parsedBody.\("isAdmin").extractOpt[Boolean]
+    val mod = parsedBody.\("isModerator").extractOpt[Boolean]
+
+    var eu = requestEvent.get.users.find(x => x.user.id == params("userId").toInt).getOrElse {
+      logger.warn("Admin " + user.id + " tried to modify an EventUser for a non-existent user " + params("userId") + " on Event " + requestEvent.get.id)
+      halt(400, "This user is not in this event.")
+    } //TODO make this work with requestEventUser
+    if(present.isDefined)
+      eu = eu.copy(isPresent = present.get)
+    if(admin.isDefined)
+      eu = eu.copy(isAdmin = admin.get)
+    if(mod.isDefined)
+      eu = eu.copy(isModerator = mod.get)
+    eventRepo.update(requestEvent.get, requestEvent.get.removeUser(eu.user).addUser(eu))
+    Ok()
   }
   //get a list of tournaments for an event
   get("/:id/tournaments") {
@@ -135,16 +155,18 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     //HENRY WHERE YOU AT?!
   }
   //A user paying for registation
-  post("/:id/payRegistration") {
+  post("/:id/users/:userId/payRegistration") {
     import scala.collection.mutable
     auth()
-    if ((user.role == "admin" || requestEvent.get.isAdmin(user)) && params.get("userId").isDefined) {
-      val paid = params.getOrElse("paid", false) == "true"
+    if (params("userId").toInt != user.id && (user.role == "admin" || requestEvent.get.isAdmin(user))) {
+      val paid = parsedBody.\("paid").extractOrElse[Boolean](halt(400, "Missing payment status"))
+      val receipt = parsedBody.\("receipt").extractOpt[String]
       val userRepo = inject[UserRepo]
-      val theuser = userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
-      eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(theuser, paid = paid, None))
+      val theuser = requestEventUser.get.user//userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
+      eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(theuser, paid = paid, receipt))
       val atype = if(user.role == "admin") "Admin" else "Event Admin"
       logger.info("["+atype+" "+ user.id + "] Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)
+      Ok()
     }
     else {
       parsedBody.\("type").extractOpt[String] match {

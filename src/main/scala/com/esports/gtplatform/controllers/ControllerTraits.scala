@@ -55,7 +55,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
   //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
   //Eventually will have to add support for all Enumeration types used.
-  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntitySerializer  ++ org.json4s.ext.JodaTimeSerializers.all +  new org.json4s.ext.EnumNameSerializer(GameType) + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType)
+  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new org.json4s.ext.EnumNameSerializer(GameType) + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType)
   before() {
 
     //Lets the controller know to format the response in json so we don't have to specify on each action.
@@ -77,6 +77,7 @@ trait StandardController extends RESTController with AuthenticationSupport with 
 
   var idType: String = ""
   var paramId: Option[Int] = None
+  var userParamId: Option[Int] = None
 
   before() {
     if (request.getRemoteHost != "127.0.0.1") {
@@ -124,6 +125,7 @@ trait TeamControllerT extends StandardController {
     }
   }
 }
+
 trait GameControllerT extends StandardController {
   idType = "Game"
   val gameRepo = inject[GameRepo]
@@ -141,10 +143,12 @@ trait GameControllerT extends StandardController {
     }
   }
 }
+
 trait EventControllerT extends StandardController {
   idType = "Event"
   val eventRepo = inject[EventRepo]
   var requestEvent: Option[Event with Persisted] = None
+  var requestEventUser: Option[EventUser with Persisted] = None
   before("/:id/?*") {
     val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
     val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
@@ -157,6 +161,25 @@ trait EventControllerT extends StandardController {
       case None => halt(400, "No event exists with the Id " + paramId.get)
     }
   }
+  before("/:id/users/:userId/?*") {
+    val p = params.getOrElse("userId", halt(400, idType + " User Id parameter is missing"))
+    val i = toInt(p).getOrElse(halt(400, idType + " User Id was not a valid integer"))
+    userParamId = Some(i)
+  }
+  before("/:id/users/:userId/?*") {
+    if (userParamId.isDefined) {
+      requestEvent.get.users.find(x => x.user.id == userParamId.get) match {
+        case Some(eu: EventUser with Persisted) =>
+          requestEventUser = Some(eu)
+        case None =>
+          logger.warn("Tried to modify an EventUser for a non-existent user " + userParamId.get + " on Event " + requestEvent.get.id)
+          halt(400, "This user is not in this event.")
+      }
+    }
+    else{
+      halt(400,"No user id paramter defined.")
+    }
+  }
 }
 
 trait UserControllerT extends StandardController {
@@ -165,15 +188,15 @@ trait UserControllerT extends StandardController {
   var requestUser: Option[User with Persisted] = None
   before("/:id/?*") {
     val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
-    if(p == "me")
+    if (p == "me")
       paramId = None
-    else{
+    else {
       val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
       paramId = Some(i)
     }
   }
   before("/:id/?*") {
-    if(paramId.isDefined)
+    if (paramId.isDefined)
       userRepo.get(paramId.get) match {
         case Some(t: User with Persisted) =>
           requestUser = Some(t)

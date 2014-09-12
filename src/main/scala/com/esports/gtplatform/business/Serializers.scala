@@ -13,6 +13,32 @@ import org.json4s.jackson.JsonMethods._
 /*
 * This is all magic.
 * */
+
+class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
+  {PartialFunction.empty}, {
+  case ed: EventDetails =>
+    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
+    Extraction.decompose(ed.copy())
+  case td: TournamentDetails =>
+    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
+    Extraction.decompose(td.copy())
+  case up: UserPlatformProfile =>
+    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(Platform)
+    Extraction.decompose(up.copy())
+}
+  ))
+
+class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
+  {PartialFunction.empty}, {
+  case ep: EventPayment =>
+    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(PaymentType)
+    Extraction.decompose(ep.copy()) removeField {
+      case("secretKey", _) => true
+      case _ => false
+    }
+}
+  ))
+
 class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
   case tu: TeamUser =>
@@ -28,14 +54,17 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("resource" -> "/user/") ~
       ("isCaptain" -> tu.isCaptain))
   case eu: EventUser =>
-    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
+    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
       ("name" -> eu.event.name) ~
       ("id" -> eu.event.id) ~
       //("date" -> Extraction.decompose(eu.event.details.timeStart)) ~
       ("isPresent" -> eu.isPresent) ~
       ("isAdmin" -> eu.isAdmin) ~
       ("isModerator" -> eu.isModerator) ~
-      ("hasPaid" -> eu.hasPaid)
+      ("hasPaid" -> eu.hasPaid) ~
+      ("globalHandle" -> eu.user.globalHandle) ~
+      ("userId" -> eu.user.id) ~
+      ("platforms" -> Extraction.decompose(eu.user.gameProfiles)) //TODO clean this shit up
   case tt: TournamentTeam =>
     implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(BracketType)
     ("Tournament" ->
@@ -64,28 +93,6 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
           ("id" -> tu.user.id) ~
           ("isPresent" -> tu.isPresent) ~
           ("resource" -> "/user/"))
-}
-  ))
-
-class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
-  {PartialFunction.empty}, {
-  case ed: EventDetails =>
-    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
-    Extraction.decompose(ed.copy())
-  case td: TournamentDetails =>
-    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
-    Extraction.decompose(td.copy())
-}
-  ))
-
-class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
-  {PartialFunction.empty}, {
-  case ep: EventPayment =>
-    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(PaymentType)
-    Extraction.decompose(ep.copy()) removeField {
-      case("secretKey", _) => true
-      case _ => false
-    }
 }
   ))
 

@@ -13,11 +13,11 @@
                                 <a href="#"><img ng-src="images/{{$index+1}}.png"/><span>{{t}}</span></a>
                             </li>
                         </ul></li>
-                    <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.users" class="topLink">Users</a></li>
-                    <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.teams" class="topLink">Teams</a></li>
+                    <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.users" class="topLink">Users <span class="badge">{{eventCtrl.event.users}}</span></a></li>
+                    <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.teams" class="topLink">Teams <span class="badge">{{eventCtrl.event.teams}}</span></a></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.about" class="topLink">About</a></li>
                     <li ng-show="cncCtrl.account.isLoggedIn() && eventCtrl != undefined && cncCtrl.account.isRegisteredForEvent(eventCtrl.event.id) && !cncCtrl.account.hasPaid(eventCtrl.event.id)"><a ui-sref="eventSkeleton.pay" class="topLink">Pay</a></li>
-                    <li ng-show="eventCtrl != undefined && (eventCtrl.isAdmin() || cncCtrl.account.isAdmin())"><a ui-sref="eventSkeleton.settings" class="topLink">Settings</a></li>
+                    <li ng-show="eventCtrl != undefined && (eventCtrl.isAdmin() || (cncCtrl.account.isAdmin() && cncCtrl.account.adminEnabled()))"><a ui-sref="eventSkeleton.settings" class="topLink">Settings</a></li>
                     <li ng-if="cncCtrl.account.isLoggedIn()" ng-show="eventCtrl != undefined && !eventCtrl.isAdmin()" ng-switch="cncCtrl.account.isRegisteredForEvent(eventCtrl.event.id)">
                         <a class="topLink" ng-switch-when="false" ng-click="eventCtrl.tryJoin()">Join</a>
                         <a class="topLink" ng-switch-when="true" ng-click="eventCtrl.tryLeave()">Leave</a>

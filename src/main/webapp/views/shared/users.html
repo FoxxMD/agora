@@ -1,12 +1,37 @@
-<table st-table="userCollection" class="table table-striped">
+<table ng-if="usersCtrl.account.isLoggedIn()" st-table="displayCollection" st-safe-src="userCollection" class="table table-striped">
     <thead>
     <tr>
         <th>Handle</th>
+        <th>Steam</th>
+        <th>Battle.net</th>
+        <th>Riot</th>
+        <th ng-if="usersCtrl.isEvent">Is Present</th>
+        <th ng-if="usersCtrl.isEvent && usersCtrl.isAdmin()">Has Paid</th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="row in usersCtrl.userCollection">
+    <tr ng-repeat="row in usersCtrl.userCollection" class="linkMask" ng-click="usersCtrl.tableGoTo($event, row.userId)">
         <td>{{row.globalHandle}}</td>
+        <td>meh</td>
+        <td>meh1</td>
+        <td>meh2</td>
+        <td ng-if="usersCtrl.isEvent"><button ladda="row.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="usersCtrl.tryChangePresent(row.userId,!row.isPresent, row)" ng-class="row.isPresent ? 'btn-success': 'btn-danger'">{{row.isPresent ? 'Yes' : 'No'}}</button>{{usersCtrl.isAdmin() ? '' : row.isPresent ? 'Yes' : 'No'}}</td>
+        <td ng-if="usersCtrl.isEvent && usersCtrl.isAdmin()"><button ladda="row.paidLoading" data-style="expand-right" class="btn btn-sm" ng-click="usersCtrl.tryChangePaid(row.userId, !row.hasPaid, row)" ng-class="row.hasPaid ? 'btn-success' : 'btn-danger'">{{row.hasPaid ? 'Yes' : 'No'}}</button></td>
+    </tr>
+    </tbody>
+</table>
+
+<table ng-if="!usersCtrl.account.isLoggedIn()" st-table="userCollection" class="table table-striped">
+    <thead>
+    <tr>
+        <th>Handle</th>
+        <th ng-if="usersCtrl.isEvent">Is Present</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in usersCtrl.userCollection" class="linkMask" ng-click="usersCtrl.tableGoTo($event, row.userId)">
+        <td>{{row.globalHandle}}</td>
+        <td ng-if="usersCtrl.isEvent">{{row.isPresent}}</td>
     </tr>
     </tbody>
 </table>

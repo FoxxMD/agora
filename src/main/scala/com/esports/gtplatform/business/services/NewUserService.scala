@@ -7,6 +7,7 @@ package com.esports.gtplatform.business.services
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import com.esports.gtplatform.Utilities.PasswordSecurity
 import com.esports.gtplatform.business._
+import com.googlecode.mapperdao.Persisted
 import models.{User, UserIdentity}
 import org.slf4j.LoggerFactory
 import com.googlecode.mapperdao.jdbc.Transaction
@@ -68,10 +69,11 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
         val temp = returnedUserIdentity.copy()
         val newuserIdentity = temp.copy(user = temp.user.copy())
         val realUserIdentRepo = inject[GenericMRepo[UserIdentity]]
-
+        var newUser:Option[User] = None
         tx { () =>
 
-          realUserIdentRepo.create(newuserIdentity)
+          val newident = realUserIdentRepo.create(newuserIdentity)
+          newUser = Some(newident.user)
 
 
 
@@ -84,7 +86,9 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
         //check if they have an eventId associate (so they registered for a certain event)
         row.map { e => e.apply("eventId")} match {
           case Some(e: Int) =>
-            //TODO use UserService to register them for this event
+            val eventRepo = inject[EventRepo]
+            val event = eventRepo.get(e)
+            eventRepo.update(event.get, event.get.addUser(newUser.get))
             logger.info("Event Id found with token, registering the user for an event. EventId:"+ e)
             (true, Option(e))
           case _ =>

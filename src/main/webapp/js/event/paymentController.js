@@ -28,7 +28,7 @@ function paymentController($scope, eventData, $state, Events, Account){
         else
         {
             console.log(response.id);
-            Events.payRegistration(eventData.id.toString(),'Stripe', response.id).then(function(){
+            Events.payRegistration(eventData.id.toString(),'Stripe', response.id, Account.user().id).then(function(){
                 $scope.$emit('notify','notice','Successfully payed!',5000);
                 Account.initUser();
                 $state.go('eventSkeleton.event',{eventId: eventData.id});
