@@ -1,6 +1,9 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
+import models.GamePlatform
+import models.GamePlatform.{GamePlatform}
+import models.{GamePlatform, UserPlatformProfile}
 import org.scalatra.Ok
 
 /**
@@ -33,6 +36,50 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     if (email.isDefined)
       editUser = user.copy(email = email.get)
     userRepo.update(requestUser.get, editUser)
+    Ok()
+  }
+  post("/:id/platforms") {
+    auth()
+    if (params("id").toInt != requestUser.get.id && user.role != "admin")
+      halt(403, "You don't have permission to edit this user.")
+
+    val platformType = parsedBody.\("platform").extract[GamePlatform]
+    val identity = parsedBody.\("identifier").extract[String]
+
+    if(requestUser.get.gameProfiles.exists(x => x.platform == platformType))
+      halt(400, "User already has this platform added.")
+
+    userRepo.update(requestUser.get, requestUser.get.addGameProfile(UserPlatformProfile(requestUser.get, platformType, identity)))
+    Ok()
+  }
+  delete("/:id/platforms") {
+    auth()
+    if (params("id").toInt != requestUser.get.id && user.role != "admin")
+      halt(403, "You don't have permission to edit this user.")
+    val pbody = parsedBody
+
+    val platformType = GamePlatform.fromString(params("platform"))
+
+    if(!requestUser.get.gameProfiles.exists(x => x.platform == platformType))
+      halt(400, "User does not have a platform with this type to delete.")
+
+    userRepo.update(requestUser.get, requestUser.get.removeGameProfile(platformType))
+    Ok()
+  }
+  patch("/:id/platforms") {
+    auth()
+    if (params("id").toInt != requestUser.get.id && user.role != "admin")
+      halt(403, "You don't have permission to edit this user.")
+
+    val platformType = parsedBody.\("platform").extract[GamePlatform]
+    val identity = parsedBody.\("identifier").extract[String]
+
+    if(!requestUser.get.gameProfiles.exists(x => x.platform == platformType))
+      halt(400, "User does not have a platform with this type to edit.")
+
+    val editedPlatform = requestUser.get.gameProfiles.find(x => x.platform == platformType).get.copy(identifier = identity)
+
+    userRepo.update(requestUser.get, requestUser.get.removeGameProfile(platformType).addGameProfile(editedPlatform))
     Ok()
   }
 }

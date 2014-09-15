@@ -136,6 +136,30 @@ class EventUserRepository extends GenericMRepository[EventUser](EventUserEntity)
   def getByUser(u: User): List[EventUser] = queryDao.query(select from EventUserEntity where EventUserEntity.user === u)
 }
 
+trait TournamentRepo extends GenericMRepo[Tournament]
+{
+  //def getByTeam(t: Team): List[Tournament]
+}
+class TournamentRepository extends GenericMRepository[Tournament](TournamentEntity) with TournamentRepo{
+  //def getByTeam(t: Team): List[Tournament] = queryDao.query(select from TournamentEntity where TournamentEntity.teams)
+}
+
+trait TournamentTeamRepo extends GenericMRepo[TournamentTeam]
+{
+  def getByTeam(t: Team): List[TournamentTeam]
+}
+class TournamentTeamRepository extends GenericMRepository[TournamentTeam](TournamentTeamEntity) with TournamentTeamRepo{
+  def getByTeam(t: Team): List[TournamentTeam] = queryDao.query(select from TournamentTeamEntity where TournamentTeamEntity.team === t)
+}
+
+trait TournamentUserRepo extends GenericMRepo[TournamentUser]
+{
+  def getByUser(u: User): List[Tournament]
+}
+class TournamentUserRepository extends GenericMRepository[TournamentUser](TournamentUserEntity) with TournamentUserRepo{
+  def getByUser(u: User): List[Tournament] = queryDao.query(select from TournamentUserEntity where TournamentUserEntity.user === u).map(x => x.tournament)
+}
+
 trait NonActiveUserIdentityRepo extends GenericMRepo[UserIdentity]
 trait NonActiveUserRepo extends UserRepo
 

@@ -74,7 +74,30 @@ function prof($scope, Account, Users, userData, Events) {
             $scope.$emit('notify', 'notice', 'Handle updated.', 3000);
             return true;
         });
-    }
+    };
+    this.tryCreateGameProfile = function(){
+        that.gameProfileLoading = true;
+        Users.addGamePlatformProfile(that.user.id.toString(), that.newPlatformData).then(function(){
+            $scope.$broadcast('toggleMorph');
+            that.newPlatformData = {};
+            $scope.$broadcast('show-errors-reset');
+            $scope.$emit('notify', 'notice', 'Platform added.', 3000);
+            that.user.profiles.push(that.newPlatformData);
+        }).finally(function(){
+            that.gameProfileLoading = false;
+        });
+    };
+    this.tryRemoveGameProfile = function(platform){
+        Users.removeGamePlatformProfile(that.user.id.toString(), platform.platform).then(function(){
+            $scope.$emit('notify', 'notice', 'Platform removed.', 3000);
+            that.user.profiles.slice(that.user.profiles.indexOf(platform),1);
+        });
+    };
+    this.tryUpdateGameProfile = function(platform) {
+      Users.updateGamePlatformProfile(that.user.id.toString(), platform).then(function(){
+          $scope.$emit('notify', 'notice', 'Platform update.', 3000);
+      });
+    };
 
 }
 prof.$inject = ["$scope", "Account", "Users", "userData", "Events"];

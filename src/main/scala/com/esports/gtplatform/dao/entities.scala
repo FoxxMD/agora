@@ -33,9 +33,8 @@ object UserEntity  extends Entity[Int, SurrogateIntId, User]("users") {
 
   //Here we write the constructor MapperDao will use to return objects from information pulled from the database.
   //It uses variables assigned above with an implicit "map of values"(ValuesMap) and adds the Key if specified(with Stored)
-  def constructor(implicit m: ValuesMap) = new User(email, role, firstName, lastName, globalHandle, createdDate, id, teams) with Stored {
+  def constructor(implicit m: ValuesMap) = new User(email, role, firstName, lastName, globalHandle, createdDate, id, teams, gameProfiles) with Stored {
     //override val id: Int = UserEntity.id
-    this.gameProfiles = gameProfiles
   }
 }
 object NonActiveUserEntity extends Entity[Int, SurrogateIntId, User]("nonactiveusers") {
@@ -52,19 +51,17 @@ object NonActiveUserEntity extends Entity[Int, SurrogateIntId, User]("nonactiveu
   //val gameProfiles = onetomany(UserPlatformProfileEntity) to (_.gameProfiles)
   //val teams = onetomany(TeamUserEntity) to (_.teams)
 
-  def constructor(implicit m: ValuesMap) = new User(email, role, firstName, lastName, globalHandle, createdDate, id, List[TeamUser]()) with Stored {
-
-    this.gameProfiles = List[UserPlatformProfile]()
+  def constructor(implicit m: ValuesMap) = new User(email, role, firstName, lastName, globalHandle, createdDate, id, List[TeamUser](), List[UserPlatformProfile]()) with Stored {
   }
 }
 
 object UserPlatformProfileEntity extends Entity[Int, NoId, UserPlatformProfile]("userplatformprofile") { //some domain objects don't need a key as they are one-to-one and always attached
   val user = manytoone(UserEntity) to (_.user)
-  val platform = column("platform") to (platform => Platform.toString(platform.platform))
+  val platform = column("platform") to (platform => GamePlatform.toString(platform.platform))
   val identifier = column("identifier") to (_.identifier)
 
   def constructor(implicit m: ValuesMap) = {
-    val plat = Platform.fromString(m(platform))
+    val plat = GamePlatform.fromString(m(platform))
     new UserPlatformProfile(user, plat, identifier) with Stored
   }
 }

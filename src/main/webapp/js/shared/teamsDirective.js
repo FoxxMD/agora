@@ -4,7 +4,7 @@
 angular.module('gtfest')
     .directive('teams', teams);
 // @ngInject
-function teams(Teams, Games, $state, $stateParams, $timeout) {
+function teams(Teams, Games, $state, $stateParams, $timeout, Account) {
     return {
         templateUrl:'views/shared/teams.html',
         restrict:'E',
@@ -17,8 +17,20 @@ function teams(Teams, Games, $state, $stateParams, $timeout) {
                 this.teamCollection = Teams.getTeams();
             }
             else if ($state.$current.includes.eventSkeleton) {
+                that.isEvent = true;
                 this.teamCollection = Teams.getTeams(undefined, $stateParams.eventId);
             }
+            this.tableGoTo = function($event, id) {
+                if($($event.target).is('td'))
+                {
+                    var thestate = '';
+                    if($state.$current.includes.globalSkeleton)
+                        $state.go('globalSkeleton.team',{teamId:id});
+                    else
+                        $state.go('eventSkeleton.team',{teamId:id, eventId:$stateParams.eventId});
+                }
+
+            };
         },
         link: function(scope, elem, attrs){
             scope.teamsCtrl.tryCreateTeam = function(){
@@ -33,4 +45,4 @@ function teams(Teams, Games, $state, $stateParams, $timeout) {
         }
     }
 }
-teams.$inject = ["Teams", "Games", "$state", "$stateParams", "$timeout"];
+teams.$inject = ["Teams", "Games", "$state", "$stateParams", "$timeout", "Account"];

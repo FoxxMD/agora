@@ -69,6 +69,45 @@
                     {{profileCtrl.user.teams.length == 0 ? 'None to report!' : ''}}
                 </div>
             </div>
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Your Game Profiles</h4>
+                    <accordion close-other="profileCtrl.openedGameProfileAccordion">
+                        <accordion-group heading="{{profile.platform}}" ng-repeat="profile in profileCtrl.user.gameProfiles">
+                            <a ng-if="profileCtrl.isEditable()" editable-text="profile.identifier" onaftersave="profileCtrl.tryUpdateGameProfile(profile)">{{profile.identifier}}</a>
+                            {{!profileCtrl.isEditable() ? profile.identifier : ''}}
+                             <button ng-click="profileCtrl.tryRemoveGameProfile(profile)" class="btn btn-sm btn-danger pull-right">Remove</button>
+                        </accordion-group>
+                    </accordion>
+                    {{profileCtrl.users.gameProfiles.length == 0 ? 'No Profiles Added!': ''}}
+                    <morphing-button ng-if="profileCtrl.isEditable()" title="Add New Profile">
+                        <form class="form morphingButtonForm" name="createProfileForm" ng-submit="profileCtrl.tryCreateGameProfile()"
+                              novalidate>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <h4>Choose A Platform</h4>
+                                        <div class="btn-group">
+                                            <!--TODO make these disappear if user already has one -->
+                                            <label class="btn btn-info" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Steam'">Steam</label>
+                                            <label class="btn btn-info" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Battle.net'">Battle.net</label>
+                                            <label class="btn btn-info" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Riot'">Riot</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                    <h4>Specify your handle</h4>
+                                    <div class="form-group" show-errors>
+                                        <input type="text" class="form-control" ng-model="profileCtrl.newPlatformData.identifier" name="platformHandle" placeholder="Handle" required/>
+                                        <p class="help-block" ng-show="createProfileForm.platformHandle.$error.required">Required</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button ladda="gameProfileLoading" data-style="expand-right" type="submit" class="btn btn-primary pull-right">Add</button>
+                        </form>
+                    </morphing-button>
+                </div>
+            </div>
         </div>
     </div>
     <div ng-if="profileCtrl.isEventProfile()" class="col-md-6">

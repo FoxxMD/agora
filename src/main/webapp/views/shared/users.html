@@ -15,7 +15,7 @@
         <td>meh</td>
         <td>meh1</td>
         <td>meh2</td>
-        <td ng-if="usersCtrl.isEvent"><button ladda="row.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="usersCtrl.tryChangePresent(row.userId,!row.isPresent, row)" ng-class="row.isPresent ? 'btn-success': 'btn-danger'">{{row.isPresent ? 'Yes' : 'No'}}</button>{{usersCtrl.isAdmin() ? '' : row.isPresent ? 'Yes' : 'No'}}</td>
+        <td ng-if="usersCtrl.isEvent"><button ng-if="usersCtrl.isAdmin()" ladda="row.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="usersCtrl.tryChangePresent(row.userId,!row.isPresent, row)" ng-class="row.isPresent ? 'btn-success': 'btn-danger'">{{row.isPresent ? 'Yes' : 'No'}}</button>{{usersCtrl.isAdmin() ? '' : row.isPresent ? 'Yes' : 'No'}}</td>
         <td ng-if="usersCtrl.isEvent && usersCtrl.isAdmin()"><button ladda="row.paidLoading" data-style="expand-right" class="btn btn-sm" ng-click="usersCtrl.tryChangePaid(row.userId, !row.hasPaid, row)" ng-class="row.hasPaid ? 'btn-success' : 'btn-danger'">{{row.hasPaid ? 'Yes' : 'No'}}</button></td>
     </tr>
     </tbody>

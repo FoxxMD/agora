@@ -12,7 +12,9 @@ function register(Account, $stateParams, $rootScope) {
         scope:'true',
         controllerAs: 'registerCtrl',
         controller: function ($scope) {
+            var that = this;
             $scope.tryRegister = function () {
+                $scope.registerLoading = true;
                 $scope.$broadcast('show-errors-check-validity');
                 if ($scope.registerForm.$valid) {
                    Account.register($scope.registerformData.handle, $scope.registerformData.email, $scope.registerformData.password, $stateParams.eventId).promise.then(
@@ -22,7 +24,9 @@ function register(Account, $stateParams, $rootScope) {
                             $scope.$broadcast('show-errors-reset');
                             $scope.registerformData = {};
                             $rootScope.toggleMenu();
-                        });
+                        }).finally(function(){
+                           $scope.registerLoading = false;
+                       });
                 }
             }
         }

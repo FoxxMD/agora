@@ -69,6 +69,27 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl:'/views/users/profile.html',
                 controller:'ProfileController as profileCtrl'
             })
+            .state('globalSkeleton.team', {
+                url:'/teams/:teamId',
+                params:{
+                    teamId:{}
+                },
+                templateUrl:'/views/teams/team.html',
+                controller:'TeamController as teamCtrl',
+                resolve:{
+                    teamData: function(Teams, $stateParams, $state, $q) {
+                        var deferred = $q.defer();
+                        Teams.getTeam($stateParams.teamId.toString()).then(function(response){
+                            return deferred.resolve(response);
+                        }, function(error){
+                            console.log(error);
+                            $state.go('globalSkeleton.teams');
+                            return deferred.reject();
+                        });
+                        return deferred.promise;
+                    }
+                }
+            })
             .state('eventSkeleton', {
                 templateUrl: '/views/shared/skeleton.html',
                 url: '/event/{eventId:[0-9]+}',
@@ -105,6 +126,28 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 template: '<teams></teams>',
                 params:{
                     eventId:{}
+                }
+            })
+            .state('eventSkeleton.team', {
+                url:'/teams/:teamId',
+                params:{
+                    teamId:{},
+                    eventId:{}
+                },
+                templateUrl:'/views/teams/team.html',
+                controller:'TeamController as teamCtrl',
+                resolve:{
+                    teamData: function(Teams, $stateParams, $state, $q) {
+                        var deferred = $q.defer();
+                        Teams.getTeam($stateParams.teamId.toString()).then(function(response){
+                            return deferred.resolve(response);
+                        }, function(error){
+                            console.log(error);
+                            $state.go('eventSkeleton.event',{eventId:$stateParams.eventId});
+                            return deferred.reject();
+                        });
+                        return deferred.promise;
+                    }
                 }
             })
             .state('eventSkeleton.users',{

@@ -28,5 +28,17 @@ angular.module('gtfest')
                     deffered.reject();
                 });
             return deferred.promise;
+        };
+        this.getTeam = function(teamId) {
+            return teams.one(teamId).get();
+        };
+        this.isCaptain = function(userId, teamData) {
+           return $.grep(team.teamPlayers, function (t) {
+                return t.User.id == userId && t.User.isCaptain
+            }).length > 0;
+        };
+        this.userOnTeam = function(userId, teamData) {
+            return $.grep(team.teamPlayers, function (t) {
+                return t.User.id == userId }).length > 0;
         }
     }]);

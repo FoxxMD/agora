@@ -1,6 +1,7 @@
 package com.esports.gtplatform.business
 
-import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
+import com.escalatesoft.subcut.inject.{AutoInjectable, Injectable, BindingModule}
+import com.esports.gtplatform.business.services.TeamService
 import com.googlecode.mapperdao.{Entity, Persisted}
 import models._
 import org.json4s.JsonAST.JValue
@@ -23,7 +24,7 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, 
     implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
     Extraction.decompose(td.copy())
   case up: UserPlatformProfile =>
-    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(Platform)
+    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GamePlatform)
     Extraction.decompose(up.copy())
 }
   ))
@@ -36,6 +37,9 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int
       case("secretKey", _) => true
       case _ => false
     }
+  case g: Game =>
+    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType) ++ org.json4s.ext.JodaTimeSerializers.all
+    Extraction.decompose(g.copy())
 }
   ))
 
@@ -70,10 +74,11 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
     ("Tournament" ->
       ("name" -> tt.tournament.details.name) ~
       ("bracketType" -> Extraction.decompose(tt.tournament.bracketType)) ~
-        ("game" ->
-          ("name" -> tt.tournament.game.name) ~
-          ("id" -> tt.tournament.game.id) ~
-          ("resource" -> "/game/"))) ~
+      ("game" ->
+        ("name" -> tt.tournament.game.name) ~
+        ("id" -> tt.tournament.game.id) ~
+        ("resource" -> "/game/")) ~
+      ("id" -> tt.tournament.id)) ~
       ("Team" ->
         ("name" -> tt.team.name ) ~
         ("id" -> tt.team.id) ~
@@ -99,19 +104,19 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
 //[T](mt: Manifest[T](implicit val bindingModule: BindingModule) https://github.com/dickwall/subcut/blob/master/GettingStarted.md#creating-an-injectable-class ?
 class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
-  case g: Game =>
-    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType) ++ org.json4s.ext.JodaTimeSerializers.all
-    Extraction.decompose(g.copy())
   case u : User =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
     Extraction.decompose(u.copy()) removeField {
       case ("User", _) => true
       case _ => false } merge render("events" -> Extraction.decompose(u.getAssociatedEvents(new EventUserRepository))//TODO Get rid of nasty coupling to repository implementation. How to mix in Injectable?
     )
   case t : Team =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
+   val teamRepo = new TournamentTeamRepository
     Extraction.decompose(t.copy()) merge
-      render("captain" -> t.getCaptain.globalHandle) removeField {
+      render("captain" -> t.getCaptain.globalHandle) merge
+      render("tournaments" -> Extraction.decompose(teamRepo.getByTeam(t))) merge
+      render("events" -> Extraction.decompose(teamRepo.getByTeam(t).map(x => x.tournament.event).distinct.map(u => ("name" -> u.name) ~ ("id" -> u.id)))) removeField {
       case ("Team", _) => true
       case _ => false }
   case e: Event =>

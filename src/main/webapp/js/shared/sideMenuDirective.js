@@ -5,7 +5,7 @@ angular.module('gtfest')
 .directive('sidebar', sidebar);
 
 // @ngInject
-function sidebar($rootScope, $timeout, Account, Events){
+function sidebar($rootScope, $timeout, Account, Events, $stateParams){
     return {
         templateUrl:'views/shared/sidebar.html',
         restrict:'E',
@@ -77,4 +77,4 @@ function sidebar($rootScope, $timeout, Account, Events){
         }
     }
 }
-sidebar.$inject = ["$rootScope", "$timeout", "Account", "Events"];
+sidebar.$inject = ["$rootScope", "$timeout", "Account", "Events", "$stateParams"];

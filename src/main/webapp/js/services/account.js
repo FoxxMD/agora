@@ -6,8 +6,7 @@ angular.module('gtfest')
     .service('Account', ['Restangular', '$localStorage', '$q','$rootScope','Users', function (Restangular, $localStorage, $q, $rootScope, Users) {
         $localStorage.reminders = $localStorage.reminders || {};
 
-        var privUser = undefined,
-            adminEnabled = true;
+        var privUser = undefined;
 
         this.user = function () {
             return privUser;
@@ -26,10 +25,10 @@ angular.module('gtfest')
             return Users.isEventAdmin(privUser, eventId);
         };
         this.adminEnabled = function() {
-            return adminEnabled;
+            return $localStorage.adminEnabled;
         };
         this.toggleAdmin = function(truthy) {
-            adminEnabled = truthy;
+            $localStorage.adminEnabled = truthy;
         };
         this.isRegisteredForEvent = function(eventId) {
             if(!privUser)

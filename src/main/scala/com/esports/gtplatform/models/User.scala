@@ -2,7 +2,27 @@ package models
 
 import com.esports.gtplatform.business.EventUserRepo
 import com.esports.gtplatform.models.Invitee
+import models.GamePlatform.GamePlatform
+import monocle.SimpleLens
+import monocle.syntax._
 import org.joda.time.DateTime
+
+object GamePlatform extends Enumeration {
+  type GamePlatform = Value
+  val Steam, Battlenet, Riot = Value
+
+  def toString(j: GamePlatform) = j match {
+    case Steam => "Steam"
+    case Battlenet => "Battle.net"
+    case Riot => "Riot"
+  }
+
+  def fromString(j: String): GamePlatform = j match {
+    case "Steam" => Steam
+    case "Battle.net" => Battlenet
+    case "Riot" => Riot
+  }
+}
 
 /**
  * Created by Matthew on 6/30/2014.
@@ -21,9 +41,9 @@ case class User(
                  globalHandle: String,
                  cDate: Option[DateTime],
                  id: Int = 0,
-                 teams: List[TeamUser] = List()) extends Invitee {
+                 teams: List[TeamUser] = List(),
+                 gameProfiles: List[UserPlatformProfile] = List()) extends Invitee {
   val createdDate: DateTime = cDate.getOrElse(DateTime.now())
-  var gameProfiles = List[UserPlatformProfile]()
 
   /* You'll notice on almost all classes that related objects will be accessed through a method rather than as child/parent objects.
   * This is intentional as it prevents cyclical dependencies and works better with immutable data structures.
@@ -32,6 +52,12 @@ case class User(
   def getTournaments: List[Tournament] = ???
 
   def getAssociatedEvents(repo: EventUserRepo): List[EventUser] = repo.getByUser(this)
+
+  private[this] val GameProfilesLens: SimpleLens[User, List[UserPlatformProfile]] = SimpleLens[User](_.gameProfiles)((u, newProfiles) => u.copy(gameProfiles = newProfiles))
+
+  def addGameProfile(gp: UserPlatformProfile): User = this applyLens GameProfilesLens modify(_.+:(gp))
+  def removeGameProfile(ptype: GamePlatform): User = this applyLens GameProfilesLens modify(_.filter(x => x.platform != ptype))
+  def changeGameProfile(gp: UserPlatformProfile) = this.removeGameProfile(gp.platform).addGameProfile(gp)
 
   //TODO work on related entities
   //def getTeams: List[TeamUser] = queryDao.query(select from TeamUserEntity where TeamUserEntity.user. === this.id).map(x => x.team)
@@ -55,21 +81,4 @@ case class UserIdentity(
 
 /* Right now more of a placeholder than anything. This will eventually serve as a list linked popular game profiles for this user
 * EX Steam, Battle.NET, etc. etc. */
-case class UserPlatformProfile(user: User, platform: Platform.Value, identifier: String)
-
-object Platform extends Enumeration {
-  type Platform = Value
-  val Steam, Battlenet, Riot = Value
-
-  def toString(j: Platform) = j match {
-    case Steam => "Steam"
-    case Battlenet => "Battle.net"
-    case Riot => "Riot"
-  }
-
-  def fromString(j: String): Platform = j match {
-    case "Steam" => Steam
-    case "Battle.net" => Battlenet
-    case "Riot" => Riot
-  }
-}
+case class UserPlatformProfile(user: User, platform: GamePlatform.Value, identifier: String)

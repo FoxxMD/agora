@@ -55,7 +55,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
   //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
   //Eventually will have to add support for all Enumeration types used.
-  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new org.json4s.ext.EnumNameSerializer(GameType) + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType)
+  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new org.json4s.ext.EnumNameSerializer(GameType) + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType) + new org.json4s.ext.EnumNameSerializer(GamePlatform)
   before() {
 
     //Lets the controller know to format the response in json so we don't have to specify on each action.
@@ -174,6 +174,8 @@ trait EventControllerT extends StandardController {
         case None =>
           logger.warn("Tried to modify an EventUser for a non-existent user " + userParamId.get + " on Event " + requestEvent.get.id)
           halt(400, "This user is not in this event.")
+        case _ =>
+          logger.warn("Did not find a match for event user")
       }
     }
     else{

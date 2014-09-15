@@ -1,0 +1,122 @@
+<div class="row profileContainer">
+    <div class="col-md-12" style="margin-bottom:50px;">
+        <div ng-switch="teamCtrl.isEditable()">
+            <h1 class="pull-left" ng-switch-when="true"><a editable-text="teamCtrl.team.globalHandle" onaftersave="teamCtrl.tryUpdateName($data)">{{teamCtrl.team.name}}</a></h1>
+
+            <h1 class="pull-left" ng-switch-default>{{teamCtrl.team.name}}</h1>
+
+            <button style="margin-top:20px;" class="btn btn-lg pull-right" ng-class="teamCtrl.OnTeam ? 'btn-warning' : 'btn-info'">{{teamCtrl.OnTeam ? 'Leave' : 'Join'}}</button>
+        </div>
+    </div>
+    <div ng-if="teamCtrl.isAdmin()" class="col-md-12">
+        <div class="well">
+            <h3>Admin Panel</h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="well">
+                        <h4>Global Admin Options (Not Implemented)</h4>
+                        <div class="alert alert-danger">
+                            <h4>Dangaaa Zoooone</h4>
+                            <button class="btn btn-danger">Delete Team</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well">
+                    <h3>Statistics</h3>
+                    <ul>
+                        <li>Joined: {{teamCtrl.team.createdDate}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Users</h4>
+                    <accordion close-other="teamCtrl.openedTeamsAccordion">
+                        <accordion-group heading="{{team.User.name}}" ng-repeat="team in teamCtrl.team.teamPlayers">
+                            Got yer User, {{team.User.name}}, with the Id {{team.User.id}} right here. And they {{team.User.isCaptain ? 'ARE' :'ARE NOT'}} captain.
+                        </accordion-group>
+                    </accordion>
+                    {{teamCtrl.team.teamPlayers.length == 0 ? 'None to show!' : ''}}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Games Played</h4>
+                    <accordion close-other="teamCtrl.openedGameProfileAccordion">
+                        <accordion-group heading="{{game.name}}" ng-repeat="game in teamCtrl.team.games">
+                            {{game.name}}
+                            <button ng-click="teamCtrl.tryRemoveGame(game)" class="btn btn-sm btn-danger pull-right">Remove</button>
+                        </accordion-group>
+                    </accordion>
+                    {{teamCtrl.teams.games.length == 0 ? 'No Games Added!': ''}}
+                    <morphing-button ng-if="teamCtrl.isEditable()" title="Add New Game">
+                        <form class="form morphingButtonForm" name="addGameForm" ng-submit="teamCtrl.tryAddGame()"
+                              novalidate>
+                            <button ladda="gameProfileLoading" data-style="expand-right" type="submit" class="btn btn-primary pull-right">Add</button>
+                        </form>
+                    </morphing-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-if="teamCtrl.isEventProfile()" class="col-md-6">
+        <div class="well">
+            <h3>At This Event</h3>
+            <h4>Tournaments</h4>
+            <accordion>
+                <accordion-group heading="1v1 Rust Me Bro">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Stats</strong>
+                            <ul class="list-unstyled">
+                                <li>Participating with <strong>Team Honkey</strong></li>
+                                <li><strong>Starts</strong> in two days at 11:45am</li>
+                                <li><strong>5 other teams are participating</strong></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Info</strong>
+                            <ul>
+                                <li><strong>Game:</strong> League of Legends</li>
+                                <li><strong>Type:</strong> Round-Robin</li>
+                                <li><strong>Roster Status:</strong> Open!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Events Participated In</h4>
+                    <accordion close-other="teamCtrl.openedEventAccordion">
+                        <accordion-group heading="{{tEvent.name}}" ng-repeat="tEvent in teamCtrl.team.events">
+                            Got yer Event, {{tEvent.name}}, with the Id {{ptevent.id}} right here.
+                        </accordion-group>
+                    </accordion>
+                    {{teamCtrl.team.events.length == 0 ? 'None to report!' :''}}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="well">
+                    <h4>Tournaments Participated In</h4>
+                    <accordion close-other="teamCtrl.openedTournamentAccordion">
+                        <accordion-group heading="{{tour.name}}" ng-repeat="tour in teamCtrl.team.tournaments">
+                            Got yer Tournament, {{tour.name}}, with the Id {{tour.id}} right here.
+                        </accordion-group>
+                    </accordion>
+                    {{teamCtrl.team.tournaments == undefined ? 'None to report!' : ''}} <!--TODO make this .length == 0 once tournaments are included -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

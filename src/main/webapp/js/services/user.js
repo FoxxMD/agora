@@ -35,6 +35,15 @@ angular.module('gtfest')
         };
         this.setHandle = function(userId, handle) {
             return users.one(userId).patch({globalHandle: handle});
-        }
+        };
+        this.addGamePlatformProfile = function(userId, platformData) {
+            return users.one(userId).all('platforms').post(platformData);
+        };
+        this.removeGamePlatformProfile = function(userId, platformType){
+            return users.one(userId).all('platforms').remove({platform: platformType});
+        };
+        this.updateGamePlatformProfile = function(userId, platformData) {
+            return users.one(userId).all('platforms').patch(platformData);
+        };
 
     }]);
