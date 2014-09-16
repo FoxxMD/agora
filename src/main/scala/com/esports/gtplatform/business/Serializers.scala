@@ -45,6 +45,16 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int
 
 class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty},{
+  case tu: GuildUser =>
+    implicit val formats: Formats = DefaultFormats
+    ("Guild" ->
+      ("name" -> tu.guild.name) ~
+        ("id" -> tu.guild.id) ~
+        ("isCaptain" -> tu.isCaptain)) ~
+      ("User" ->
+        ("name" -> tu.user.globalHandle) ~
+          ("id" -> tu.user.id) ~
+          ("isCaptain" -> tu.isCaptain))
   case tu: TeamUser =>
     implicit val formats: Formats = DefaultFormats
     ("Team" ->
@@ -69,21 +79,6 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("globalHandle" -> eu.user.globalHandle) ~
       ("userId" -> eu.user.id) ~
       ("platforms" -> Extraction.decompose(eu.user.gameProfiles)) //TODO clean this shit up
-  case tt: TournamentTeam =>
-    implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(BracketType)
-    ("Tournament" ->
-      ("name" -> tt.tournament.details.name) ~
-      ("bracketType" -> Extraction.decompose(tt.tournament.bracketType)) ~
-      ("game" ->
-        ("name" -> tt.tournament.game.name) ~
-        ("id" -> tt.tournament.game.id) ~
-        ("resource" -> "/game/")) ~
-      ("id" -> tt.tournament.id)) ~
-      ("Team" ->
-        ("name" -> tt.team.name ) ~
-        ("id" -> tt.team.id) ~
-        ("isPresent" -> tt.isPresent) ~
-        ("resource" -> "/team/"))
   case tu: TournamentUser =>
     implicit val formats: Formats = DefaultFormats +  new org.json4s.ext.EnumNameSerializer(BracketType)
     ("Tournament" ->
@@ -110,15 +105,15 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       case ("User", _) => true
       case _ => false } merge render("events" -> Extraction.decompose(u.getAssociatedEvents(new EventUserRepository))//TODO Get rid of nasty coupling to repository implementation. How to mix in Injectable?
     )
-  case t : Team =>
-    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
-   val teamRepo = new TournamentTeamRepository
+  case t : Guild =>
+    implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(BracketType) + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
     Extraction.decompose(t.copy()) merge
-      render("captain" -> t.getCaptain.globalHandle) merge
-      render("tournaments" -> Extraction.decompose(teamRepo.getByTeam(t))) merge
-      render("events" -> Extraction.decompose(teamRepo.getByTeam(t).map(x => x.tournament.event).distinct.map(u => ("name" -> u.name) ~ ("id" -> u.id)))) removeField {
+      render("captain" -> t.getCaptain.globalHandle) removeField {
       case ("Team", _) => true
       case _ => false }
+  /* merge
+    render("tournaments" -> Extraction.decompose(teamRepo.getByTeam(t))) merge
+    render("events" -> Extraction.decompose(teamRepo.getByTeam(t).map(x => x.tournament.event).distinct.map(u => ("name" -> u.name) ~ ("id" -> u.id))))*/
   case e: Event =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new  EntityAuxillarySerializer
     (Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge

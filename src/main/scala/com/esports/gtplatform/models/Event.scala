@@ -1,6 +1,7 @@
 package models
 
 import com.esports.gtplatform.models.{MeetingT, Requestable, Inviteable}
+import models.BracketType.BracketType
 import monocle.{Lenser, SimpleLens}
 import monocle.syntax._
 import org.joda.time.DateTime
@@ -22,7 +23,7 @@ object JoinType extends Enumeration {
   }
 }
 
-case class Event(name: String, joinType: JoinType.Value, details: Option[EventDetails] = None, payments: Set[EventPayment] = Set(), users: Set[EventUser] = Set(),
+case class Event(name: String = "A New Event", joinType: JoinType.Value = JoinType.Public, details: Option[EventDetails] = None, payments: Set[EventPayment] = Set(), users: Set[EventUser] = Set(),
             tournaments: Set[Tournament] = Set(),id: Int = 0) extends Inviteable with Requestable with MeetingT[Event] {
 
   private[this] val UserListLens: SimpleLens[Event, Set[EventUser]] = SimpleLens[Event](_.users)((e, newUsers) => e.copy(users = newUsers))
@@ -68,7 +69,7 @@ case class Event(name: String, joinType: JoinType.Value, details: Option[EventDe
  *
  * */
 
-case class EventDetails(event: Event, address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
+case class EventDetails(event: Event = Event(), address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
                         streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None)
 {
 

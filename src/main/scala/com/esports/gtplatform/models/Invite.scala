@@ -1,6 +1,6 @@
 package com.esports.gtplatform.models
 
-import models.{Team, Event, Tournament, User}
+import models.{Guild, Event, Tournament, User}
 import org.joda.time.DateTime
 
 /**
@@ -31,12 +31,12 @@ abstract class RequestT[T <% Invitee, U <% Requestable] extends AppliedActivityT
   val message: String
 }
 
-case class TeamInvite(
-                       Author: Team,
+case class GuildInvite(
+                       Author: Guild,
                        Receiver: User,
                        message: String = null,
-                       Time: DateTime
-                       ) extends InviteT//[Team, User]
+                       Time: DateTime,
+                       id: Int = 0) extends InviteT//[Team, User]
 
 case class TournamentUserInvite(
                                  Author: Tournament,
@@ -48,26 +48,26 @@ case class TournamentUserInvite(
 
 case class TournamentTeamInvite(
                                  Author: Tournament,
-                                 Receiver: Team,
-                                 Mediator: Team,
+                                 Receiver: Guild,
+                                 Mediator: Guild,
                                  message: String = null,
                                  Time: DateTime
-                                 ) extends InviteOnBehalfT[Tournament, Team, Team]
+                                 ) extends InviteOnBehalfT[Tournament, Guild, Guild]
 
 case class EventInvite(
                         Author: Event,
                         Receiver: User,
                         //Mediator: User,
                         message: String = null,
-                        Time: DateTime
-                        ) extends InviteT//[Event, User]
+                        Time: DateTime,
+                        id: Int = 0) extends InviteT//[Event, User]
 
 case class TeamRequest(
                         Author: User,
-                        Receiver: Team,
+                        Receiver: Guild,
                         message: String = null,
                         Time: DateTime
-                        ) extends RequestT[User, Team]
+                        ) extends RequestT[User, Guild]
 
 case class EventRequest(
                          Author: User,
@@ -76,8 +76,8 @@ case class EventRequest(
                          Time: DateTime
                          ) extends RequestT[User, Event]
 case class TournamentTeamRequest(
-                                  Author: Team,
+                                  Author: Guild,
                                   Receiver: Tournament,
                                   message: String = null,
                                   Time: DateTime
-                                  ) extends RequestT[Team, Tournament]
+                                  ) extends RequestT[Guild, Tournament]

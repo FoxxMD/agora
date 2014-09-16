@@ -30,6 +30,9 @@ angular.module('gtfest')
             });
             return deferred.promise;
         };
+        this.updateEvent = function(event) {
+          return events.one(event.id.toString()).patch(event);
+        };
 
         /*
          * Event Info Settings

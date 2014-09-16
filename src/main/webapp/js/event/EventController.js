@@ -34,14 +34,19 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
 
     this.tryDescUpdate = function(content)
     {
-        return Events.setDescription(eventData.id.toString(),content);
+        that.event.details.description = content;
+        return Events.updateEvent(that.event);
+        //return Events.setDescription(eventData.id.toString(),content);
     };
     this.tryTimeUpdate = function() {
         var deferred = $q.defer();
       console.log(that.event.details.timeStart);
-        deferred.resolve();
+       Events.updateEvent(that.event).then(function(){
+            deferred.resolve();
+        }, function(){
+           deferred.reject();
+       });
         return deferred.promise;
-
     };
     this.tryJoin = function() {
         Events.joinEvent(that.event.id.toString()).then(function(){

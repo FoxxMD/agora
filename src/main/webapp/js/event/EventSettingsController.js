@@ -17,7 +17,7 @@ function eventSettingsController($scope, eventData, $rootScope, Events) {
         if(that.privacyChange)
         {
             that.privacyLoading = true;
-            Events.setPrivacy(eventData.id.toString(),that.event.joinType).then(function(){
+            Events.updateEvent(that.event).then(function(){
                 $scope.$emit('notify','notice',"Settings updated.", 1000);
             }).finally(function(){
                 that.privacyLoading = false;

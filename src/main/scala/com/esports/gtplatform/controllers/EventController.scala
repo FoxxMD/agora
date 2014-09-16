@@ -42,13 +42,18 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   get("/:id") {
     Ok(requestEvent.get)
   }
-  post("/:id") {
+  patch("/:id") {
     auth()
     if (!requestEvent.get.isAdmin(user) && user.role != "admin")
       halt(403, "You do not have permission to edit this event.")
 
-    eventRepo.update(requestEvent.get, requestEvent.get.copy(name = parsedBody.\("name").extract[String],
-      joinType = parsedBody.\("eventType").extract[JoinType]))
+    val extractedDetails = parsedBody.\("details").extract[EventDetails].copy(event = requestEvent.get)
+
+    val newEvent = requestEvent.get.copy(name = parsedBody.\("name").extract[String],
+      joinType = parsedBody.\("joinType").extract[JoinType]).setDetails(extractedDetails)
+
+    eventRepo.update(requestEvent.get, newEvent)
+    Ok()
   }
   //Change the description of the event(front page)
   post("/:id/description") {
@@ -61,7 +66,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   //Get a list of teams that are participating in tournaments at this event
   get("/:id/teams") {
-    Ok(requestEvent.get.tournaments.flatMap(x => x.teams).map(t => t.team))
+    Ok(requestEvent.get.tournaments.flatMap(x => x.teams))
   }
   //Get a list of users for this event
   get("/:id/users") {

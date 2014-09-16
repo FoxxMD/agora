@@ -29,9 +29,9 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   module.bind[GenericMRepo[Game]] toSingle new GenericMRepository[Game](GameEntity)
   module.bind[GameRepo] toSingle new GameRepository(GameEntity)
   module.bind[GenericMRepo[UserIdentity]] toSingle new GenericMRepository[UserIdentity](UserIdentityEntity)
-  module.bind[GenericMRepo[Team]] toSingle new GenericMRepository[Team](TeamEntity)
-  module.bind[TeamRepo] toSingle new TeamRepository(TeamEntity)
-  module.bind[GenericMRepo[TeamUser]] toSingle new GenericMRepository[TeamUser](TeamUserEntity)
+  module.bind[GenericMRepo[Guild]] toSingle new GenericMRepository[Guild](GuildEntity)
+  module.bind[GuildRepo] toSingle new GuildRepository(GuildEntity)
+  module.bind[GenericMRepo[GuildUser]] toSingle new GenericMRepository[GuildUser](GuildUserEntity)
   module.bind[GenericMRepo[User]] toSingle new GenericMRepository[User](UserEntity)
   module.bind[UserRepo] toSingle new UserRepository(UserEntity)
   //Created a separate set of tables/repositories for non-confirmed users.
@@ -40,7 +40,6 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   module.bind[EventRepo] toSingle new EventRepository(EventEntity)
   module.bind[EventUserRepo] toSingle new EventUserRepository
   module.bind[GenericMRepo[EventUser]] toSingle new GenericMRepository[EventUser](EventUserEntity)
-  module.bind[TournamentTeamRepo] toSingle new TournamentTeamRepository
   module.bind[TournamentUserRepo] toSingle new TournamentUserRepository
 
   module.bind[Transaction] toSingle { Transaction.default(Transaction.transactionManager(jdbc)) }
@@ -60,7 +59,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
     //This is how we mount individual controllers to a route. Each controller's url argument is relative to this path.
     context.mount(new UserManagementController,"/api/")
     context.mount(new GameController,"/api/games")
-    context.mount(new TeamController,"/api/teams")
+    context.mount(new GuildController,"/api/guilds")
     context.mount(new UserController,"/api/users")
     context.mount(new EventController,"/api/events")
 

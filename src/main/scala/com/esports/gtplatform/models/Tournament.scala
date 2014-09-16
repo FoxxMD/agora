@@ -1,6 +1,6 @@
 package models
 
-import com.esports.gtplatform.models.{Requestable, Inviteable}
+import com.esports.gtplatform.models.{Team, Requestable, Inviteable}
 import org.joda.time.DateTime
 
 /**
@@ -28,7 +28,7 @@ case class Tournament(bracketType: BracketType.Value,
                  event: Event,
                  details: TournamentDetails,
                  users: Set[TournamentUser],
-                 teams: Set[TournamentTeam],
+                 teams: Set[Team],
                  id: Int = 0) extends Inviteable with Requestable {
 }
 

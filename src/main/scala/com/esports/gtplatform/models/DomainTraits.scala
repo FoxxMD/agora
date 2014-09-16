@@ -1,6 +1,6 @@
 package com.esports.gtplatform.models
 
-import models.{Game, Tournament, Team, User}
+import models.{Game, Tournament, Guild, User}
 
 /**
  * Created by Matthew on 8/26/2014.
@@ -20,14 +20,16 @@ trait MeetingT[T] extends GroupT[T]{
   def isPresent(u: User): Boolean
 }
 trait TournamentT extends MeetingT[Tournament] {
-  def getPresentTeams: List[Team]
-  def addTeam(t: Team): Tournament
-  def removeTeam(t: Team): Tournament
+  def getPresentTeams: List[Guild]
+  def addTeam(t: Guild): Tournament
+  def removeTeam(t: Guild): Tournament
 }
 trait TeamT extends GroupT[Team] {
   def setCaptain(u: User): Team
   def getCaptain: User
-  def addGame(g: Game): Team
-  def removeGame(g: Game): Team
+}
+trait GuildT extends GroupT[Guild] {
+  def setCaptain(u: User): Guild
+  def getCaptain: User
 }
 

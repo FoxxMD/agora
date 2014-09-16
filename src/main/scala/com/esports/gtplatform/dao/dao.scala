@@ -2,7 +2,7 @@ package dao
 
 import java.util.Properties
 
-import com.esports.gtplatform.models.InviteT
+import com.esports.gtplatform.models.{Team, InviteT}
 import com.googlecode.mapperdao.utils._
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import models._
@@ -23,8 +23,8 @@ object Daos {
 
 
 //Initialize components of MapperDao DAOs. Setup.mysql is the actual statement for opening a connection and forming objects.
-val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, TeamEntity, TeamUserEntity,
-  GameEntity, TournamentEntity, TournamentTeamEntity, TournamentUserEntity, EventEntity, EventDetailsEntity, EventPaymentEntity,
+val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, TeamEntity, GuildUserEntity, TeamUserEntity,
+  GameEntity, TournamentEntity, TournamentUserEntity, EventEntity, EventDetailsEntity, EventPaymentEntity, GuildEntity, GuildUserEntity,
   EventUserEntity, UserIdentityEntity, UserPlatformProfileEntity, NonActiveUserEntity, NonActiveUserIdentityEntity, InviteEntity)) //All entities must be listed here
 
   /*Still kind of figuring out how these totally work.
@@ -62,6 +62,20 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, Te
     val mapperDao = Daos.mapperDao
   }
 
+  val guildDao = new GuildDao {
+    val entity = GuildEntity
+    val queryDao = Daos.queryDao
+    val txManager = Daos.txManager
+    val mapperDao = Daos.mapperDao
+  }
+
+  val guildUserDao = new GuildUserDao {
+    val entity = GuildUserEntity
+    val queryDao = Daos.queryDao
+    val txManager = Daos.txManager
+    val mapperDao = Daos.mapperDao
+  }
+
   val gameDao = new GameDao {
     val entity = GameEntity
     val queryDao = Daos.queryDao
@@ -78,13 +92,6 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, Te
 
   val tournamentUserDao = new TournamentUserDao {
     val entity = TournamentUserEntity
-    val queryDao = Daos.queryDao
-    val txManager = Daos.txManager
-    val mapperDao = Daos.mapperDao
-  }
-
-  val tournamentTeamDao = new TournamentTeamDao {
-    val entity = TournamentTeamEntity
     val queryDao = Daos.queryDao
     val txManager = Daos.txManager
     val mapperDao = Daos.mapperDao
@@ -128,13 +135,14 @@ abstract class NonActiveUserDao extends TransactionalSurrogateIntIdCRUD[User] wi
 abstract class UserIdentityDao extends SurrogateIntIdCRUD[UserIdentity] with SurrogateIntIdAll[UserIdentity]
 abstract class NonActiveUserIdentityDao extends SurrogateIntIdCRUD[UserIdentity] with SurrogateIntIdAll[UserIdentity]
 abstract class TeamDao extends TransactionalSurrogateIntIdCRUD[Team] with SurrogateIntIdAll[Team]
+abstract class GuildDao extends TransactionalSurrogateIntIdCRUD[Guild] with SurrogateIntIdAll[Guild]
 abstract class TeamUserDao extends TransactionalSurrogateIntIdCRUD[TeamUser] with SurrogateIntIdAll[TeamUser]
+abstract class GuildUserDao extends TransactionalSurrogateIntIdCRUD[GuildUser] with SurrogateIntIdAll[GuildUser]
 //abstract class GameDao extends TransactionalSurrogateIntIdCRUD[Game] with SurrogateIntIdAll[Game]
 abstract class GameDao extends TransactionalNaturalIntIdCRUD[Game] with NaturalIntIdAll[Game]
 abstract class TournamentDao extends TransactionalSurrogateIntIdCRUD[Tournament] with SurrogateIntIdAll[Tournament]
 //abstract class TournamentDetailsDao extends TransactionalSurrogateIntIdCRUD[TournamentDetails] with SurrogateIntIdAll[TournamentDetails]
 abstract class TournamentUserDao extends TransactionalSurrogateIntIdCRUD[TournamentUser] with SurrogateIntIdAll[TournamentUser]
-abstract class TournamentTeamDao extends TransactionalSurrogateIntIdCRUD[TournamentTeam] with SurrogateIntIdAll[TournamentTeam]
 abstract class EventDao extends TransactionalSurrogateIntIdCRUD[Event] with SurrogateIntIdAll[Event]
 //abstract class EventDetailsDao extends TransactionalNaturalIntIdCRUD[EventDetails] with NaturalIntIdAll[EventDetails]
 abstract class EventUserDao extends TransactionalSurrogateIntIdCRUD[EventUser] with SurrogateIntIdAll[EventUser]

@@ -1,7 +1,6 @@
-package models
+package com.esports.gtplatform.models
 
-import com.esports.gtplatform.models._
-import models.JoinType.JoinType
+import models._
 import monocle.SimpleLens
 import monocle.syntax._
 import org.joda.time.DateTime
@@ -12,15 +11,17 @@ import org.joda.time.DateTime
 
 case class Team(
             name: String,
-            createdDate: DateTime = DateTime.now(),
-            games: List[Game],
-            teamPlayers: List[TeamUser] = List(),
+            game: Game,
             maxPlayers: Int,
             joinType: JoinType.Value,
+            tournament: Tournament,
+            teamPlayers: List[TeamUser] = List(),
+            createdDate: DateTime = DateTime.now(),
+            isPresent: Boolean = false,
+            guildOnly: Boolean = false,
             id: Int = 0) extends Invitee with Inviteable with Requestable with TeamT {
 
   private[this] val TPListLens: SimpleLens[Team, List[TeamUser]] = SimpleLens[Team](_.teamPlayers)((t, tp) => t.copy(teamPlayers = tp))
-  private[this] val GamesListLens: SimpleLens[Team, List[Game]] = SimpleLens[Team](_.games)((t, g) => t.copy(games = g))
 
   def addUser(u: User): Team = this applyLens TPListLens modify (_.+:(TeamUser(this, u, isCaptain = false)))
 
@@ -32,8 +33,4 @@ case class Team(
     val modifiedTP = this.teamPlayers.map(x => x.copy(isCaptain = x.user == u))
     this applyLens TPListLens set modifiedTP
   }
-
-  def addGame(g: Game): Team = this applyLens GamesListLens modify (_.+:(g))
-
-  def removeGame(g: Game): Team = this applyLens GamesListLens modify(_.filter(x => x != g))
 }

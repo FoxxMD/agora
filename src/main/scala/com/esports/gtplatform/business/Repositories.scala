@@ -104,12 +104,12 @@ class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericM
   //def getByEvent(id: Int): List[User] = queryDao.query(select from EventUserEntity where EventUserEntity.event.id === id)
 }
 
-trait TeamRepo extends GenericMRepo[Team]
+trait GuildRepo extends GenericMRepo[Guild]
 {
-  def getByName(name: String): Option[Team]
+  def getByName(name: String): Option[Guild]
 }
-class TeamRepository(returnEntity: Entity[Int,Persisted, Team]) extends GenericMRepository[Team](returnEntity) with TeamRepo{
-  def getByName(name: String): Option[Team] = queryDao.querySingleResult(select from TeamEntity where TeamEntity.name === name)
+class GuildRepository(returnEntity: Entity[Int,Persisted, Guild]) extends GenericMRepository[Guild](returnEntity) with GuildRepo{
+  def getByName(name: String): Option[Guild] = queryDao.querySingleResult(select from GuildEntity where GuildEntity.name === name)
 }
 
 trait GameRepo extends GenericMRepo[Game]
@@ -142,14 +142,6 @@ trait TournamentRepo extends GenericMRepo[Tournament]
 }
 class TournamentRepository extends GenericMRepository[Tournament](TournamentEntity) with TournamentRepo{
   //def getByTeam(t: Team): List[Tournament] = queryDao.query(select from TournamentEntity where TournamentEntity.teams)
-}
-
-trait TournamentTeamRepo extends GenericMRepo[TournamentTeam]
-{
-  def getByTeam(t: Team): List[TournamentTeam]
-}
-class TournamentTeamRepository extends GenericMRepository[TournamentTeam](TournamentTeamEntity) with TournamentTeamRepo{
-  def getByTeam(t: Team): List[TournamentTeam] = queryDao.query(select from TournamentTeamEntity where TournamentTeamEntity.team === t)
 }
 
 trait TournamentUserRepo extends GenericMRepo[TournamentUser]

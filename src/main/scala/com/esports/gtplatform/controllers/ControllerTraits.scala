@@ -55,7 +55,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
   //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
   //Eventually will have to add support for all Enumeration types used.
-  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new org.json4s.ext.EnumNameSerializer(GameType) + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType) + new org.json4s.ext.EnumNameSerializer(GamePlatform)
+  protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntitySerializer + new org.json4s.ext.EnumNameSerializer(GameType) + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType) + new org.json4s.ext.EnumNameSerializer(GamePlatform)
   before() {
 
     //Lets the controller know to format the response in json so we don't have to specify on each action.
@@ -108,19 +108,19 @@ trait APIController extends StandardController {
   }
 }
 
-trait TeamControllerT extends StandardController {
-  idType = "Team"
-  val teamRepo = inject[TeamRepo]
-  var requestTeam: Option[Team with Persisted] = None
+trait GuildControllerT extends StandardController {
+  idType = "Guild"
+  val guildRepo = inject[GuildRepo]
+  var requestGuild: Option[Guild with Persisted] = None
   before("/:id/?*") {
     val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
     val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
     paramId = Some(i)
   }
   before("/:id/?*") {
-    teamRepo.get(paramId.get) match {
-      case Some(t: Team with Persisted) =>
-        requestTeam = Some(t)
+    guildRepo.get(paramId.get) match {
+      case Some(t: Guild with Persisted) =>
+        requestGuild = Some(t)
       case None => halt(400, "No team exists with the Id " + paramId.get)
     }
   }

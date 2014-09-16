@@ -41,7 +41,7 @@ case class User(
                  globalHandle: String,
                  cDate: Option[DateTime],
                  id: Int = 0,
-                 teams: List[TeamUser] = List(),
+                 guilds: List[GuildUser] = List(),
                  gameProfiles: List[UserPlatformProfile] = List()) extends Invitee {
   val createdDate: DateTime = cDate.getOrElse(DateTime.now())
 

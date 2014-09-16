@@ -14,7 +14,7 @@
                             </li>
                         </ul></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.users" class="topLink">Users <span class="badge">{{eventCtrl.event.users}}</span></a></li>
-                    <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.teams" class="topLink">Teams <span class="badge">{{eventCtrl.event.teams}}</span></a></li>
+                    <!--<li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.guilds" class="topLink">Guilds <span class="badge">{{eventCtrl.event.guilds}}</span></a></li>-->
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.about" class="topLink">About</a></li>
                     <li ng-show="cncCtrl.account.isLoggedIn() && eventCtrl != undefined && cncCtrl.account.isRegisteredForEvent(eventCtrl.event.id) && !cncCtrl.account.hasPaid(eventCtrl.event.id)"><a ui-sref="eventSkeleton.pay" class="topLink">Pay</a></li>
                     <li ng-show="eventCtrl != undefined && (eventCtrl.isAdmin() || (cncCtrl.account.isAdmin() && cncCtrl.account.adminEnabled()))"><a ui-sref="eventSkeleton.settings" class="topLink">Settings</a></li>
@@ -28,7 +28,7 @@
                     <li ng-if="globalCtrl != undefined"><a ui-sref="globalSkeleton.tournaments"  class="topLink">Tournaments</a></li>
                     <li ng-if="globalCtrl != undefined"><a ui-sref="globalSkeleton.friends"  class="topLink">Friends</a></li>
                     <li ng-show="eventCtrl == undefined"><a ui-sref="globalSkeleton.users"  class="topLink">Users</a></li>
-                    <li ng-show="eventCtrl == undefined"><a ui-sref="globalSkeleton.teams" ui-sref-active="active" class="topLink">Teams</a></li>
+                    <li ng-show="eventCtrl == undefined"><a ui-sref="globalSkeleton.guilds" ui-sref-active="active" class="topLink">Guilds</a></li>
                     <!-- End Global Header Links -->
                     <li ng-hide="cncCtrl.account.isLoggedIn()" ng-click="openRegister()"><a class="topLink">Register</a></li>
                     <li ng-hide="cncCtrl.account.isLoggedIn()"><a ng-click="openLogin()" class="topLink">Login</a></li>

@@ -60,13 +60,13 @@
             </div>
             <div class="col-md-12">
                 <div class="well">
-                    <h4>Teams</h4>
+                    <h4>Guilds</h4>
                     <accordion close-other="profileCtrl.openedTeamsAccordion">
-                        <accordion-group heading="{{team.Team.name}}" ng-repeat="team in profileCtrl.user.teams">
-                            Got yer Team, {{team.Team.name}}, with the Id {{team.Team.id}} right here.
+                        <accordion-group heading="{{guild.Guild.name}}" ng-repeat="guild in profileCtrl.user.guilds">
+                            Got yer Guild, {{guild.Guild.name}}, with the Id {{guild.Guild.id}} right here.
                         </accordion-group>
                     </accordion>
-                    {{profileCtrl.user.teams.length == 0 ? 'None to report!' : ''}}
+                    {{profileCtrl.user.guilds.length == 0 ? 'None to report!' : ''}}
                 </div>
             </div>
             <div class="col-md-12">

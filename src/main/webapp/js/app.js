@@ -37,9 +37,9 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl: '/views/global/events.html',
                 controller: 'EventsController as eventsCtrl'
             })
-            .state('globalSkeleton.teams', {
+            .state('globalSkeleton.guilds', {
                 url: '/teams',
-                template: '<teams></teams>'
+                template: '<guilds></guilds>'
             })
             .state('globalSkeleton.users',{
                 url:'/users',
@@ -69,21 +69,21 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl:'/views/users/profile.html',
                 controller:'ProfileController as profileCtrl'
             })
-            .state('globalSkeleton.team', {
-                url:'/teams/:teamId',
+            .state('globalSkeleton.guild', {
+                url:'/guilds/:guildId',
                 params:{
-                    teamId:{}
+                    guildId:{}
                 },
-                templateUrl:'/views/teams/team.html',
-                controller:'TeamController as teamCtrl',
+                templateUrl:'/views/guilds/guild.html',
+                controller:'GuildController as guildCtrl',
                 resolve:{
-                    teamData: function(Teams, $stateParams, $state, $q) {
+                    guildData: function(Guilds, $stateParams, $state, $q) {
                         var deferred = $q.defer();
-                        Teams.getTeam($stateParams.teamId.toString()).then(function(response){
+                        Guilds.getGuild($stateParams.guildId.toString()).then(function(response){
                             return deferred.resolve(response);
                         }, function(error){
                             console.log(error);
-                            $state.go('globalSkeleton.teams');
+                            $state.go('globalSkeleton.guilds');
                             return deferred.reject();
                         });
                         return deferred.promise;
@@ -121,25 +121,25 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 },
                 templateUrl: '/views/event/eventHome.html'
             })
-            .state('eventSkeleton.teams', {
+            .state('eventSkeleton.guilds', {
                 url: '/teams',
-                template: '<teams></teams>',
+                template: '<guilds></guilds>',
                 params:{
                     eventId:{}
                 }
             })
-            .state('eventSkeleton.team', {
-                url:'/teams/:teamId',
+            .state('eventSkeleton.guild', {
+                url:'/guilds/:guildId',
                 params:{
-                    teamId:{},
+                    guildId:{},
                     eventId:{}
                 },
-                templateUrl:'/views/teams/team.html',
-                controller:'TeamController as teamCtrl',
+                templateUrl:'/views/guilds/guild.html',
+                controller:'GuildController as guildCtrl',
                 resolve:{
-                    teamData: function(Teams, $stateParams, $state, $q) {
+                    guildData: function(Guilds, $stateParams, $state, $q) {
                         var deferred = $q.defer();
-                        Teams.getTeam($stateParams.teamId.toString()).then(function(response){
+                        Guilds.getGuild($stateParams.guildId.toString()).then(function(response){
                             return deferred.resolve(response);
                         }, function(error){
                             console.log(error);
@@ -230,6 +230,29 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
         $locationProvider.html5Mode(true);
         RestangularProvider.setBaseUrl('/api');
 
+        //Make sure we transform dates into Date() objects on response data (since restangular doesn't do it automatically)
+        RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred)
+            {
+                if(operation === "getList")
+                {
+                    if(data[0].details != undefined)
+                    {
+                       for(var i = 0; i < data.length; i++)
+                       {
+                           data[i].details.timeStart = new Date(data[i].details.timeStart);
+                           data[i].details.timeEnd = new Date(data[i].details.timeEnd);
+                       }
+                    }
+                }
+                else if(data.details != undefined)
+                {
+                    data.details.timeStart = new Date(data.details.timeStart);
+                    data.details.timeEnd = new Date(data.details.timeEnd);
+                }
+                return data;
+            });
+
+
     }]);
 
 angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state","editableOptions", "editableThemes",
@@ -256,7 +279,7 @@ angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRoute
             $rootScope.$broadcast('notify', 'error', response.data, 5000);
         }
     });
-    //on startup let's try and get the user from memory
+    //on startup try and get the user from memory
     Account.validateToken().then(function () {
         Account.initUser();
     });

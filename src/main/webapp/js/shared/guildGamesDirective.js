@@ -2,7 +2,7 @@
  * Created by Matthew on 8/28/2014.
  */
 angular.module('gtfest')
-    .directive('teamGames', teamGames);
+    .directive('guildGames', teamGames);
 // @ngInject
 function teamGames(Games, $rootScope) {
     return {
