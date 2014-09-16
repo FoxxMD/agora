@@ -22,7 +22,7 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
   private val tx = inject[Transaction]
 
   def newUserPass(handle: String, email: String, password: String): UserIdentity = {
-    val newu = User(email, "user", None, None, handle, None)
+    val newu = User(email, "user", None, None, handle)
     val salted = PasswordSecurity.createHash(password)
     UserIdentity(newu, "userpass", email, None, None, None, Option(email), None, salted)
   }

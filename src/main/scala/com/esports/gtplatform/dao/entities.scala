@@ -245,8 +245,9 @@ object EventDetailsEntity extends Entity[Int, NoId, EventDetails]("eventdetails"
   val servers = column("servers") option (_.servers)
   val timeStart = column("timeStart") option (_.timeStart)
   val timeEnd = column("timeEnd") option (_.timeEnd)
+  val scheduledEvents = column("scheduledevents") option (_.scheduledEvents)
 
-  def constructor(implicit m: ValuesMap) = new EventDetails(event, address, city, state, description, rules, prizes, streams, servers, timeStart, timeEnd) with Stored
+  def constructor(implicit m: ValuesMap) = new EventDetails(event, address, city, state, description, rules, prizes, streams, servers, timeStart, timeEnd, scheduledEvents) with Stored
 }
 
 object EventPaymentEntity extends Entity[Int, SurrogateIntId, EventPayment]("eventpayments") {

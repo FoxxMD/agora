@@ -55,6 +55,7 @@ CREATE TABLE `eventdetails` (
   `prizes` longtext,
   `streams` longtext,
   `servers` longtext,
+  `scheduledevents` longtext,
   PRIMARY KEY (`events_id`),
   CONSTRAINT `events_details` FOREIGN KEY (`events_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

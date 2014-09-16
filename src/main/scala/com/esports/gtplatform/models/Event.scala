@@ -70,7 +70,7 @@ case class Event(name: String = "A New Event", joinType: JoinType.Value = JoinTy
  * */
 
 case class EventDetails(event: Event = Event(), address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None,
-                        streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None)
+                        streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None, scheduledEvents: Option[String] = None)
 {
 
 }

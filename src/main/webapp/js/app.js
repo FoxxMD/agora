@@ -1,7 +1,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar', 'ngSanitize','angular-ladda',
-        'xeditable','angularPayments', 'toggle-switch'],
+        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -120,6 +120,14 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     eventId: {}
                 },
                 templateUrl: '/views/event/eventHome.html'
+            })
+            .state('eventSkeleton.schedule', {
+                url: '/schedule',
+                controller:'ScheduleController as scheduleCtrl',
+                params: {
+                    eventId: {}
+                },
+                templateUrl: '/views/event/schedule.html'
             })
             .state('eventSkeleton.guilds', {
                 url: '/teams',
@@ -243,11 +251,22 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                            data[i].details.timeEnd = new Date(data[i].details.timeEnd);
                        }
                     }
+                    if(data[0].createdDate != undefined)
+                    {
+                        for(var u = 0; u < data.length; u++)
+                        {
+                            data[u].createdDate = new Date(data[u].createdDate);
+                        }
+                    }
                 }
                 else if(data.details != undefined)
                 {
                     data.details.timeStart = new Date(data.details.timeStart);
                     data.details.timeEnd = new Date(data.details.timeEnd);
+                }
+                else if(data.createdDate != undefined)
+                {
+                    data.createdDate = new Date(data.createdDate)
                 }
                 return data;
             });

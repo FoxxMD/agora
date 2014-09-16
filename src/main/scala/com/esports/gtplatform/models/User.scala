@@ -39,11 +39,10 @@ case class User(
                  firstName: Option[String],
                  lastName: Option[String],
                  globalHandle: String,
-                 cDate: Option[DateTime],
+                 createdDate: DateTime = DateTime.now(),
                  id: Int = 0,
                  guilds: List[GuildUser] = List(),
                  gameProfiles: List[UserPlatformProfile] = List()) extends Invitee {
-  val createdDate: DateTime = cDate.getOrElse(DateTime.now())
 
   /* You'll notice on almost all classes that related objects will be accessed through a method rather than as child/parent objects.
   * This is intentional as it prevents cyclical dependencies and works better with immutable data structures.
