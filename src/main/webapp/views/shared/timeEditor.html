@@ -1,4 +1,4 @@
-<div ng-class="{halloEditable: iseditable, inEditMode: timeEditor.editable}">
+<div class="timeEditor" ng-class="{halloEditable: iseditable && !multimode, inEditMode: timeEditor.editable && !multimode}">
     <div ng-switch="timeEditor.editable">
        <div ng-switch-default ng-click="timeEditor.tryEdit()">
            <h4>Starts</h4>
@@ -20,30 +20,42 @@
         </div>
         <div ng-switch-when="true">
             <h4>Starts</h4>
-                <p class="input-group">
-                    <input placeholder="TBD" type="text" datepicker-popup="{{timeEditor.format}}"
-                           show-button-bar="true" class="form-control"
-                           max="$parent.timeEnd"
-                           ng-model="$parent.timestart"
-                           is-open="timeEditor.startOpened" ng-required="true" close-text="Close"/>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="input-group">
+                        <input placeholder="TBD" type="text" datepicker-popup="{{timeEditor.format}}"
+                               show-button-bar="true" class="form-control"
+                               max="$parent.timeEnd"
+                               ng-model="$parent.timestart"
+                               is-open="timeEditor.startOpened" ng-required="true" close-text="Close"/>
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="timeEditor.openStartTime($event)"><i class="fa fa-calendar"></i></button>
                     </span>
-                </p>
-            <timepicker ng-model="$parent.timestart"></timepicker>
+                    </p>
+                </div>
+                <div class="col-md-6 timePicker">
+                    <timepicker ng-model="$parent.timestart"></timepicker>
+                </div>
+            </div>
             <h4>Ends</h4>
-            <p class="input-group">
-                <input placeholder="TBD" type="text" datepicker-popup="{{timeEditor.format}}"
-                       show-button-bar="true" class="form-control"
-                       min="$parent.timestart"
-                       ng-model="$parent.timeEnd"
-                       is-open="timeEditor.stopOpened" ng-required="true" close-text="Close"/>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="input-group">
+                        <input placeholder="TBD" type="text" datepicker-popup="{{timeEditor.format}}"
+                               show-button-bar="true" class="form-control"
+                               min="$parent.timestart"
+                               ng-model="$parent.timeEnd"
+                               is-open="timeEditor.stopOpened" ng-required="true" close-text="Close"/>
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="timeEditor.openStopTime($event)"><i class="fa fa-calendar"></i></button>
                     </span>
-            </p>
-            <timepicker ng-model="$parent.timeEnd"></timepicker>
-            <button class="btn btn-info pull-left" ng-click="timeEditor.updateTimeData();">Save</button>
+                    </p>
+                </div>
+                <div class="col-md-6 timePicker">
+                    <timepicker ng-model="$parent.timeEnd"></timepicker>
+                </div>
+            </div>
+            <button ng-if="!multimode" class="btn btn-info" ng-click="timeEditor.updateTimeData();">Save</button>
         </div>
     </div>
 </div>

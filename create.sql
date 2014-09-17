@@ -1,7 +1,7 @@
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(50) NOT NULL,
-  `createdDate` datetime NOT NULL,
+  `createdDate` int(11) NOT NULL,
   `lastLogin` datetime DEFAULT NULL,
   `firstName` varchar(45) DEFAULT NULL,
   `lastName` varchar(45) DEFAULT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE `users` (
 
 CREATE TABLE `useridentity` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `userId` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
   `userIdentifier` varchar(50) NOT NULL,
   `providerId` varchar(45) NOT NULL,
   `email` varchar(45) DEFAULT NULL,
@@ -22,8 +22,8 @@ CREATE TABLE `useridentity` (
   `lastName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `user_identity_id` (`userId`),
-  CONSTRAINT `user_identity_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `user_identity_id` (`users_id`),
+  CONSTRAINT `user_identity_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `userplatformprofile` (
@@ -48,8 +48,8 @@ CREATE TABLE `eventdetails` (
   `address` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
   `state` varchar(45) DEFAULT NULL,
-  `timeStart` datetime DEFAULT NULL,
-  `timeEnd` datetime DEFAULT NULL,
+  `timeStart` int(11) DEFAULT NULL,
+  `timeEnd` int(11) DEFAULT NULL,
   `description` longtext,
   `rules` longtext,
   `prizes` longtext,
@@ -107,8 +107,8 @@ CREATE TABLE `tournamentdetails` (
   `rules` longtext,
   `prizes` longtext,
   `streams` longtext,
-  `timeStart` datetime DEFAULT NULL,
-  `timeEnd` datetime DEFAULT NULL,
+  `timeStart` int(11) DEFAULT NULL,
+  `timeEnd` int(11) DEFAULT NULL,
   `tournamentdetailscol` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`tournamentId`),
   KEY `tournament_details_id_idx` (`tournamentId`),
@@ -122,7 +122,7 @@ CREATE TABLE `teams` (
   `maxPlayers` int(11) DEFAULT NULL,
   `joinType` varchar(45) NOT NULL,
   `tournament_id` int(11) NOT NULL,
-  `createdDate` datetime DEFAULT NULL,
+  `createdDate` int(11) DEFAULT NULL,
   `isPresent` smallint(2) NOT NULL DEFAULT '0',
   `guildOnly` smallint(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -138,7 +138,7 @@ CREATE TABLE `guilds` (
   `description` text,
   `maxPlayers` int(11) DEFAULT NULL,
   `joinType` varchar(45) NOT NULL,
-  `createdDate` datetime NOT NULL,
+  `createdDate` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -223,7 +223,7 @@ CREATE TABLE `user_tournaments` (
 CREATE TABLE `tokens` (
   `id` int(11) NOT NULL,
   `token` varchar(100) NOT NULL,
-  `issuedOn` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `issuedOn` int(11) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `token_UNIQUE` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -277,7 +277,7 @@ CREATE TABLE `invites` (
   `author` int(11) NOT NULL,
   `receiver` int(11) DEFAULT NULL,
   `message` text,
-  `createdOn` datetime NOT NULL,
+  `createdOn` int(11) NOT NULL,
   `tournament_id` int(11) DEFAULT NULL,
   `events_id` int(11) DEFAULT NULL,
   `guilds_id` int(11) DEFAULT NULL,

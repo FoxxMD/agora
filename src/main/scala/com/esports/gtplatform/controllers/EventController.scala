@@ -46,8 +46,10 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     auth()
     if (!requestEvent.get.isAdmin(user) && user.role != "admin")
       halt(403, "You do not have permission to edit this event.")
-
-    val extractedDetails = parsedBody.\("details").extract[EventDetails].copy(event = requestEvent.get)
+    //val activitiesraw =  compact(render(parsedBody.\("details").\("scheduledEvents")))
+    val extractedDetails = parsedBody.\("details").extract[EventDetails].copy(
+      event = requestEvent.get,
+      scheduledEvents = Some(compact(render(parsedBody.\("details").\("scheduledEvents")))))
 
     val newEvent = requestEvent.get.copy(name = parsedBody.\("name").extract[String],
       joinType = parsedBody.\("joinType").extract[JoinType]).setDetails(extractedDetails)

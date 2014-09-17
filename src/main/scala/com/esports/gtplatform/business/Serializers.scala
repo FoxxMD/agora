@@ -2,6 +2,7 @@ package com.esports.gtplatform.business
 
 import com.escalatesoft.subcut.inject.{AutoInjectable, Injectable, BindingModule}
 import com.esports.gtplatform.business.services.TeamService
+import com.esports.gtplatform.json.DateSerializer
 import com.googlecode.mapperdao.{Entity, Persisted}
 import models._
 import org.json4s.JsonAST.JValue
@@ -18,10 +19,16 @@ import org.json4s.jackson.JsonMethods._
 class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats =>(
   {PartialFunction.empty}, {
   case ed: EventDetails =>
-    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
-    Extraction.decompose(ed.copy())
+    implicit val formats: Formats = DefaultFormats + new DateSerializer
+    val f = Extraction.decompose(ed.copy())
+      if(ed.scheduledEvents.isDefined)
+      {
+        f.replace(List("scheduledEvents"),parse(ed.scheduledEvents.get))
+      }
+    else
+        f
   case td: TournamentDetails =>
-    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
+    implicit val formats: Formats = DefaultFormats + new DateSerializer
     Extraction.decompose(td.copy())
   case up: UserPlatformProfile =>
     implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GamePlatform)

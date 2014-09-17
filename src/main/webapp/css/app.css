@@ -264,3 +264,19 @@ fieldset[disabled] {
 .well .well {
   background-color: #555555;
 }
+.st-content .timeEditor input {
+  width: 100%;
+}
+.st-content .timeEditor .timePicker {
+  margin-top: -37px;
+}
+.calendarAction {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  display: none;
+}
+.fc-content:hover .calendarAction,
+.fc-content.active .calendarAction {
+  display: block;
+}
