@@ -60,5 +60,15 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
             Account.initUser();
         });
     };
+    this.savePlace = function(){
+        that.placeLoading = true;
+        Events.updateEvent(that.event)
+            .then(function(){
+                that.editPlace = false;
+                $scope.$emit('notify', 'notice', 'Location saved.', 2000);
+            }).finally(function(){
+                that.placeLoading = false;
+            });
+    }
 }
 eventController.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$sce", "$timeout", "$localStorage", "$state"];

@@ -9,8 +9,39 @@
         <h2 class="text-center">When?</h2>
         <div time-editor time-end="eventCtrl.event.details.timeEnd" timestart="eventCtrl.event.details.timeStart" iseditable="eventCtrl.isAdmin()" update-property="eventCtrl.tryTimeUpdate()"></div>
     </div>
-    <div class="col-md-6 halloEditable">
+    <div ng-click="eventCtrl.editPlace = true" class="col-md-6" ng-class="{halloEditable: eventCtrl.isAdmin(),inEditMode: eventCtrl.editPlace && eventCtrl.isAdmin()}">
         <h2 class="text-center">Where?</h2>
-        <h4>{{eventCtrl.eventData.details.address || "Who knows?"}}</h4>
+        <h4 ng-show="!eventCtrl.editPlace && eventCtrl.isAdmin()">
+            <address>
+                {{eventCtrl.event.details.locationName}}<br/>
+                {{eventCtrl.event.details.address}}<br/>
+                {{eventCtrl.event.details.city}}<br/>
+                {{eventCtrl.event.details.state}}</address>
+            {{(eventCtrl.event.details.locationName == undefined && eventCtrl.event.details.address == undefined && eventCtrl.event.details.city == undefined) ? 'Who Knows?' : ''}}
+        </h4>
+        <form ng-if="eventCtrl.editPlace && eventCtrl.isAdmin()" name="placeForm" class="form" ng-submit="eventCtrl.savePlace()">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="eventCtrl.event.details.locationName" placeholder="Location Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="eventCtrl.event.details.address" placeholder="Address">
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="eventCtrl.event.details.city" placeholder="City">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="eventCtrl.event.details.state" placeholder="State">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button type="submit" ladda="eventCtrl.placeLoading" data-style="expand-right" class="btn btn-info pull-right">Save</button>
+            </div>
+        </form>
     </div>
 </div>

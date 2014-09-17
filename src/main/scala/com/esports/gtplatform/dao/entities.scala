@@ -245,6 +245,7 @@ object EventEntity extends Entity[Int, SurrogateIntId, Event]("events") {
 
 object EventDetailsEntity extends Entity[Int, NoId, EventDetails]("eventdetails") {
   val event = onetoone(EventEntity) to (_.event)
+  val location = column("location") option (_.locationName)
   val address = column("address") option (_.address)
   val city = column("city") option (_.city)
   val state = column("state") option (_.state)
@@ -270,7 +271,7 @@ object EventDetailsEntity extends Entity[Int, NoId, EventDetails]("eventdetails"
   def constructor(implicit m: ValuesMap) = {
     val ts = new DateTime(m(timeStart)*1000L,DateTimeZone.UTC)
     val te = new DateTime(m(timeEnd)*1000L,DateTimeZone.UTC)
-    new EventDetails(event, address, city, state, description, rules, prizes, streams, servers, Some(ts), Some(te), scheduledEvents) with Stored
+    new EventDetails(event, location, address, city, state, description, rules, prizes, streams, servers, Some(ts), Some(te), scheduledEvents) with Stored
   }
 }
 

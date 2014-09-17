@@ -45,6 +45,7 @@ CREATE TABLE `events` (
 
 CREATE TABLE `eventdetails` (
   `events_id` int(11) NOT NULL AUTO_INCREMENT,
+  `location` varchar(45) DEFAULT NULL,
   `address` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
   `state` varchar(45) DEFAULT NULL,
