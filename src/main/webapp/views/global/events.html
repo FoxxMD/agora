@@ -58,6 +58,35 @@
         </form>
     </morphing-button>
 </div>
+        <div class="row well">
+            <div class="col-md-offset-2 col-md-4 well">
+                <h4>Filter By Name</h4>
+                <tags-input ng-model="eventsCtrl.eventNameTags" display-property="name">
+                    <auto-complete source="eventsCtrl.loadEvents($query)"></auto-complete>
+                </tags-input>
+            </div>
+            <div class="col-md-4 well">
+                <h4>Filter By City</h4>
+                <tags-input ng-model="eventsCtrl.eventCityTags">
+                    <auto-complete source="eventsCtrl.loadEventsCity($query)"></auto-complete>
+                </tags-input>
+            </div>
+        </div>
+<ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="eventsCtrl.getMoreEvents()" infinite-scroll-container="'#st-content'" infinite-scroll-disabled="eventsCtrl.busy">
+    <div class="grid-sizer"></div>
+    <li ng-click="eventsCtrl.state.go('eventSkeleton.event',{eventId:event.id})" class="masonry-brick outline-outward eventCard" ng-repeat="event in eventsCtrl.eventsCollection track by $index" on-last-repeat>
+        <h3>{{event.name}}</h3>
+        <h4>{{event.details.timeStart.calendar()}}</h4>
+        <h4>{{event.joinType}} Event</h4>
+        <h4>{{event.details.city}}</h4>
+        <div style="position:absolute; bottom:0">
+            <h4>{{event.users}} users attending</h4>
+            <h4>{{event.tournaments.length}} tournaments hosted</h4>
+        </div>
+
+    </li>
+</ul>
+<!--
 <table st-table="eventsCollection" class="table table-striped table-hover smartTable">
     <thead>
     <tr>
@@ -79,4 +108,4 @@
         <td>{{row.users}}</td>
     </tr>
     </tbody>
-</table>
+</table>-->

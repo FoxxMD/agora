@@ -1,7 +1,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar', 'ngSanitize','angular-ladda',
-        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar'],
+        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -34,8 +34,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
             })
             .state('globalSkeleton.events', {
                 url: '/events',
-                templateUrl: '/views/global/events.html',
-                controller: 'EventsController as eventsCtrl'
+                template: '<events></events>'
             })
             .state('globalSkeleton.guilds', {
                 url: '/teams',
@@ -241,32 +240,32 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
         //Make sure we transform dates into Date() objects on response data (since restangular doesn't do it automatically)
         RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred)
             {
-                if(operation === "getList")
+                if(operation === "getList" && data.length > 0)
                 {
                     if(data[0].details != undefined)
                     {
                        for(var i = 0; i < data.length; i++)
                        {
-                           data[i].details.timeStart = new Date(data[i].details.timeStart);
-                           data[i].details.timeEnd = new Date(data[i].details.timeEnd);
+                           data[i].details.timeStart = moment(data[i].details.timeStart);//new Date(data[i].details.timeStart);
+                           data[i].details.timeEnd = moment(data[i].details.timeEnd);//new Date();
                        }
                     }
                     if(data[0].createdDate != undefined)
                     {
                         for(var u = 0; u < data.length; u++)
                         {
-                            data[u].createdDate = new Date(data[u].createdDate);
+                            data[u].createdDate = moment(data[u].createdDate);//new Date(data[u].createdDate);
                         }
                     }
                 }
                 else if(data.details != undefined)
                 {
-                    data.details.timeStart = new Date(data.details.timeStart);
-                    data.details.timeEnd = new Date(data.details.timeEnd);
+                    data.details.timeStart = moment(data.details.timeStart);
+                    data.details.timeEnd = moment(data.details.timeEnd);//new Date(data.details.timeEnd);
                 }
                 else if(data.createdDate != undefined)
                 {
-                    data.createdDate = new Date(data.createdDate)
+                    data.createdDate = moment(data.createdDate);//new Date(data.createdDate)
                 }
                 return data;
             });
@@ -280,6 +279,18 @@ angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRoute
         editableThemes.bs3.inputClass = 'form-control input-sm';
         editableThemes.bs3.buttonsClass = 'btn-sm';
         editableOptions.theme = 'bs3';
+
+        //set momnetjs calendar formatting
+        moment.locale('en', {
+            calendar : {
+                lastDay : '[Yesterday at] LT',
+                sameDay : '[Today at] LT',
+                nextDay : '[Tomorrow at] LT',
+                lastWeek : '[Last] dddd [at] LT',
+                nextWeek : 'dddd [at] LT',
+                sameElse : 'L [at] LT'
+            }
+        });
 
     Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
         if (response.status === 400) {

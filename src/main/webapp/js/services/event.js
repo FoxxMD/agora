@@ -9,7 +9,11 @@ angular.module('gtfest')
             currentEvent = undefined;
 
         this.getEvents = function(pageNo){
-            return events.getList({page: pageNo}).$object;
+            var deferred = $q.defer();
+            events.getList({page: pageNo}).then(function(response){
+                deferred.resolve(response.plain());
+            });
+            return deferred.promise;
         };
         this.setCurrentEvent = function(eventData)
         {

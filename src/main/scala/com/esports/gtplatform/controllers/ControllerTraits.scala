@@ -30,7 +30,7 @@ trait BasicServletWithLogging extends ScalatraServlet {
   }
 
   val logger = LoggerFactory.getLogger(getClass)
-  val pageSize = 300
+  val pageSize = 70
   error {
     case p: JsonParseException =>
       logger.error(p.getMessage, p)

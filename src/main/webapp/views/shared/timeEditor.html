@@ -3,16 +3,14 @@
        <div ng-switch-default ng-click="timeEditor.tryEdit()">
            <h4>Starts</h4>
             <address ng-if="timestart">
-                {{timestart.toTimeString()}}<br/>
-                {{timestart.toDateString()}}<br/>
+                {{timestart.calendar()}}<br/>
             </address>
             <address ng-if="!timestart">
                 TBD
             </address>
            <h4>Ends</h4>
            <address ng-if="timeEnd">
-               {{timeEnd.toTimeString()}}<br/>
-               {{timeEnd.toDateString()}}<br/>
+               {{timeEnd.calendar()}}<br/>
            </address>
             <address ng-if="!timeEnd">
                 TBD

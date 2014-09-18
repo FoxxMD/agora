@@ -329,3 +329,81 @@ fieldset[disabled] {
 .fc-content.active .calendarAction{
   display:block;
 }
+
+#grid.grid {
+  .grid-sizer {
+    width:33%;
+  }
+  li {
+    margin-bottom:30px;
+    width:30%;
+    height: 300px;
+    background-color: grey;
+  }
+}
+
+/*https://github.com/IanLunn/Hover/blob/master/css/hover.css*/
+/* SHADOW/GLOW TRANSITIONS */
+/* Glow */
+.glow {
+  display: inline-block;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: box-shadow;
+  transition-property: box-shadow;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+.glow:hover, .glow:focus, .glow:active {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.90);
+}
+
+/* Outline Outward */
+.outline-outward {
+  display: inline-block;
+  position: relative;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+.outline-outward:before {
+  content: '';
+  position: absolute;
+  border: #808080 solid 4px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: top, right, bottom, left;
+  transition-property: top, right, bottom, left;
+}
+.outline-outward:hover:before, .outline-outward:focus:before, .outline-outward:active:before {
+  top: -8px;
+  right: -8px;
+  bottom: -8px;
+  left: -8px;
+}
+
+.eventCard {
+  padding:5px;
+  cursor:pointer;
+}
+
+tags-input {
+  border:none;
+  .tags {
+    background-color: transparent;
+    padding: 5px;
+    border: none;
+    box-shadow:none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    li.tag-item {
+      background: #808080;
+    }
+  }
+}

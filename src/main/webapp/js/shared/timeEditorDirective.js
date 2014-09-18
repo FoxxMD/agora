@@ -21,11 +21,7 @@ function timeEditor($q) {
         controller: function ($scope) {
             var that = this;
             this.editable = $scope.starteditable || false;
-            var validateTime = function (atime) {
-                return atime ? typeof atime === 'object' ? atime : new Date(atime) : undefined;
-            };
-            $scope.timestart = validateTime($scope.timestart);
-            $scope.timeEnd = validateTime($scope.timeEnd);
+
             this.format = 'dd-MMMM-yyyy';
 
             this.openStopTime = function ($event) {
