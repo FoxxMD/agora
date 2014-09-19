@@ -1883,7 +1883,7 @@
         $buttonHolder = jQuery('<span>');
         $buttonHolder.hallobutton({
           label: this.texts.title_insert,
-          icon: 'icon-picture',
+          icon: 'fa fa-image',
           editable: this.options.editable,
           command: null,
           queryState: false,

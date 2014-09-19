@@ -22,7 +22,8 @@ function halloEditor($q) {
                     'halloformat': {},
                     'halloheadings': [1, 2, 3, 4],
                     'hallolists': {},
-                    'hallojustify': {}
+                    'hallojustify': {},
+                    'hallo-image-insert-edit': {}
                 },
                 toolbar: 'halloToolbarFixed',
                 toolbarOptions: {

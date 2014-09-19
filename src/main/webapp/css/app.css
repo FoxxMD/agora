@@ -355,3 +355,6 @@ tags-input .tags {
 tags-input .tags li.tag-item {
   background: #808080;
 }
+.insert-image-dialog {
+  z-index: 9999;
+}
