@@ -20,7 +20,7 @@
                 <ul ng-if="sidebar.account.isLoggedIn() && sidebar.account.user().events.length > 0"
                     ng-show="sidebar.toggleEvents" class="subsection myEvents fa-ul">
                     <li ng-repeat="event in sidebar.account.user().events">
-                        <a ui-sref="eventSkeleton.event({eventId:event.id})" ng-click="sidebar.toggleEvents = false; toggleMenu();"><i class="fa fa-li fa-arrow-right"></i>{{event.name}}</a>
+                        <a ui-sref="eventSkeleton.event({eventId:event.event.id})" ng-click="sidebar.toggleEvents = false; toggleMenu();"><i class="fa fa-li fa-arrow-right"></i>{{event.event.name}}</a>
                     </li>
                 </ul>
             </li>

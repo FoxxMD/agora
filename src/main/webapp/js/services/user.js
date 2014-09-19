@@ -7,29 +7,29 @@ angular.module('gtfest')
 
         this.isRegisteredForEvent = function (user, eventId) {
             return $.grep(user.events, function (e) {
-                return e.id == eventId
+                return e.event.id == eventId
             }).length > 0; //or should it be == 1?
         };
         this.hasPaid = function (user, eventId) {
             return $.grep(user.events, function (e) {
-                return e.id == eventId && e.hasPaid
+                return e.event.id == eventId && e.hasPaid
             }).length > 0;
         };
         this.getEventIndex = function (user, eventId) {
             for (var i = 0; i < user.events.length; i++) {
-                if (user.events[i].id == eventId)
+                if (user.events[i].event.id == eventId)
                     return i;
             }
         };
-        this.getUsers = function () {
-            return users.getList(); //TODO pagination
+        this.getUsers = function (pageNo) {
+            return users.getList({page: pageNo}); //TODO pagination
         };
         this.getUser = function (userId) {
             return users.one(userId).get();
         };
         this.isEventAdmin = function (user, eventId) {
             var validEvents = $.grep(user.events, function (e) {
-                return e.id == eventId && (e.isAdmin || e.isModerator)
+                return e.event.id == eventId && (e.isAdmin || e.isModerator)
             });
             return validEvents.length > 0 ? validEvents[0].isAdmin ? 'A' : 'M' : false;
         };

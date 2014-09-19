@@ -39,9 +39,6 @@ function eventsDirective(Events, $state, Account, $timeout, $q){
             };
             this.loadEventsCity = function(query) {
                 var deferred = $q.defer();
-/*                var filteredEvents = that.eventsCollection.filter(function(value, index,ar){
-                return value.details.city != undefined
-                });*/
                 var filteredEvents = [];
                     that.eventsCollection.map(function(x) {
                         if(filteredEvents.indexOf(x.details.city) == -1)
@@ -54,13 +51,15 @@ function eventsDirective(Events, $state, Account, $timeout, $q){
                 var passed = true;
               if(that.eventNameTags.length > 0)
               {
-                  if(that.eventNameTags.indexOf(event.name) == -1)
-                   passed = false;
+                 passed = that.eventNameTags.filter(function(val, index, arr){
+                     return val.name == event.name.toLowerCase().indexOf(val.name.toLowerCase()) != -1
+                 }).length > 0;
               }
                 if(that.eventCityTags.length > 0)
                 {
-                    if(that.eventCityTags.indexOf(event.details.city) == -1)
-                    passed = false;
+                   passed = that.eventCityTags.filter(function(val,index,arr){
+                       return event.details.city != undefined && val.text.toLowerCase() == event.details.city.toLowerCase()
+                   }).length > 0;
                 }
                 return passed;
             };
@@ -86,37 +85,8 @@ function eventsDirective(Events, $state, Account, $timeout, $q){
             };
         },
         link: function(scope, elem, attrs) {
-            var thatelem = elem;
-            var anim = undefined;
-            scope.$on('onRepeatLast', function(scope, element, attrs){
-                $timeout(function(){
-                    if(anim == undefined)
-                    {
-                        anim = new AnimOnScroll( $(thatelem).find( '#grid' )[0], {
-                            minDuration : 0.4,
-                            maxDuration : 0.7,
-                            viewportFactor : 0.2,
-                            scrollingElement: $('.st-content')[0]
-                        } );
-                    }
-                    else{
-                        anim.items =  Array.prototype.slice.call(elem[0].querySelectorAll( '#grid > li' ));
-                    }
-
-                    console.log(anim);
-                },100);
-            });
         }
     }
 
 }
 eventsDirective.$inject = ["Events","$state", "Account", "$timeout", "$q"];
-
-angular.module('gtfest')
-.directive('onLastRepeat', function() {
-    return function(scope, element, attrs) {
-        if (scope.$last) setTimeout(function(){
-            scope.$emit('onRepeatLast', element, attrs);
-        }, 1);
-    };
-});

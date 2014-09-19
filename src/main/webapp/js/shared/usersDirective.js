@@ -4,7 +4,7 @@
 angular.module('gtfest')
     .directive('users', users);
 // @ngInject
-function users(Users, Events, $state, $stateParams, Account){
+function users(Users, Events, $state, $stateParams, Account, $q){
     return {
         templateUrl:'views/shared/users.html',
         restrict:'E',
@@ -13,52 +13,94 @@ function users(Users, Events, $state, $stateParams, Account){
         controller: function($scope){
             var that = this;
             this.account = Account;
+            this.state = $state;
+            this.stateParams = $stateParams;
+            var pageNo = 1;
+
             this.isAdmin = function(){
                 return (Account.isAdmin() || Account.isEventAdmin()) && Account.adminEnabled();
             };
+
             this.userCollection = [];
             if ($state.$current.includes.globalSkeleton) {
-                that.userCollection = Users.getUsers().then(function(response){
-                    that.displayCollection = [].concat(response.plain());
-                    return response.plain();
+                Users.getUsers().then(function(response){
+                    that.userCollection = response.plain();
                 });
                 that.isGlobal = true;
             }
             else if ($state.$current.includes.eventSkeleton) {
                 Events.getUsers($stateParams.eventId.toString()).then(function(response){
-                    plainArray = response.plain();
-                    that.displayCollection = [].concat(plainArray);
-                    that.userCollection = plainArray;
+                    that.userCollection = response.plain();
                 });
                 that.isEvent = true;
             }
-            this.tableGoTo = function($event, id) {
-                if($($event.target).is('td'))
-                {
-                    var thestate = '';
-                    if($state.$current.includes.globalSkeleton)
-                        $state.go('globalSkeleton.profile',{userId:id});
-                    else
-                        $state.go('eventSkeleton.profile',{userId:id, eventId:$stateParams.eventId});
-                }
 
+            this.getMoreUsers = function(){
+                that.busy = true;
+                pageNo++;
+                if (that.isGlobal) {
+                    Users.getUsers(pageNo).then(function(response){
+                        if(response.length > 0)
+                        {
+                            that.userCollection = that.userCollection.concat(response.plain());
+                            that.busy = false;
+                        }
+                    });
+                }
+                else if (that.isEvent) {
+                    Events.getUsers($stateParams.eventId.toString(), pageNo).then(function(response){
+                        if(response.length > 0)
+                        {
+                            that.userCollection = that.userCollection.concat(response.plain());
+                            that.busy = false;
+                        }
+                    });
+                }
             };
-            this.tryChangePresent = function(userId, status, row) {
-                row.presentLoading = true;
-              Events.setPresent(Events.getCurrentEvent().id.toString(),userId.toString(),status).then(function(){
-                  that.userCollection[that.userCollection.indexOf(row)].isPresent = status;
+            this.loadPlatforms = function(query) {
+                var deferred = $q.defer();
+                var plats = [{'text':'Steam'},
+                    {'text':'Battle.net'},
+                    {'text':'Riot'}];
+                deferred.resolve(plats);
+                return deferred.promise;
+            };
+            this.filterUsers = function(user) {
+                var passed = true;
+                if(that.userNameTags.length > 0)
+                {
+                    passed = that.userNameTags.filter(function(val, index, arr){
+                        return user.globalHandle.toLowerCase().indexOf(val.text.toLowerCase()) != -1;
+                    }).length > 0;
+                }
+                if(that.userPlatformTags.length > 0)
+                {
+                    passed = that.userPlatformTags.filter(function(val, index, arr){
+                       for(var i = 0; i < user.gameProfiles.length; i++){
+                           if(user.gameProfiles[i].platform == val.text)
+                            return true;
+                       }
+                    }).length > 0;
+                }
+                return passed;
+            };
+
+            this.tryChangePresent = function(user) {
+                user.presentLoading = true;
+              Events.setPresent(Events.getCurrentEvent().id.toString(),user.id.toString(),!user.isPresent).then(function(){
+                  that.userCollection[that.userCollection.indexOf(user)].isPresent = !user.isPresent;
                   $scope.$emit('notify','notice', 'Presence successfully changed.',3000);
               }).finally(function(){
-                  row.presentLoading = false;
+                  user.presentLoading = false;
               });
             };
-            this.tryChangePaid = function(userId, paidStatus, row) {
-                row.paidLoading = true;
-                Events.payRegistration(Events.getCurrentEvent().id.toString(), undefined, undefined, userId.toString(), paidStatus).then(function(){
-                    that.userCollection[that.userCollection.indexOf(row)].hasPaid = paidStatus;
+            this.tryChangePaid = function(user) {
+                user.paidLoading = true;
+                Events.payRegistration(Events.getCurrentEvent().id.toString(), undefined, undefined, user.id.toString(), !user.hasPaid).then(function(){
+                    that.userCollection[that.userCollection.indexOf(user)].hasPaid = paidStatus;
                     $scope.$emit('notify','notice', 'Payment status successfully changed.',3000);
                 }).finally(function(){
-                    row.paidLoading = false;
+                    user.paidLoading = false;
                 });
             }
         },
@@ -67,4 +109,4 @@ function users(Users, Events, $state, $stateParams, Account){
         }
     }
 }
-users.$inject = ["Users", "Events", "$state", "$stateParams", "Account"];
+users.$inject = ["Users", "Events", "$state", "$stateParams", "Account", "$q"];

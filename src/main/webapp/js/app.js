@@ -37,7 +37,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 template: '<events></events>'
             })
             .state('globalSkeleton.guilds', {
-                url: '/teams',
+                url: '/guilds',
                 template: '<guilds></guilds>'
             })
             .state('globalSkeleton.users',{

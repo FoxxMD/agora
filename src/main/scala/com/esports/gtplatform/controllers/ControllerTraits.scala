@@ -4,6 +4,7 @@ import com.escalatesoft.subcut.inject.Injectable
 import com.esports.gtplatform.business._
 import com.fasterxml.jackson.core.JsonParseException
 import com.googlecode.mapperdao.Persisted
+import com.googlecode.mapperdao.exceptions.QueryException
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
@@ -41,6 +42,9 @@ trait BasicServletWithLogging extends ScalatraServlet {
     case n: NotImplementedError =>
       logger.error(n.getMessage, n)
       halt(500, "We forgot to implement something...")
+    case q: QueryException =>
+      logger.error(q.getMessage, q)
+      halt(500, "Database problems...")
     case t: Throwable =>
       logger.info(t.getMessage, t)
       halt(500, "Something went wrong!")

@@ -11,29 +11,77 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account) {
         scope:'true',
         controllerAs:'guildsCtrl',
         controller: function(){
-            var that = this;
+            var that = this,
+                pageNo = 1;
             this.guildCollection = [];
+            this.stateParams = $stateParams;
+            this.state = $state;
             this.createGuildData = {
                 maxPlayers: 0,
                 joinType: 'Public'
             };
             if ($state.$current.includes.globalSkeleton) {
-                this.guildCollection = Guilds.getGuilds();
+                Guilds.getGuilds().then(function(response){
+                   that.guildCollection = response.plain();
+                });
             }
             else if ($state.$current.includes.eventSkeleton) {
                 that.isEvent = true;
-                this.guildCollection = Guilds.getGuilds(undefined, $stateParams.eventId);
+                 Guilds.getGuilds(undefined, $stateParams.eventId).then(function(response){
+                    that.guildCollection = response.plain();
+                });
             }
-            this.tableGoTo = function($event, id) {
-                if($($event.target).is('td'))
-                {
-                    var thestate = '';
-                    if($state.$current.includes.globalSkeleton)
-                        $state.go('globalSkeleton.guild',{guildId:id});
-                    else
-                        $state.go('eventSkeleton.guild',{guildId:id, eventId:$stateParams.eventId});
-                }
 
+            this.getMoreGuilds = function(){
+                that.busy = true;
+                pageNo++;
+                if(!that.isEvent){
+                    Guilds.getGuilds(pageNo).then(function(response){
+                        if(response.length > 0)
+                        {
+                            that.guildCollection = that.guildCollection.concat(response.plain());
+                            that.busy = false;
+                        }
+                    });
+                }
+                else{
+                    Guilds.getGuilds(pageNo, $stateParams.eventId).then(function(response){
+                        if(response.length > 0)
+                        {
+                            that.guildCollection = that.guildCollection.concat(response.plain());
+                            that.busy = false;
+                        }
+                    });
+                }
+            };
+
+            this.loadGames = function(query) {
+                var deferred = $q.defer();
+                var plats = [{'text':'Halo'},
+                    {'text':'LoL'},
+                    {'text':'CS:GO'}];
+                deferred.resolve(plats);
+                return deferred.promise;
+            };
+
+            this.filterGuilds = function(guild) {
+                var passed = true;
+                if(that.guildNameTags.length > 0)
+                {
+                    passed = that.guildNameTags.filter(function(val, index, arr){
+                        return guild.name.toLowerCase().indexOf(val.text.toLowerCase()) != -1;
+                    }).length > 0;
+                }
+                if(that.guildGameTags.length > 0)
+                {
+                    passed = that.guildGameTags.filter(function(val, index, arr){
+                        for(var i = 0; i < user.gameProfiles.length; i++){
+                            if(guild.games[i].name == val.text)
+                                return true;
+                        }
+                    }).length > 0;
+                }
+                return passed;
             };
         },
         link: function(scope, elem, attrs){

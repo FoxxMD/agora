@@ -29,7 +29,7 @@ function prof($scope, Account, Users, userData, Events) {
     };
     this.tryChangePaid = function () {
         that.paidLoading = true;
-        Events.payRegistration(that.event.id.toString(), undefined, undefined, userData.id.toString(), !that.user.events[that.eventIndex].hasPaid).then(function () {
+        Events.payRegistration(that.event.event.id.toString(), undefined, undefined, userData.id.toString(), !that.user.events[that.eventIndex].hasPaid).then(function () {
             that.user.events[that.eventIndex].hasPaid = !that.user.events[that.eventIndex].hasPaid;
             $scope.$emit('notify', 'notice', 'Payment status successfully changed.', 3000);
         }).finally(function () {
@@ -38,7 +38,7 @@ function prof($scope, Account, Users, userData, Events) {
     };
     this.tryChangePresent = function () {
         that.presentLoading = true;
-        Events.setPresent(that.event.id.toString(), userData.id.toString(), !that.user.events[that.eventIndex].isPresent).then(function () {
+        Events.setPresent(that.event.event.id.toString(), userData.id.toString(), !that.user.events[that.eventIndex].isPresent).then(function () {
             that.user.events[that.eventIndex].isPresent = !that.user.events[that.eventIndex].isPresent;
             $scope.$emit('notify', 'notice', 'Presence successfully changed.', 3000);
         }).finally(function () {
@@ -53,7 +53,7 @@ function prof($scope, Account, Users, userData, Events) {
     };
     this.tryChangeModerator = function () {
         that.modLoading = true;
-        Events.setModerator(that.event.id.toString(), userData.id.toString(), !that.user.events[that.eventIndex].isModerator).then(function () {
+        Events.setModerator(that.event.event.id.toString(), userData.id.toString(), !that.user.events[that.eventIndex].isModerator).then(function () {
             that.user.events[that.eventIndex].isModerator = !that.user.events[that.eventIndex].isModerator;
             $scope.$emit('notify', 'notice', 'Mod status successfully changed.', 3000);
         }).finally(function () {
@@ -62,7 +62,7 @@ function prof($scope, Account, Users, userData, Events) {
     };
     this.tryChangeEventAdmin = function () {
         that.eventAdminLoading = true;
-        Events.setAdmin(that.event.id.toString(), userData.id.toString(), !that.user.events[that.eventIndex].isAdmin).then(function () {
+        Events.setAdmin(that.event.event.id.toString(), userData.id.toString(), !that.user.events[that.eventIndex].isAdmin).then(function () {
             that.user.events[that.eventIndex].isAdmin = !that.user.events[that.eventIndex].isAdmin;
             $scope.$emit('notify', 'notice', 'Admin status successfully changed.', 3000);
         }).finally(function () {

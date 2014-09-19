@@ -133,7 +133,9 @@ trait EventUserRepo extends GenericMRepo[EventUser]
   def getByUser(u: User): List[EventUser]
 }
 class EventUserRepository extends GenericMRepository[EventUser](EventUserEntity) with EventUserRepo{
-  def getByUser(u: User): List[EventUser] = queryDao.query(select from EventUserEntity where EventUserEntity.user === u)
+  def getByUser(u: User): List[EventUser] = {
+    queryDao.query(select from EventUserEntity where EventUserEntity.user === u)
+  }
 }
 
 trait TournamentRepo extends GenericMRepo[Tournament]

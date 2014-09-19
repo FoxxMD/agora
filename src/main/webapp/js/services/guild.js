@@ -11,10 +11,10 @@ angular.module('gtfest')
             pageNo == undefined ? pageNo = 1 : pageNo;
             if (eventId !== undefined) {
                 var eventTeams = Restangular.service('guilds', Restangular.one('events', eventId));
-                return eventTeams.getList({page: pageNo}).$object;
+                return eventTeams.getList({page: pageNo});
             }
             else {
-                return guilds.getList({pageNo: pageNo}).$object;
+                return guilds.getList({page: pageNo});
             }
         };
         this.createGuild = function (guild) {

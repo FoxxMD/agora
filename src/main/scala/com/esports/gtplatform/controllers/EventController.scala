@@ -72,11 +72,11 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   //Get a list of users for this event
   get("/:id/users") {
-    params.get("pageNo") match {
+    params.get("page") match {
       case Some(p: String) =>
-        Ok(requestEvent.get.users) //.slice(pageSize * (p.toInt - 1), pageSize * p.toInt))
+        Ok(requestEvent.get.users.slice(pageSize * (p.toInt - 1), pageSize))
       case None =>
-        Ok(requestEvent.get.users) //.take(pageSize))
+        Ok(requestEvent.get.users.take(pageSize))
     }
   }
   get("/:id/users/:userId") {

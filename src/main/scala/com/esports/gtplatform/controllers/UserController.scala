@@ -1,6 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
+import com.googlecode.mapperdao.exceptions.QueryException
 import models.GamePlatform
 import models.GamePlatform.{GamePlatform}
 import models.{GamePlatform, UserPlatformProfile}
@@ -13,14 +14,14 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
   get("/:id") {
     if (params("id") == "me") {
       auth()
-      Ok(user)
+        Ok(user)
     }
     else {
       Ok(requestUser.get)
     }
   }
   get("/") {
-    Ok(userRepo.getAll) //TODO pagination!
+    Ok(userRepo.getPaginated(params.getOrElse("page", "1").toInt))
   }
   patch("/:id") {
     auth()

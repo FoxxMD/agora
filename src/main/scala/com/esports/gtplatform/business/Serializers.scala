@@ -75,17 +75,19 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("resource" -> "/user/") ~
       ("isCaptain" -> tu.isCaptain))
   case eu: EventUser =>
-    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
+    implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntitySerializer
+    ("event" ->
       ("name" -> eu.event.name) ~
-      ("id" -> eu.event.id) ~
+      ("id" -> eu.event.id)) ~
       //("date" -> Extraction.decompose(eu.event.details.timeStart)) ~
       ("isPresent" -> eu.isPresent) ~
       ("isAdmin" -> eu.isAdmin) ~
       ("isModerator" -> eu.isModerator) ~
       ("hasPaid" -> eu.hasPaid) ~
       ("globalHandle" -> eu.user.globalHandle) ~
-      ("userId" -> eu.user.id) ~
-      ("platforms" -> Extraction.decompose(eu.user.gameProfiles)) //TODO clean this shit up
+      ("id" -> eu.user.id) ~
+      ("platforms" -> Extraction.decompose(eu.user.gameProfiles)) ~
+      ("guilds" -> Extraction.decompose(eu.user.guilds))//TODO clean this shit up
   case tu: TournamentUser =>
     implicit val formats: Formats = DefaultFormats +  new org.json4s.ext.EnumNameSerializer(BracketType)
     ("Tournament" ->

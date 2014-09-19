@@ -54,7 +54,7 @@
                 <div class="well">
                     <h3>Statistics</h3>
                     <ul>
-                        <li>Joined: {{profileCtrl.user.createdDate}}</li>
+                        <li>Joined: {{profileCtrl.user.createdDate.format("MMMM Do YYYY")}}</li>
                     </ul>
                 </div>
             </div>
@@ -147,8 +147,8 @@
                 <div class="well">
                     <h4>Events Participated In</h4>
                     <accordion close-other="profileCtrl.openedEventAccordion">
-                        <accordion-group heading="{{pEvent.name}}" ng-repeat="pEvent in profileCtrl.user.events">
-                            Got yer Event, {{pEvent.name}}, with the Id {{pEvent.id}} right here.
+                        <accordion-group heading="{{pEvent.event.name}}" ng-repeat="pEvent in profileCtrl.user.events">
+                            Got yer Event, {{pEvent.event.name}}, with the Id {{pEvent.event.id}} right here.
                         </accordion-group>
                     </accordion>
                     {{profileCtrl.user.events.length == 0 ? 'None to report!' :''}}

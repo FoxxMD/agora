@@ -62,7 +62,7 @@ angular.module('gtfest')
         };
         this.payRegistration = function(eventId, payType, cardToken, userId, paid, receipt) {
             return events.one(eventId).all('users').one(userId).post('payRegistration',{card: cardToken, type: payType, paid: paid, receipt: receipt});
-        };;
+        };
         /*
          * User Functions
          */
@@ -78,8 +78,8 @@ angular.module('gtfest')
             else
                 return events.one(eventId).one('users').remove();
         };
-        this.getUsers = function(eventId) {
-            return events.one(eventId).all('users').getList(); //TODO pagination
+        this.getUsers = function(eventId, pageNo) {
+            return events.one(eventId).all('users').getList({page: pageNo}); //TODO pagination
         };
         this.getUser = function(eventId, userId) {
             return events.one(eventId).all('users').one(userId).get();
