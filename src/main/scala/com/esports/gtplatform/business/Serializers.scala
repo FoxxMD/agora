@@ -23,7 +23,7 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, 
     val f = Extraction.decompose(ed.copy())
       if(ed.scheduledEvents.isDefined)
       {
-        f.replace(List("scheduledEvents"),parse(ed.scheduledEvents.get))
+        f.replace(List("scheduledEvents"),parseOpt(ed.scheduledEvents.get))
       }
     else
         f
