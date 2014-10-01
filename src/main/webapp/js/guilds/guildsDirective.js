@@ -4,7 +4,7 @@
 angular.module('gtfest')
     .directive('guilds', teams);
 // @ngInject
-function teams(Guilds, Games, $state, $stateParams, $timeout, Account) {
+function teams(Guilds, Games, $state, $stateParams, $timeout, Account, Events) {
     return {
         templateUrl:'views/guilds/guilds.html',
         restrict:'E',
@@ -27,7 +27,7 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account) {
             }
             else if ($state.$current.includes.eventSkeleton) {
                 that.isEvent = true;
-                 Guilds.getGuilds(undefined, $stateParams.eventId).then(function(response){
+                Events.getTeamsAndGuilds($stateParams.eventId).then(function(response){
                     that.guildCollection = response.plain();
                 });
             }
@@ -45,7 +45,7 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account) {
                     });
                 }
                 else{
-                    Guilds.getGuilds(pageNo, $stateParams.eventId).then(function(response){
+                    Events.getTeamsAndGuilds($stateParams.eventId, pageNo).then(function(response){
                         if(response.length > 0)
                         {
                             that.guildCollection = that.guildCollection.concat(response.plain());
@@ -100,4 +100,4 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account) {
         }
     }
 }
-teams.$inject = ["Guilds", "Games", "$state", "$stateParams", "$timeout", "Account"];
+teams.$inject = ["Guilds", "Games", "$state", "$stateParams", "$timeout", "Account" ,"Events"];

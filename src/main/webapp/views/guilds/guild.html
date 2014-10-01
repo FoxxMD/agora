@@ -5,7 +5,7 @@
 
             <h1 class="pull-left" ng-switch-default>{{guildCtrl.guild.name}}</h1>
 
-            <button style="margin-top:20px;" class="btn btn-lg pull-right" ng-class="guildCtrl.Onguild ? 'btn-warning' : 'btn-info'">{{guildCtrl.Onguild ? 'Leave' : 'Join'}}</button>
+            <button style="margin-top:20px;" class="btn btn-lg pull-right" ng-class="guildCtrl.onGuild ? 'btn-warning' : 'btn-info'">{{guildCtrl.onGuild ? 'Leave' : 'Join'}}</button>
         </div>
     </div>
     <div ng-if="guildCtrl.isAdmin()" class="col-md-12">
@@ -30,7 +30,7 @@
                 <div class="well">
                     <h3>Statistics</h3>
                     <ul>
-                        <li>Joined: {{guildCtrl.guild.createdDate}}</li>
+                        <li>Joined: {{guildCtrl.guild.createdDate.format("M[/]D[/]YYYY")}}</li>
                     </ul>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                 <div class="well">
                     <h4>Users</h4>
                     <accordion close-other="guildCtrl.openedguildsAccordion">
-                        <accordion-group heading="{{guild.User.name}}" ng-repeat="guild in guildCtrl.guild.guildPlayers">
+                        <accordion-group heading="{{guild.User.name}}" ng-repeat="guild in guildCtrl.guild.members">
                             Got yer User, {{guild.User.name}}, with the Id {{guild.User.id}} right here. And they {{guild.User.isCaptain ? 'ARE' :'ARE NOT'}} captain.
                         </accordion-group>
                     </accordion>

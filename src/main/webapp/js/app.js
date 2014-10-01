@@ -128,6 +128,14 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 },
                 templateUrl: '/views/event/schedule.html'
             })
+            .state('eventSkeleton.tournaments', {
+                url:'/tournaments',
+                controller:'TournamentsController as toursCtrl',
+                params: {
+                    eventId:{}
+                },
+                templateUrl:'/views/event/tournaments.html'
+            })
             .state('eventSkeleton.guilds', {
                 url: '/teams',
                 template: '<guilds></guilds>',

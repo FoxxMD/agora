@@ -18,7 +18,8 @@ function animatedheader(Events){
                 header = elem.find('.cbp-af-header')[0],
                 content = $(document).find('.st-content')[0],
                 didScroll = false,
-                changeHeaderOn = 100;
+                changeHeaderOn = 100,
+                isinit = false;
 
             function init() {
                 content.addEventListener( 'scroll', function( event ) {
@@ -45,7 +46,12 @@ function animatedheader(Events){
             }
 
             init();
-            var menu = new cbpHorizontalSlideOutMenu( elem.find('#cbp-hsmenu-wrapper' )[0] );
+
+            if(!isinit)
+            {
+                var menu = new cbpHorizontalSlideOutMenu( elem.find('#cbp-hsmenu-wrapper' )[0] );
+                isinit = true;
+            }
         }
     }
 }

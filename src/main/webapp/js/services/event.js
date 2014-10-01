@@ -93,5 +93,9 @@ angular.module('gtfest')
         this.setAdmin = function(eventId, userId, status) {
             return events.one(eventId).all('users').one(userId).patch({isAdmin: status });
         };
+        this.getTeamsAndGuilds = function(eventId, pageNo) {
+            var eid = eventId || currentEvent.id.toString();
+            return events.one(eid).all('teamsAndGuilds').getList({page: pageNo});
+        }
 
     }]);

@@ -67,7 +67,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     Ok()
   }
   //Get a list of teams that are participating in tournaments at this event
-  get("/:id/teams") {
+  get("/:id/teamsAndGuilds") {
     Ok(requestEvent.get.tournaments.flatMap(x => x.teams))
   }
   //Get a list of users for this event
@@ -158,8 +158,22 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
   }
   post("/:id/tournaments") {
-    NotImplemented
-    //HENRY WHERE YOU AT?!
+    val regType = parsedBody.\("registrationType").extract[JoinType]
+    val tourType = parsedBody.\("tournamentType").extract[TournamentType]
+    val game = parsedBody.\("game").extract[Game]
+
+    val newTour = Tournament(tourType, regType, game, requestEvent.get)
+
+    val tx = inject[Transaction]
+    val tourRepo = inject[GenericMRepo[Tournament]]
+    val inserted = tx { () =>
+      val insertedTour = tourRepo.create(newTour)
+
+      val extractedTD = parsedBody.\("details").extract[TournamentDetails]
+      val completedTour = tourRepo.update(insertedTour, insertedTour.copy(details = Some(extractedTD.copy(tournament = insertedTour))))
+      completedTour
+    }
+  Ok(inserted.id)
   }
   //A user paying for registation
   post("/:id/users/:userId/payRegistration") {

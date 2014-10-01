@@ -226,6 +226,9 @@ fieldset[disabled] {
 .eventButton .morph-button-inflow-1 {
   width: 600px;
 }
+.tournamentsButton .morph-button-inflow-1 {
+  width: 700px;
+}
 .smartTable tr.linkMask {
   cursor: pointer;
 }

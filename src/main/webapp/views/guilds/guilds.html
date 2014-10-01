@@ -50,7 +50,7 @@
                 <li class="masonry-brick outline-outward eventCard" ng-repeat="guild in guildsCtrl.guildCollection | filter: guildsCtrl.filterGuilds track by $index" on-last-repeat>
                     <div style="position:relative;width:100%; height:100%;">
                         <div style="position:absolute;top:0;bottom:0;right:0;left:0;"
-                             ng-click="guildsCtrl.isGlobal ? guildsCtrl.state.go('globalSkeleton.guild',{guildId:guild.id}) : guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id})">
+                             ng-click="!guildsCtrl.isEvent ? guildsCtrl.state.go('globalSkeleton.guild',{guildId:guild.id}) : guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id})">
                             <h3>{{guild.name}}</h3>
                             <h4>{{guild.members.length}} Members</h4>
                             <h4>Established {{guild.createdDate.format("M[/]D[/]YYYY")}}</h4>

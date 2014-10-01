@@ -1,0 +1,73 @@
+<div ng-cloak ng-show="cncCtrl.account.isLoggedIn()" class="buttonWrapper tournamentsButton">
+    <morphing-button title="Create A New Tournament">
+        <form class="form morphingButtonForm" name="createTourForm" ng-submit="toursCtrl.tryCreateTour()"
+              novalidate>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group" show-errors>
+                        <label class="form-label"><h4>Select Game</h4></label>
+                        <input type="text" name="game" ng-model="toursCtrl.createTourData.game" typeahead="game as game.name for game in toursCtrl.gamesCollection" typeahead-editable="false" class="form-control" typeahead-on-select="toursCtrl.populateTourTypes($item)" required>
+                    </div>
+                    <div ng-show="toursCtrl.createTourData.game != undefined" class="form-group" show-errors>
+                        <h4>Choose Tournament Type</h4>
+                        <input type="text" name="tourneyType" ng-model="toursCtrl.createTourData.tournamentType" typeahead="tour as tour.name for tour in toursCtrl.createTourData.game.tournamentTypes" typeahead-editable="false" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group">
+                        <h4>Choose A Tournament Name</h4>
+                        <input type="text" name="name" placeholder="Tournament Name" class="input-small form-control"
+                               ng-model="toursCtrl.createTourData.details.name"/>
+                    </div>
+                    <div class="form-group">
+                        <div time-editor time-end="toursCtrl.createTourData.details.timeEnd" timestart="toursCtrl.createTourData.details.timeStart" iseditable="true"
+                             starteditable="true" multimode="true"></div>
+                    </div>
+<!--                    <div class="form-group">
+                        <h4>Select Privacy</h4>
+                        <div class="btn-group">
+                            <label class="btn btn-info" ng-model="toursCtrl.createTourData.joinType" btn-radio="'Public'">Public</label>
+                            <label class="btn btn-info" ng-model="toursCtrl.createTourData.joinType" btn-radio="'Invite'">Invite Only</label>
+                        </div>
+                    </div>-->
+                   </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </morphing-button>
+</div>
+<div class="row well">
+    <div class="col-md-offset-2 col-md-4 well">
+        <h4>Filter By Name</h4>
+        <tags-input ng-model="toursCtrl.tourNameTags">
+        </tags-input>
+    </div>
+    <div class="col-md-4 well">
+        <h4>Filter By Games</h4>
+        <tags-input ng-model="toursCtrl.tourGameTags">
+            <auto-complete source="toursCtrl.loadGames($query)"></auto-complete>
+        </tags-input>
+    </div>
+</div>
+<!--<h2 style="margin-top:50px; margin-bottom:50px;" class="text-center">Tournaments</h2>-->
+<infinite-scroller-animated>
+    <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="toursCtrl.getMoreTours()"
+        infinite-scroll-container="'#st-content'" infinite-scroll-disabled="toursCtrl.busy">
+        <div class="grid-sizer"></div>
+        <li class="masonry-brick outline-outward eventCard" ng-repeat="tour in toursCtrl.tourCollection | filter: toursCtrl.filterTours track by $index" on-last-repeat>
+            <div style="position:relative;width:100%; height:100%;">
+                <div style="position:absolute;top:0;bottom:0;right:0;left:0;"
+                     ng-click="toursCtrl.state.go('eventSkeleton.tournament',{guildId:guild.id})">
+                    <h3>{{tour.name}}</h3>
+                    <h4>{{tour.game.name}}</h4>
+                    <h4>Starting {{tour.details.startDate.calendar()}}</h4>
+                    <h4>Ending {{tour.details.endDate.calendar()}}</h4>
+                    <div style="position:absolute; bottom:0">
+                        <h4>{{tour.users.length}} Players</h4>
+                        <h4>{{tour.teams.length}} Players</h4>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</infinite-scroller-animated>

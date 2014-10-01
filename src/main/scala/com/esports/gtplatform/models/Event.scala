@@ -1,7 +1,6 @@
 package models
 
 import com.esports.gtplatform.models.{MeetingT, Requestable, Inviteable}
-import models.BracketType.BracketType
 import monocle.{Lenser, SimpleLens}
 import monocle.syntax._
 import org.joda.time.DateTime

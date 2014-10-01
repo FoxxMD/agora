@@ -17,8 +17,8 @@ function teamCtrl($scope, Guilds, Events, Account, guildData) {
     this.isEditable = function(){
         return Account.isLoggedIn() && (Account.isAdmin() || Guilds.isCaptain(Account.user().id, guildData)) && Account.adminEnabled();
     };
-    this.onTeam = function(){
-        Guilds.userOnTeam(Account.user().id, guildData);
+    this.onGuild = function(){
+        Guilds.userInGuild(Account.user().id, guildData);
     };
 }
 teamCtrl.$inject = ["$scope", "Guilds", "Events", "Account", "guildData"];

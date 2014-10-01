@@ -34,6 +34,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   module.bind[GenericMRepo[GuildUser]] toSingle new GenericMRepository[GuildUser](GuildUserEntity)
   module.bind[GenericMRepo[User]] toSingle new GenericMRepository[User](UserEntity)
   module.bind[UserRepo] toSingle new UserRepository(UserEntity)
+  module.bind[GenericMRepo[Tournament]] toSingle new GenericMRepository[Tournament](TournamentEntity)
   //Created a separate set of tables/repositories for non-confirmed users.
   module.bind[NonActiveUserIdentityRepo] toSingle new NonActiveUserIdentityRepository
   module.bind[NonActiveUserRepo] toSingle new NonActiveUserRepository

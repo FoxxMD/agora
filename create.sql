@@ -75,6 +75,14 @@ CREATE TABLE `eventpayments` (
   CONSTRAINT `event_payment_id` FOREIGN KEY (`events_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `tournamenttypes` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `userPlay` tinyint(4) NOT NULL,
+  `teamPlay` tinyint(4) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `games` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
@@ -85,29 +93,43 @@ CREATE TABLE `games` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `games_tournamenttypes` (
+  `game_id` int(11) NOT NULL,
+  `tournamentType_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`Id`),
+  KEY `game_tt_id_idx` (`game_id`),
+  KEY `tt_id_idx` (`tournamentType_id`),
+  CONSTRAINT `game_tt_id` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `tt_id` FOREIGN KEY (`tournamentType_id`) REFERENCES `tournamenttypes` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `tournament` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `bracketType` varchar(15) NOT NULL,
+  `tournamenttypes_id` int(11) NOT NULL,
   `registrationType` varchar(15) NOT NULL,
-  `tournamentType` varchar(15) NOT NULL,
   `games_id` int(11) NOT NULL,
   `events_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `tournament_event_id` (`games_id`),
   KEY `tournament_game_id` (`events_id`),
+  KEY `tournament_type_id_idx` (`tournamentType`),
+  KEY `tournament_type_id_idx1` (`tournamenttypes_id`),
+  CONSTRAINT `tournament_type_id` FOREIGN KEY (`tournamenttypes_id`) REFERENCES `tournamenttypes` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tournament_event_id` FOREIGN KEY (`games_id`) REFERENCES `games` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `tournament_game_id` FOREIGN KEY (`events_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tournamentdetails` (
-  `tournamentId` int(11) NOT NULL,
+  `tournament_id` int(11) NOT NULL,
   `name` varchar(45) DEFAULT NULL,
   `gamePlayed` varchar(45) DEFAULT NULL,
   `description` longtext,
   `rules` longtext,
   `prizes` longtext,
   `streams` longtext,
+  `servers` longtext,
   `timeStart` int(11) DEFAULT NULL,
   `timeEnd` int(11) DEFAULT NULL,
   `tournamentdetailscol` varchar(45) DEFAULT NULL,
