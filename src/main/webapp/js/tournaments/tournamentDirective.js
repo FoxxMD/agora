@@ -23,3 +23,4 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
         }
     }
 }
+tourDirective.$inject = ["Tournaments", "Events", "Guilds", "$state", "$stateParams", "Account", "$q"];
