@@ -8,6 +8,7 @@ import models.JoinType.JoinType
 import models.PaymentType.PaymentType
 import models._
 import org.joda.time.DateTime
+import org.json4s.Extraction
 import org.scalatra.{BadRequest, NotImplemented, Ok}
 
 /**
@@ -157,6 +158,12 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
       case None =>
         Ok(requestEvent.get.tournaments)
     }
+  }
+  get("/:id/tournaments/:tourId") {
+    val jsonTour = Extraction.decompose(requestTournament.get)
+    .replace(List("users"),Extraction.decompose(requestTournament.get.users))
+    .replace(List("teams"), Extraction.decompose(requestTournament.get.teams))
+    Ok(jsonTour)
   }
   post("/:id/tournaments") {
     val ttRepo = inject[GenericMRepo[TournamentType]]

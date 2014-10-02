@@ -151,8 +151,12 @@ trait GameControllerT extends StandardController {
 trait EventControllerT extends StandardController {
   idType = "Event"
   val eventRepo = inject[EventRepo]
+  val tournamentRepo = inject[GenericMRepo[Tournament]]
   var requestEvent: Option[Event with Persisted] = None
   var requestEventUser: Option[EventUser with Persisted] = None
+  var tournamentParamId: Option[Int] = None
+  var requestTournament: Option[Tournament with Persisted] = None
+
   before("/:id/?*") {
     val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
     val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
@@ -184,6 +188,23 @@ trait EventControllerT extends StandardController {
     }
     else{
       halt(400,"No user id paramter defined.")
+    }
+  }
+  before("/:id/tournaments/:tourId/?*") {
+    val ti = params.getOrElse("tourId", halt(400, "Tournament Id parameter is missing"))
+    val tii = toInt(ti).getOrElse(halt(400, "Tournament Id was not a valid integer"))
+    tournamentParamId = Some(tii)
+  }
+  before("/:id/tournaments/:tourId/?*") {
+    if(tournamentParamId.isDefined) {
+      tournamentRepo.get(tournamentParamId.get) match {
+        case Some(t: Tournament with Persisted) =>
+          requestTournament = Some(t)
+        case None => halt(400, "No tournament exists with the Id " + tournamentParamId.get)
+      }
+    }
+    else{
+      halt(400,"No tournament id paramter defined.")
     }
   }
 }

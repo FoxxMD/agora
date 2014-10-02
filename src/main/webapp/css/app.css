@@ -145,6 +145,9 @@ a.editable-click:hover {
 .cbp-af-header.globalHeader {
   background-color: #ca6842;
 }
+.cbp-hssubmenu li a span {
+  line-height: normal;
+}
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped > tbody tr:nth-child(odd) th {
   background-color: #686868;

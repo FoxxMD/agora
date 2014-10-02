@@ -134,7 +134,30 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 params: {
                     eventId:{}
                 },
-                templateUrl:'/views/event/tournaments.html'
+                templateUrl:'/views/tournaments/tournaments.html'
+            })
+            .state('eventSkeleton.tournament',{
+                url:'/tournaments/{tournamentId:[0-9]+}',
+                template:'<tournament></tournament>',
+                resolve:{
+                    tournamentData: function(Tournaments, $stateParams, $q, $state) {
+                        var deferred = $q.defer();
+                        Tournaments.getTournament($stateParams.eventId.toString(), $stateParams.tournamentId.toString()).then(function(response)
+                        {
+                            Tournaments.setCurrent(response);
+                            return deferred.resolve(response);
+                        }, function(error){
+                            $state.go('eventSkeleton.tournaments',{eventId: $stateParams.eventId});
+                            console.log(error);
+                            return deferred.reject();
+                        });
+                        return deferred.promise;
+                    }
+                },
+                params:{
+                    eventId:{},
+                    tournamentId:{}
+                }
             })
             .state('eventSkeleton.guilds', {
                 url: '/teams',
