@@ -10,8 +10,8 @@ function toursCtrl($scope, Events, $state, $stateParams, Account, $timeout, $q, 
         pageNo = 1;
     this.state = $state;
     this.event = Events.getCurrentEvent();
-    Tournaments.getTournaments($stateParams.eventId).then(function (response) {
-        that.toursCollection = response;
+    Tournaments.getTournaments($stateParams.eventId.toString()).then(function (response) {
+        that.toursCollection = response.plain();
     });
     function newTournamentData(){
         return {
@@ -28,7 +28,7 @@ function toursCtrl($scope, Events, $state, $stateParams, Account, $timeout, $q, 
         pageNo++;
         Tournaments.getTournaments($stateParams.eventId, pageNo).then(function (response) {
             if (response.length > 0) {
-                that.toursCollection = that.toursCollection.concat(response);
+                that.toursCollection = that.toursCollection.concat(response.plain());
                 that.busy = false;
             }
         });

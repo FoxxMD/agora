@@ -3,9 +3,11 @@ package dao
 import java.util.Properties
 
 import com.esports.gtplatform.models.{Team, InviteT}
+import com.googlecode.mapperdao.{MapperDao, NaturalIntId, Entity, QueryDao}
 import com.googlecode.mapperdao.utils._
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import models._
+import org.springframework.transaction.PlatformTransactionManager
 
 /*Here we initialize the DAOs(Data Access Objects) we will use to interact with the database using MapperDao's DSL(domain specific language).
 * It's basically a way to write queries/interactions with MySQL without having to write actual MySQL -- you use instead these objects and in application objects to construct queries.
@@ -122,6 +124,12 @@ val (jdbc, mapperDao, queryDao, txManager) = Setup.mysql(ds, List(UserEntity, Te
     val txManager = Daos.txManager
     val mapperDao = Daos.mapperDao
   }
+  val tournamentTypeDao = new TournamentTypeDao {
+    val entity = TournamentTypeEntity
+    val queryDao = Daos.queryDao
+    val txManager = Daos.txManager
+    val mapperDao = Daos.mapperDao
+  }
 }
 
 /* Each of these abstract classes creates the DAO infrastructure for interacting with Entities from the DB.
@@ -147,3 +155,4 @@ abstract class EventDao extends TransactionalSurrogateIntIdCRUD[Event] with Surr
 //abstract class EventDetailsDao extends TransactionalNaturalIntIdCRUD[EventDetails] with NaturalIntIdAll[EventDetails]
 abstract class EventUserDao extends TransactionalSurrogateIntIdCRUD[EventUser] with SurrogateIntIdAll[EventUser]
 abstract class InviteEntityDao extends TransactionalSurrogateIntIdCRUD[InviteT] with SurrogateIntIdAll[InviteT]
+abstract class TournamentTypeDao extends TransactionalNaturalIntIdCRUD[TournamentType] with NaturalIntIdAll[TournamentType]

@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.business.services.{PaymentService, StripePayment}
-import com.esports.gtplatform.business.{EntityAuxillarySerializer, GenericMRepo, UserRepo}
+import com.esports.gtplatform.business.{GameRepo, EntityAuxillarySerializer, GenericMRepo, UserRepo}
 import com.googlecode.mapperdao.jdbc.Transaction
 import models.JoinType.JoinType
 import models.PaymentType.PaymentType
@@ -150,25 +150,28 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
   }
   //get a list of tournaments for an event
   get("/:id/tournaments") {
-    params.get("pageNo") match {
+    params.get("page") match {
       case Some(p: String) =>
-        Ok(requestEvent.get.tournaments)
+        val i = toInt(p).getOrElse(halt(400,"Page parmeter was not a valid integer"))
+        Ok(requestEvent.get.tournaments.drop(pageSize*(i+(-1))).take(pageSize))
       case None =>
         Ok(requestEvent.get.tournaments)
     }
   }
   post("/:id/tournaments") {
+    val ttRepo = inject[GenericMRepo[TournamentType]]
+    val gameRepo = inject[GameRepo]
+    val tx = inject[Transaction]
+    val tourRepo = inject[GenericMRepo[Tournament]]
+
     val regType = parsedBody.\("registrationType").extract[JoinType]
-    val tourType = parsedBody.\("tournamentType").extract[TournamentType]
-    val game = parsedBody.\("game").extract[Game]
+    val tourType = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).get
+    val game = gameRepo.get(parsedBody.\("game").\("id").extract[Int]).get
 
     val newTour = Tournament(tourType, regType, game, requestEvent.get)
 
-    val tx = inject[Transaction]
-    val tourRepo = inject[GenericMRepo[Tournament]]
     val inserted = tx { () =>
       val insertedTour = tourRepo.create(newTour)
-
       val extractedTD = parsedBody.\("details").extract[TournamentDetails]
       val completedTour = tourRepo.update(insertedTour, insertedTour.copy(details = Some(extractedTD.copy(tournament = insertedTour))))
       completedTour

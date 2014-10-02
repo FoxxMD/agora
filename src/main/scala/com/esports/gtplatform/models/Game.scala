@@ -33,6 +33,12 @@ object GameType extends Enumeration {
  * have NO knowledge of the application, data(DAO), or business layer. This forces code written to have as little dependencies as possible which
   * facilities modularity and decoupling. */
 
-case class Game(name: String = "A Game",publisher: String = "A Publisher",website: String = "A Website", gameType: GameType.Value = GameType.FPS, userPlay: Boolean = true, teamPlay: Boolean = true, tournamentTypes: Set[TournamentType] = Set(), id: Int = 0) {
-
+case class Game(name: String = "A Game",
+                publisher: String = "A Publisher",
+                website: String = "A Website",
+                gameType: GameType.Value = GameType.FPS,
+                userPlay: Boolean = true,
+                teamPlay: Boolean = true,
+                tournamentTypes: Set[TournamentType] = Set(),
+                id: Int = 0) {
 }

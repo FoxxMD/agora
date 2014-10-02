@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.GenericMRepo
+import com.esports.gtplatform.business.{GameRepo, GenericMRepo}
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.jdbc.Transaction
 import models._
@@ -17,8 +17,13 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
   }
   post("/") {
     auth()
-    val newguild = parsedBody.extract[Guild]
+    val gameRepo = inject[GameRepo]
     val guildUserRepo = inject[GenericMRepo[GuildUser]]
+
+    val extractedGuild = parsedBody.extract[Guild]
+    val persistedGames = extractedGuild.games.map { x => gameRepo.get(x.id).get}
+    val newguild = extractedGuild.copy(games = persistedGames)
+
     var userFT: Option[User] = None
 
     if (guildRepo.getByName(newguild.name).isDefined)
