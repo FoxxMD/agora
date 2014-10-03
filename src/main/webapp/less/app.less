@@ -35,6 +35,15 @@ body {
   z-index: 2000;
 }
 
+.tabs.tabs-style-underline {
+    position:absolute;
+    left:0;
+    &.fix{
+        position:fixed;
+        top:120px;
+    }
+}
+
 .loginContainer {
   background: darkgray;
   position: absolute;
@@ -163,6 +172,10 @@ a.editable-click {
   line-height: normal;
 }
 
+.contentPane {
+    margin-top:230px;
+}
+
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped > tbody tr:nth-child(odd) th {
   background-color: #686868;
@@ -174,7 +187,8 @@ a.editable-click {
   width: auto;
 }
 
-.st-menu {
+.st-menu,
+.tabs{
   a {
     text-decoration: none;
   }

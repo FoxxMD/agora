@@ -5,8 +5,9 @@ angular.module('gtfest')
     .controller('ScheduleController', schController);
 
 // @ngInject
-function schController($scope, eventData, Events, Account){
+function schController($scope, eventData, tourData, Events, Account, $state){
     var that = this;
+    console.log(tourData);
     this.event = eventData;
     this.isAdmin = function() {
         return Account.isEventAdmin(that.event.id) && Account.adminEnabled();
@@ -58,7 +59,18 @@ function schController($scope, eventData, Events, Account){
         }
     };
     that.event.details.scheduledEvents = that.event.details.scheduledEvents || [];
-    $scope.schedule = [that.event.details.scheduledEvents];
+    var tourneys = tourData.plain().map(function(x) {
+       return {
+           title: '[TOURNAMENT] ' +  x.game.name + ' - ' + x.tournamentType.name + ' : ' + x.details.name,
+           location: x.details.location,
+           start: x.details.timeStart,
+           end: x.details.timeEnd,
+           editable: false,
+           backgroundColor: '#ee4c00',
+           url:  $state.href('eventSkeleton.tournament.roster',{eventId: eventData.id, tournamentId: x.id})
+       }
+    });
+    $scope.schedule = [that.event.details.scheduledEvents, tourneys];
     function getNewTime() {
         return {
             start: that.event.details.timeStart,
@@ -95,4 +107,4 @@ function schController($scope, eventData, Events, Account){
         }
     });
 }
-schController.$inject = ["$scope", "eventData", "Events", "Account"];
+schController.$inject = ["$scope", "eventData", "tourData", "Events", "Account", "$state"];

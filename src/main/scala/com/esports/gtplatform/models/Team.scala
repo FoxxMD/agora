@@ -11,8 +11,6 @@ import org.joda.time.DateTime
 
 case class Team(
             name: String,
-            game: Game,
-            maxPlayers: Int,
             joinType: JoinType.Value,
             tournament: Tournament,
             teamPlayers: List[TeamUser] = List(),

@@ -112,17 +112,15 @@ object TeamEntity extends Entity[Int, SurrogateIntId, Team]("teams") {
   val name = column("name") to (_.name)
   val createdDate = column("createdDate") to { team => (team.createdDate.getMillis/1000).toInt }
   val users = onetomany(TeamUserEntity) to (_.teamPlayers)
-  val maxPlayers = column("maxPlayers") to (_.maxPlayers)
   val joinType = column("joinType") to (team => JoinType.toString(team.joinType))
   val tournament = manytoone(TournamentEntity) to (_.tournament)
-  val game = manytoone(GameEntity) to (_.game)
   val isPresent = column("isPresent") to (_.isPresent)
   val guild = column("guildOnly") to (_.guildOnly)
 
   def constructor(implicit m: ValuesMap) = {
     val cd = new DateTime(m(createdDate)*1000L,DateTimeZone.UTC)
     val jtype = JoinType.fromString(m(joinType))
-    new Team(name, game, maxPlayers, jtype, tournament, users, cd, isPresent, guild, id) with Stored {
+    new Team(name, jtype, tournament, users, cd, isPresent, guild, id) with Stored {
     }
   }
 }
@@ -211,6 +209,7 @@ object TournamentDetailsEntity extends Entity[Int, NoId, TournamentDetails]("tou
   val name = column("name") option (_.name)
   val gamePlayed = column("gamePlayed") option (_.gamePlayed)
   val description = column("description") option (_.description)
+    val location = column("location") option (_.location)
   val rules = column("rules") option (_.rules)
   val prizes = column("prizes") option (_.prizes)
   val streams = column("streams") option (_.streams)
@@ -227,11 +226,13 @@ object TournamentDetailsEntity extends Entity[Int, NoId, TournamentDetails]("tou
     else
       None
   }
+    val maxSize = column("teamMaxSize") to (_.teamMaxSize)
+    val minSize = column("teamMinSize") to (_.teamMinSize)
 
   def constructor(implicit m: ValuesMap) = {
     val ts = new DateTime(m(timeStart)*1000L,DateTimeZone.UTC)
     val te = new DateTime(m(timeEnd)*1000L,DateTimeZone.UTC)
-    new TournamentDetails(tournament, name, gamePlayed, description, rules, prizes, streams, servers, Some(ts), Some(te)) with Stored
+    new TournamentDetails(tournament, name, gamePlayed, description, location, rules, prizes, streams, servers, Some(ts), Some(te), minSize, maxSize) with Stored
   }
 }
 

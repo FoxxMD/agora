@@ -43,6 +43,14 @@ body .panel.panel-default .panel-heading {
   width: 100%;
   z-index: 2000;
 }
+.tabs.tabs-style-underline {
+  position: absolute;
+  left: 0;
+}
+.tabs.tabs-style-underline.fix {
+  position: fixed;
+  top: 120px;
+}
 .loginContainer {
   background: darkgray;
   position: absolute;
@@ -148,6 +156,9 @@ a.editable-click:hover {
 .cbp-hssubmenu li a span {
   line-height: normal;
 }
+.contentPane {
+  margin-top: 230px;
+}
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped > tbody tr:nth-child(odd) th {
   background-color: #686868;
@@ -157,16 +168,20 @@ a.editable-click:hover {
   border-radius: 2px;
   width: auto;
 }
-.st-menu a {
+.st-menu a,
+.tabs a {
   text-decoration: none;
 }
-.st-menu .siteSwitcher {
+.st-menu .siteSwitcher,
+.tabs .siteSwitcher {
   /*margin: 0em 1em 1em 2.8em;*/
 }
-.st-menu .siteSwitcher h3 {
+.st-menu .siteSwitcher h3,
+.tabs .siteSwitcher h3 {
   padding: 0.5em;
 }
-.st-menu .siteSwitcher:hover {
+.st-menu .siteSwitcher:hover,
+.tabs .siteSwitcher:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 .st-content input {

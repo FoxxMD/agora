@@ -17,6 +17,7 @@ function animatedheader(Events){
             var docElem = document.documentElement,
                 header = elem.find('.cbp-af-header')[0],
                 content = $(document).find('.st-content')[0],
+                contentPane = $(document).find('.contentPane')[0],
                 didScroll = false,
                 changeHeaderOn = 100,
                 isinit = false;

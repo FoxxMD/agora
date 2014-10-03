@@ -16,7 +16,8 @@ function timeEditor($q) {
             timeEnd: '=',
             timestart: '=',
             starteditable: '=',
-            multimode: '='
+            multimode: '=',
+            horizontal: '='
         },
         controller: function ($scope) {
             var that = this;

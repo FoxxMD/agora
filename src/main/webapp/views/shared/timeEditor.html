@@ -1,20 +1,28 @@
 <div class="timeEditor" ng-class="{halloEditable: iseditable && !multimode, inEditMode: timeEditor.editable && !multimode}">
     <div ng-switch="timeEditor.editable">
        <div ng-switch-default ng-click="timeEditor.tryEdit()">
-           <h4>Starts</h4>
-            <address ng-if="timestart">
-                {{timestart.calendar()}}<br/>
-            </address>
-            <address ng-if="!timestart">
-                TBD
-            </address>
-           <h4>Ends</h4>
-           <address ng-if="timeEnd">
-               {{timeEnd.calendar()}}<br/>
-           </address>
-            <address ng-if="!timeEnd">
-                TBD
-            </address>
+           <div ng-switch="horizontal">
+               <div ng-switch-when="true">
+                   <h4>Starts {{timestart ? timestart.calendar() : "TBD"}}</h4>
+                   <h4>Ends {{timeEnd ? timeEnd.calendar() : "TBD"}}</h4>
+               </div>
+               <div ng-switch-default>
+                   <h4>Starts</h4>
+                   <address ng-if="timestart">
+                       {{timestart.calendar()}}<br/>
+                   </address>
+                   <address ng-if="!timestart">
+                       TBD
+                   </address>
+                   <h4>Ends</h4>
+                   <address ng-if="timeEnd">
+                       {{timeEnd.calendar()}}<br/>
+                   </address>
+                   <address ng-if="!timeEnd">
+                       TBD
+                   </address>
+               </div>
+           </div>
         </div>
         <div ng-switch-when="true">
             <h4>Starts</h4>

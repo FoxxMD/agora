@@ -1,0 +1,46 @@
+<morphing-button ng-if="tourCtrl.tour.tournamentType.teamPlay" title="Create Team"></morphing-button>
+    <div ng-switch="tourCtrl.tour.tournamentType.teamPlay">
+        <infinite-scroller-animated ng-switch-default>
+            <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="rosterCtrl.dumb()"
+                infinite-scroll-container="'#st-content'" infinite-scroll-disabled="true">
+                <div class="grid-sizer"></div>
+                <li class="masonry-brick outline-outward eventCard" ng-repeat="user in tourCtrl.tour.users" on-last-repeat>
+                    <div style="position:relative;width:100%; height:100%;">
+                        <div ng-if="" style="position:absolute; top:0; right:0">
+                            <button ng-if="tourCtrl.isAdmin()" ladda="user.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="rosterCtrl.tryChangePresent(user)"
+                                    ng-class="user.isPresent ? 'btn-success': 'btn-danger'">{{user.isPresent ? 'Is Present' : 'Not Present'}}
+                            </button>
+                        </div>
+                        <div style="position:absolute;top:0;bottom:0;right:0;left:0;"
+                             ng-click="rosterCtrl.state.go('eventSkeleton.profile',{userId:user.id})">
+                            <h3>{{user.globalHandle}}</h3>
+                            <p>Joined {{user.createdDate.format("M[/]D[/]YYYY")}}</p>
+                            <div style="position:absolute; bottom:0">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </infinite-scroller-animated>
+        <infinite-scroller-animated ng-switch="true">
+            <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="toursCtrl.dumb()"
+                infinite-scroll-container="'#st-content'" infinite-scroll-disabled="true">
+                <div class="grid-sizer"></div>
+                <li class="masonry-brick outline-outward eventCard" ng-repeat="team in tourCtrl.tour.teams" on-last-repeat>
+                    <div style="position:relative;width:100%; height:100%;">
+                        <div style="position:absolute;top:0;bottom:0;right:0;left:0;"
+                             ng-click="toursCtrl.state.go('eventSkeleton.team',{teamId:team.id})">
+                            <h3>{{team.name}}</h3>
+                            <h4>{{team.isValid}}</h4>
+                            <div style="position:absolute; bottom:0">
+                                <ul ng-repeat="user in team.teamPlayers">
+                                    {{user.globalHandle}}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </infinite-scroller-animated>
+    </div>
+

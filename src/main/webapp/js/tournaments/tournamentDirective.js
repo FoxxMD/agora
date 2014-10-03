@@ -15,11 +15,24 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             console.log(that.tour.plain());
 
             this.isAdmin = function() {
-                return Account.isEventAdmin(that.event.id) && Account.adminEnabled();
+                return Account.isEventAdmin($stateParams.eventId) && Account.adminEnabled();
             };
         },
         link: function (scope, elem, attrs) {
-
+            var content = $(document).find('.st-content')[0],
+                tabs = $(elem).find('.tabs')[0],
+                fixed = false;
+            content.addEventListener( 'scroll', function( event ) {
+                if(!fixed && event.currentTarget.scrollTop > 196)
+                {
+                    $(tabs).addClass('fix');
+                    fixed = true;
+                }
+                else if(fixed && event.currentTarget.scrollTop < 196){
+                    $(tabs).removeClass('fix');
+                    fixed = false;
+                }
+            }, false );
         }
     }
 }

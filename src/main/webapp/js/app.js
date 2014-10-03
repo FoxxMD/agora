@@ -123,6 +123,11 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
             .state('eventSkeleton.schedule', {
                 url: '/schedule',
                 controller:'ScheduleController as scheduleCtrl',
+                resolve: {
+                    tourData: function(Tournaments, $stateParams) {
+                      return Tournaments.getTournaments($stateParams.eventId.toString());
+                    }
+                },
                 params: {
                     eventId: {}
                 },
@@ -137,6 +142,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl:'/views/tournaments/tournaments.html'
             })
             .state('eventSkeleton.tournament',{
+                abstract:true,
                 url:'/tournaments/{tournamentId:[0-9]+}',
                 template:'<tournament></tournament>',
                 resolve:{
@@ -154,6 +160,22 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                         return deferred.promise;
                     }
                 },
+                params:{
+                    eventId:{},
+                    tournamentId:{}
+                }
+            })
+            .state('eventSkeleton.tournament.roster', {
+                url:'',
+                template:'<roster></roster>',
+                params:{
+                    eventId:{},
+                    tournamentId:{}
+                }
+            })
+            .state('eventSkeleton.tournament.rules',{
+                url:'',
+                templateUrl:'views/tournaments/rules.html',
                 params:{
                     eventId:{},
                     tournamentId:{}

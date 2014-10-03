@@ -56,12 +56,12 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
   *
   */
   get("/:id") {
-    Ok(requestGuild.get)
+    Ok(requestGuild)
   }
   post("/:id") {
     auth()
-    if (requestGuild.get.getCaptain == user || user.role == "admin") {
-      guildRepo.update(requestGuild.get, requestGuild.get.copy(name = parsedBody.\("name").extract[String]))
+    if (requestGuild.getCaptain == user || user.role == "admin") {
+      guildRepo.update(requestGuild, requestGuild.copy(name = parsedBody.\("name").extract[String]))
       Ok()
     }
     else
@@ -69,8 +69,8 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
   }
   delete("/:id") {
     auth()
-    if (requestGuild.get.getCaptain == user || user.role == "admin") {
-      guildRepo.delete(requestGuild.get)
+    if (requestGuild.getCaptain == user || user.role == "admin") {
+      guildRepo.delete(requestGuild)
       Ok()
     }
     else
@@ -81,19 +81,19 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
    *
    */
   get("/:id/members") {
-    Ok(requestGuild.get.members)
+    Ok(requestGuild.members)
   }
   post("/:id/members") {
     val addingUser = parsedBody.\("userId").extractOrElse[Int](halt(401, "User Id parameter is missing"))
     auth()
-    if (user.role != "admin" && requestGuild.get.getCaptain != user)
+    if (user.role != "admin" && requestGuild.getCaptain != user)
       halt(403, "You don't have permission to edit this team.")
 
     val userRepo = inject[GenericMRepo[User]]
     userRepo.get(addingUser) match {
       case Some(u: User with Persisted) =>
-        if (!requestGuild.get.members.exists(x => x.user == u)) {
-          guildRepo.update(requestGuild.get, requestGuild.get.addUser(u))
+        if (!requestGuild.members.exists(x => x.user == u)) {
+          guildRepo.update(requestGuild, requestGuild.addUser(u))
           Ok()
         }
         else
@@ -104,14 +104,14 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
   delete("/:id/members/:userId") {
     val removingUser = params("userId").toInt
     auth()
-    if (user.role != "admin" && requestGuild.get.getCaptain != user)
+    if (user.role != "admin" && requestGuild.getCaptain != user)
       halt(403, "You don't have permission to edit this team")
 
     val userRepo = inject[GenericMRepo[User]]
     userRepo.get(removingUser) match {
       case Some(u: User) =>
-        if (requestGuild.get.members.exists(x => x.user == u)) {
-          guildRepo.update(requestGuild.get, requestGuild.get.removeUser(u))
+        if (requestGuild.members.exists(x => x.user == u)) {
+          guildRepo.update(requestGuild, requestGuild.removeUser(u))
         }
         else {
           BadRequest("User with that Id is not on this team")
@@ -124,18 +124,18 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
    *
    */
   get("/:id/games") {
-    Ok(requestGuild.get.games)
+    Ok(requestGuild.games)
   }
   post("/:id/games") {
     val gameId = parsedBody.\("gameId").extractOrElse[Int](halt(400, "Game Id parameter is missing"))
     auth()
-    if (user.role != "admin" && requestGuild.get.getCaptain != user)
+    if (user.role != "admin" && requestGuild.getCaptain != user)
       halt(403, "You don't have permission to edit this team.")
       val gameRepo = inject[GenericMRepo[Game]]
       gameRepo.get(gameId) match {
         case Some(g: Game) =>
-          if (!requestGuild.get.games.contains(g))
-            guildRepo.update(requestGuild.get, requestGuild.get.addGame(g))
+          if (!requestGuild.games.contains(g))
+            guildRepo.update(requestGuild, requestGuild.addGame(g))
           else
             BadRequest("Team already plays this game.")
         case None =>
@@ -145,13 +145,13 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
   delete("/:id/games/:gameId") {
     val gameId = params("gameId").toInt
     auth()
-    if (user.role != "admin" && requestGuild.get.getCaptain != user)
+    if (user.role != "admin" && requestGuild.getCaptain != user)
       halt(403, "You don't have permission to edit this team.")
     val gameRepo = inject[GenericMRepo[Game]]
     gameRepo.get(gameId) match {
       case Some(g: Game) =>
-        if (requestGuild.get.games.contains(g))
-          guildRepo.update(requestGuild.get, requestGuild.get.removeGame(g))
+        if (requestGuild.games.contains(g))
+          guildRepo.update(requestGuild, requestGuild.removeGame(g))
         else
           BadRequest("Team does not play this game.")
       case None =>
