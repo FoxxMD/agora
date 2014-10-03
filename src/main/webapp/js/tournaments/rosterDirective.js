@@ -16,4 +16,5 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
         }
     }
 }
+rostDirective.$inject = ["Tournaments", "Events", "Guilds", "$state", "$stateParams", "Account", "$q"];
 tourDirective.$inject = ["Tournaments", "Events", "Guilds", "$state", "$stateParams", "Account", "$q"];

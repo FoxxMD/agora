@@ -1,6 +1,6 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
-        'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'smart-table', 'angular-loading-bar', 'ngSanitize','angular-ladda',
+        'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'angular-loading-bar', 'ngSanitize','angular-ladda',
         'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
