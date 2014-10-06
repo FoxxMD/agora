@@ -40,5 +40,11 @@ angular.module('gtfest')
         this.userInGuild = function(userId, guildData) {
             return $.grep(guildData.members, function (t) {
                 return t.User.id == userId }).length > 0;
-        }
+        };
+        this.joinGuild = function(userId, guildData) {
+            return guilds.one(guildData.id.toString()).post('members',{userId: userId});
+        };
+        this.leaveGuild = function(userId, guildData) {
+            return guilds.one(guildData.id.toString()).one('members').remove({userId: userId});
+        };
     }]);

@@ -55,9 +55,10 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int
     Extraction.decompose(g.copy())
   case t: Team =>
     implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(JoinType) + new LinkObjectEntitySerializer
-    Extraction.decompose(t.copy()) merge
+      Extraction.decompose(t.copy())
+/*    Extraction.decompose(t.copy()) merge
       render(("userPlay" -> t.tournament.tournamentType.userPlay) ~
-        ("teamPlay" -> t.tournament.tournamentType.teamPlay))
+             ("teamPlay" -> t.tournament.tournamentType.teamPlay))*/
 }
   ))
 
@@ -102,7 +103,7 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("guilds" -> Extraction.decompose(eu.user.guilds)) //TODO clean this shit up
   case tu: TournamentUser =>
     implicit val formats: Formats = DefaultFormats + new EntityDetailsSerializer
-    ("name" -> tu.user.globalHandle) ~
+      ("name" -> tu.user.globalHandle) ~
       ("id" -> tu.user.id) ~
       ("isPresent" -> tu.isPresent) ~
       ("isModerator" -> tu.isModerator) ~
@@ -145,13 +146,14 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))))
       .replace(List("payments"), Extraction.decompose(e.payments.filter(x => x.isEnabled))) //TODO learn json4s and remove non enabled events from JSON rather than re-rendering filtered list
       .replace(List("tournaments"), e.tournaments.size) merge
-      render(("games") -> e.tournaments.map(x => x.game).groupBy(m => m)
+      render("games" -> e.tournaments.map(x => x.game).groupBy(m => m)
           .map(y => ("name" -> y._1.name) ~
           ("id" -> y._1.id) ~
           ("gameType" -> Extraction.decompose(y._1.gameType)) ~
           ("count" -> y._2.size)
           )
-      )
+      ) merge
+      render("teams" -> e.tournaments.foldLeft(0)((b,a) => b+ a.teams.size))
   case t: Tournament =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
     Extraction.decompose(t.copy())

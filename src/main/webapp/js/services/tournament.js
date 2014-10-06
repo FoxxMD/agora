@@ -40,4 +40,28 @@ angular.module('gtfest')
                 return tuser.id == userId && tuser.isAdmin;
             });
         };
+        this.isOnTeamInRoster = function(userId, tour) {
+            tour = tour || currentTournament;
+            _.find(tour.teams, function(team) {
+               return _.find(team.teamPlayers, function(player){
+                    return player.User.id == userId;
+                }) !== undefined;
+            });
+        };
+        this.isUserInRoster = function(userId, tour) {
+            tour = tour || currentTournament;
+            _.find(tour.users, function(user) {
+                return user.id == userId;
+            })
+        };
+        this.canAddTeamMember = function(team, tour) {
+            tour = tour || currentTournament;
+          return team.length < tour.details.teamMaxSize || tour.details.teamMaxSize == 0;
+        };
+        this.isValidTeamSize = function(team, tour) {
+            return (team.length <= tour.details.teamMaxSize || tour.details.teamMaxSize == 0) && (team.length >= tour.details.teamMinSize || tour.details.teamMinSize == 0);
+        };
+        this.createTeam = function(eventId, tourId, teamData) {
+          return RestTour(eventId).one(tourId).post('teams',teamData);
+        }
     }]);

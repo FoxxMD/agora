@@ -1,5 +1,6 @@
 package com.esports.gtplatform.business
 
+import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.Query._
 import com.googlecode.mapperdao.jdbc.JdbcMap
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
@@ -145,6 +146,16 @@ trait TournamentRepo extends GenericMRepo[Tournament]
 class TournamentRepository extends GenericMRepository[Tournament](TournamentEntity) with TournamentRepo{
   //def getByTeam(t: Team): List[Tournament] = queryDao.query(select from TournamentEntity where TournamentEntity.teams)
 }
+
+/*
+trait TeamRepo extends GenericMRepo[Team]
+{
+    def getByEvent: List[Team]
+}
+class TeamRepository extends GenericMRepository[Team](TeamEntity) with TeamRepo {
+    def getByEvent: List[Team] = queryDao.query(select from TeamEntity where TeamEntity.tournament.)
+}
+*/
 
 trait TournamentUserRepo extends GenericMRepo[TournamentUser]
 {

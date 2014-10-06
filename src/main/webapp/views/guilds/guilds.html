@@ -49,18 +49,33 @@
                 <div class="grid-sizer"></div>
                 <li class="masonry-brick outline-outward eventCard" ng-repeat="guild in guildsCtrl.guildCollection | filter: guildsCtrl.filterGuilds track by $index" on-last-repeat>
                     <div style="position:relative;width:100%; height:100%;">
-                        <div style="position:absolute;top:0;bottom:0;right:0;left:0;"
-                             ng-click="!guildsCtrl.isEvent ? guildsCtrl.state.go('globalSkeleton.guild',{guildId:guild.id}) : guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id})">
-                            <h3>{{guild.name}}</h3>
-                            <h4>{{guild.members.length}} Members</h4>
-                            <h4>Established {{guild.createdDate.format("M[/]D[/]YYYY")}}</h4>
-                            <h4>Led by {{guild.captain}}</h4>
-                            <div style="position:absolute; bottom:0">
-                                <h4>{{guild.events.length}} Events Particiapted In</h4>
-                                <h4>{{guild.tournaments.length}} Tournaments Participated In</h4>
-                                <h4>{{guild.games.length}} Games Played</h4>
+                        <div ng-switch="guildsCtrl.isEvent">
+                            <div ng-switch-default style="position:absolute;top:0;bottom:0;right:0;left:0;"
+                                 ng-click="!guildsCtrl.isEvent ? guildsCtrl.state.go('globalSkeleton.guild',{guildId:guild.id}) : guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id})">
+                                <h3>{{guild.name}}</h3>
+                                <h4>{{guildsCtrl.isEvent ? guild.teamPlayers.length : guild.members.length}} Members</h4>
+                                <h4>Established {{guild.createdDate.format("M[/]D[/]YYYY")}}</h4>
+                                <h4>Led by {{guild.captain}}</h4>
+                                <div style="position:absolute; bottom:0">
+                                    <h4>{{guild.events.length}} Events Particiapted In</h4>
+                                    <h4>{{guild.tournaments.length}} Tournaments Participated In</h4>
+                                    <h4>{{guild.games.length}} Games Played</h4>
+                                </div>
+                            </div>
+                            <div ng-switch-when="true" style="position:absolute;top:0;bottom:0;right:0;left:0;"
+                                 ng-click="guild.guildOnly ? guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id}) : null">
+                                <h3>{{guild.guildOnly ? '[GUILD]' : ''}} {{guild.name}}</h3>
+                                <h4>{{guild.teamPlayers.length}} Players</h4>
+                                <h4 ng-if="guild.captain != undefined">Led by {{guild.captain}}</h4>
+                                <h4>{{guild.teamPlayers.length > guild.tournament.teamMinSize && (guild.teamPlayers.length < guild.tournament.teamMaxSize || guild.tournament.teamMaxSize == 0) ? 'Ready to play!' : 'Needs Players!'}}</h4>
+                                <div style="position:absolute; bottom:0">
+                                    <h4>Playing {{guild.tournament.game.name}}</h4>
+                                    <h4 ng-if="guild.tournament.name != undefined">{{guild.tournament.name}}</h4>
+                                    <h4>{{guild.tournament.tournamentType.name}}</h4>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </li>
             </ul>

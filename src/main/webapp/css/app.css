@@ -379,3 +379,16 @@ tags-input .tags li.tag-item {
 .insert-image-dialog {
   z-index: 9999;
 }
+.teamChoiceButton {
+  width: 100%;
+  height: 70px;
+  background-color: grey;
+  cursor: pointer;
+}
+.teamChoiceButton:hover,
+.teamChoiceButton.active {
+  background-color: #636363;
+}
+.teamChoiceButton.member {
+  height: 40px;
+}

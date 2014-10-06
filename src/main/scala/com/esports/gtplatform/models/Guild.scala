@@ -24,7 +24,7 @@ case class Guild(
 
   def addUser(u: User): Guild = this applyLens TPListLens modify (_.+:(GuildUser(this, u, isCaptain = false)))
 
-  def removeUser(u: User): Guild = this applyLens TPListLens modify (_.filter(x => x.user != u))
+  def removeUser(u: User): Guild = this applyLens TPListLens modify (_.filter(x => x.user.id != u.id))
 
   def getCaptain = this.members.find(u => u.isCaptain).get.user
 

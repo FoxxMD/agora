@@ -4,6 +4,7 @@ import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.data.DatabaseInit
+import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.jdbc.Transaction
 import dao.Daos._
 import dao._
@@ -44,6 +45,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
   module.bind[TournamentUserRepo] toSingle new TournamentUserRepository
   module.bind[GenericMRepo[TournamentType]] toSingle new GenericMRepository[TournamentType](TournamentTypeEntity)
   module.bind[GenericMRepo[Tournament]] toSingle new GenericMRepository[Tournament](TournamentEntity)
+    module.bind[GenericMRepo[Team]] toSingle new GenericMRepository[Team](TeamEntity)
 
   module.bind[Transaction] toSingle { Transaction.default(Transaction.transactionManager(jdbc)) }
     }
@@ -67,7 +69,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
     context.mount(new EventController,"/api/events")
 
   }
-  
+
   override def destroy(context:ServletContext) {
     //closeDbConnection()
   }

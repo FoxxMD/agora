@@ -5,7 +5,7 @@
 
             <h1 class="pull-left" ng-switch-default>{{guildCtrl.guild.name}}</h1>
 
-            <button style="margin-top:20px;" class="btn btn-lg pull-right" ng-class="guildCtrl.onGuild ? 'btn-warning' : 'btn-info'">{{guildCtrl.onGuild ? 'Leave' : 'Join'}}</button>
+            <button ladda="guildCtrl.guildLoading" data-style="expand-right" ng-if="guildCtrl.account.isLoggedIn()" style="margin-top:20px;" class="btn btn-lg pull-right" ng-click="guildCtrl.toggleGuildMembership()" ng-class="guildCtrl.onGuild() ? 'btn-warning' : 'btn-info'">{{guildCtrl.onGuild() ? 'Leave' : 'Join'}}</button>
         </div>
     </div>
     <div ng-if="guildCtrl.isAdmin()" class="col-md-12">
