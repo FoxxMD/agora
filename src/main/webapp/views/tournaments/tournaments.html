@@ -1,6 +1,6 @@
 <div ng-cloak ng-show="cncCtrl.account.isLoggedIn()" class="buttonWrapper tournamentsButton">
     <morphing-button title="Create A New Tournament">
-        <form class="form morphingButtonForm" name="createTourForm" ng-submit="toursCtrl.tryCreateTour()"
+        <form class="form morphingButtonForm" name="createTourForm" ng-submit="toursCtrl.tryCreateTour(createTourForm)"
               novalidate>
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-6">
@@ -54,18 +54,18 @@
     <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="toursCtrl.getMoreTours()"
         infinite-scroll-container="'#st-content'" infinite-scroll-disabled="toursCtrl.busy">
         <div class="grid-sizer"></div>
-        <li class="masonry-brick outline-outward eventCard" ng-repeat="tour in toursCtrl.toursCollection | filter: toursCtrl.filterTours track by $index" on-last-repeat>
+        <li class="masonry-brick outline-outward eventCard component" ng-repeat="tour in toursCtrl.toursCollection | filter: toursCtrl.filterTours track by $index" on-last-repeat>
             <div style="position:relative;width:100%; height:100%;">
                 <div style="position:absolute;top:0;bottom:0;right:0;left:0;"
                      ng-click="toursCtrl.state.go('eventSkeleton.tournament.roster',{tournamentId:tour.id})">
-                    <h3>{{tour.name}}</h3>
+                    <h3>{{tour.details.name}}</h3>
                     <h4>{{tour.tournamentType.name}}</h4>
                     <h4>{{tour.game.name}}</h4>
                     <h4>Starting {{tour.details.timeStart.calendar()}}</h4>
                     <h4>Ending {{tour.details.timeEnd.calendar()}}</h4>
                     <div style="position:absolute; bottom:0">
-                        <h4>{{tour.users.length}} Players</h4>
-                        <h4>{{tour.teams.length}} Teams</h4>
+                        <h4 ng-if="!tour.tournamentType.teamPlay">{{tour.users}} Players</h4>
+                        <h4 ng-if="tour.tournamentType.teamPlay">{{tour.teams}} Teams</h4>
                     </div>
                 </div>
             </div>

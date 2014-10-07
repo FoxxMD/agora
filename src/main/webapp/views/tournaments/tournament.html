@@ -1,11 +1,12 @@
 <div class="row" style="margin-bottom:40px;">
     <div class="col-md-8">
-        <h1 class="text-center">{{tourCtrl.tour.game.name}} - {{tourCtrl.tour.tournamentType.name}} <span ng-if="tourCtrl.tour.details.name != undefined">: {{tourCtrl.tour.details.name}}</span>
+        <h1 class="text-center">{{tourCtrl.tour.game.name}} - {{tourCtrl.tour.tournamentType.name}}
+            <span ng-if="tourCtrl.tour.details.name != undefined">: <a ng-if="tourCtrl.isAdmin()" editable-text="tourCtrl.tour.details.name" onaftersave="tourCtrl.updateName($data)">{{tourCtrl.tour.details.name}}</a> <span ng-if="!tourCtrl.isAdmin()">{{tourCtrl.tour.details.name}}</span></span>
         </h1>
     </div>
     <div class="col-md-4">
         <div time-editor time-end="tourCtrl.tour.details.timeEnd" timestart="tourCtrl.tour.details.timeStart" iseditable="tourCtrl.isAdmin()"
-             starteditable="false" horizontal="true"></div>
+             starteditable="false" update-property="tourCtrl.updateTime()" horizontal="true"></div>
         <h4>Location: {{tourCtrl.tour.details.location || "TBD"}}</h4>
     </div>
 </div>
@@ -17,6 +18,7 @@
                 <li ui-sref-active="tab-current"><a ui-sref="eventSkeleton.tournament.rules">Rules</a></li>
                 <li><a>Prizes</a></li>
                 <li><a>Streams and Servers</a></li>
+                <li ng-if="tourCtrl.isAdmin()"><a>Admin</a></li>
             </ul>
         </nav>
     </div>

@@ -1,6 +1,8 @@
 package models
 
 import com.esports.gtplatform.models.{Team, Requestable, Inviteable}
+import monocle._
+import monocle.syntax._
 import org.joda.time.DateTime
 
 /**
@@ -14,6 +16,10 @@ case class Tournament(tournamentType: TournamentType = TournamentType(),
                       users: Set[TournamentUser] = Set(),
                       teams: Set[Team] = Set(),
                       id: Int = 0) extends Inviteable with Requestable {
+
+    private[this] val DetailsLens: SimpleLens[Tournament, Option[TournamentDetails]] = SimpleLens[Tournament](_.details)((e, newDetails) => e.copy(details = newDetails))
+
+    def setDetails(e: TournamentDetails): Tournament = this applyLens DetailsLens set Option(e)
 }
 
 case class TournamentDetails(tournament: Tournament = Tournament(),
@@ -28,6 +34,8 @@ case class TournamentDetails(tournament: Tournament = Tournament(),
                              timeStart: Option[DateTime] = None,
                              timeEnd: Option[DateTime] = None,
                                 teamMinSize: Int = 0,
-                                teamMaxSize: Int = 0) {
+                                teamMaxSize: Int = 0,
+                                playerMinSize: Int = 0,
+                                playerMaxSize: Int = 0) {
 
 }

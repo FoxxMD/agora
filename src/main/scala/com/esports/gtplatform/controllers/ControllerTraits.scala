@@ -2,6 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.Injectable
 import com.esports.gtplatform.business._
+import com.esports.gtplatform.models.Team
 import com.fasterxml.jackson.core.JsonParseException
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
@@ -164,6 +165,8 @@ trait EventControllerT extends StandardController {
     var requestEventUser: Option[EventUser with Persisted] = None
     var tournamentParamId: Option[Int] = None
     var requestTournament: Option[Tournament with Persisted] = None
+    var teamParamId: Option[Int] = None
+    var requestTeam: Option[Team with Persisted] = None
 
     before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
@@ -208,11 +211,37 @@ trait EventControllerT extends StandardController {
             tournamentRepo.get(tournamentParamId.get) match {
                 case Some(t: Tournament with Persisted) =>
                     requestTournament = Some(t)
-                case None => halt(400, "No tournament exists with the Id " + tournamentParamId.get)
+                case None => halt(400, "No tournament exists with the Id " + tournamentParamId.get + " exists.")
             }
         }
         else {
             halt(400, "No tournament id paramter defined.")
+        }
+    }
+    before("\"/:id/tournaments/:tourId/teams/") {
+        if(!requestTournament.get.tournamentType.teamPlay)
+            halt(400,"This tournament is using a User Only play type. Change the game and play type to allow users.")
+    }
+    before("\"/:id/tournaments/:tourId/players/") {
+        if(requestTournament.get.tournamentType.teamPlay)
+            halt(400,"This tournament is using a Team Only play type. Change the game and play type to allow teams.")
+    }
+    before("/:id/tournaments/:tourId/teams/:teamId/?*"){
+        val tdefined = params.getOrElse("teamId", halt(400,"Team id is missing"))
+        val tInt = toInt(tdefined).getOrElse(halt(400,"Team Id was not a valid integer"))
+        teamParamId = Some(tInt)
+    }
+    before("/:id/tournaments/:tourId/teams/:teamId/?*"){
+        if(teamParamId.isDefined) {
+            requestTournament.get.teams.find(x => x.id == teamParamId.get) match {
+                case Some(t: Team with Persisted) =>
+                requestTeam = Some(t)
+                case None => halt(400, "No team with the Id " + teamParamId.get + " exists.")
+                case _ => logger.warn("We missed the match!")
+            }
+        }
+        else {
+            halt(400, "No team id paramter defined.")
         }
     }
 }

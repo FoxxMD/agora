@@ -1,1 +1,5 @@
-<h2>got some rules for you right here buddy</h2>
+<div ui-tree data-empty-place-holder-enabled="true" class="angular-ui-tree">
+<ol ui-tree-nodes="" ng-model="rulesCtrl.tour.details.rules" class="angular-ui-tree-nodes">
+    <li ng-repeat="node in rulesCtrl.tour.details.rules" ui-tree-node ng-include="'views/shared/nodes.html'" class="angular-ui-tree-node"></li>
+</ol>
+</div>

@@ -166,7 +166,9 @@ CREATE TABLE tournamentdetails
     tournamentdetailscol VARCHAR(45),
     location VARCHAR(255),
     teamMaxSize INT DEFAULT 0 NOT NULL,
-    teamMinSize INT
+    teamMinSize INT,
+    playerMinSize INT DEFAULT 0 NOT NULL,
+    playerMaxSize INT DEFAULT 0 NOT NULL
 );
 CREATE TABLE tournamenttypes
 (

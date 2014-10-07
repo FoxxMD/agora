@@ -85,7 +85,7 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account, Events) {
             };
         },
         link: function(scope, elem, attrs){
-            scope.guildsCtrl.tryCreateGuild = function(){
+            scope.guildsCtrl.tryCreateGuild = function(form){
                 Guilds.createGuild(scope.guildsCtrl.createGuildData).then(function(tid){
                     scope.$broadcast('toggleMorph');
                     scope.guildsCtrl.createGuildData = {

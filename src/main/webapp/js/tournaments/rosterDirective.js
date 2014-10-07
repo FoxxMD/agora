@@ -4,7 +4,7 @@
 angular.module('gtfest')
     .directive('roster', rostDirective);
 // @ngInject
-function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Account, $q) {
+function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Account, $q, $timeout) {
     return {
         restrict: 'E',
         templateUrl: '/views/tournaments/roster.html',
@@ -18,6 +18,7 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
                 guildOnly: false,
                 captainId: that.user.id
             };
+            this.state = $state;
             this.showTeamForm = that.user.guilds.length == 0;
             if (that.tour.tournamentType.teamPlay)
                 this.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id);
@@ -41,8 +42,7 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             this.cachedGuilds = [];
             this.populateGuildMembers = function (guild) {
                 that.selectedGuildData = undefined;
-                if (that.cachedGuilds[guild.Guild.id] != undefined)
-                {
+                if (that.cachedGuilds[guild.Guild.id] != undefined) {
                     that.selectedGuildData = that.cachedGuilds[guild.Guild.id];
                     that.newTeamData.guildId = guild.Guild.id;
                     $scope.$broadcast('adjustMorphHeight');
@@ -50,8 +50,8 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
                 else
                     Guilds.getGuild(guild.Guild.id.toString()).then(function (response) {
                         that.cachedGuilds[response.plain().id] = response.plain();
-                        that.cachedGuilds[guild.Guild.id].members = _.map(that.cachedGuilds[guild.Guild.id].members, function(member){
-                           if(member.User.id == that.user.id)
+                        that.cachedGuilds[guild.Guild.id].members = _.map(that.cachedGuilds[guild.Guild.id].members, function (member) {
+                            if (member.User.id == that.user.id)
                                 member.selected = true;
                             return member;
                         });
@@ -60,13 +60,14 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
                         $scope.$broadcast('adjustMorphHeight');
                     });
             };
-            this.createNewTeam = function(){
+            this.createNewTeam = function (form) {
                 $scope.$broadcast('show-errors-check-validity');
-                if ($scope.$$childHead.$$childHead.$$nextSibling.newTeamForm.$valid) {
+                if (form.$valid) {
                     that.teamLoading = true;
-                    Tournaments.createTeam($stateParams.eventId.toString(), that.tour.id.toString(), that.newTeamData).then(function(){
-                        Tournaments.getTournament($stateParams.eventId.toString(), that.tour.id.toString()).then(function(response){
+                    Tournaments.createTeam($stateParams.eventId.toString(), that.tour.id.toString(), that.newTeamData).then(function (response) {
+                        Tournaments.getTournament($stateParams.eventId.toString(), that.tour.id.toString()).then(function (response) {
                             that.tour = response.plain();
+                            that.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id);
                         });
                         $scope.$emit('notify', 'notice', "Team successfully added.", 4000);
                         $scope.$broadcast('toggleMorph');
@@ -75,18 +76,125 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
                             guildOnly: false,
                             captainId: that.user.id
                         };
+
                         that.selectedGuild = undefined;
                         that.selectedGuildData = undefined;
                         that.showTeamForm = that.user.guilds.length == 0;
-                    }).finally(function(){
+                    }).finally(function () {
                         that.teamLoading = false;
                     });
                 }
             };
+            this.isCaptain = function (team, userId) {
+                userId = userId || that.user.id;
+                return _.find(team.teamPlayers, function (player) {
+                    return player.User.isCaptain && player.User.id == userId;
+                });
+            };
+            this.joinTeam = function (team) {
+                team.teamJoinLoading = true;
+                userId = that.user.id;
+                Tournaments.joinTeam(team.id.toString(), userId, false).then(function (response) {
+                    team.teamPlayers = response.teamPlayers;
+                    that.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id, that.tour);
+                    $scope.$emit('notify', 'notice', "Succesfully joined team.", 2000);
+                }).finally(function () {
+                    team.teamJoinLoading = false;
+                })
+            };
+            this.leaveTeam = function (team, userId) {
+                team.teamLeaveLoading = true;
+                userId = userId || that.user.id;
+                Tournaments.leaveTeam(team.id.toString(), userId).then(function (response) {
+                    team.teamPlayers = response.teamPlayers;
+                    that.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id, that.tour);
+                    $scope.$emit('notify', 'notice', "Succesfully left team.", 2000);
+                }).finally(function () {
+                    team.teamLeaveLoading = false;
+                });
+            };
+            this.deleteTeam = function (team) {
+                Tournaments.deleteTeam(team.id.toString()).then(function () {
+                    $scope.$emit('notify', 'notice', "Team deleted.", 4000);
+                })
+            };
+            this.changeTeamPresent = function(team) {
+                team.teamPresentLoading = true;
+                Tournaments.changeTeamPresent(team, that.tour.id.toString()).then(function(){
+                }, function(){
+                    team.isPresent = !team.isPresent;
+                }).
+                    finally(function () {
+                    team.teamPresentLoading = false;
+                });
+            };
+            this.changeUserPresent = function(user) {
+                user.presentLoading = true;
+                Tournaments.changeUserPresent(user).then(function(){}, function(){
+                    user.isPresent = !user.isPresent;
+                }).finally(function(){
+                    user.presentLoading = false;
+                })
+            };
+            this.changeUserModerator = function(user) {
+                user.moderatorLoading = true;
+                Tournaments.changeUserModerator(user).then(function(){}, function(){
+                    user.isModerator = !user.isModerator;
+                }).finally(function(){
+                    user.moderatorLoading = false;
+                })
+            };
+            this.changeUserAdmin = function(user) {
+                user.adminLoading = true;
+                Tournaments.changeUserAdmin(user).then(function(){}, function(){
+                    user.isAdmin = !user.isAdmin;
+                }).finally(function(){
+                    user.adminLoading = false;
+                })
+            };
+            this.changeRosterStatus = function(){
+                that.rosterStatusLoading = true;
+                if(that.isOnRoster) {
+                    Tournaments.removePlayer().then(function(response){
+                        that.tour.users = _.filter(that.tour.users, function(user){
+                           return user.id != that.user.id;
+                        });
+                        //that.tour.users.splice TODO user removal after leaving tournament
+                        that.isOnRoster = false;
+                        $scope.$emit('notify', 'notice', "Succesfully left tournament.", 2000);
+                    }).finally(function(){
+                        that.rosterStatusLoading = false;
+                    });
+                }
+                else{
+                    Tournaments.addPlayer().then(function(response){
+                        that.tour.users.push(response);
+                        that.isOnRoster = true;
+                        $scope.$emit('notify', 'notice', "Succesfully joined tournament.", 2000);
+                    }).finally(function(){
+                        that.rosterStatusLoading = false;
+                    });
+                }
+            };
+            this.bootPlayer = function(userId) {
+              Tournaments.removePlayer(userId.toString()).then(function(){
+                  that.tour.users = _.filter(that.tour.users, function(user){
+                      return user.id != userId;
+                  });
+                  $scope.$emit('notify', 'notice', "Player booted.", 2000);
+              })
+            };
+            this.hasGuild = function(guildName) {
+              return _.find(that.user.guilds, function(guild){
+                    return guild.name == guildName;
+                })
+            };
+            this.guildTip = function(){
+                $scope.$emit('notify','notice',"You can't join this team because you are not part of the Guild! Visit the guild's page to join.",5000);
+            }
         },
         link: function (scope, elem, attrs) {
         }
     }
 }
-rostDirective.$inject = ["Tournaments", "Events", "Guilds", "$state", "$stateParams", "Account", "$q"];
-tourDirective.$inject = ["Tournaments", "Events", "Guilds", "$state", "$stateParams", "Account", "$q"];
+rostDirective.$inject = ["Tournaments", "Events", "Guilds", "$state", "$stateParams", "Account", "$q", "$timeout"];

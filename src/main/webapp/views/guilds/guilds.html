@@ -1,6 +1,6 @@
 <div ng-cloak ng-show="cncCtrl.account.isLoggedIn()" class="buttonWrapper">
 <morphing-button title="Create A New Guild">
-    <form class="form morphingButtonForm" name="createGuildForm" ng-submit="guildsCtrl.tryCreateGuild()"
+    <form class="form morphingButtonForm" name="createGuildForm" ng-submit="guildsCtrl.tryCreateGuild(createGuildForm)"
           novalidate>
         <div class="row">
             <div class="col-md-6 col-sm-6 col-xs-6">
@@ -47,7 +47,7 @@
             <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="guildsCtrl.getMoreGuilds()"
                 infinite-scroll-container="'#st-content'" infinite-scroll-disabled="guildsCtrl.busy">
                 <div class="grid-sizer"></div>
-                <li class="masonry-brick outline-outward eventCard" ng-repeat="guild in guildsCtrl.guildCollection | filter: guildsCtrl.filterGuilds track by $index" on-last-repeat>
+                <li class="masonry-brick outline-outward eventCard component" ng-repeat="guild in guildsCtrl.guildCollection | filter: guildsCtrl.filterGuilds track by $index" on-last-repeat>
                     <div style="position:relative;width:100%; height:100%;">
                         <div ng-switch="guildsCtrl.isEvent">
                             <div ng-switch-default style="position:absolute;top:0;bottom:0;right:0;left:0;"
@@ -63,7 +63,7 @@
                                 </div>
                             </div>
                             <div ng-switch-when="true" style="position:absolute;top:0;bottom:0;right:0;left:0;"
-                                 ng-click="guild.guildOnly ? guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id}) : null">
+                                 ng-click="guild.guildOnly ? guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id}) : guildsCtrl.state.go('eventSkeleton.tournament.roster',{eventId:guildsCtrl.stateParams.eventId, tournamentId: guild.tournament.id})">
                                 <h3>{{guild.guildOnly ? '[GUILD]' : ''}} {{guild.name}}</h3>
                                 <h4>{{guild.teamPlayers.length}} Players</h4>
                                 <h4 ng-if="guild.captain != undefined">Led by {{guild.captain}}</h4>

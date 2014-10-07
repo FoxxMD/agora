@@ -77,13 +77,13 @@ function toursCtrl($scope, Events, $state, $stateParams, Account, $timeout, $q, 
     };
     this.format = 'dd-MMMM-yyyy';
 
-    this.tryCreateTour = function () {
+    this.tryCreateTour = function (form) {
         $scope.$broadcast('show-errors-check-validity');
-        if ($scope.$$childTail.createTourForm.$valid) {
+        if (form.$valid) {
             Tournaments.createTournament($stateParams.eventId, that.createTourData).then(function (response) {
                 that.createTourData = newTournamentData();
                 $scope.$broadcast('show-errors-reset');
-                $state.go('eventSkeleton.tournament', {eventId: that.event.id.toString(), tournamentId: response.id});
+                $state.go('eventSkeleton.tournament.roster', {eventId: that.event.id.toString(), tournamentId: response.id});
             });
         }
     };

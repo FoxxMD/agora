@@ -102,7 +102,7 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("platforms" -> Extraction.decompose(eu.user.gameProfiles)) ~
       ("guilds" -> Extraction.decompose(eu.user.guilds)) //TODO clean this shit up
   case tu: TournamentUser =>
-    implicit val formats: Formats = DefaultFormats + new EntityDetailsSerializer
+    implicit val formats: Formats = DefaultFormats + new EntityDetailsSerializer + new EntityAuxillarySerializer
       ("name" -> tu.user.globalHandle) ~
       ("id" -> tu.user.id) ~
       ("isPresent" -> tu.isPresent) ~
@@ -110,12 +110,12 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
       ("isAdmin" -> tu.isAdmin) ~
       ("resource" -> "/user/") ~
       ("Tournament" ->
-        ("name" -> tu.tournament.details.get.name) ~
+        ("name" -> tu.tournament.details.flatMap(x => x.name)) ~
           ("tournamentType" -> Extraction.decompose(tu.tournament.tournamentType)) ~
-          ("game" ->
-            ("name" -> tu.tournament.game.name) ~
-              ("id" -> tu.tournament.game.id)) ~
-          ("id" -> tu.tournament.id))
+          ("id" -> tu.tournament.id) ~
+            ("game" -> Extraction.decompose(tu.tournament.game)
+/*            ("name" -> tu.tournament.game.name) ~
+                ("id" -> tu.tournament.game.id)*/))
 }
   ))
 
@@ -156,13 +156,14 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       render("teams" -> e.tournaments.foldLeft(0)((b,a) => b+ a.teams.size))
   case t: Tournament =>
     implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
-    Extraction.decompose(t.copy())
+   val tour = Extraction.decompose(t.copy())
       .replace(List("users"), t.users.size)
       .replace(List("teams"), t.teams.size)
       .removeField {
       case ("Tournament", _) => true
       case _ => false
     }
+    tour
 }
   ))
 

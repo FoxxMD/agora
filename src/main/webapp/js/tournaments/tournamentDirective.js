@@ -17,6 +17,16 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             this.isAdmin = function() {
                 return Account.isEventAdmin($stateParams.eventId) && Account.adminEnabled();
             };
+            this.updateName = function(name) {
+                Tournaments.update({name:name}).then(function(){
+                    return true;
+                }, function(){
+                    return false;
+                });
+            };
+            this.updateTime = function() {
+              return Tournaments.update({timeStart: that.tour.details.timeStart, timeEnd: that.tour.details.timeEnd});
+            }
         },
         link: function (scope, elem, attrs) {
             var content = $(document).find('.st-content')[0],

@@ -4,6 +4,7 @@ import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.business.services.{PaymentService, StripePayment}
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Team
+import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.jdbc.Transaction
 import models.JoinType.JoinType
 import models.PaymentType.PaymentType
@@ -73,8 +74,8 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     //Get a list of teams that are participating in tournaments at this event
     get("/:id/teamsAndGuilds") {
-        val teams = requestEvent.get.tournaments.flatMap{x =>
-            x.teams.map{u =>
+        val teams = requestEvent.get.tournaments.flatMap { x =>
+            x.teams.map { u =>
                 Extraction.decompose(u) merge render(
                     "tournament" -> Extraction.decompose(x).removeField {
                         case ("details", _) => true
@@ -84,8 +85,8 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                         case _ => false
                     }.merge(render(
                         ("name" -> x.details.get.name) ~
-                        ("teamMaxSize" -> x.details.get.teamMaxSize) ~
-                        ("teamMinSize" -> x.details.get.teamMinSize))))
+                            ("teamMaxSize" -> x.details.get.teamMaxSize) ~
+                            ("teamMinSize" -> x.details.get.teamMinSize))))
             }
         }
         params.get("page") match {
@@ -191,7 +192,48 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             .replace(List("teams"), Extraction.decompose(requestTournament.get.teams))
         Ok(jsonTour)
     }
+    patch("/:id/tournaments/:tourId") {
+        auth()
+        var reqTour = requestTournament.get //TODO tournament security
+        var tourDetails = requestTournament.get.details.getOrElse(TournamentDetails(reqTour))
+
+        parsedBody.\("name").extractOpt[String].fold() { x =>
+            tourDetails = tourDetails.copy(name = Option(x))
+        }
+        parsedBody.\("location").extractOpt[String].fold() { x =>
+            tourDetails = tourDetails.copy(location = Option(x))
+        }
+        parsedBody.\("timeStart").extractOpt[DateTime].fold() { x =>
+            tourDetails = tourDetails.copy(timeStart = Option(x))
+        }
+        parsedBody.\("timeEnd").extractOpt[DateTime].fold() { x =>
+            tourDetails = tourDetails.copy(timeEnd = Option(x))
+        }
+        if(parsedBody.\("servers").toOption.isDefined)
+        {
+            tourDetails = tourDetails.copy(servers = Option(compact(render(parsedBody.\("servers")))))
+        }
+        if(parsedBody.\("rules").toOption.isDefined)
+        {
+            tourDetails = tourDetails.copy(rules = Option(compact(render(parsedBody.\("rules")))))
+        }
+        if(parsedBody.\("streams").toOption.isDefined)
+        {
+            tourDetails = tourDetails.copy(streams = Option(compact(render(parsedBody.\("streams")))))
+        }
+        if(parsedBody.\("prizes").toOption.isDefined)
+        {
+            tourDetails = tourDetails.copy(prizes = Option(compact(render(parsedBody.\("prizes")))))
+        }
+        if(parsedBody.\("description").toOption.isDefined)
+        {
+            tourDetails = tourDetails.copy(description = Option(compact(render(parsedBody.\("description")))))
+        }
+        reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails))
+        Ok()
+    }
     post("/:id/tournaments") {
+        auth()
         val ttRepo = inject[GenericMRepo[TournamentType]]
         val gameRepo = inject[GameRepo]
         val tx = inject[Transaction]
@@ -212,12 +254,16 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         Ok(inserted.id)
     }
     post("/:id/tournaments/:tourId/teams") {
+        auth()
         val teamRepo = inject[GenericMRepo[Team]]
         val tx = inject[Transaction]
 
         val guildOnly = parsedBody.\("guildOnly").extractOrElse[Boolean](halt(400, "Team type not specified (Guild or Free-Agent)"))
         val teamPlayerIds = parsedBody.\("teamPlayers").extractOrElse[List[Int]](halt(400, "No members specified"))
         val captainId = parsedBody.\("captainId").extractOpt[Int]
+
+        if (requestTournament.get.teams.exists(x => x.teamPlayers.exists(u => teamPlayerIds.contains(u.id))))
+            halt(400, "One or more members already belongs to a Team in this Tournament.")
 
         if (guildOnly) {
             val guildId = parsedBody.\("guildId").extractOrElse[Int](halt(400, "No guild Id specified."))
@@ -232,6 +278,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 val newPlayers = members.map(x => TeamUser(insertedTeam, x.user, isCaptain = captainId.isDefined && x.user.id == captainId.get))
                 teamRepo.update(insertedTeam, insertedTeam.copy(teamPlayers = newPlayers))
             }
+            Ok(inserted)
         }
         else {
             val teamName = parsedBody.\("name").extractOrElse[String](halt(400, "No team name provided."))
@@ -245,10 +292,112 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 val newPlayers = members.map(x => TeamUser(insertedTeam, x, isCaptain = captainId.isDefined && x.id == captainId.get))
                 teamRepo.update(insertedTeam, insertedTeam.copy(teamPlayers = newPlayers))
             }
+            Ok(inserted)
         }
+
+    }
+    patch("/:id/tournaments/:tourId/teams/:teamId") {
+        auth()
+        val teamRepo = inject[GenericMRepo[Team]]
+
+        parsedBody.\("isPresent").extractOpt[Boolean].fold() { x =>
+            teamRepo.update(requestTeam.get, requestTeam.get.copy(isPresent = x))
+        }
+
         Ok()
     }
-    //A user paying for registation
+    post("/:id/tournaments/:tourId/teams/:teamId/members") {
+        auth()
+        val userId = parsedBody.\("userId").extractOrElse[Int](halt(400, "User Id is not specified."))
+
+        if (requestTeam.get.teamPlayers.exists(x => x.id == userId))
+            halt(400, "User with Id " + userId + " is already on this Team")
+
+        val isCaptain = parsedBody.\("isCaptain").extractOrElse[Boolean](false)
+        val userRepo = inject[UserRepo]
+        val teamRepo = inject[GenericMRepo[Team]]
+
+        userRepo.get(userId) match {
+            case Some(u: User with Persisted) =>
+                val updated = teamRepo.update(requestTeam.get, requestTeam.get.addUser(u))
+                Ok(updated)
+            case None =>
+                halt(400, "No user with the specified Id " + userId + " exists.")
+            case _ => logger.warn("Not hitting a match here!")
+        }
+    }
+    delete("/:id/tournaments/:tourId/teams/:teamId/members") {
+        auth()
+        val uExist = params.getOrElse("userId", halt(400, "No user Id specified."))
+        val userId = toInt(uExist).getOrElse(halt(400, "User id was not a valid integer"))
+        val teamRepo = inject[GenericMRepo[Team]]
+        requestTeam.get.teamPlayers.find(x => x.user.id == userId) match {
+            case Some(x: TeamUser with Persisted) =>
+                val updated = teamRepo.update(requestTeam.get, requestTeam.get.removeUser(x.user))
+                Ok(updated)
+            case None => halt(400, "User is not on team. Could not remove.")
+            case _ => logger.warn("Not hitting a match here!")
+        }
+    }
+    delete("/:id/tournaments/:tourId/teams/:teamId") {
+        auth()
+        val teamRepo = inject[GenericMRepo[Team]]
+        teamRepo.delete(requestTeam.get)
+        Ok(tournamentRepo.get(requestTournament.get.id))
+    }
+    post("/:id/tournaments/:tourId/players") {
+        auth()
+        val uExist = parsedBody.\("userId").extractOrElse[String](halt(400, "No user Id specified."))
+        val userId = toInt(uExist).getOrElse(halt(400, "User id was not a valid integer"))
+        val tuRepo = inject[GenericMRepo[TournamentUser]]
+        val userRepo = inject[UserRepo]
+
+        userRepo.get(userId) match {
+            case Some(u: User with Persisted) =>
+                val newTu = TournamentUser(requestTournament.get, u)
+                val inserted = tuRepo.create(newTu)
+                Ok(inserted)
+            case None =>
+                halt(400, "No user with the specified Id " + userId + " exists.")
+            case _ => logger.warn("Not hitting a match here!")
+        }
+    }
+    patch("/:id/tournaments/:tourId/players/:userId") {
+        auth()
+        val uExist = params("userId")
+        val userId = toInt(uExist).getOrElse(halt(400, "User id was not a valid integer"))
+        val tuRepo = inject[GenericMRepo[TournamentUser]]
+        requestTournament.get.users.find(x => x.user.id == userId) match {
+            case Some(tu: TournamentUser with Persisted) =>
+                var tourUser = tu
+                parsedBody.\("isPresent").extractOpt[Boolean].fold() { x =>
+                    tourUser = tuRepo.update(tourUser, tourUser.copy(isPresent = x))
+                }
+                parsedBody.\("isModerator").extractOpt[Boolean].fold() { x =>
+                    tourUser = tuRepo.update(tourUser, tourUser.copy(isModerator = x))
+                }
+                parsedBody.\("isAdmin").extractOpt[Boolean].fold() { x =>
+                    tourUser = tuRepo.update(tourUser, tourUser.copy(isAdmin = x))
+                }
+                Ok(tourUser)
+            case None => halt(400, "No user with the Id " + userId + " is in this tournament.")
+            case _ => logger.warn("Not hitting a match here!")
+        }
+    }
+    delete("/:id/tournaments/:tourId/players/:userId") {
+        auth()
+        val uExist = params("userId")
+        val userId = toInt(uExist).getOrElse(halt(400, "User id was not a valid integer"))
+        val tuRepo = inject[GenericMRepo[TournamentUser]]
+        requestTournament.get.users.find(x => x.user.id == userId) match {
+            case Some(tu: TournamentUser with Persisted) =>
+                tuRepo.delete(tu)
+                Ok()
+            case None => halt(400, "No user with the Id " + userId + " is in this tournament.")
+            case _ => logger.warn("Not hitting a match here!")
+        }
+    }
+    //A user paying for registration
     post("/:id/users/:userId/payRegistration") {
         import scala.collection.mutable
         auth()

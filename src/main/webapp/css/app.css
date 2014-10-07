@@ -304,11 +304,24 @@ fieldset[disabled] {
 #grid.grid .grid-sizer {
   width: 33%;
 }
-#grid.grid li {
+#grid.grid li.component {
   margin-bottom: 30px;
   width: 30%;
   height: 300px;
   background-color: grey;
+}
+.grid.cs-style-4 li.component {
+  padding: 0px;
+  overflow: hidden;
+}
+.grid-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /*overflow:hidden;*/
+}
+.grid-content.expandedAction {
+  width: 120%;
 }
 /*https://github.com/IanLunn/Hover/blob/master/css/hover.css*/
 /* SHADOW/GLOW TRANSITIONS */

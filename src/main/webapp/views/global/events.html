@@ -75,7 +75,8 @@
         <infinite-scroller-animated>
 <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="eventsCtrl.getMoreEvents()" infinite-scroll-container="'#st-content'" infinite-scroll-disabled="eventsCtrl.busy">
     <div class="grid-sizer"></div>
-    <li ng-click="eventsCtrl.state.go('eventSkeleton.event',{eventId:event.id})" class="masonry-brick outline-outward eventCard gridElement" ng-repeat="event in eventsCtrl.eventsCollection | filter: filterEvents track by $index" on-last-repeat>
+    <li ng-click="eventsCtrl.state.go('eventSkeleton.event',{eventId:event.id})" class="masonry-brick outline-outward eventCard gridElement component" ng-repeat="event in eventsCtrl.eventsCollection | filter: filterEvents track by $index" on-last-repeat>
+        <div style="position:relative;width:100%; height:100%;">
         <h3>{{event.name}}</h3>
         <h4>{{event.details.timeStart.calendar()}}</h4>
         <h4>{{event.joinType}} Event</h4>
@@ -84,7 +85,7 @@
             <h4>{{event.users}} users attending</h4>
             <h4>{{event.tournaments.length}} tournaments hosted</h4>
         </div>
-
+</div>
     </li>
 </ul>
         </infinite-scroller-animated>

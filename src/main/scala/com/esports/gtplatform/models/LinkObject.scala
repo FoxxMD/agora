@@ -28,4 +28,4 @@ case class TournamentUser(tournament: Tournament,
                      isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false){
 }
 
-case class TournamentType(name: String = "A Tourney Type", userPlay:Boolean = true, teamPlay: Boolean = true, id: Int = 0)
+case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Int = 0)

@@ -5,7 +5,7 @@
 	padding: 0;
 }
 
-.grid li {
+.grid li.component {
 	display: block;
 	float: left;
 	padding: 7px;
@@ -19,8 +19,8 @@
 	opacity: 1;
 }
 
-.grid li a,
-.grid li img {
+.grid li.component a,
+.grid li.component img {
 	outline: none;
 	border: none;
 	display: block;

@@ -1,7 +1,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'angular-loading-bar', 'ngSanitize','angular-ladda',
-        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput'],
+        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
         $stateProvider
             .state('index', {
@@ -179,7 +179,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 params:{
                     eventId:{},
                     tournamentId:{}
-                }
+                },
+                controller:'RulesController as rulesCtrl'
             })
             .state('eventSkeleton.guilds', {
                 url: '/teams',
