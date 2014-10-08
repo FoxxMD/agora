@@ -36,6 +36,9 @@ body .panel.panel-default .panel-heading {
   background-color: grey;
   color: white;
 }
+body .btn.btn-link:hover {
+  text-decoration: none;
+}
 .headerWrapper {
   position: fixed;
   top: 0;
@@ -68,7 +71,7 @@ body .panel.panel-default .panel-heading {
 }
 .st-menu .subsection {
   overflow: hidden;
-  height: 180px;
+  height: 225px;
   -webkit-transition: height 0.3s;
   -moz-transition: height 0.3s;
   -ms-transition: height 0.3s;

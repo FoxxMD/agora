@@ -90,6 +90,15 @@ angular.module('gtfest')
                 });
             return deferred;
         };
+        this.forgotPassword = function(email) {
+            return Restangular.all('forgotPassword').post({email: email});
+        };
+        this.validateForgottenPasswordToken = function(token) {
+            return Restangular.one('passwordReset').get({token:token});
+        };
+        this.resetForgottenPassword = function(data) {
+            return Restangular.all('passwordReset').post(data);
+        };
         //eventId is OPTIONAL
         this.register = function(handle, email, password, eventId) {
             var deferred = $q.defer();

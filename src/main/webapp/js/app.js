@@ -281,6 +281,35 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 },
                 parent: 'globalSkeleton'
             })
+            .state('globalSkeleton.passwordreset', {
+                url:'/passwordReset?token',
+                params:{
+                    token:{}
+                },
+                templateUrl:'/views/shared/passwordReset.html',
+                controller: function($scope, $stateParams, Account, $location, $rootScope) {
+                    Account.validateForgottenPasswordToken($stateParams.token).then(function(){
+                        $scope.passwordData = {
+                            token: $stateParams.token
+                        }
+                    }, function(){
+                        $location.url('/');
+                    });
+                    $scope.passwordResetSubmit = function(form) {
+                        $scope.$broadcast('show-errors-check-validity');
+                        if(form.$valid){
+                            $scope.resetLoading = true;
+                            Account.resetForgottenPassword($scope.passwordData).then(function(){
+                                $rootScope.$broadcast('notify', 'notice', 'Password has been changed! Please login.');
+                                $location.url('/');
+                                $rootScope.openLogin();
+                            }).finally(function(){
+                                $scope.resetLoading = false;
+                            })
+                        }
+                    }
+                }
+            })
             .state('globalSkeleton.account', {
                 url:'/account',
                 templateUrl:'/views/users/account.html',

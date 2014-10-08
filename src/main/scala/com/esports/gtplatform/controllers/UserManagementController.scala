@@ -1,9 +1,18 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.Utilities.Mailer
+import com.esports.gtplatform.Utilities.{PasswordSecurity, Mailer}
+import com.esports.gtplatform.business.{GenericMRepo, UserRepo}
 import com.esports.gtplatform.business.services.NewUserService
-import org.scalatra.{BadRequest, Ok}
+import com.googlecode.mapperdao.Persisted
+import com.googlecode.mapperdao.jdbc.Transaction
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException
+import dao.UserIdentityEntity
+import models.{UserIdentity, User}
+import dao.Daos._
+import com.googlecode.mapperdao.Query._
+import org.scalatra.{InternalServerError, BadRequest, Ok}
+import org.springframework.jdbc.BadSqlGrammarException
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -16,58 +25,163 @@ import org.scalatra.{BadRequest, Ok}
 //Mounted at /
 class UserManagementController(implicit val bindingModule: BindingModule) extends StandardController {
 
-  get("/login") {
-    //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
-    response.addHeader("ignoreError", "true")
-    authUserPass()
-    Ok(response.getHeader("Authorization"))
-  }
-  post("/register") {
-    val nuservice = new NewUserService
-    //you can get any parameters in the queryString of a POST or GET using params("key")
+    get("/login") {
+        //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
+        response.addHeader("ignoreError", "true")
+        authUserPass()
+        Ok(response.getHeader("Authorization"))
+    }
+    post("/register") {
+        val nuservice = new NewUserService
+        //you can get any parameters in the queryString of a POST or GET using params("key")
 
-    //Use this method to extract values from a JSON object in the request
-      val email = parsedBody.\("email").extract[String]
-      val password = parsedBody.\("password").extract[String]
-      val handle = parsedBody.\("handle").extract[String]
-      val eventId = parsedBody.\("eventId").extractOpt[String]
+        //Use this method to extract values from a JSON object in the request
+        val email = parsedBody.\("email").extract[String]
+        val password = parsedBody.\("password").extract[String]
+        val handle = parsedBody.\("handle").extract[String]
+        val eventId = parsedBody.\("eventId").extractOpt[String]
 
-    val newuser = nuservice.newUserPass(handle, email, password)
-    val m = new Mailer()
-    nuservice.isUnique(newuser) match {
-      case Some(s: String) =>
-        if(s == "handle")
-          BadRequest("Username is already taken.")
-        else if(s == "email")
-        {
-          m.sendAlreadyRegistered(email)
-          /* This method is safer than notifying the user that an email address is already in use. We don't want to
-          * give away that information so instead we say "OK sent." and then notify that email address that it is already
-          * registered.
-          */
-          Ok("Registration successful. Please check your email for a confirmation link.")
+        val newuser = nuservice.newUserPass(handle, email, password)
+        val m = new Mailer()
+        nuservice.isUnique(newuser) match {
+            case Some(s: String) =>
+                if (s == "handle")
+                    BadRequest("Username is already taken.")
+                else if (s == "email") {
+                    m.sendAlreadyRegistered(email)
+                    /* This method is safer than notifying the user that an email address is already in use. We don't want to
+                    * give away that information so instead we say "OK sent." and then notify that email address that it is already
+                    * registered.
+                    */
+                    Ok("Registration successful. Please check your email for a confirmation link.")
+                }
+            case None =>
+                val token = nuservice.create(newuser)
+                if (eventId.isDefined)
+                    nuservice.associateEvent(token, eventId.get.toInt)
+                logger.info("Non-active user successfully created: " + token)
+                m.sendConfirm("matt.duncan13@gmail.com", handle, token)
+                Ok("Registration successful. Please check your email for a confirmation link.")
         }
-      case None =>
-      val token = nuservice.create(newuser)
-        if(eventId.isDefined)
-          nuservice.associateEvent(token, eventId.get.toInt)
-      logger.info("Non-active user successfully created: " + token)
-      m.sendConfirm("matt.duncan13@gmail.com",handle, token)
-      Ok("Registration successful. Please check your email for a confirmation link.")
     }
-  }
-  get("/confirmRegistration"){
-    val nuservice = new NewUserService
-    val token = request.parameters.get("token")
-    token match {
-      case Some(t: String) =>
-        val confirmed = nuservice.confirmNewUser(t)
-        if(confirmed._1)
-          Ok(confirmed._2)
-        else
-          BadRequest("Could not find the provided token.")
-      case None =>
-        BadRequest("No token provided.")
+    get("/confirmRegistration") {
+        val nuservice = new NewUserService
+        val token = request.parameters.get("token")
+        token match {
+            case Some(t: String) =>
+                val confirmed = nuservice.confirmNewUser(t)
+                if (confirmed._1)
+                    Ok(confirmed._2)
+                else
+                    BadRequest("Could not find the provided token.")
+            case None =>
+                BadRequest("No token provided.")
+        }
     }
-  }
+    post("/forgotPassword") {
+        val email = parsedBody.\("email").extractOrElse[String](halt(400, "No email address specified."))
+        val userRepo = inject[UserRepo]
+        val m = new Mailer()
+        val newToken = java.util.UUID.randomUUID.toString
+
+        userRepo.getByEmail(email) match {
+            case Some(u: User with Persisted) =>
+
+                jdbc.queryForMap(
+                    """
+                      |select t.*
+                      |from passwordtokens t
+                      |where t.id=?
+                    """.stripMargin
+                    , u.id).map { m => m.string("token")} match {
+                    case Some(token: String) =>
+                        logger.info("User already has a password token, generating new one.")
+                        jdbc.update(
+                            """
+                              |UPDATE passwordtokens p
+                              |SET token="""+newToken+"""
+                              |where p.id=?
+                            """.stripMargin, u.id)
+                    case None =>
+                        jdbc.update(
+                            """
+                              |INSERT INTO passwordtokens VALUES(?,?)
+                            """.stripMargin, List(u.id, newToken))
+                }
+
+                m.sendForgotPassword(u.email, newToken)
+
+            case None =>
+                logger.warn("Request for password recovery with email address not in DB: " + email)
+            case _ => logger.warn("No match found!")
+        }
+        Ok()
+    }
+    get("/passwordReset") {
+        val p = params.get("token")
+        val token: String = params.getOrElse("token",halt(400,"No token received."))
+        val pp = params("token")
+        jdbc.queryForMap(
+            """
+              |select t.*
+              |from passwordtokens t
+              |where t.token=?
+            """.stripMargin
+            , token).map { m => m.string("token")} match {
+            case Some(t: String) =>
+            Ok()
+            case None =>
+            BadRequest("Token is invalid. Please make sure it is entered correctly.")
+        }
+    }
+    post("/passwordReset") {
+        val token = parsedBody.\("token").extractOrElse[String](halt(400,"No token specified"))
+        val password = parsedBody.\("password").extractOrElse[String](halt(400,"No password specified"))
+        val userRepo = inject[UserRepo]
+        val identRepo = inject[GenericMRepo[UserIdentity]]
+        val tx = inject[Transaction]
+
+        val uie = UserIdentityEntity
+            val userId = jdbc.queryForMap(
+                """
+              |select t.*
+              |from passwordtokens t
+              |where t.token=?
+            """.
+                    stripMargin
+            , token).map { m => m.int("id")} match {
+            case Some(t: Int) =>
+                t
+            case None =>
+                halt(400,"Token is invalid.")
+        }
+
+        val identity = queryDao.querySingleResult(select from uie where uie.user === userRepo.get(userId).get)
+
+        val salted = PasswordSecurity.createHash(password)
+
+        val inserted = tx { trans =>
+            try {
+            identRepo.update(identity.get, identity.get.copy(password = salted))
+          val update = jdbc.update(
+            """
+              |DELETE FROM passwordtokens
+              |where id=?
+            """.stripMargin, userId)
+          if(update.rowsAffected != 1)
+          {
+              trans.setRollbackOnly()
+              InternalServerError("There was a problem resetting the password. No changes were committed.")
+          }
+          else{
+              Ok()
+          }
+            }
+          catch {
+              case m:BadSqlGrammarException =>
+                  trans.setRollbackOnly()
+                  InternalServerError("There was a problem resetting the password. No changes were committed.")
+          }
+        }
+    }
 }

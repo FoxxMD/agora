@@ -120,6 +120,11 @@ CREATE TABLE nonactiveusers
     globalHandle VARCHAR(45),
     role VARCHAR(11) NOT NULL
 );
+CREATE TABLE passwordtokens
+(
+    id INT PRIMARY KEY NOT NULL,
+    token VARCHAR(70) NOT NULL
+);
 CREATE TABLE teams
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -174,7 +179,6 @@ CREATE TABLE tournamenttypes
 (
     Id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name VARCHAR(45) NOT NULL,
-    userPlay TINYINT NOT NULL,
     teamPlay TINYINT NOT NULL
 );
 CREATE TABLE user_events
@@ -264,6 +268,8 @@ ALTER TABLE nonactiveuseridentity ADD FOREIGN KEY (userId) REFERENCES nonactiveu
 CREATE UNIQUE INDEX id_UNIQUE ON nonactiveuseridentity (id);
 CREATE INDEX user_identity_id_nonactive ON nonactiveuseridentity (userId);
 CREATE UNIQUE INDEX id_UNIQUE ON nonactiveusers (id);
+CREATE UNIQUE INDEX unique_Id ON passwordtokens (id);
+CREATE UNIQUE INDEX unique_token ON passwordtokens (token);
 ALTER TABLE teams ADD FOREIGN KEY (tournament_id) REFERENCES tournament (id);
 CREATE INDEX team_tournament_id_idx ON teams (tournament_id);
 ALTER TABLE teams_users ADD FOREIGN KEY (teams_id) REFERENCES teams (id) ON DELETE CASCADE;

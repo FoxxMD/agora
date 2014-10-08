@@ -22,3 +22,4 @@ function rulesC($scope, Account, $q, eventData, $rootScope, Events, $timeout, To
         scope.remove();
     };
 }
+rulesC.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$timeout", "Tournaments"];

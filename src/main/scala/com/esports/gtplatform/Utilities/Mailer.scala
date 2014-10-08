@@ -60,6 +60,29 @@ def sendConfirm(toAddress: String, handle: String, token: String) = {
   logger.info("Attempting to send confirmation email to " + toAddress)
   sendMail(confirmEmail)
 }
+    def sendForgotPassword(toAddress: String, token: String, alreadyTried: Boolean = false) = {
+
+        val forgottenEmail =
+            Email(
+                to = Email.Addr(toAddress),
+                from = Email.Addr(defaultFrom, eventName + " Staff"),
+                subject = s"Forgotten Password Recovery for $eventName",
+                body = Email.text(s"""Hello,
+        |
+        | Someone has requested that the password associated with this account be reset.
+        |
+        | To reset your password please follow this link: http://gtgamefest.com/passwordReset?token=$token
+        |
+        | If you did not request to have your password reset or feel this was an error please contact us at feedback@gtgamefest.com
+        |
+        | Thanks!
+        |
+        | -$eventName Staff
+      """.stripMargin)
+            )
+        logger.info("Attempting to send forgotten password email to " + toAddress)
+        sendMail(forgottenEmail)
+    }
 
   def sendAlreadyRegistered(toAddress: String) = {
 

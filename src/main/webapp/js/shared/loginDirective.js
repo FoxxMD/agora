@@ -28,7 +28,21 @@ function login(Account, $rootScope) {
                             $scope.loginLoading = false;
                         });
                 }
-            }
+            };
+            $scope.tryForgotPassword = function(form) {
+                $scope.$broadcast('show-errors-check-validity');
+                if(form.$valid) {
+                    $scope.forgotLoading = true;
+                    Account.forgotPassword($scope.forgotPasswordEmail).then(function(){
+                        $scope.$broadcast('notify','notice', "If there is an email associated with this account an email has been sent to it. Please check your inbox for a link.", 10000);
+                        $scope.showForgotForm = false;
+                        $rootScope.toggleMenu();
+                        $scope.$broadcast('show-errors-reset');
+                    }).finally(function(){
+                        $scope.forgotLoading = false;
+                    });
+                }
+            };
         }
     }
 }

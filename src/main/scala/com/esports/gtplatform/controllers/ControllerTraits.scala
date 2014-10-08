@@ -6,11 +6,13 @@ import com.esports.gtplatform.models.Team
 import com.fasterxml.jackson.core.JsonParseException
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 import org.slf4j.LoggerFactory
 import models._
+import org.springframework.jdbc.BadSqlGrammarException
 
 /**
  * Created by Matthew on 7/24/2014.
@@ -46,8 +48,11 @@ trait BasicServletWithLogging extends ScalatraServlet {
         case q: QueryException =>
             logger.error(q.getMessage, q)
             halt(500, "Database problems...")
+        case my: BadSqlGrammarException =>
+            logger.error(my.getMessage, my)
+            halt(500, "Database problems...")
         case t: Throwable =>
-            logger.info(t.getMessage, t)
+            logger.error(t.getMessage, t)
             halt(500, "Something went wrong!")
     }
 }
