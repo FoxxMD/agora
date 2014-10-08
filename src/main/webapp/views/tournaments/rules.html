@@ -1,5 +1,22 @@
-<div ui-tree data-empty-place-holder-enabled="true" class="angular-ui-tree">
-<ol ui-tree-nodes="" ng-model="rulesCtrl.tour.details.rules" class="angular-ui-tree-nodes">
-    <li ng-repeat="node in rulesCtrl.tour.details.rules" ui-tree-node ng-include="'views/shared/nodes.html'" class="angular-ui-tree-node"></li>
-</ol>
+<div ng-if="tourCtrl.isAdmin()" class="col-md-12 well">
+    <p>Edit the rules for your tournament here. After finishing your edits make sure you save!</p>
+    <ul>
+        <li>Top-level items act as the header for a rule section</li>
+        <li>All items below the top level act as a nested list of your rules</li>
+    </ul>
+</div>
+    <div ng-if="tourCtrl.isAdmin()" class="col-md-12" style="margin-bottom:50px;">
+        <div ui-tree="rulesCtrl.treeOptions" data-drag-delay="200" class="angular-ui-tree">
+            <ol ui-tree-nodes="" ng-model="tour.details.rules" class="angular-ui-tree-nodes">
+                <li ng-repeat="node in tour.details.rules track by $index" ui-tree-node ng-include="'views/shared/nodes.html'" class="angular-ui-tree-node"></li>
+            </ol>
+        </div>
+    </div>
+<button ladda="rulesCtrl.rulesLoading" data-style="expand-right" ng-show="rulesCtrl.showSave" class="btn btn-info btn-lg" style="position:fixed; bottom:50px; right:100px;" ng-click="rulesCtrl.saveRules()">Save</button>
+
+<div ng-repeat="header in tour.details.rules track by $index" class="col-md-12 well">
+    <h2>{{header.title}}</h2>
+    <ul>
+        <li ng-repeat="node in header.nodes" ng-include="'views/shared/rulenode.html'"></li>
+    </ul>
 </div>

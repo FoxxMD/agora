@@ -53,6 +53,7 @@ body .btn.btn-link:hover {
 .tabs.tabs-style-underline.fix {
   position: fixed;
   top: 120px;
+  z-index: 8000;
 }
 .loginContainer {
   background: darkgray;
@@ -407,4 +408,22 @@ tags-input .tags li.tag-item {
 }
 .teamChoiceButton.member {
   height: 40px;
+}
+.angular-ui-tree-handle {
+  background: #555555;
+  /*border: 1px solid #dae2ea;*/
+  color: white;
+  padding: 10px 10px;
+}
+.angular-ui-tree-handle:hover {
+  color: white;
+  background: #636363;
+  /*border-color: #dce2e8;*/
+}
+.angular-ui-tree-placeholder {
+  background: #f0f9ff;
+  border: 2px dashed #bed2db;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }

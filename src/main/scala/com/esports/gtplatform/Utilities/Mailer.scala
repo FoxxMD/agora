@@ -15,8 +15,8 @@ import scala.concurrent.{Await, Future}
  */
 class Mailer(eventName: String = "Gamefest") {
   val logger = LoggerFactory.getLogger(getClass)
-  val sender: MailSender =  new Mailgun("sandboxebc2e9178fa5401b9169d5c545a89379.mailgun.org", "key-77e9200b3bc681ca40e0c58267b13941")
-  val defaultFrom = "postmaster@sandboxebc2e9178fa5401b9169d5c545a89379.mailgun.org"
+  val sender: MailSender =  new Mailgun("gtgamefest.com", "key-83a54e74ccf0a9f92db196a538b6d03d")
+  val defaultFrom = "postmaster@gtgamefest.com"
 
   private def sendMail(mail: Email) = {
     val response: Future[MailSender.Response] = sender.send(mail)

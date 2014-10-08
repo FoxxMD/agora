@@ -1,0 +1,4 @@
+{{node.title}}
+    <ul ng-if="node.nodes.length > 0">
+        <li ng-repeat="node in node.nodes" ng-include="'views/shared/rulenode.html'"></li>
+    </ul>
