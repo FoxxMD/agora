@@ -13,7 +13,15 @@ function toursCtrl($scope, Events, $state, $stateParams, Account, $timeout, $q, 
     Tournaments.getTournaments($stateParams.eventId.toString()).then(function (response) {
         that.toursCollection = response.plain();
     });
-    function newTournamentData(){
+    if($stateParams.gameFilter != null)
+    {
+        that.tourGameTags =[
+            {
+                text: $stateParams.gameFilter
+            }
+        ];
+    }
+    function newTournamentData() {
         return {
             registrationType: 'Public',
             details: {
@@ -22,11 +30,12 @@ function toursCtrl($scope, Events, $state, $stateParams, Account, $timeout, $q, 
             }
         };
     }
+
     this.createTourData = newTournamentData();
     this.getMoreTours = function () {
         that.busy = true;
         pageNo++;
-        Tournaments.getTournaments($stateParams.eventId, pageNo).then(function (response) {
+        Tournaments.getTournaments($stateParams.eventId.toString(), pageNo).then(function (response) {
             if (response.length > 0) {
                 that.toursCollection = that.toursCollection.concat(response.plain());
                 that.busy = false;
@@ -49,20 +58,34 @@ function toursCtrl($scope, Events, $state, $stateParams, Account, $timeout, $q, 
         deferred.resolve(games);
         return deferred.promise;
     };
-    $scope.filterTours = function (event) {
+    this.loadTypes = function (query) {
+        var deferred = $q.defer();
+        var theTypes = [];
+        that.toursCollection.map(function (x) {
+            if (theTypes.indexOf(x.tournamentType.name) == -1)
+                theTypes.push(x.tournamentType.name)
+        });
+        deferred.resolve(theTypes);
+        return deferred.promise;
+    };
+
+    this.filterTours = function (tour) {
         var passed = true;
-        /*        if(that.eventNameTags.length > 0)
-         {
-         passed = that.eventNameTags.filter(function(val, index, arr){
-         return val.name == event.name.toLowerCase().indexOf(val.name.toLowerCase()) != -1
-         }).length > 0;
-         }
-         if(that.eventCityTags.length > 0)
-         {
-         passed = that.eventCityTags.filter(function(val,index,arr){
-         return event.details.city != undefined && val.text.toLowerCase() == event.details.city.toLowerCase()
-         }).length > 0;
-         }*/
+        if (that.tourNameTags.length > 0) {
+            passed = that.tourNameTags.filter(function (val, index, arr) {
+                return tour.details.name.toLowerCase().indexOf(val.text.toLowerCase()) != -1
+            }).length > 0;
+        }
+        if (that.tourGameTags.length > 0) {
+            passed = that.tourGameTags.filter(function (val, index, arr) {
+                return tour.game.name.toLowerCase().indexOf(val.text.toLowerCase()) != -1
+            }).length > 0;
+        }
+        if (that.tourTypeTags.length > 0) {
+            passed = that.tourTypeTags.filter(function (val, index, arr) {
+                return tour.tournamentType.name.toLowerCase().indexOf(val.text.toLowerCase()) != -1
+            }).length > 0;
+        }
         return passed;
     };
     this.openStopTime = function ($event) {
@@ -87,8 +110,7 @@ function toursCtrl($scope, Events, $state, $stateParams, Account, $timeout, $q, 
             });
         }
     };
-    this.populateTourTypes = function(item)
-    {
+    this.populateTourTypes = function (item) {
         console.log(item);
     };
     Games.getGames().then(function (games) {

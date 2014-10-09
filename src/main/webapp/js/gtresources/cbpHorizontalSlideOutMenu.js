@@ -4,18 +4,18 @@
  *
  * Licensed under the MIT license.
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * Copyright 2013, Codrops
  * http://www.codrops.com
  */
 ;( function( window ) {
-	
+
 	'use strict';
 
 	var document = window.document;
 
 	function extend( a, b ) {
-		for( var key in b ) { 
+		for( var key in b ) {
 			if( b.hasOwnProperty( key ) ) {
 				a[key] = b[key];
 			}
@@ -23,7 +23,7 @@
 		return a;
 	}
 
-	function cbpHorizontalSlideOutMenu( el, options ) {	
+	function cbpHorizontalSlideOutMenu( el, options ) {
 		this.el = el;
 		this.options = extend( this.defaults, options );
 		this._init();
@@ -32,6 +32,7 @@
 	cbpHorizontalSlideOutMenu.prototype = {
 		defaults : {},
 		_init : function() {
+            var that = this;
 			this.current = -1;
 			this.touch = Modernizr.touch;
 			this.menu = this.el.querySelector( '.cbp-hsmenu' );
@@ -42,7 +43,7 @@
 			this._initEvents();
 		},
 		_openMenu : function( el, ev ) {
-			
+
 			var self = this,
 				item = el.parentNode,
 				items = Array.prototype.slice.call( this.menuItems ),
@@ -50,7 +51,7 @@
 				closeCurrent = function( current ) {
 					var current = current || self.menuItems[ self.current ];
 					current.className = '';
-					current.setAttribute( 'data-open', '' );	
+					current.setAttribute( 'data-open', '' );
 				},
 				closePanel = function() {
 					self.current = -1;
@@ -58,8 +59,8 @@
 				};
 
 			if( submenu ) {
-
-				ev.preventDefault();
+                if(ev != undefined)
+				    ev.preventDefault();
 
 				if( item.getAttribute( 'data-open' ) === 'open' ) {
 					closeCurrent( item );
@@ -84,7 +85,7 @@
 
 		},
 		_initEvents : function() {
-			
+
 			var self = this;
 			Array.prototype.slice.call( this.menuItems ).forEach( function( el, i ) {
 				var trigger = el.querySelector( 'a' );
@@ -92,10 +93,10 @@
 					trigger.addEventListener( 'touchstart', function( ev ) { self._openMenu( this, ev ); } );
 				}
 				else {
-					trigger.addEventListener( 'click', function( ev ) { self._openMenu( this, ev ); } );	
+					trigger.addEventListener( 'click', function( ev ) { self._openMenu( this, ev ); } );
 				}
 			} );
-			
+
 			window.addEventListener( 'resize', function( ev ) { self._resizeHandler(); } );
 
 		},

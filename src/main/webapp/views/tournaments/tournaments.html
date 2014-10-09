@@ -37,15 +37,21 @@
     </morphing-button>
 </div>
 <div class="row well">
-    <div class="col-md-offset-2 col-md-4 well">
+    <div class="col-md-4 well">
         <h4>Filter By Name</h4>
-        <tags-input ng-model="toursCtrl.tourNameTags">
+        <tags-input ng-model="toursCtrl.tourNameTags" replace-spaces-with-dashes="false">
         </tags-input>
     </div>
     <div class="col-md-4 well">
         <h4>Filter By Games</h4>
-        <tags-input ng-model="toursCtrl.tourGameTags">
+        <tags-input ng-model="toursCtrl.tourGameTags" replace-spaces-with-dashes="false">
             <auto-complete source="toursCtrl.loadGames($query)"></auto-complete>
+        </tags-input>
+    </div>
+    <div class="col-md-4 well">
+        <h4>Filter By Tournament Type</h4>
+        <tags-input ng-model="toursCtrl.tourTypeTags" replace-spaces-with-dashes="false">
+            <auto-complete source="toursCtrl.loadTypes($query)"></auto-complete>
         </tags-input>
     </div>
 </div>

@@ -1,21 +1,22 @@
 package models
+
 /* In Scala namespaces are specified by packages. They work pretty much like Java */
 
 object GameType extends Enumeration {
-  type GameType = Value
-  val FPS,MMO,RTS = Value
+    type GameType = Value
+    val FPS, MMO, RTS = Value
 
-  def toString(gType: GameType) = gType match {
-    case FPS => "FPS"
-    case MMO => "MMO"
-    case RTS => "RTS"
-  }
+    def toString(gType: GameType) = gType match {
+        case FPS => "FPS"
+        case MMO => "MMO"
+        case RTS => "RTS"
+    }
 
-  def fromString(gType: String): GameType = gType match {
-    case "FPS" => FPS
-    case "MMO" => MMO
-    case "RTS" => RTS
-  }
+    def fromString(gType: String): GameType = gType match {
+        case "FPS" => FPS
+        case "MMO" => MMO
+        case "RTS" => RTS
+    }
 }
 
 /* Domain Models are specified in the models package.
@@ -40,5 +41,6 @@ case class Game(name: String = "A Game",
                 userPlay: Boolean = true,
                 teamPlay: Boolean = true,
                 tournamentTypes: Set[TournamentType] = Set(),
+                logoFilename: Option[String] = None,
                 id: Int = 0) {
 }

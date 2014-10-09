@@ -51,7 +51,8 @@ CREATE TABLE games
     website VARCHAR(100),
     gameType VARCHAR(20) NOT NULL,
     userPlay TINYINT DEFAULT 1 NOT NULL,
-    teamPlay TINYINT DEFAULT 1 NOT NULL
+    teamPlay TINYINT DEFAULT 1 NOT NULL,
+    logoFilename VARCHAR(30)
 );
 CREATE TABLE games_events
 (

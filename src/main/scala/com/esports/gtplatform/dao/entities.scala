@@ -169,11 +169,12 @@ object GameEntity extends Entity[Int, NaturalIntId, Game]("games"){
   val gt = column("gameType") to (theGame => GameType.toString(theGame.gameType))
   val uPlay = column("userPlay") to (_.userPlay)
   val tPlay = column("teamPlay") to (_.teamPlay)
+    val logo = column("logoFilename") option (_.logoFilename)
   val tt = manytomany(TournamentTypeEntity) join ("games_tournamenttypes","games_id", "tournamenttypes_id") to (_.tournamentTypes)
 
   def constructor(implicit m: ValuesMap) = {
     val g = GameType.fromString(m(gt))
-    new Game(name, publisher, website, g, uPlay, tPlay, tt, id) with Stored {
+    new Game(name, publisher, website, g, uPlay, tPlay, tt, logo, id) with Stored {
     }
   }
 }

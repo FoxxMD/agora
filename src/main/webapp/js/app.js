@@ -137,7 +137,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 url:'/tournaments',
                 controller:'TournamentsController as toursCtrl',
                 params: {
-                    eventId:{}
+                    eventId:{},
+                    gameFilter:{value: null}
                 },
                 templateUrl:'/views/tournaments/tournaments.html'
             })

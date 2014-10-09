@@ -5,7 +5,7 @@ angular.module('gtfest')
 .directive('animatedheader', animatedheader);
 
 // @ngInject
-function animatedheader(Events){
+function animatedheader(Events, $rootScope){
     return {
         templateUrl:'views/shared/animatedheader.html',
         restrict:'E',
@@ -50,10 +50,10 @@ function animatedheader(Events){
 
             if(!isinit)
             {
-                var menu = new cbpHorizontalSlideOutMenu( elem.find('#cbp-hsmenu-wrapper' )[0] );
+                $rootScope.menu = new cbpHorizontalSlideOutMenu( elem.find('#cbp-hsmenu-wrapper' )[0] );
                 isinit = true;
             }
         }
     }
 }
-animatedheader.$inject = ["Events"];
+animatedheader.$inject = ["Events","$rootScope"];
