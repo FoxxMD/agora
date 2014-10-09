@@ -27,7 +27,7 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account, Events) {
             }
             else if ($state.$current.includes.eventSkeleton) {
                 that.isEvent = true;
-                Events.getTeamsAndGuilds($stateParams.eventId).then(function(response){
+                Events.getTeamsAndGuilds($stateParams.eventId.toString()).then(function(response){
                     that.guildCollection = response.plain();
                 });
             }

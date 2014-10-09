@@ -25,7 +25,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     }
                 }
             })
-            .state('globalSkeleton.portal', {
+            /*.state('globalSkeleton.portal', {
                 url: '/{opt:(?:login|register)}',
                 params: {
                     opt: {value: null}
@@ -88,7 +88,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                         return deferred.promise;
                     }
                 }
-            })
+            })*/
             .state('eventSkeleton', {
                 templateUrl: '/views/shared/skeleton.html',
                 url: '/event/{eventId:[0-9]+}',
@@ -352,7 +352,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 controller: 'AccountController as accountCtrl'
             });
 
-        $urlRouterProvider.otherwise('/');
+        $urlRouterProvider.when('','/event/1');
+        $urlRouterProvider.otherwise('/event/1');
         $locationProvider.html5Mode(true);
         RestangularProvider.setBaseUrl('/api');
 
