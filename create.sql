@@ -135,7 +135,8 @@ CREATE TABLE teams
     tournament_id INT NOT NULL,
     createdDate INT,
     isPresent SMALLINT DEFAULT 0 NOT NULL,
-    guildOnly SMALLINT DEFAULT 0 NOT NULL
+    guildOnly SMALLINT DEFAULT 0 NOT NULL,
+    guildId INT
 );
 CREATE TABLE teams_users
 (

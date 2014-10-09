@@ -17,6 +17,7 @@ case class Team(
             createdDate: DateTime = DateTime.now(),
             isPresent: Boolean = false,
             guildOnly: Boolean = false,
+            guildId: Option[Int] = None,
             id: Int = 0) extends Invitee with Inviteable with Requestable with TeamT {
 
   private[this] val TPListLens: SimpleLens[Team, List[TeamUser]] = SimpleLens[Team](_.teamPlayers)((t, tp) => t.copy(teamPlayers = tp))
