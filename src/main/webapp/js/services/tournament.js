@@ -32,6 +32,10 @@ angular.module('gtfest')
             return RestTour(eventId).post(tourData);
         };
 
+        this.deleteTournament = function(tourId) {
+            return restNew().one(tourId).remove();
+        };
+
         this.update = function(data, tourId)
         {
             tourId = tourId || currentTournament.id.toString();

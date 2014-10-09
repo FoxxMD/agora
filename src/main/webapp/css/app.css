@@ -427,3 +427,10 @@ tags-input .tags li.tag-item {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.group-title {
+  background-color: #687074 !important;
+  color: #FFF !important;
+}
+a.withDecoration {
+  text-decoration: underline;
+}

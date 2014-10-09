@@ -16,9 +16,9 @@
             <ul>
                 <li ui-sref-active="tab-current"><a ui-sref="eventSkeleton.tournament.roster">Roster</a></li>
                 <li ui-sref-active="tab-current"><a ui-sref="eventSkeleton.tournament.rules">Rules</a></li>
-                <li><a>Prizes</a></li>
-                <li><a>Streams and Servers</a></li>
-                <li ng-if="tourCtrl.isAdmin()"><a>Admin</a></li>
+                <li ui-sref-active="tab-current"><a ui-sref="eventSkeleton.tournament.prizes">Prizes</a></li>
+                <li ui-sref-active="tab-current"><a ui-sref="eventSkeleton.tournament.streamsandservers">Streams and Servers</a></li>
+                <li ng-if="tourCtrl.isAdmin()" ui-sref-active="tab-current"><a ui-sref="eventSkeleton.tournament.admin">Admin</a></li>
             </ul>
         </nav>
     </div>

@@ -186,6 +186,11 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 Ok(requestEvent.get.tournaments)
         }
     }
+    delete("/:id/tournaments/:tourId") {
+        auth()
+        tournamentRepo.delete(requestTournament.get)
+        Ok()
+    }
     get("/:id/tournaments/:tourId") {
         val jsonTour = Extraction.decompose(requestTournament.get)
             .replace(List("users"), Extraction.decompose(requestTournament.get.users))

@@ -10,6 +10,19 @@
             <ol ui-tree-nodes="" ng-model="tour.details.rules" class="angular-ui-tree-nodes">
                 <li ng-repeat="node in tour.details.rules track by $index" ui-tree-node ng-include="'views/shared/nodes.html'" class="angular-ui-tree-node"></li>
             </ol>
+            <ol class="angular-ui-tree-nodes">
+                <li class="angular-ui-tree-node">
+                    <div class="group-title tree-node tree-node-content angular-ui-tree-handle">
+                        <form class="form-inline" name="newGroupForm" role="form" ng-submit="rulesCtrl.addGroup(newGroupForm)" novalidate>
+                            <div class="form-group" show-errors>
+                                <label class="sr-only" for="groupName">Section Name</label>
+                                <input type="text" class="form-control" ng-model="rulesCtrl.newGroupName" name="groupName" id="groupName" placeholder="Section Name" required>
+                            </div>
+                            <button type="submit" class="btn btn-info btn-sm">Add Group</button>
+                        </form>
+                    </div>
+                </li>
+            </ol>
         </div>
     </div>
 <button ladda="rulesCtrl.rulesLoading" data-style="expand-right" ng-show="rulesCtrl.showSave" class="btn btn-info btn-lg" style="position:fixed; bottom:50px; right:100px;" ng-click="rulesCtrl.saveRules()">Save</button>
@@ -17,6 +30,6 @@
 <div ng-repeat="header in tour.details.rules track by $index" class="col-md-12 well">
     <h2>{{header.title}}</h2>
     <ul>
-        <li ng-repeat="node in header.nodes" ng-include="'views/shared/rulenode.html'"></li>
+        <li ng-repeat="node in header.nodes" ng-include="'views/shared/node.html'"></li>
     </ul>
 </div>

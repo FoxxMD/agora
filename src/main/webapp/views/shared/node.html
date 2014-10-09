@@ -1,0 +1,5 @@
+<a ng-if="node.link" class="withDecoration" ng-href="{{node.link}}">{{node.title}}</a>
+<span ng-if="!node.link">{{node.title}}</span>
+    <ul ng-if="node.nodes.length > 0">
+        <li ng-repeat="node in node.nodes" ng-include="'views/shared/node.html'"></li>
+    </ul>

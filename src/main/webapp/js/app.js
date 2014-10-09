@@ -174,13 +174,40 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 }
             })
             .state('eventSkeleton.tournament.rules',{
-                url:'',
+                url:'/rules',
                 templateUrl:'views/tournaments/rules.html',
                 params:{
                     eventId:{},
                     tournamentId:{}
                 },
                 controller:'RulesController as rulesCtrl'
+            })
+            .state('eventSkeleton.tournament.prizes',{
+                url:'/prizes',
+                templateUrl:'views/tournaments/prizes.html',
+                params:{
+                    eventId:{},
+                    tournamentId:{}
+                },
+                controller:'PrizesController as prizesCtrl'
+            })
+            .state('eventSkeleton.tournament.admin',{
+                url:'/admin',
+                templateUrl:'views/tournaments/admin.html',
+                params:{
+                    eventId:{},
+                    tournamentId:{}
+                },
+                controller:'TourAdminController as adminCtrl'
+            })
+            .state('eventSkeleton.tournament.streamsandservers',{
+                url:'/streamsandservers',
+                templateUrl:'views/tournaments/streamsandservers.html',
+                params:{
+                    eventId:{},
+                    tournamentId:{}
+                },
+                controller:'SSController as ssCtrl'
             })
             .state('eventSkeleton.guilds', {
                 url: '/teams',
@@ -331,6 +358,14 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                        {
                            data[i].details.timeStart = moment(data[i].details.timeStart);//new Date(data[i].details.timeStart);
                            data[i].details.timeEnd = moment(data[i].details.timeEnd);//new Date();
+                           if(data[i].details.rules)
+                               data[i].details.rules = angular.fromJson(data[i].details.rules);
+                           if(data[i].details.servers)
+                               data[i].details.servers = angular.fromJson(data[i].details.servers);
+                           if(data[i].details.streams)
+                               data[i].details.streams = angular.fromJson(data[i].details.streams);
+                           if(data[i].details.prizes)
+                               data[i].details.prizes = angular.fromJson(data[i].details.prizes);
                        }
                     }
                     if(data[0].createdDate != undefined)
@@ -345,6 +380,14 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 {
                     data.details.timeStart = moment(data.details.timeStart);
                     data.details.timeEnd = moment(data.details.timeEnd);//new Date(data.details.timeEnd);
+                    if(data.details.rules)
+                        data.details.rules = angular.fromJson(data.details.rules);
+                    if(data.details.servers)
+                        data.details.servers = angular.fromJson(data.details.servers);
+                    if(data.details.streams)
+                        data.details.streams = angular.fromJson(data.details.streams);
+                    if(data.details.prizes)
+                        data.details.prizes = angular.fromJson(data.details.prizes);
                 }
                 else if(data.createdDate != undefined)
                 {
