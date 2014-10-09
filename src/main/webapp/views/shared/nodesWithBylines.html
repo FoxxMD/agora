@@ -1,0 +1,12 @@
+<div ui-tree-handle class="tree-node tree-node-content" ng-class="{'group-title':this.$nodeScope.$parentNodeScope == null}">
+    <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><i class="fa" ng-class="{'fa-chevron-up': collapsed, 'fa-chevron-down': !collapsed}"></i></a>
+    <div style="display:inline-table" data-nodrag>
+        <div>Name: <a editable-text="this.$modelValue.title">{{this.$modelValue.title}}</a></div>
+        <div>Byline: <a editable-text="this.$modelValue.byline">{{this.$modelValue.byline}}</a></div>
+    </div>
+    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><i class="fa fa-close"></i></a>
+</div>
+<ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'views/shared/nodesWithBylines.html'">
+    </li>
+</ol>

@@ -79,7 +79,7 @@ function rulesC($scope, Account, $q, eventData, $rootScope, Events, $timeout, To
         }).finally(function () {
             that.rulesLoading = false;
         });
-    }
+    };
 
     function populateDefault() {
         return [

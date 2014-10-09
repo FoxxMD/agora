@@ -276,6 +276,7 @@ object EventDetailsEntity extends Entity[Int, NoId, EventDetails]("eventdetails"
   val prizes = column("prizes") option (_.prizes)
   val streams = column("streams") option (_.streams)
   val servers = column("servers") option (_.servers)
+    val credits = column("credits") option (_.credits)
   val timeStart = column("timeStart") option {details =>
     if(details.timeStart.isDefined)
       Some((details.timeStart.get.getMillis/1000).toInt)
@@ -293,7 +294,7 @@ object EventDetailsEntity extends Entity[Int, NoId, EventDetails]("eventdetails"
   def constructor(implicit m: ValuesMap) = {
     val ts = new DateTime(m(timeStart)*1000L,DateTimeZone.UTC)
     val te = new DateTime(m(timeEnd)*1000L,DateTimeZone.UTC)
-    new EventDetails(event, location, address, city, state, description, rules, prizes, streams, servers, Some(ts), Some(te), scheduledEvents) with Stored
+    new EventDetails(event, location, address, city, state, description, rules, prizes, streams, servers, Some(ts), Some(te), scheduledEvents, credits) with Stored
   }
 }
 

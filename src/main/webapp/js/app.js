@@ -285,6 +285,14 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     eventId:{}
                 },
                 controller:'EventSettingsController as eventSettings'
+            })
+            .state('eventSkeleton.about', {
+                url:'/about',
+                templateUrl:'/views/event/about.html',
+                params:{
+                    eventId:{}
+                },
+                controller:'EventAboutController as aboutCtrl'
             });
 
         //Account related states
@@ -388,6 +396,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                         data.details.streams = angular.fromJson(data.details.streams);
                     if(data.details.prizes)
                         data.details.prizes = angular.fromJson(data.details.prizes);
+                    if(data.details.credits)
+                        data.details.credits = angular.fromJson(data.details.credits);
                 }
                 else if(data.createdDate != undefined)
                 {

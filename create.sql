@@ -23,7 +23,8 @@ CREATE TABLE eventdetails
     prizes LONGTEXT,
     streams LONGTEXT,
     servers LONGTEXT,
-    scheduledevents LONGTEXT
+    scheduledevents LONGTEXT,
+    credits LONGTEXT
 );
 CREATE TABLE eventpayments
 (

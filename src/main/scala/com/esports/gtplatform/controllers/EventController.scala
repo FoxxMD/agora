@@ -55,6 +55,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         //val activitiesraw =  compact(render(parsedBody.\("details").\("scheduledEvents")))
         val extractedDetails = parsedBody.\("details").extract[EventDetails].copy(
             event = requestEvent.get,
+            credits = Some(compact(render(parsedBody.\("details").\("credits")))),
             scheduledEvents = Some(compact(render(parsedBody.\("details").\("scheduledEvents")))))
 
         val newEvent = requestEvent.get.copy(name = parsedBody.\("name").extract[String],
@@ -187,7 +188,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         }
     }
     delete("/:id/tournaments/:tourId") {
-        auth()
+
         tournamentRepo.delete(requestTournament.get)
         Ok()
     }
