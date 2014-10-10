@@ -60,6 +60,15 @@ INSERT INTO `events` VALUES (1,'Public','GameFest: The Event');
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Set test user as admin for seeded event
+--
+LOCK TABLES `user_events` WRITE;
+/*!40000 ALTER TABLE `user_events` DISABLE KEYS */;
+INSERT INTO `user_events` VALUES (1,1,1,0,1,1,0,NULL);
+/*!40000 ALTER TABLE `user_events` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
