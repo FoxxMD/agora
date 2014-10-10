@@ -91,16 +91,16 @@ module.exports = function (grunt) {
                 }
             ],
             options: {
-                port: 9000,
                 // Change this to '0.0.0.0' to access the server from outside.
-                hostname: '0.0.0.0',
-                livereload: 35729
+                hostname: '0.0.0.0'
             }
             //},
             ,
             livereload: {
                 options: {
                     open: 'http://gtgamefest.com:9000',
+                    port:9000,
+                    livereload: 35729,
                     base: [
                         '<%= yeoman.app %>'
                     ],
@@ -115,6 +115,8 @@ module.exports = function (grunt) {
             },
             dist: {
                 options: {
+                    port:443,
+                    protocol: 'https',
                     base: '<%= yeoman.dist %>',
                     middleware: function (connect) {
                         return [
@@ -258,7 +260,7 @@ module.exports = function (grunt) {
                 'watch'
             ]);
     });
-    grunt.registerTask('server:dist', function (target) {
+/*    grunt.registerTask('server:dist', function (target) {
         return  grunt.task.run([
             'clean:dist',
             'less:dev',
@@ -273,6 +275,15 @@ module.exports = function (grunt) {
             'configureProxies',
             'connect:dist',
             'watch'
+        ]);
+    });*/
+    grunt.registerTask('server:dist', function (target) {
+        return  grunt.task.run([
+            'less:dev',
+            'wiredep',
+            'ngAnnotate:dev',
+            'configureProxies',
+            'connect:dist',
         ]);
     });
 };
