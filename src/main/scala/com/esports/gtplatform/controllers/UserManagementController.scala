@@ -60,7 +60,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
                 if (eventId.isDefined)
                     nuservice.associateEvent(token, eventId.get.toInt)
                 logger.info("Non-active user successfully created: " + token)
-                m.sendConfirm("matt.duncan13@gmail.com", handle, token)
+                m.sendConfirm(email, handle, token)
                 Ok("Registration successful. Please check your email for a confirmation link.")
         }
     }

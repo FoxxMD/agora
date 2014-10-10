@@ -115,14 +115,15 @@ module.exports = function (grunt) {
             },
             dist: {
                 options: {
-                    port:443,
-                    protocol: 'https',
-                    base: '<%= yeoman.dist %>',
+                    port:80,
+                    protocol: 'http',
+                    base: '<%= yeoman.dev %>',
+                    keepalive: true,
                     middleware: function (connect) {
                         return [
                             proxySnippet,
                             modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.gif\\.jpg$ /index.html [L]']),
-                            connect.static(require('path').resolve('src/main/webapp/build/dist'))
+                            connect.static(require('path').resolve('src/main/webapp/'))
                         ];
                     }
                 }
@@ -278,12 +279,15 @@ module.exports = function (grunt) {
         ]);
     });*/
     grunt.registerTask('server:dist', function (target) {
-        return  grunt.task.run([
+        grunt.task.run([
             'less:dev',
             'wiredep',
             'ngAnnotate:dev',
             'configureProxies',
-            'connect:dist',
+            'connect:dist'
         ]);
+        grunt.event.once('connect.tests.listening', function(host, port) {
+            grunt.log.writeln('Running at: ' + host + port);
+        });
     });
 };
