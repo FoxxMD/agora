@@ -3,6 +3,7 @@ import com.mojolly.scalate.ScalatePlugin._
 import org.scalatra.sbt._
 import sbt.Keys._
 import sbt._
+import sbtassembly.Plugin._
 
 /* This is the "manifest" for the whole application. Here you specify project wide settings
  * and, more importantly, tell SBT what dependencies your project uses. SBT stands for Simple Build Tool and it's what
@@ -23,7 +24,7 @@ object ScalatraBuild extends Build {
   lazy val project = Project (
     "gamefest-platform",
     file("."),
-    settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+    settings = Defaults.defaultSettings ++ assemblySettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
       port in Conf := 8080,
       organization := Organization,
       name := Name,
@@ -42,7 +43,6 @@ object ScalatraBuild extends Build {
         "org.json4s"   %% "json4s-jackson" % "3.2.10",
         "org.json4s" %% "json4s-ext" % "3.2.10",
         "org.json4s" %% "json4s-core" % "3.2.10",
-        //"com.github.jarlakxen" %% "scalatra-rest" % "1.4",
         "com.chuusai" %% "shapeless" % "2.0.0",
         "com.github.julien-truffaut"  %%  "monocle-core" % "0.5.1",
         "com.github.julien-truffaut"  %%  "monocle-generic" % "0.5.1",
