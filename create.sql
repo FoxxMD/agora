@@ -1,3 +1,5 @@
+CREATE DATABASE `gtgamfest_scal` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE gtgamfest_scal;
 CREATE TABLE apikeys
 (
     id INT PRIMARY KEY NOT NULL,
