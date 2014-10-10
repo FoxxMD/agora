@@ -24,7 +24,7 @@ object ScalatraBuild extends Build {
   lazy val project = Project (
     "gamefest-platform",
     file("."),
-    settings = Defaults.defaultSettings ++ assemblySettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+    settings = Defaults.defaultSettings ++ assemblySettings ++ ScalatraPlugin.scalatraWithJRebel ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ scalateSettings ++ Seq(
       port in Conf := 8080,
       organization := Organization,
       name := Name,
@@ -63,6 +63,12 @@ object ScalatraBuild extends Build {
         "commons-dbcp" % "commons-dbcp" % "1.4",
         "com.stripe" % "stripe-java" % "1.18.0"
       ),
+        mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
+        {
+            case "spring.tooling" => MergeStrategy.first
+            case x => old(x)
+        }
+        },
       scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
         Seq(
           TemplateConfig(
