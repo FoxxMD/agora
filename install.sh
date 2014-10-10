@@ -25,11 +25,24 @@ sudo apt-get install npm
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 # Install dev dependencies
-sudo npm install bower -g
-sudo npm install grunt-cli -g
-sudo npm install npm-install-missing -g --save
+sudo npm install -g bower
+sudo npm install -g grunt-cli
+sudo npm install -g grunt
+sudo npm install -g npm-install-missing --save
 sudo npm install
 # Make sure we get all dependencies, node ain't great about that
 npm-install-missing
 bower install
 
+# Install MySQL
+echo "Installing MySQL..."
+sudo apt-get install mysql-server
+
+# Configure and seed MySQL
+echo "Attempting to configure and seed MySQL"
+echo "Setting up database and tables"
+mysql --user root -p gtgamfest_scal < create.sql
+echo "Seeding databases"
+mysql --user root -p gtgamfest_scal < seed.sql
+
+echo "Success!"
