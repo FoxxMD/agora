@@ -1,8 +1,10 @@
 // Declare app level module which depends on filters, and services
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'angular-loading-bar', 'ngSanitize','angular-ladda',
-        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree'],
-    ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
+        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree',
+        'angulartics', 'angulartics.google.analytics'],
+    ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", "$analyticsProvider",
+        function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider, $analyticsProvider) {
         $stateProvider
             .state('index', {
                 abstract: true,
@@ -408,6 +410,8 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 return data;
             });
 
+            $analyticsProvider.firstPageview(true); /* Records pages that don't use $state or $route */
+            $analyticsProvider.withAutoBase(true);  /* Records full path */
 
     }]);
 

@@ -116,10 +116,10 @@ module.exports = function (grunt) {
             },
             dist: {
                 options: {
-                    port:80,
+                    port:9000,
                     protocol: 'http',
                     base: '<%= yeoman.dev %>',
-                    keepalive: true,
+                    livereload: 35729,
                     middleware: function (connect) {
                         return [
                             proxySnippet,
