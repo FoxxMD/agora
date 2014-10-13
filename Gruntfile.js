@@ -1,6 +1,7 @@
 'use strict';
 
 var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+var modRewrite = require('connect-modrewrite');
 
 module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
@@ -247,9 +248,13 @@ module.exports = function (grunt) {
                     }
                 ]
             }
+        },
+        nodemon:{
+            dist:{
+                script:'server.js'
+            }
         }
     });
-    var modRewrite = require('connect-modrewrite');
 
     grunt.registerTask('server:dev', function (target) {
             return  grunt.task.run([
@@ -282,10 +287,10 @@ module.exports = function (grunt) {
         grunt.task.run([
             'less:dev',
             'wiredep',
-            'ngAnnotate:dev',
-            'configureProxies',
-            'connect:dist'
+            'ngAnnotate:dev'
         ]);
+
+
         grunt.event.once('connect.tests.listening', function(host, port) {
             grunt.log.writeln('Running at: ' + host + port);
         });
