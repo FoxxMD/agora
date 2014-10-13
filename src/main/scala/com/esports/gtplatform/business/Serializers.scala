@@ -127,8 +127,10 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
         Extraction.decompose(u.copy()) removeField {
             case ("User", _) => true
-            case _ => false //TODO Get rid of nasty coupling to repository implementation. How to mix in Injectable?
+            case("email", _) => true
+            case _ => false
         } merge render(
+            //TODO Get rid of nasty coupling to repository implementation. How to mix in Injectable?
             ("events" -> Extraction.decompose(u.getAssociatedEvents(new EventUserRepository))) ~
                 ("tournaments" -> {
                     val tRepo = new TeamRepository
