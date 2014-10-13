@@ -1,4 +1,4 @@
-<div ng-cloak ng-show="cncCtrl.account.isLoggedIn()" class="buttonWrapper tournamentsButton">
+<div ng-cloak ng-if="eventCtrl.isAdmin()" ng-show="cncCtrl.account.isLoggedIn()" class="buttonWrapper tournamentsButton">
     <morphing-button title="Create A New Tournament">
         <form class="form morphingButtonForm" name="createTourForm" ng-submit="toursCtrl.tryCreateTour(createTourForm)"
               novalidate>

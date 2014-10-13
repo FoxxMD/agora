@@ -99,7 +99,7 @@ module.exports = function (grunt) {
             ,
             livereload: {
                 options: {
-                    open: 'http://gtgamefest.com:9000',
+                    open: 'http://gtgamefest.local:9000',
                     port:9000,
                     livereload: 35729,
                     base: [
