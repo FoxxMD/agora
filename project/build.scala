@@ -3,8 +3,6 @@ import com.mojolly.scalate.ScalatePlugin._
 import org.scalatra.sbt._
 import sbt.Keys._
 import sbt._
-import sbtassembly.Plugin._
-import sbtassembly.Plugin.AssemblyKeys._
 
 object ScalatraBuild extends Build {
     val Organization = "com.esports.gtplatform"
@@ -18,7 +16,7 @@ object ScalatraBuild extends Build {
     lazy val project = Project(
         "gamefest-platform",
         file("."),
-        settings = Defaults.defaultConfigs ++ ScalatraPlugin.scalatraWithJRebel ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ scalateSettings ++ assemblySettings ++ Seq(
+        settings = Defaults.defaultConfigs ++ ScalatraPlugin.scalatraWithJRebel ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ scalateSettings ++ sbtassembly.Plugin.assemblySettings ++ Seq(
             port in Conf := 8080,
             organization := Organization,
             name := Name,
@@ -57,17 +55,6 @@ object ScalatraBuild extends Build {
                 "commons-dbcp" % "commons-dbcp" % "1.4",
                 "com.stripe" % "stripe-java" % "1.18.0"
             ),
-            mergeStrategy in assembly <<= (mergeStrategy in assembly) {
-                (old) => {
-                    case PathList(xs@_*) if xs.last endsWith ".tooling" => MergeStrategy.first
-                    case PathList("META-INF", "spring.tooling") => MergeStrategy.first
-                    case PathList("META-INF", xs @ _*) =>
-                        (xs map {_.toLowerCase}) match {
-                            case "spring.tooling" :: Nil => MergeStrategy.first
-                        }
-                    case x => old(x)
-                }
-            },
                 scalateTemplateConfig in Compile <<=(sourceDirectory in Compile) { base =>
                 Seq(
                     TemplateConfig(
