@@ -140,7 +140,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         auth()
         userId match {
             case Some(uid: Int) =>
-                if (user.role != "admin" || !requestEvent.get.isAdmin(user))
+                if (user.role != "admin" && !requestEvent.get.isAdmin(user))
                     halt(403, "You do not have permission to remove users from this event.")
                 val userRepo = inject[UserRepo]
                 userRepo.get(uid) match {
@@ -157,7 +157,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     patch("/:id/users/:userId") {
         auth()
-        if (user.role != "admin" || !requestEvent.get.isAdmin(user))
+        if (user.role != "admin" && !requestEvent.get.isAdmin(user) && user.id != params("userId").toInt)
             halt(403, "You do not have permission to edit users at this event.")
 
         val present = parsedBody.\("isPresent").extractOpt[Boolean]
@@ -188,7 +188,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         }
     }
     delete("/:id/tournaments/:tourId") {
-        if (user.role != "admin" || !requestEvent.get.isAdmin(user))
+        if (user.role != "admin" && !requestEvent.get.isAdmin(user))
             halt(403, "You do not have permission to delete users from this event.")
         tournamentRepo.delete(requestTournament.get)
         Ok()
@@ -201,7 +201,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     patch("/:id/tournaments/:tourId") {
         auth()
-        if (user.role != "admin" || !requestEvent.get.isAdmin(user))
+        if (user.role != "admin" && !requestEvent.get.isAdmin(user))
             halt(403, "You do not have permission to edit users at this event.")
 
         var reqTour = requestTournament.get //TODO tournament security
@@ -244,7 +244,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     post("/:id/tournaments") {
         auth()
-        if (user.role != "admin" || !requestEvent.get.isAdmin(user))
+        if (user.role != "admin" && !requestEvent.get.isAdmin(user))
             halt(403, "You do not have permission to edit users at this event.")
 
         val ttRepo = inject[GenericMRepo[TournamentType]]
@@ -311,7 +311,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     patch("/:id/tournaments/:tourId/teams/:teamId") {
         auth()
-        if (user.role != "admin" || requestTeam.get.getCaptain.id != user.id || !requestEvent.get.isAdmin(user))
+        if (user.role != "admin" && requestTeam.get.getCaptain.id != user.id && !requestEvent.get.isAdmin(user))
             halt(403, "You do not have permission to edit this team.")
         val teamRepo = inject[GenericMRepo[Team]]
 
@@ -343,7 +343,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     delete("/:id/tournaments/:tourId/teams/:teamId/members") {
         auth()
-        if (user.role != "admin" || requestTeam.get.getCaptain.id != user.id || !requestEvent.get.isAdmin(user) || requestTeam.get.teamPlayers.exists(x => x.user.id == user.id))
+        if (user.role != "admin" && requestTeam.get.getCaptain.id != user.id && !requestEvent.get.isAdmin(user) && !requestTeam.get.teamPlayers.exists(x => x.user.id == user.id))
             halt(403, "You do not have permission to delete a user from this team.")
 
         val uExist = params.getOrElse("userId", halt(400, "No user Id specified."))
@@ -359,7 +359,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     delete("/:id/tournaments/:tourId/teams/:teamId") {
         auth()
-        if (user.role != "admin" || requestTeam.get.getCaptain.id != user.id || !requestEvent.get.isAdmin(user))
+        if (user.role != "admin" && requestTeam.get.getCaptain.id != user.id && !requestEvent.get.isAdmin(user))
             halt(403, "You do not have permission to delete this team.")
 
         val teamRepo = inject[GenericMRepo[Team]]

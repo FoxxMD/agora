@@ -14,5 +14,8 @@ angular.module('gtfest')
             else{
                 return games.getList();
             }
+        };
+        this.getImageUrl = function(game) {
+          return 'images/' + game.name.replace(/[^A-Z0-9]+/ig, "_").toLowerCase() + '.png';
         }
     }]);

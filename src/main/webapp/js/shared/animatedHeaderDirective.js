@@ -5,12 +5,13 @@ angular.module('gtfest')
 .directive('animatedheader', animatedheader);
 
 // @ngInject
-function animatedheader(Events, $rootScope){
+function animatedheader(Events, $rootScope, Games){
     return {
         templateUrl:'views/shared/animatedheader.html',
         restrict:'E',
        controllerAs:'headerCtrl',
-        controller: function(){
+        controller: function($scope){
+            this.games = Games;
         },
         link: function(scope,elem,attrs)
         {
@@ -56,4 +57,4 @@ function animatedheader(Events, $rootScope){
         }
     }
 }
-animatedheader.$inject = ["Events","$rootScope"];
+animatedheader.$inject = ["Events","$rootScope", "Games"];
