@@ -2,7 +2,6 @@
   "name": "gtfest",
   "version": "0.0.0",
   "dependencies": {
-    "angular-resource": "~1.2.13",
     "angular": "~1.2.13",
     "jquery": "~2.1.0",
     "lodash": "~2.4.1",
@@ -59,6 +58,9 @@
     "angular-bootstrap-show-errors": {
       "main": "src/showErrors.min.js"
     },
+    "lodash": {
+      "main": "dist/lodash.compat.min.js"
+    },
     "angular-loading-bar": {
       "main": [
         "build/loading-bar.min.js",
@@ -74,8 +76,8 @@
         "dist/angular-ui-tree.min.css"
       ]
     },
-    "angular-ui-router":{
-        "main": "./release/angular-ui-router.min.js"
+    "angular-ui-router": {
+      "main": "./release/angular-ui-router.min.js"
     },
     "angular-toggle-switch": {
       "main": [
