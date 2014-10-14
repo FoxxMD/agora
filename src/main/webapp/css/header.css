@@ -87,7 +87,13 @@
 
 /* Example Media Queries */
 /*@media screen and (max-width: 55em) {*/
-    @media screen and (max-width: 992px) {
+@media screen and (max-width: 1600px) {
+    .cbp-af-header h1
+    {
+        font-size:2.5em;
+    }
+}
+@media screen and (max-width: 1420px) {
 
     .cbp-af-header .cbp-af-inner {
         width: 100%;
@@ -100,6 +106,33 @@
         text-align: center;
         float: none;
     }
+    .cbp-af-header nav a {
+        margin: 0 10px;
+    }
+    .cbp-af-header nav a.topLink {
+        line-height: 100px;
+    }
+    .cbp-af-header h1
+    {
+        line-height:70px;
+        font-size:3em;
+    }
+    .cbp-af-header.cbp-af-header-shrink h1,
+    .cbp-af-header.cbp-af-header-shrink nav a {
+        line-height: 60px;
+    }
+
+    .cbp-af-header.cbp-af-header-shrink h1 {
+        font-size: 2em;
+    }
+
+    .cbp-af-header.cbp-af-header-shrink nav a {
+        font-size: 1.2em;
+    }
+
+}
+
+    @media screen and (max-width: 992px) {
 
     .cbp-af-header h1
     {
@@ -128,21 +161,42 @@
     }
 }
 
-@media screen and (max-width: 992px){
+@media screen and (max-width: 500px){
+    .cbp-af-header {
+/*        height: */
+    }
     .cbp-af-header h1 {
-        font-size:2.5em;
+        font-size:1.5em;
+        line-height:50px;
+    }
+    .cbp-af-header.cbp-af-header-shrink h1 {
+        font-size:1.1em;
+        line-height:25px;
+    }
+    .cbp-af-header nav a.topLink {
+        line-height:35px;
     }
 }
 
-@media screen and (max-width: 32.25em) {
-    .cbp-af-header nav a {
-        font-size: 1em;
+@media screen and (max-width: 400px){
+    .cbp-af-header {
+        /*height: 100px;*/
     }
-}
-
-@media screen and (max-width: 24em) {
-    .cbp-af-header nav a,
-    .cbp-af-header.cbp-af-header-shrink nav a {
-        line-height: 30px;
+    .cbp-af-header h1 {
+        font-size:1.5em;
+        line-height:50px;
+    }
+    .cbp-af-header.cbp-af-header-shrink
+    {
+        height:100px;
+    }
+    .cbp-af-header.cbp-af-header-shrink h1 {
+        display:none;
+        font-size:1.1em;
+        line-height:25px;
+    }
+    .cbp-af-header nav a.topLink {
+        font-weight:400;
+        line-height:35px;
     }
 }
