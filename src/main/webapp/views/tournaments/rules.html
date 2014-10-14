@@ -25,7 +25,7 @@
             </ol>
         </div>
     </div>
-<button ladda="rulesCtrl.rulesLoading" data-style="expand-right" ng-show="rulesCtrl.showSave" class="btn btn-info btn-lg" style="position:fixed; bottom:50px; right:100px;" ng-click="rulesCtrl.saveRules()">Save</button>
+<button ladda="rulesCtrl.rulesLoading" data-style="expand-right" ng-show="rulesCtrl.showSave" class="btn btn-info btn-lg fixedSaveButton" ng-click="rulesCtrl.saveRules()">Save</button>
 
 <div ng-repeat="header in tour.details.rules track by $index" class="col-md-12 well">
     <h2>{{header.title}}</h2>

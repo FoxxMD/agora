@@ -36,7 +36,7 @@
         </ol>
     </div>
 </div>
-<button ladda="prizesCtrl.prizesLoading" data-style="expand-right" ng-show="prizesCtrl.showSave" class="btn btn-info btn-lg" style="position:fixed; bottom:50px; right:100px;" ng-click="prizesCtrl.savePrizes()">Save</button>
+<button ladda="prizesCtrl.prizesLoading" data-style="expand-right" ng-show="prizesCtrl.showSave" class="btn btn-info btn-lg fixedSaveButton" ng-click="prizesCtrl.savePrizes()">Save</button>
 
 <div ng-repeat="header in tour.details.prizes track by $index" class="col-md-12 well">
     <h2>{{header.title}}</h2>
