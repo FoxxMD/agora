@@ -14,7 +14,7 @@ function notify($rootScope, toaster)
         {
             var notification = {};
             $rootScope.$on('closeNotification', function(){
-                notification.dismiss();
+                toaster.clear();
             });
             $rootScope.$on('notify',function(event, type, message, time, notificationType)
             {

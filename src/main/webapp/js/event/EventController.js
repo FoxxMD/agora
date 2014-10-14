@@ -26,7 +26,7 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
     });
     //This is terrible and I feel bad for doing it.
     //So sue me.
-    $(document).on('click', '.ns-box .reminderButton', function(){
+    $(document).on('click', '.reminderButton', function(){
         $localStorage.reminders[Account.user().id][that.event.id] = true;
         $scope.$apply();
         $scope.$emit('closeNotification');
