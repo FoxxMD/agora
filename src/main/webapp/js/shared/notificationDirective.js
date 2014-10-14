@@ -4,45 +4,26 @@
 angular.module('gtfest')
 .directive('notify', notify);
 // @ngInject
-function notify($rootScope)
+function notify($rootScope, toaster)
 {
     return {
         scope:true,
         restrict:'E',
+        templateUrl:'views/shared/toaster.html',
         link: function(scope,elem,attrs)
         {
             var notification = {};
             $rootScope.$on('closeNotification', function(){
                 notification.dismiss();
             });
-            //time is measured in milliseconds
             $rootScope.$on('notify',function(event, type, message, time, notificationType)
             {
-                var icon = 'fa-lightbulb-o';
-                switch(type) {
-                    case 'important':
-                        icon = 'fa-exclamation-circle';
-                        type = 'notice';
-                        break;
-                    case 'warning':
-                        icon = 'fa-warning';
-                        break;
-                    case 'error':
-                        icon = 'fa-close';
-                        break;
-                }
-                notification = new NotificationFx({
-                    message : '<i class="fa '+icon+' fa-2x"></i><p>'+ message +'</p>',
-                    layout : notificationType || 'bar',
-                    effect : notificationType ? 'slidebottom' : 'slidetop',
-                    type : type, // notice, warning or error,
-                    ttl: time == undefined ? 6000 : time,
-                    wrapper: document.body
-                });
-                // show the notification
-                notification.show();
+                if(type == 'notice')
+                    type = 'note';
+
+                toaster.pop(type, type, message, time == undefined ? 6000 : time, 'trustedHtml');
             });
         }
     }
 }
-notify.$inject = ["$rootScope"];
+notify.$inject = ["$rootScope", "toaster"];
