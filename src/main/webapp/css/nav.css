@@ -144,8 +144,19 @@ body,
   color: #fff;
 }
 .st-effect-2.st-menu-open .st-pusher {
-  -webkit-transform: translate3d(300px, 0, 0);
-  transform: translate3d(300px, 0, 0);
+/*  -webkit-transform: translate3d(300px, 0, 0);
+  transform: translate3d(300px, 0, 0);*/
+    -webkit-transform: translate(300px, 0);
+    transform: translate(300px, 0);
+    transform-style: flat;
+}
+.headerWrapper
+{
+    transition: transform 0.5s;
+    overflow:hidden;
+}
+.st-effect-2.st-menu-open .headerWrapper {
+    -ms-transform: translate(300px,0);
 }
 
 .st-effect-2.st-menu {
