@@ -8,9 +8,9 @@ function smartMenu($rootScope, Account, Events){
         restrict: 'E',
         scope: true,
         controllerAs:'smartMenu',
-        controller: function(){
+        controller: /*@ngInject*/ ["$scope", function($scope){
 
-        },
+        }],
         link: function(scope, elem, attrs, control)
         {
             var letter = null;

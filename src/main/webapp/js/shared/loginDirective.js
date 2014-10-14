@@ -11,7 +11,7 @@ function login(Account, $rootScope) {
         restrict: 'E',
         scope:'true',
         controllerAs: 'loginCon',
-        controller: function ($scope) {
+        controller: /*@ngInject*/ ["$scope", function ($scope) {
             $scope.tryLogin = function () {
                 $scope.$broadcast('show-errors-check-validity');
                 if ($scope.loginForm.$valid) {
@@ -43,7 +43,7 @@ function login(Account, $rootScope) {
                     });
                 }
             };
-        }
+        }]
     }
 }
 login.$inject = ["Account", "$rootScope"];

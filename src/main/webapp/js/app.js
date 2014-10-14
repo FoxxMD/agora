@@ -1,4 +1,5 @@
 // Declare app level module which depends on filters, and services
+// @ngInject
 angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'angular-loading-bar', 'ngSanitize','angular-ladda',
         'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree',
@@ -10,9 +11,9 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 abstract: true,
                 controller: 'CNCController as cncCtrl',
                 resolve: {
-                    UAccount: function (Account) {
+                    UAccount: /*@ngInject*/ ["Account", function (Account) {
                         return Account;
-                    }
+                    }]
                 },
                 template: '<div ui-view></div>'
             })
@@ -22,9 +23,9 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 parent: 'index',
                 controller: 'GlobalController as globalCtrl',
                 resolve: {
-                    nothing: function(Events){
+                    nothing: /*@ngInject*/ ["Events", function(Events){
                         Events.setCurrentEvent(undefined);
-                    }
+                    }]
                 }
             })
             /*.state('globalSkeleton.portal', {
@@ -98,7 +99,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     eventId: {}
                 },
                 resolve: {
-                    eventData: function (Events, $stateParams, $state, $q) {
+                    eventData: /*@ngInject*/ ["Events", "$stateParams", "$state", "$q", function (Events, $stateParams, $state, $q) {
                         var deferred = $q.defer();
                         Events.getEvent($stateParams.eventId.toString()).then(function (response) {
                             Events.setCurrentEvent(response.plain());
@@ -108,7 +109,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                             return deferred.reject();
                         });
                         return deferred.promise;
-                    }
+                    }]
                 },
                 abstract: true,
                 controller: 'EventController as eventCtrl',
@@ -126,9 +127,9 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 url: '/schedule',
                 controller:'ScheduleController as scheduleCtrl',
                 resolve: {
-                    tourData: function(Tournaments, $stateParams) {
+                    tourData: /*@ngInject*/ ["Tournaments", "$stateParams", function(Tournaments, $stateParams) {
                       return Tournaments.getTournaments($stateParams.eventId.toString());
-                    }
+                    }]
                 },
                 params: {
                     eventId: {}
@@ -149,7 +150,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 url:'/tournaments/{tournamentId:[0-9]+}',
                 template:'<tournament></tournament>',
                 resolve:{
-                    tournamentData: function(Tournaments, $stateParams, $q, $state) {
+                    tournamentData: /*@ngInject*/ ["Tournaments", "$stateParams", "$q", "$state", function(Tournaments, $stateParams, $q, $state) {
                         var deferred = $q.defer();
                         Tournaments.getTournament($stateParams.eventId.toString(), $stateParams.tournamentId.toString()).then(function(response)
                         {
@@ -161,7 +162,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                             return deferred.reject();
                         });
                         return deferred.promise;
-                    }
+                    }]
                 },
                 params:{
                     eventId:{},
@@ -228,7 +229,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 templateUrl:'/views/guilds/guild.html',
                 controller:'GuildController as guildCtrl',
                 resolve:{
-                    guildData: function(Guilds, $stateParams, $state, $q) {
+                    guildData: /*@ngInject*/ ["Guilds", "$stateParams", "$state", "$q", function(Guilds, $stateParams, $state, $q) {
                         var deferred = $q.defer();
                         Guilds.getGuild($stateParams.guildId.toString()).then(function(response){
                             return deferred.resolve(response);
@@ -238,7 +239,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                             return deferred.reject();
                         });
                         return deferred.promise;
-                    }
+                    }]
                 }
             })
             .state('eventSkeleton.users',{
@@ -255,7 +256,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     userId:{}
                 },
                 resolve: {
-                    userData: function(Account, Events, $stateParams, $state, $q){
+                    userData: /*@ngInject*/ ["Account", "Events", "$stateParams", "$state", "$q", function(Account, Events, $stateParams, $state, $q){
                         if(Account.isLoggedIn() && $stateParams.userId == Account.user().id)
                            return Account.user();
                         else {
@@ -268,7 +269,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                             });
                             return deferred.promise;
                         }
-                    }
+                    }]
                 },
                 templateUrl:'/views/users/profile.html',
                 controller:'ProfileController as profileCtrl'
@@ -305,7 +306,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                 params: {
                     token: {}
                 },
-                controller: function ($rootScope, Account, $stateParams, $state, $location) {
+                controller: /*@ngInject*/ ["$rootScope", "Account", "$stateParams", "$state", "$location", function ($rootScope, Account, $stateParams, $state, $location) {
                     Account.confirmRegistration($stateParams.token).then(function (response) {
                         $rootScope.$broadcast('notify', 'notice', 'Account confirmation is complete! Please login.');
                         if (response !== undefined)
@@ -316,7 +317,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     }, function () {
                         $location.url('/');
                     });
-                },
+                }],
                 parent: 'globalSkeleton'
             })
             .state('globalSkeleton.passwordreset', {
@@ -325,7 +326,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                     token:{}
                 },
                 templateUrl:'/views/shared/passwordReset.html',
-                controller: function($scope, $stateParams, Account, $location, $rootScope) {
+                controller: /*@ngInject*/ ["$scope", "$stateParams", "Account", "$location", "$rootScope", function($scope, $stateParams, Account, $location, $rootScope) {
                     Account.validateForgottenPasswordToken($stateParams.token).then(function(){
                         $scope.passwordData = {
                             token: $stateParams.token
@@ -346,7 +347,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
                             })
                         }
                     }
-                }
+                }]
             })
             .state('globalSkeleton.account', {
                 url:'/account',
@@ -414,7 +415,7 @@ angular.module('gtfest', ['ngResource', 'ui.bootstrap', 'restangular', 'ui.route
             $analyticsProvider.withAutoBase(true);  /* Records full path */
 
     }]);
-
+// @ngInject
 angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state","editableOptions", "editableThemes",
     function ($rootScope, Restangular, Account, $urlRouter, $location, $state, editableOptions, editableThemes) {
 

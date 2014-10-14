@@ -10,7 +10,7 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account, Events) {
         restrict:'E',
         scope:'true',
         controllerAs:'guildsCtrl',
-        controller: function(){
+        controller: /*@ngInject*/ ["$scope", function($scope){
             var that = this,
                 pageNo = 1;
             this.guildCollection = [];
@@ -83,7 +83,7 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account, Events) {
                 }
                 return passed;
             };
-        },
+        }],
         link: function(scope, elem, attrs){
             scope.guildsCtrl.tryCreateGuild = function(form){
                 Guilds.createGuild(scope.guildsCtrl.createGuildData).then(function(tid){

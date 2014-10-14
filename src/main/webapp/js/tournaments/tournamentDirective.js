@@ -9,7 +9,7 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
         restrict: 'E',
         templateUrl: '/views/tournaments/tournament.html',
         controllerAs: 'tourCtrl',
-        controller: function ($scope) {
+        controller: /*@ngInject*/ ["$scope", function ($scope) {
             var that = this;
             this.tour = Tournaments.getCurrent();
             console.log(that.tour.plain());
@@ -27,7 +27,7 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             this.updateTime = function() {
               return Tournaments.update({timeStart: that.tour.details.timeStart, timeEnd: that.tour.details.timeEnd});
             }
-        },
+        }],
         link: function (scope, elem, attrs) {
             var content = $(document).find('.st-content')[0],
                 tabs = $(elem).find('.tabs')[0],

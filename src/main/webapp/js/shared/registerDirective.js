@@ -11,7 +11,7 @@ function register(Account, $stateParams, $rootScope) {
         restrict: 'E',
         scope:'true',
         controllerAs: 'registerCtrl',
-        controller: function ($scope) {
+        controller: /*@ngInject*/ ["$scope", function ($scope) {
             var that = this;
             $scope.tryRegister = function () {
                 $scope.registerLoading = true;
@@ -29,7 +29,7 @@ function register(Account, $stateParams, $rootScope) {
                        });
                 }
             }
-        }
+        }]
     }
 }
 register.$inject = ["Account", "$stateParams", "$rootScope"];

@@ -10,7 +10,7 @@ function users(Users, Events, $state, $stateParams, Account, $q){
         restrict:'E',
         scope:'true',
         controllerAs:'usersCtrl',
-        controller: function($scope){
+        controller: /*@ngInject*/ ["$scope", function($scope){
             var that = this;
             this.account = Account;
             this.state = $state;
@@ -103,7 +103,7 @@ function users(Users, Events, $state, $stateParams, Account, $q){
                     user.paidLoading = false;
                 });
             }
-        },
+        }],
         link: function(scope, elem, attrs){
 
         }

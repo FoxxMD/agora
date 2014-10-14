@@ -118,13 +118,13 @@ module.exports = function (grunt) {
                 options: {
                     port:9000,
                     protocol: 'http',
-                    base: '<%= yeoman.dev %>',
+                    base: '<%= yeoman.dist %>',
                     livereload: 35729,
                     middleware: function (connect) {
                         return [
                             proxySnippet,
                             modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.gif\\.jpg$ /index.html [L]']),
-                            connect.static(require('path').resolve('src/main/webapp/'))
+                            connect.static(require('path').resolve('src/main/webapp/build/dist'))
                         ];
                     }
                 }
@@ -228,6 +228,9 @@ module.exports = function (grunt) {
             }
         },
         ngAnnotate: {
+            options:{
+                sourcemap:true
+            },
             dev: {
                 files: [
                     {
@@ -244,14 +247,9 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: '<%= yeoman.app %>/js/',
                         src: ['**/*.js', '!**/gtresources/**'],
-                        dest: '<%= yeoman.dist %>/js/'
+                        dest: '<%= yeoman.app %>/js/'
                     }
                 ]
-            }
-        },
-        nodemon:{
-            dist:{
-                script:'server.js'
             }
         }
     });
@@ -266,7 +264,7 @@ module.exports = function (grunt) {
                 'watch'
             ]);
     });
-/*    grunt.registerTask('server:dist', function (target) {
+    grunt.registerTask('server:dist', function (target) {
         return  grunt.task.run([
             'clean:dist',
             'less:dev',
@@ -277,22 +275,7 @@ module.exports = function (grunt) {
             'concat:generated',
             'cssmin:generated',
             'uglify:generated',
-            'usemin',
-            'configureProxies',
-            'connect:dist',
-            'watch'
+            'usemin'
         ]);
-    });*/
-    grunt.registerTask('server:dist', function (target) {
-        grunt.task.run([
-            'less:dev',
-            'wiredep',
-            'ngAnnotate:dev'
-        ]);
-
-
-        grunt.event.once('connect.tests.listening', function(host, port) {
-            grunt.log.writeln('Running at: ' + host + port);
-        });
     });
 };

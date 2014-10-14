@@ -19,7 +19,7 @@ function timeEditor($q) {
             multimode: '=',
             horizontal: '='
         },
-        controller: function ($scope) {
+        controller: /*@ngInject*/ ["$scope", function ($scope) {
             var that = this;
             this.editable = $scope.starteditable || false;
 
@@ -48,7 +48,7 @@ function timeEditor($q) {
                 });
             };
 
-        },
+        }],
         link: function (scope, element, attrs) {
         }
 

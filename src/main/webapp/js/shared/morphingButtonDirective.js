@@ -13,9 +13,9 @@ function morphButton($timeout){
         scope: {
             title:'@'
         },
-        controller:function(){
+        controller: /*@ngInject*/ ["$scope", function($scope){
 
-        },
+        }],
         link:function(scope, elem, attrs)
         {
             var morphButton = new UIMorphingButton( elem[0]);

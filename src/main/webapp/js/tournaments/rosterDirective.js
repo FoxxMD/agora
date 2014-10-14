@@ -9,7 +9,7 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
         restrict: 'E',
         templateUrl: '/views/tournaments/roster.html',
         controllerAs: 'rosterCtrl',
-        controller: function ($scope) {
+        controller: /*@ngInject*/ ["$scope", function ($scope) {
             var that = this;
             this.tour = Tournaments.getCurrent();
             this.user = Account.user();
@@ -192,7 +192,7 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             this.guildTip = function(){
                 $scope.$emit('notify','notice',"You can't join this team because you are not part of the Guild! Visit the guild's page to join.",5000);
             }
-        },
+        }],
         link: function (scope, elem, attrs) {
         }
     }

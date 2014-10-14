@@ -12,7 +12,7 @@ function scroller($timeout){
         controllerAs:'animatedScrollCtrl',
         transclude: true,
         replace: true,
-        controller: function($scope) {},
+        controller: /*@ngInject*/ ["$scope", function($scope) {}],
         link: function(scope, elem, attr){
             var thatelem = elem;
             var anim = undefined;

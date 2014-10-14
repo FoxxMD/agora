@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="gtfest">
+<html lang="en" ng-app="gtfest" ng-strict-di>
 <head>
     <base href="/"></base>
     <meta charset="utf-8">
@@ -9,13 +9,14 @@
     <title>Gtfest</title>
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="lib/angular-loading-bar/build/loading-bar.css" />
+    <link rel="stylesheet" href="lib/angular-loading-bar/build/loading-bar.min.css" />
     <link rel="stylesheet" href="lib/angular-xeditable/dist/css/xeditable.css" />
     <link rel="stylesheet" href="lib/angular-toggle-switch/angular-toggle-switch.css" />
     <link rel="stylesheet" href="lib/fullcalendar/dist/fullcalendar.css" />
     <link rel="stylesheet" href="lib/ng-tags-input/ng-tags-input.min.css" />
-    <link rel="stylesheet" href="lib/flatstrap3/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="lib/flatstrap3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="lib/angular-ui-tree/dist/angular-ui-tree.min.css" />
+    <link rel="stylesheet" href="lib/ladda/dist/ladda-themeless.min.css" />
     <!-- endbower -->
     <link href="css/toaster.css" rel="stylesheet">
     <link href="css/tileHover.css" rel="stylesheet">
@@ -36,7 +37,6 @@
     <link href="css/header.css" rel="stylesheet">
     <link href="css/nav.css" rel="stylesheet">
     <link href="css/morphingButton.css" rel="stylesheet">
-    <link href="css/ladda-themeless.min.css" rel="stylesheet">
     <!-- endbuild -->
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -48,20 +48,20 @@
     <!-- build:js js/vendor.js -->
     <!-- bower:js -->
     <script src="lib/es5-shim/es5-shim.js"></script>
-    <script src="lib/jquery/dist/jquery.js"></script>
-    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-resource/angular-resource.js"></script>
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular-resource/angular-resource.min.js"></script>
     <script src="lib/lodash/dist/lodash.compat.js"></script>
-    <script src="lib/restangular/dist/restangular.js"></script>
-    <script src="lib/ngstorage/ngStorage.js"></script>
-    <script src="lib/angular-bootstrap-show-errors/src/showErrors.js"></script>
-    <script src="lib/angular-animate/angular-animate.js"></script>
-    <script src="lib/angular-ui-utils/ui-utils.js"></script>
-    <script src="lib/angular-loading-bar/build/loading-bar.js"></script>
-    <script src="lib/angular-sanitize/angular-sanitize.js"></script>
-    <script src="lib/angular-payments/lib/angular-payments.js"></script>
-    <script src="lib/angular-xeditable/dist/js/xeditable.js"></script>
-    <script src="lib/angular-toggle-switch/angular-toggle-switch.js"></script>
+    <script src="lib/restangular/dist/restangular.min.js"></script>
+    <script src="lib/ngstorage/ngStorage.min.js"></script>
+    <script src="lib/angular-bootstrap-show-errors/src/showErrors.min.js"></script>
+    <script src="lib/angular-animate/angular-animate.min.js"></script>
+    <script src="lib/angular-ui-utils/ui-utils.min.js"></script>
+    <script src="lib/angular-loading-bar/build/loading-bar.min.js"></script>
+    <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="lib/angular-payments/lib/angular-payments.min.js"></script>
+    <script src="lib/angular-xeditable/dist/js/xeditable.min.js"></script>
+    <script src="lib/angular-toggle-switch/angular-toggle-switch.min.js"></script>
     <script src="lib/moment/moment.js"></script>
     <script src="lib/fullcalendar/dist/fullcalendar.js"></script>
     <script src="lib/get-style-property/get-style-property.js"></script>
@@ -76,51 +76,42 @@
     <script src="lib/masonry/masonry.js"></script>
     <script src="lib/imagesloaded/imagesloaded.js"></script>
     <script src="lib/angular-masonry/angular-masonry.js"></script>
-    <script src="lib/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
-    <script src="lib/ng-tags-input/ng-tags-input.js"></script>
-    <script src="lib/flatstrap3/dist/js/bootstrap.js"></script>
-    <script src="lib/angular-ui-tree/dist/angular-ui-tree.js"></script>
+    <script src="lib/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+    <script src="lib/ng-tags-input/ng-tags-input.min.js"></script>
+    <script src="lib/flatstrap3/dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
     <script src="lib/jquery-waypoints/waypoints.js"></script>
     <script src="lib/SHA-1/sha1.js"></script>
-    <script src="lib/angulartics/src/angulartics.js"></script>
-    <script src="lib/angulartics/src/angulartics-adobe.js"></script>
-    <script src="lib/angulartics/src/angulartics-chartbeat.js"></script>
-    <script src="lib/angulartics/src/angulartics-flurry.js"></script>
-    <script src="lib/angulartics/src/angulartics-ga-cordova.js"></script>
-    <script src="lib/angulartics/src/angulartics-ga.js"></script>
-    <script src="lib/angulartics/src/angulartics-gtm.js"></script>
-    <script src="lib/angulartics/src/angulartics-kissmetrics.js"></script>
-    <script src="lib/angulartics/src/angulartics-mixpanel.js"></script>
-    <script src="lib/angulartics/src/angulartics-piwik.js"></script>
-    <script src="lib/angulartics/src/angulartics-scroll.js"></script>
-    <script src="lib/angulartics/src/angulartics-segmentio.js"></script>
-    <script src="lib/angulartics/src/angulartics-splunk.js"></script>
-    <script src="lib/angulartics/src/angulartics-woopra.js"></script>
-    <script src="lib/angulartics/src/angulartics-marketo.js"></script>
-    <script src="lib/angulartics/src/angulartics-intercom.js"></script>
+    <script src="lib/angulartics/dist/angulartics.min.js"></script>
+    <script src="lib/angulartics/dist/angulartics-ga.min.js"></script>
+    <script src="lib/rangy-official/rangy-core.min.js"></script>
+    <script src="lib/spin.js/spin.js"></script>
+    <script src="lib/ladda/dist/ladda.min.js"></script>
+    <script src="lib/angular-ladda/dist/angular-ladda.min.js"></script>
+    <script src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="lib/jquery-ui/jquery-ui.min.js"></script>
+    <script src="lib/AngularJS-Toaster/toaster.js"></script>
+    <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
     <!-- endbower -->
-  <script src="js/gtresources/jquery-ui.min.js"></script>
     <script src="js/gtresources/calendar.js"></script>
     <script src="js/gtresources/modernizr.custom.js"></script>
     <script src="js/gtresources/classie.js"></script>
-    <script src="js/gtresources/notificationFx.js"></script>
     <script src="js/gtresources/cbpHorizontalSlideOutMenu.js"></script>
-    <script src="js/gtresources/angular-ui-router.min.js"></script>
     <script src="js/gtresources/morphingButton.js"></script>
     <script src="js/gtresources/hallo.js"></script>
-    <script src="js/gtresources/ui-bootstrap-tpls.js"></script>
-    <script src="js/gtresources/rangy-core.min.js"></script>
-    <script src="js/gtresources/spin.min.js"></script>
-    <script src="js/gtresources/ladda.min.js"></script>
-    <script src="js/gtresources/angular-ladda.min.js"></script>
     <script src="js/gtresources/AnimOnScroll.js"></script>
     <script src="js/gtresources/toucheffects.js"></script>
-    <script src="js/gtresources/toaster.js"></script>
     <script src="https://js.stripe.com/v2/"></script>
     <!-- endbuild -->
 
-    <!-- build:js js/app.js  -->
+    <!-- build:js js/application.js  -->
     <script src="js/app.js"></script>
+    <script src="js/services/account.js"></script>
+    <script src="js/services/guild.js"></script>
+    <script src="js/services/game.js"></script>
+    <script src="js/services/event.js"></script>
+    <script src="js/services/user.js"></script>
+    <script src="js/services/tournament.js"></script>
     <script src="js/shared/utilityDirectives.js"></script>
     <script src="js/shared/infiniteScrollerAnimated.js"></script>
     <script src="js/shared/cncController.js"></script>
@@ -146,12 +137,6 @@
     <script src="js/shared/notificationDirective.js"></script>
     <script src="js/shared/guildGamesDirective.js"></script>
     <script src="js/shared/morphingButtonDirective.js"></script>
-    <script src="js/services/account.js"></script>
-    <script src="js/services/guild.js"></script>
-    <script src="js/services/game.js"></script>
-    <script src="js/services/event.js"></script>
-    <script src="js/services/user.js"></script>
-    <script src="js/services/tournament.js"></script>
     <script src="js/shared/loginDirective.js"></script>
     <script src="js/shared/timeEditorDirective.js"></script>
     <script src="js/shared/sideMenuDirective.js"></script>

@@ -10,9 +10,9 @@ function animatedheader(Events, $rootScope, Games){
         templateUrl:'views/shared/animatedheader.html',
         restrict:'E',
        controllerAs:'headerCtrl',
-        controller: function($scope){
+        controller: /*@ngInject*/ ["$scope", function($scope){
             this.games = Games;
-        },
+        }],
         link: function(scope,elem,attrs)
         {
             var docElem = document.documentElement,

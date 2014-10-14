@@ -22,7 +22,8 @@ nconf.defaults({
 //If anything else(prod) uses 80 as default redirect, 443 as main (assuming HTTPS)
 var env = nconf.get('env'),
     redirectPort = (env == 'dev') ? nconf.get('redirectPort') || '8000' : nconf.get('redirectPort') || '80',
-    mainPort = (env == 'dev') ? nconf.get('mainPort') || '9000' : nconf.get('redirectPort') || '443';
+    mainPort = (env == 'dev') ? nconf.get('mainPort') || '9000' : nconf.get('redirectPort') || '443',
+    basePath = (env == 'dev') ? 'src/main/webapp/' : 'src/main/webapp/build/dist/';
 
 console.log('Environment: ' + env);
 console.log('Using port ' + redirectPort + ' as redirect and port ' + mainPort + ' as main.');
@@ -77,7 +78,7 @@ var app = connect()
      */
     .use(modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.gif\\.jpg$ /index.html [L]']))
     //Make node act as a static server
-    .use(serveStatic(require('path').resolve('src/main/webapp/')));
+    .use(serveStatic(require('path').resolve(basePath)));
 
 //create main server
 

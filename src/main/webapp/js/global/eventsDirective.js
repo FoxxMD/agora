@@ -10,7 +10,7 @@ function eventsDirective(Events, $state, Account, $timeout, $q){
         templateUrl:'/views/global/events.html',
         restrict:'E',
         controllerAs:'eventsCtrl',
-        controller: function($scope){
+        controller: /*@ngInject*/ ["$scope", function($scope){
             var that = this;
             var pageNo = 1;
             this.state = $state;
@@ -83,7 +83,7 @@ function eventsDirective(Events, $state, Account, $timeout, $q){
                     $state.go('eventSkeleton.event',{eventId:response});
                 });
             };
-        },
+        }],
         link: function(scope, elem, attrs) {
         }
     }

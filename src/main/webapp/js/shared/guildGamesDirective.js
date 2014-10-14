@@ -13,7 +13,7 @@ function teamGames(Games, $rootScope) {
         },
         restrict: 'E',
         controllerAs: 'tgCtrl',
-        controller: function ($scope) {
+        controller: /*@ngInject*/ ["$scope", function ($scope) {
             var that = this;
             if($scope.gamearray == undefined)
                 $scope.gamearray = [];
@@ -31,7 +31,7 @@ function teamGames(Games, $rootScope) {
                 that.gameCollection.push(g);
                 $rootScope.$broadcast('adjustMorphHeight');
             }
-        }
+        }]
     }
 }
 teamGames.$inject = ["Games", "$rootScope"];

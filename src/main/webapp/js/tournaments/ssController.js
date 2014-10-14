@@ -156,4 +156,3 @@ function ssC($scope, Account, $q, eventData, $rootScope, Events, $timeout, Tourn
     }
 }
 ssC.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$timeout", "Tournaments", "$stateParams"];
-prizesC.$inject = ["$scope", "Account", "$q", "eventData", "$rootScope", "Events", "$timeout", "Tournaments", "$stateParams"];

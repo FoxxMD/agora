@@ -10,7 +10,7 @@ function sidebar($rootScope, $timeout, Account, Events, $stateParams){
         templateUrl:'views/shared/sidebar.html',
         restrict:'E',
         controllerAs: 'sidebar',
-        controller: function($scope){
+        controller: /*@ngInject*/ ["$scope", function($scope){
             this.account = Account;
             this.event = function() {
                 return Events.getCurrentEvent();
@@ -28,7 +28,7 @@ function sidebar($rootScope, $timeout, Account, Events, $stateParams){
             this.adminToggleVisible = function(){
                 return Account.isAdmin() || (Events.getCurrentEvent() != undefined ? Account.isEventAdmin(Events.getCurrentEvent().id) : false);
             }
-        },
+        }],
         link: function(scope, elem, attrs)
         {
             $rootScope.toggleMenu = function () {
