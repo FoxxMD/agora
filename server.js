@@ -42,7 +42,23 @@ if (env == 'prod') {
 
 
 //Configure tls options
+    ca = [];
+    chain = fs.readFileSync("ca.pem", 'utf8');
+    chain = chain.split("\n");
+    cert = [];
+    for (_i = 0, _len = chain.length; _i < _len; _i++) {
+        line = chain[_i];
+        if (!(line.length !== 0)) {
+            continue;
+        }
+        cert.push(line);
+        if (line.match(/-END CERTIFICATE-/)) {
+            ca.push(cert.join("\n"));
+            cert = [];
+        }
+    }
     var secureOptions = {
+        ca: ca,
         key: fs.readFileSync('key.pem'),
         cert: fs.readFileSync('cert.pem')
     };
