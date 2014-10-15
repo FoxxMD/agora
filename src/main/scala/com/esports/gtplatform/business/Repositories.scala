@@ -105,6 +105,14 @@ class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericM
   //def getByEvent(id: Int): List[User] = queryDao.query(select from EventUserEntity where EventUserEntity.event.id === id)
 }
 
+trait UserIdentityRepo extends GenericMRepo[UserIdentity] {
+    def getByUser(user: User with Persisted): Option[UserIdentity with Persisted]
+}
+class UserIdentityRepository(returnEntity: Entity[Int,Persisted, UserIdentity]) extends GenericMRepository[UserIdentity](returnEntity) with UserIdentityRepo
+{
+    def getByUser(user: User with Persisted): Option[UserIdentity with Persisted] = queryDao.querySingleResult(select from UserIdentityEntity where UserIdentityEntity.user === user)
+}
+
 trait GuildRepo extends GenericMRepo[Guild]
 {
   def getByName(name: String): Option[Guild]

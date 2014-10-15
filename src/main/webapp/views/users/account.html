@@ -8,26 +8,26 @@
 
                     <div class="form-group">
                         <strong>Email:</strong> <a editable-text="accountCtrl.user.email"
-                                                   onaftersave="accountCtrl.changed = true" e-required>{{accountCtrl.user.email}}</a>
+                                                   onaftersave="accountCtrl.updateEmail($data)" e-required>{{accountCtrl.user.email}}</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-12">
                 <div class="well">
-                    <form class="form">
+                    <form class="form" name="passwordForm" ng-submit="accountCtrl.changePassword(passwordForm)">
                         <h3>Change Password</h3>
 
                         <div class="form-group" show-errors>
-                            <input class="form-control" ng-model="accountCtrl.passwordChange.current"
+                            <input class="form-control" type="password" ng-model="accountCtrl.passwordChange.current"
                                    placeholder="Current Password" name="currentPassword" required/>
                         </div>
                         <div class="form-group" show-errors>
-                            <input class="form-control" ng-model="accountCtrl.passwordChange.new"
+                            <input class="form-control" type="password" ng-model="accountCtrl.passwordChange.new"
                                    placeholder="New Password"
                                    name="newPassword" required/>
                         </div>
                         <div class="form-group" show-errors>
-                            <input class="form-control" ng-model="accountCtrl.passwordChange.newConfirm"
+                            <input class="form-control" type="password" ng-model="accountCtrl.passwordChange.newConfirm"
                                    name="confirmNewPassword" placeholder="Confirm New Password" required/>
                         </div>
                         <button type="submit" class="btn btn-info">Change Password</button>
@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+<!--    <div class="col-md-6">
         <div class="well">
             <h3>Connected Accounts</h3>
         </div>
@@ -45,7 +45,7 @@
         <div class="well">
             <h3>My Payments</h3>
         </div>
-    </div>
+    </div>-->
 </div>
 <div class="row">
     <div class="col-md-12">

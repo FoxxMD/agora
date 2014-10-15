@@ -27,6 +27,12 @@ angular.module('gtfest')
         this.getUser = function (userId) {
             return users.one(userId).get();
         };
+        this.updateUser = function(userId, user) {
+            return users.one(userId).patch(user);
+        };
+        this.updateUserPassword = function(userId, passwordData) {
+          return users.one(userId).post('password', passwordData);
+        };
         this.isEventAdmin = function (user, eventId) {
             var validEvents = $.grep(user.events, function (e) {
                 return e.event.id == eventId && (e.isAdmin || e.isModerator)

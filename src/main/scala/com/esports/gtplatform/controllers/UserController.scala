@@ -1,11 +1,16 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
+import com.esports.gtplatform.Utilities.PasswordSecurity
+import com.esports.gtplatform.business.UserIdentityRepo
+import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
-import models.GamePlatform
 import models.GamePlatform.{GamePlatform}
+import models.UserIdentity
+import org.json4s.JsonDSL._
 import models.{GamePlatform, UserPlatformProfile}
-import org.scalatra.Ok
+import org.json4s.Extraction
+import org.scalatra.{InternalServerError, Ok}
 
 /**
  * Created by Matthew on 8/6/2014.
@@ -14,7 +19,8 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
   get("/:id") {
     if (params("id") == "me") {
       auth()
-        Ok(user)
+        val jsonUser = Extraction.decompose(user) merge render("email" -> user.email)
+        Ok(jsonUser)
     }
     else {
       Ok(requestUser.get)
@@ -83,4 +89,26 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     userRepo.update(requestUser.get, requestUser.get.removeGameProfile(platformType).addGameProfile(editedPlatform))
     Ok()
   }
+    post("/:id/password") {
+        val currentPass = parsedBody.\("current").extract[String]
+        val newPass = parsedBody.\("new").extract[String]
+
+        val identRepo = inject[UserIdentityRepo]
+
+        identRepo.getByUser(requestUser.get) match {
+            case Some(ident: UserIdentity with Persisted) =>
+                if(PasswordSecurity.validatePassword(currentPass, ident.password))
+                {
+                    val newIdent = ident.copy(password = PasswordSecurity.createHash(newPass))
+                    identRepo.update(ident, newIdent)
+                    Ok()
+                }
+                else{
+                    halt(400, "Current password was not correct.")
+                }
+            case None =>
+            logger.warn("No identity found for User " + requestUser.get.id)
+            InternalServerError("Could not find identity for requested user. Something's wrong!")
+        }
+    }
 }
