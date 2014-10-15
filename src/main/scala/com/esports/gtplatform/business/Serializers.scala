@@ -91,7 +91,7 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
         implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntitySerializer
         ("event" ->
             ("name" -> eu.event.name) ~
-                ("id" -> eu.event.id)) ~
+            ("id" -> eu.event.id)) ~
             //("date" -> Extraction.decompose(eu.event.details.timeStart)) ~
             ("isPresent" -> eu.isPresent) ~
             ("isAdmin" -> eu.isAdmin) ~
@@ -100,7 +100,8 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
             ("globalHandle" -> eu.user.globalHandle) ~
             ("id" -> eu.user.id) ~
             ("platforms" -> Extraction.decompose(eu.user.gameProfiles)) ~
-            ("guilds" -> Extraction.decompose(eu.user.guilds)) //TODO clean this shit up
+            ("guilds" -> Extraction.decompose(eu.user.guilds)) ~
+            ("tournaments" -> eu.user.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository, Option(eu.event)).size)//TODO clean this shit up
     case tu: TournamentUser =>
         implicit val formats: Formats = DefaultFormats + new EntityDetailsSerializer + new EntityAuxillarySerializer
         ("name" -> tu.user.globalHandle) ~
@@ -135,19 +136,17 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
                 ("tournaments" -> {
                     val tRepo = new TeamRepository
                     /*Extraction.decompose(u.getAssociatedTournaments(new TournamentUserRepository))*/
-                    val utour = u.getAssociatedTournaments(new TournamentUserRepository).map(x => x.tournament)
+                    val utour = u.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository)
 
-                    val ttour = u.guilds.flatMap(u =>
-                        tRepo.getByGuild(u.id)).filter(x =>
-                        x.teamPlayers.exists(p =>
-                            p.user.id == u.id)).map(y =>
-                        y.tournament)
-
-                    (utour ++: ttour).map(x =>
+                    utour.map(x =>
                         ("id" -> x.id) ~
                         ("name" -> x.details.flatMap(u => u.name)) ~
                         ("game" -> x.game.name) ~
-                        ("tournamentType" -> x.tournamentType.name))
+                        ("tournamentType" -> x.tournamentType.name) ~
+                        ("eventId" -> x.event.id) ~
+                        ("teamPlay" -> x.tournamentType.teamPlay) ~
+                        ("users" -> x.users.size) ~
+                        ("teams" -> x.teams.size))
                 })
         )
     case t: Guild =>

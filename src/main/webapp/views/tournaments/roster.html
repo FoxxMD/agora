@@ -40,7 +40,7 @@
     </form>
 </morphing-button>
 
-<button ng-if="!rosterCtrl.tour.tournamentType.teamPlay && (rosterCtrl.tour.users.length < rosterCtrl.tour.details.playerMaxSize || rosterCtrl.isOnRoster)" ladda="rosterCtrl.rosterStatusLoading" data-style="expand-right" class="btn btn-lg"
+<button ng-if="!rosterCtrl.tour.tournamentType.teamPlay && ((rosterCtrl.tour.users.length < rosterCtrl.tour.details.playerMaxSize || rosterCtrl.tour.details.playerMaxSize == 0) || rosterCtrl.isOnRoster)" ladda="rosterCtrl.rosterStatusLoading" data-style="expand-right" class="btn btn-lg"
         ng-click="rosterCtrl.changeRosterStatus()" ng-class="rosterCtrl.isOnRoster ? 'btn-warning' : 'btn-info'">{{rosterCtrl.isOnRoster ? 'Leave' : 'Join Tournament'}}
 </button>
 

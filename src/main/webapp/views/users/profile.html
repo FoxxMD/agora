@@ -118,22 +118,23 @@
             </ul>
             <h4>Tournaments</h4>
             <accordion>
-                <accordion-group heading="1v1 Rust Me Bro">
+                <accordion-group heading="{{tour.name}}" ng-repeat="tour in profileCtrl.user.tournaments | filter:{eventId: that.event.id}">
                     <div class="row">
                         <div class="col-md-6">
                             <strong>Stats</strong>
-                            <ul class="list-unstyled">
-                                <li>Participating with <strong>Team Honkey</strong></li>
-                                <li><strong>Starts</strong> in two days at 11:45am</li>
-                                <li><strong>5 other teams are participating</strong></li>
+                            <ul>
+                                <!--<li>Participating with <strong>Team Honkey</strong></li>-->
+                                <!--<li><strong>Starts</strong> in two days at 11:45am</li>-->
+                                <li ng-if="tour.teamPlay"><strong>{{tour.teams}}</strong> teams are participating.</li>
+                                <li ng-if="!tour.teamPlay"><strong>{{tour.users}}</strong> users are participating.</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
                             <strong>Info</strong>
                             <ul>
-                                <li><strong>Game:</strong> League of Legends</li>
-                                <li><strong>Type:</strong> Round-Robin</li>
-                                <li><strong>Roster Status:</strong> Open!</li>
+                                <li><strong>Game:</strong> {{tour.game}}</li>
+                                <li><strong>Type:</strong> {{tour.tournamentType}}</li>
+                                <!--<li><strong>Roster Status:</strong> Open!</li>-->
                             </ul>
                         </div>
                     </div>
@@ -159,7 +160,25 @@
                     <h4>Tournaments Participated In</h4>
                     <accordion close-other="profileCtrl.openedTournamentAccordion">
                         <accordion-group heading="{{tour.name}}" ng-repeat="tour in profileCtrl.user.tournaments">
-                            Got yer Tournament, {{tour.name}}, with the Id {{tour.id}} right here.
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Stats</strong>
+                                    <ul>
+                                        <!--<li>Participating with <strong>Team Honkey</strong></li>-->
+                                        <!--<li><strong>Starts</strong> in two days at 11:45am</li>-->
+                                        <li ng-if="tour.teamPlay"><strong>{{tour.teams}}</strong> teams are participating.</li>
+                                        <li ng-if="!tour.teamPlay"><strong>{{tour.users}}</strong> users are participating.</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Info</strong>
+                                    <ul>
+                                        <li><strong>Game:</strong> {{tour.game}}</li>
+                                        <li><strong>Type:</strong> {{tour.tournamentType}}</li>
+                                        <!--<li><strong>Roster Status:</strong> Open!</li>-->
+                                    </ul>
+                                </div>
+                            </div>
                         </accordion-group>
                     </accordion>
                     {{profileCtrl.user.tournaments == undefined ? 'None to report!' : ''}} <!--TODO make this .length == 0 once tournaments are included -->

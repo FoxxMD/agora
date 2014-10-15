@@ -29,6 +29,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
         //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
         response.addHeader("ignoreError", "true")
         authUserPass()
+        logger.info("[Phone Home] authentication succeeded for User " + user.id)
         Ok(response.getHeader("Authorization"))
     }
     post("/register") {

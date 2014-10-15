@@ -50,6 +50,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
         module.bind[GenericMRepo[TournamentType]] toSingle new GenericMRepository[TournamentType](TournamentTypeEntity)
         module.bind[GenericMRepo[Tournament]] toSingle new GenericMRepository[Tournament](TournamentEntity)
         module.bind[GenericMRepo[Team]] toSingle new GenericMRepository[Team](TeamEntity)
+        module.bind[TeamUserRepo] toSingle new TeamUserRepository
 
         module.bind[Transaction] toSingle {
             Transaction.default(Transaction.transactionManager(jdbc))

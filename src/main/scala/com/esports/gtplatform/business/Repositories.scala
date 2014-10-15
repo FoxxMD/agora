@@ -162,7 +162,24 @@ trait TeamRepo extends GenericMRepo[Team]
 }
 class TeamRepository extends GenericMRepository[Team](TeamEntity) with TeamRepo {
     //def getByEvent: List[Team] = queryDao.query(select from TeamEntity where TeamEntity.tournament.)
-    def getByGuild(id: Int): List[Team] = queryDao.query(select from TeamEntity where TeamEntity.gid === id)
+    def getByGuild(id: Int): List[Team] = {
+        val te = TeamEntity
+        val ge = GuildEntity
+        //queryDao.query(select from te join (te, te.guild, ge) where ge.id === id)
+        queryDao.query(select from te where te.guildId === id)
+    }
+
+}
+trait TeamUserRepo extends GenericMRepo[TeamUser]{
+    def getByUser(id: Int): List[TeamUser]
+}
+class TeamUserRepository extends GenericMRepository[TeamUser](TeamUserEntity) with TeamUserRepo {
+
+    def getByUser(id: Int): List[TeamUser] = {
+        val tu = TeamUserEntity
+        val ue = UserEntity
+        queryDao.query(select from tu join (tu, tu.user, ue) where ue.id === id)
+    }
 }
 
 trait TournamentUserRepo extends GenericMRepo[TournamentUser]
@@ -170,7 +187,11 @@ trait TournamentUserRepo extends GenericMRepo[TournamentUser]
   def getByUser(u: User): List[TournamentUser]
 }
 class TournamentUserRepository extends GenericMRepository[TournamentUser](TournamentUserEntity) with TournamentUserRepo{
-  def getByUser(u: User): List[TournamentUser] = queryDao.query(select from TournamentUserEntity where TournamentUserEntity.user === u)
+  def getByUser(u: User): List[TournamentUser] = {
+      val tu = TournamentUserEntity
+      val uentity = UserEntity
+      queryDao.query(select from tu join (tu, tu.user, uentity) where uentity.id === u.id)
+  }
 }
 
 trait NonActiveUserIdentityRepo extends GenericMRepo[UserIdentity]

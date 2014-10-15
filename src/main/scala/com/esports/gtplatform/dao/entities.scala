@@ -120,13 +120,13 @@ object TeamEntity extends Entity[Int, SurrogateIntId, Team]("teams") {
     val joinType = column("joinType") to (team => JoinType.toString(team.joinType))
     val tournament = manytoone(TournamentEntity) to (_.tournament)
     val isPresent = column("isPresent") to (_.isPresent)
-    val gid = column("guildId") option (_.guildId)
-    val guild = column("guildOnly") to (_.guildOnly)
+    val guildId = column("guildId") option (_.guildId)
+    val guildOnly = column("guildOnly") to (_.guildOnly)
 
     def constructor(implicit m: ValuesMap) = {
         val cd = new DateTime(m(createdDate) * 1000L, DateTimeZone.UTC)
         val jtype = JoinType.fromString(m(joinType))
-        new Team(name, jtype, tournament, users, cd, isPresent, guild, gid, id) with Stored {
+        new Team(name, jtype, tournament, users, cd, isPresent, guildOnly, guildId, id) with Stored {
         }
     }
 }

@@ -29,7 +29,7 @@
                 <div style="position:absolute;top:0;bottom:0;right:0;left:0;"
                      ng-click="usersCtrl.isGlobal ? usersCtrl.state.go('globalSkeleton.profile',{userId:user.id}) : usersCtrl.state.go('eventSkeleton.profile',{eventId:usersCtrl.stateParams.eventId, userId:user.id})">
                     <h3>{{user.globalHandle}}</h3>
-                    <p>Joined {{user.createdDate.format("M[/]D[/]YYYY")}}</p>
+                    <h4>{{user.tournaments}} Tournaments</h4>
                     <div style="position:absolute; bottom:0">
                         <h4>{{user.guilds.length}} Guilds</h4>
                         <h4>{{user.platforms.length}} platforms</h4>

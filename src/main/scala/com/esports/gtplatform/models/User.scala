@@ -1,6 +1,6 @@
 package models
 
-import com.esports.gtplatform.business.{TournamentUserRepo, EventUserRepo}
+import com.esports.gtplatform.business.{TeamUserRepo, TeamRepo, TournamentUserRepo, EventUserRepo}
 import com.esports.gtplatform.models.Invitee
 import models.GamePlatform.GamePlatform
 import monocle.SimpleLens
@@ -51,7 +51,16 @@ case class User(
   def getTournaments: List[Tournament] = ???
 
   def getAssociatedEvents(repo: EventUserRepo): List[EventUser] = repo.getByUser(this)
-    def getAssociatedTournaments(repo: TournamentUserRepo): List[TournamentUser] = repo.getByUser(this)
+def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, event: Option[Event] = None): List[Tournament] = {
+
+    val allTourneys = repo.getByUser(this).map(x => x.tournament)++trepo.getByUser(this.id).map(x => x.team.tournament)
+    event match {
+        case Some(e: Event) =>
+            allTourneys.filter(x => x.event.id == e.id)
+        case None =>
+            allTourneys
+    }
+}
 
   private[this] val GameProfilesLens: SimpleLens[User, List[UserPlatformProfile]] = SimpleLens[User](_.gameProfiles)((u, newProfiles) => u.copy(gameProfiles = newProfiles))
 

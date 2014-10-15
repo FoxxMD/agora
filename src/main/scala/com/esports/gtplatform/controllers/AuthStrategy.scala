@@ -125,7 +125,6 @@ class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStr
         |where t.token=?
       """.stripMargin, List(token)).headOption match {
       case Some(i: User) =>
-        logger.info("authenticaion succeeded for User " + i.id)
         Option(i)
       case None =>
           logger.warn("authenticaion failed for token " + token)
@@ -225,10 +224,12 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
         *  We do this here because the checking method uses a technique to prevent against timing attacks and is
         *  inherently slower because of it. Putting it in the query would slow down query time which would increase blocking.
         * */
-        if (!PasswordSecurity.validatePassword(password, ident.password))
-          None
+        if (!PasswordSecurity.validatePassword(password, ident.password)) {
+            logger.warn("Password invalid for User " + ident.user.id)
+            None
+        }
         else {
-          logger.info("authentication succeeded for " + ident.user.id)
+          /*logger.info("authentication succeeded for " + ident.user.id)*/
           //Check to see if this user has a token already
           val possibleToken = jdbc.queryForMap(
             """
@@ -256,7 +257,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
         }
       case None =>
         //Did not match an email
-        logger.info("authentication failed for " + login)
+        logger.info("authentication failed for " + login + ", email not found in DB.")
         None
     }
   }
