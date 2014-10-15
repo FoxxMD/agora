@@ -6,11 +6,11 @@
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <div class="form-group" show-errors>
                         <label class="form-label"><h4>Select Game</h4></label>
-                        <input type="text" name="game" ng-model="toursCtrl.createTourData.game" typeahead="game as game.name for game in toursCtrl.gamesCollection" typeahead-editable="false" class="form-control" typeahead-on-select="toursCtrl.populateTourTypes($item)" required>
+                        <input type="text" name="game" ng-model="toursCtrl.createTourData.game" typeahead="game as game.name for game in toursCtrl.gamesCollection | filter:{name: $viewValue}" typeahead-editable="false" class="form-control" typeahead-on-select="toursCtrl.populateTourTypes($item)" required>
                     </div>
                     <div ng-show="toursCtrl.createTourData.game != undefined" class="form-group" show-errors>
                         <h4>Choose Tournament Type</h4>
-                        <input type="text" name="tourneyType" ng-model="toursCtrl.createTourData.tournamentType" typeahead="tour as tour.name for tour in toursCtrl.createTourData.game.tournamentTypes" typeahead-editable="false" class="form-control" required>
+                        <input type="text" name="tourneyType" ng-model="toursCtrl.createTourData.tournamentType" typeahead="tour as tour.name for tour in toursCtrl.createTourData.game.tournamentTypes | filter:{name: $viewValue}" typeahead-editable="false" class="form-control" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
