@@ -349,8 +349,11 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                     }
                 }]
             })
-            .state('globalSkeleton.account', {
+            .state('eventSkeleton.account', {
                 url:'/account',
+                params:{
+                    eventId:{}
+                },
                 templateUrl:'/views/users/account.html',
                 controller: 'AccountController as accountCtrl'
             });
