@@ -289,8 +289,8 @@
 
 }
 
-@media screen and (max-width: 25em){
-	/* Let's only allow 1 item in a row now */
+/*@media screen and (max-width: 25em){
+	*//* Let's only allow 1 item in a row now *//*
 	.cbp-hssubmenu > li {
 		width: 100%;
 		display: block;
@@ -316,4 +316,4 @@
 		min-height: 0;
 		margin: 0;
 	}
-}
+}*/

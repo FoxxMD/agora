@@ -117,7 +117,6 @@ class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStr
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request.token)
 
   protected def validate(token: String): Option[User] = {
-    logger.info("attempting authentication")
     queryDao.lowLevelQuery(UserEntity,
       """
         |select u.*
@@ -126,9 +125,11 @@ class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStr
         |where t.token=?
       """.stripMargin, List(token)).headOption match {
       case Some(i: User) =>
-        logger.info("authenticaion succeeded for " + i.email)
+        logger.info("authenticaion succeeded for User " + i.id)
         Option(i)
-      case None => None
+      case None =>
+          logger.warn("authenticaion failed for token " + token)
+          None
     }
   }
 }
@@ -227,7 +228,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
         if (!PasswordSecurity.validatePassword(password, ident.password))
           None
         else {
-          logger.info("authentication succeeded for " + ident.email.get)
+          logger.info("authentication succeeded for " + ident.user.id)
           //Check to see if this user has a token already
           val possibleToken = jdbc.queryForMap(
             """
@@ -255,7 +256,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
         }
       case None =>
         //Did not match an email
-        logger.info("authentication failed")
+        logger.info("authentication failed for " + login)
         None
     }
   }

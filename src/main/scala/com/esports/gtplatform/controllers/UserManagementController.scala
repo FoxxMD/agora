@@ -86,7 +86,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
 
         userRepo.getByEmail(email) match {
             case Some(u: User with Persisted) =>
-
+                logger.info("Generating password reset request token for User " + u.id)
                 jdbc.queryForMap(
                     """
                       |select t.*
@@ -170,6 +170,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
             """.stripMargin, userId)
           if(update.rowsAffected != 1)
           {
+              logger.error("Problem during password recovery process, no rows were updated in passwordtokens!")
               trans.setRollbackOnly()
               InternalServerError("There was a problem resetting the password. No changes were committed.")
           }
@@ -179,6 +180,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
             }
           catch {
               case m:BadSqlGrammarException =>
+                  logger.error("Problem during password recovery process",m)
                   trans.setRollbackOnly()
                   InternalServerError("There was a problem resetting the password. No changes were committed.")
           }

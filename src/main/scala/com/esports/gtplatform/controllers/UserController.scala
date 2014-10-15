@@ -90,6 +90,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     Ok()
   }
     post("/:id/password") {
+        auth()
         val currentPass = parsedBody.\("current").extract[String]
         val newPass = parsedBody.\("new").extract[String]
 
@@ -104,6 +105,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
                     Ok()
                 }
                 else{
+                    logger.warn("User " + user.id + " tried to change their password but used an incorrect current password.")
                     halt(400, "Current password was not correct.")
                 }
             case None =>

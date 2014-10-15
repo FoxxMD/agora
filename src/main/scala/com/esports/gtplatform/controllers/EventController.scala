@@ -125,12 +125,14 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 userRepo.get(uid) match {
                     case Some(u: User) =>
                         eventRepo.update(requestEvent.get, requestEvent.get.addUser(u))
+                        logger.info("[Admin] (" + user.id + ") Added User " + u.id + " to Event " + requestEvent.get.id)
                         Ok()
                     case None =>
                         BadRequest("No user exists with that Id")
                 }
             case None =>
                 eventRepo.update(requestEvent.get, requestEvent.get.addUser(user))
+                logger.info("[Event] ("+ requestEvent.get.id +")User " + user.id + " joined Event ")
                 Ok()
         }
     }
@@ -146,12 +148,14 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 userRepo.get(uid) match {
                     case Some(u: User) =>
                         eventRepo.update(requestEvent.get, requestEvent.get.removeUser(u))
+                        logger.info("[Admin] with " + user.id + " removed User " + u.id + " from Event " + requestEvent.get.id)
                         Ok()
                     case None =>
                         BadRequest("No user exists with that Id")
                 }
             case None =>
                 eventRepo.update(requestEvent.get, requestEvent.get.removeUser(user))
+                logger.info("User " + user.id + " left Event " + requestEvent.get.id)
                 Ok()
         }
     }
@@ -165,15 +169,23 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val mod = parsedBody.\("isModerator").extractOpt[Boolean]
 
         var eu = requestEvent.get.users.find(x => x.user.id == params("userId").toInt).getOrElse {
-            logger.warn("Admin " + user.id + " tried to modify an EventUser for a non-existent user " + params("userId") + " on Event " + requestEvent.get.id)
+            logger.warn("[Admin] " + user.id + " tried to modify an EventUser for a non-existent user " + params("userId") + " on Event " + requestEvent.get.id)
             halt(400, "This user is not in this event.")
         } //TODO make this work with requestEventUser
         if (present.isDefined)
+        {
             eu = eu.copy(isPresent = present.get)
+        }
         if (admin.isDefined)
+        {
             eu = eu.copy(isAdmin = admin.get)
+            logger.info("[Admin] " + user.id + "set Event Admin = " + admin.get + " on User " + eu.user.id + " for Event " + requestEvent.get.id)
+        }
         if (mod.isDefined)
+        {
             eu = eu.copy(isModerator = mod.get)
+            logger.info("[Admin] " + user.id + "set Event Moderator = " + mod.get + " on User " + eu.user.id + " for Event " + requestEvent.get.id)
+        }
         eventRepo.update(requestEvent.get, requestEvent.get.removeUser(eu.user).addUser(eu))
         Ok()
     }
@@ -189,7 +201,10 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     delete("/:id/tournaments/:tourId") {
         if (user.role != "admin" && !requestEvent.get.isAdmin(user))
-            halt(403, "You do not have permission to delete users from this event.")
+        {
+            logger.warn("[Tournament] ("+ requestTournament.get.id +")Non-Admin User " + user.id + " attempted to delete Tournament.")
+            halt(403, "You do not have permission to delete tournaments from this event.")
+        }
         tournamentRepo.delete(requestTournament.get)
         Ok()
     }
@@ -272,6 +287,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             val completedTour = tourRepo.update(insertedTour, insertedTour.copy(details = Some(extractedTD.copy(tournament = insertedTour))))
             completedTour
         }
+        logger.info("[Tournament] (" + inserted.id + ") New Tournament created for Event " + requestEvent.get.id)
         Ok(inserted.id)
     }
     post("/:id/tournaments/:tourId/teams") {
@@ -299,6 +315,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 val newPlayers = members.map(x => TeamUser(insertedTeam, x.user, isCaptain = captainId.isDefined && x.user.id == captainId.get))
                 teamRepo.update(insertedTeam, insertedTeam.copy(teamPlayers = newPlayers))
             }
+            logger.info("[Tournament] ("+ requestTournament.get.id +") New Guild Team \"" + inserted.name + "\" created.")
             Ok(inserted)
         }
         else {
@@ -313,6 +330,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 val newPlayers = members.map(x => TeamUser(insertedTeam, x, isCaptain = captainId.isDefined && x.id == captainId.get))
                 teamRepo.update(insertedTeam, insertedTeam.copy(teamPlayers = newPlayers))
             }
+            logger.info("[Tournament] ("+ requestTournament.get.id +") New Team \"" + inserted.name + "\" created.")
             Ok(inserted)
         }
 
@@ -385,6 +403,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             case Some(u: User with Persisted) =>
                 val newTu = TournamentUser(requestTournament.get, u)
                 val inserted = tuRepo.create(newTu)
+                logger.info("[Tournament] ("+ requestTournament.get.id +") User " + u.id + " joined as player.")
                 Ok(inserted)
             case None =>
                 halt(400, "No user with the specified Id " + userId + " exists.")
@@ -437,7 +456,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             val theuser = requestEventUser.get.user //userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
             eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(theuser, paid = paid, receipt))
             val atype = if (user.role == "admin") "Admin" else "Event Admin"
-            logger.info("[" + atype + " " + user.id + "] Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)
+            logger.info("[" + atype + "] (" + user.id + ") Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)
             Ok()
         }
         else {
@@ -449,10 +468,12 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                     val paymentService: PaymentService = new StripePayment(requestEvent.get)
                     paymentService.makePayment(user, mutable.Map("card" -> card)) match {
                         case (false, s: String) =>
+                            logger.info("[Event] (" + requestEvent.get.id + ") User " + user.id + " payment was not successful")
                             BadRequest("Payment was not successful. Reason: " + s)
                         case (true, s: String) =>
-                            Ok("Payment successful!")
                             eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(user, paid = true, Some(s)))
+                            logger.info("[Event] (" + requestEvent.get.id + ") User " + user.id + " payed successfully.")
+                            Ok("Payment successful!")
                     }
                 case Some(s: String) =>
                     NotImplemented
