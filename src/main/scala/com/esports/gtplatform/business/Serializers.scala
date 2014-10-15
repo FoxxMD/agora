@@ -51,7 +51,7 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int
             case _ => false
         }
     case g: Game =>
-        implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GameType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
+        implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
         Extraction.decompose(g.copy())
     case t: Team =>
         implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(JoinType) + new LinkObjectEntitySerializer
@@ -161,7 +161,7 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
       render("tournaments" -> Extraction.decompose(teamRepo.getByTeam(t))) merge
       render("events" -> Extraction.decompose(teamRepo.getByTeam(t).map(x => x.tournament.event).distinct.map(u => ("name" -> u.name) ~ ("id" -> u.id))))*/
     case e: Event =>
-        implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(GameType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
+        implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
         (Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge
             render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))))
             .replace(List("payments"), Extraction.decompose(e.payments.filter(x => x.isEnabled))) //TODO learn json4s and remove non enabled events from JSON rather than re-rendering filtered list

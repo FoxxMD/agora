@@ -65,7 +65,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
     //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
     //Eventually will have to add support for all Enumeration types used.
-    protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntityDetailsSerializer + new EntitySerializer + new org.json4s.ext.EnumNameSerializer(GameType) + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType) + new org.json4s.ext.EnumNameSerializer(GamePlatform)
+    protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntityDetailsSerializer + new EntitySerializer + new org.json4s.ext.EnumNameSerializer(JoinType) + new org.json4s.ext.EnumNameSerializer(PaymentType) + new org.json4s.ext.EnumNameSerializer(GamePlatform)
     before() {
 
         //Lets the controller know to format the response in json so we don't have to specify on each action.
