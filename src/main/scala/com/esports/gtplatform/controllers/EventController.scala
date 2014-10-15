@@ -239,7 +239,15 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         {
             tourDetails = tourDetails.copy(description = Option(compact(render(parsedBody.\("description")))))
         }
-        reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails))
+        if(parsedBody.\("tournamentType").toOption.isDefined){
+            val ttRepo = inject[GenericMRepo[TournamentType]]
+            val tt = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).getOrElse(halt(400, "No tournament type with that Id found."))
+            reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails).copy(tournamentType = tt))
+        } //TODO this is a hack job
+        else{
+            reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails))
+        }
+
         Ok()
     }
     post("/:id/tournaments") {

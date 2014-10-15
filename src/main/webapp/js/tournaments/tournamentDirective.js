@@ -26,7 +26,20 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             };
             this.updateTime = function() {
               return Tournaments.update({timeStart: that.tour.details.timeStart, timeEnd: that.tour.details.timeEnd});
-            }
+            };
+            this.filterType = function(ttype) {
+                if(that.tour.tournamentType.teamPlay && that.tour.teams.length > 0)
+                    return ttype.teamPlay;
+                if(!that.tour.tournamentType.teamPlay && that.tour.user.length > 0)
+                    return !ttype.teamPlay;
+                return true;
+            };
+            this.updateTourType = function(ttype) {
+              Tournaments.update({tournamentType: ttype}, that.tour.id.toString()).then(function(){
+                  $scope.$emit('notify','notice',"Tournament type updated.", 3000);
+                  return true;
+              })
+            };
         }],
         link: function (scope, elem, attrs) {
             var content = $(document).find('.st-content')[0],

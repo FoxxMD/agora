@@ -1,7 +1,14 @@
 <div class="row" style="margin-bottom:40px;">
     <div class="col-md-8">
-        <h1 class="text-center">{{tourCtrl.tour.game.name}} - {{tourCtrl.tour.tournamentType.name}}
-            <span ng-if="tourCtrl.tour.details.name != undefined">: <a ng-if="tourCtrl.isAdmin()" editable-text="tourCtrl.tour.details.name" onaftersave="tourCtrl.updateName($data)">{{tourCtrl.tour.details.name}}</a> <span ng-if="!tourCtrl.isAdmin()">{{tourCtrl.tour.details.name}}</span></span>
+        <h1>{{tourCtrl.tour.game.name}} <br/>
+            <a ng-if="tourCtrl.isAdmin()"
+               editable-text="tourCtrl.tour.tournamentType"
+               e-typeahead="ttype as ttype.name for ttype in tourCtrl.tour.game.tournamentTypes | filter:{name: $viewValue} | filter: tourCtrl.filterType"
+                onshow="tourCtrl.ttypeDisclaimer = true;"
+                onhide="tourCtrl.ttypeDisclaimer = false;"
+                onaftersave="tourCtrl.updateTourType($data)">{{tourCtrl.tour.tournamentType.name}}</a> <span style="font-size:14px;" ng-show="tourCtrl.ttypeDisclaimer"><strong>Note:</strong> If your tournament already has teams or users you can only change to a tournament type with the same game play type.</span>
+            {{!tourCtrl.isAdmin() ? tourCtrl.tour.tournamentType.name : ''}}
+            <span ng-if="tourCtrl.tour.details.name != undefined"><br/> <a ng-if="tourCtrl.isAdmin()" editable-text="tourCtrl.tour.details.name" onaftersave="tourCtrl.updateName($data)">{{tourCtrl.tour.details.name}}</a> <span ng-if="!tourCtrl.isAdmin()">{{tourCtrl.tour.details.name}}</span></span>
         </h1>
     </div>
     <div class="col-md-4">
