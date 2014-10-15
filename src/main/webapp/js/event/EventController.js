@@ -6,6 +6,7 @@ angular.module('gtfest')
 
 // @ngInject
 function eventController($scope, Account, $q, eventData, $rootScope, Events, $sce, $timeout, $localStorage, $state){
+
     var that = this;
     this.event = eventData.plain();
     this.tourneyNames = ['Frosty 2v2','Epic 4v4','Round-Robin(20 player)','Deathmatch 100-kill Win'];

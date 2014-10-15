@@ -14,6 +14,8 @@ function schController($scope, eventData, tourData, Events, Account, $state){
     };
     this.uiConfig = {
         calendar:{
+            height:'auto',
+            aspectRatio: 2,
             header:{
                 left: 'title',
                 center: '',

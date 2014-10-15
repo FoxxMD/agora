@@ -28,7 +28,9 @@
     "angular-bootstrap": "~0.11.2",
     "jquery-ui": "~1.11.1",
     "AngularJS-Toaster": "~0.4.8",
-    "angular-ui-router": "~0.2.11"
+    "angular-ui-router": "~0.2.11",
+    "Flowtype.js": "~1.1.0",
+    "angular-flowtype": "*"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.13",
