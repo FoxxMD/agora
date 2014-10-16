@@ -187,10 +187,10 @@ module.exports = function (grunt) {
             target: {
                 src: '<%= yeoman.app %>/index.html'
             },
-            cwd: '<%= yeoman.app %>'
-/*            exclude:{
-                src:[]
-        }*/
+            cwd: '<%= yeoman.app %>',
+           exclude:{
+                src:['lib/fullcalendar/dist/fullcalendar.js']
+        }
         },
         useminPrepare: {
             dev: {

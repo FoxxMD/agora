@@ -225,8 +225,12 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         parsedBody.\("name").extractOpt[String].fold() { x =>
             tourDetails = tourDetails.copy(name = Option(x))
         }
-        parsedBody.\("location").extractOpt[String].fold() { x =>
-            tourDetails = tourDetails.copy(location = Option(x))
+        if(parsedBody.\("location").toOption.isDefined)
+        {
+            tourDetails = tourDetails.copy(location = Option(compact(render(parsedBody.\("location")))))
+        }
+        parsedBody.\("locationsub").extractOpt[String].fold() { x =>
+            tourDetails = tourDetails.copy(locationsub = Option(x))
         }
         parsedBody.\("timeStart").extractOpt[DateTime].fold() { x =>
             tourDetails = tourDetails.copy(timeStart = Option(x))

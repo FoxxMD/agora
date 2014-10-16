@@ -14,7 +14,23 @@
     <div class="col-md-4">
         <div time-editor time-end="tourCtrl.tour.details.timeEnd" timestart="tourCtrl.tour.details.timeStart" iseditable="tourCtrl.isAdmin()"
              starteditable="false" update-property="tourCtrl.updateTime()" horizontal="true"></div>
-        <h4>Location: {{tourCtrl.tour.details.location || "TBD"}}</h4>
+        <span ng-if="!tourCtrl.isAdmin()">Location:
+            <h4 ng-repeat="loc in tourCtrl.tour.details.location">{{loc}}</h4><span ng-if="tourCtrl.tour.details.location == undefined">TBD</span>
+        </span>
+        <h4 ng-if="!tourCtrl.isAdmin()">
+            {{tourCtrl.tour.details.locationsub || ''}}
+        </h4>
+        <span ng-if="tourCtrl.isAdmin()">
+            <h4>Location: <!--<a editable-text="tourCtrl.tour.details.location" onaftersave="tourCtrl.updateLocation($data)">{{tourCtrl.tour.details.location || "TBD"}}</a>--></h4>
+            <tags-input ng-model="tourCtrl.tour.details.location"
+                        on-tag-added="tourCtrl.showLocationSave = true"
+                        on-tag-removed="tourCtrl.showLocationSave = true"
+                        enable-editing-last-tag="true"
+                        replace-spaces-with-dashes="false" class="tags-input-element">
+
+            </tags-input> <button class="btn btn-info" ng-show="tourCtrl.showLocationSave" ng-click="tourCtrl.updateLocation()">Save</button>
+            <h4>Location Details: <a editable-text="tourCtrl.tour.details.locationsub" onaftersave="tourCtrl.updateLocation()">{{tourCtrl.tour.details.locationsub || "TBD"}}</a></h4>
+        </span>
     </div>
 </div>
 <div style="height:58px; width:100%">

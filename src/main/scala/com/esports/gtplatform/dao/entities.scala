@@ -216,6 +216,7 @@ object TournamentDetailsEntity extends Entity[Int, NoId, TournamentDetails]("tou
     val gamePlayed = column("gamePlayed") option (_.gamePlayed)
     val description = column("description") option (_.description)
     val location = column("location") option (_.location)
+    val sublocation = column("locationsub") option(_.locationsub)
     val rules = column("rules") option (_.rules)
     val prizes = column("prizes") option (_.prizes)
     val streams = column("streams") option (_.streams)
@@ -240,7 +241,7 @@ object TournamentDetailsEntity extends Entity[Int, NoId, TournamentDetails]("tou
     def constructor(implicit m: ValuesMap) = {
         val ts = new DateTime(m(timeStart) * 1000L, DateTimeZone.UTC)
         val te = new DateTime(m(timeEnd) * 1000L, DateTimeZone.UTC)
-        new TournamentDetails(tournament, name, gamePlayed, description, location, rules, prizes, streams, servers, Some(ts), Some(te), minSize, maxSize, pminSize, pmaxSize) with Stored
+        new TournamentDetails(tournament, name, gamePlayed, description, location, sublocation, rules, prizes, streams, servers, Some(ts), Some(te), minSize, maxSize, pminSize, pmaxSize) with Stored
     }
 }
 

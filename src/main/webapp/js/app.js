@@ -382,6 +382,8 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                                data[i].details.streams = angular.fromJson(data[i].details.streams);
                            if(data[i].details.prizes)
                                data[i].details.prizes = angular.fromJson(data[i].details.prizes);
+                           if(data[i].details.location)
+                               data[i].details.location = angular.fromJson(data[i].details.location);
                        }
                     }
                     if(data[0].createdDate != undefined)
@@ -406,6 +408,8 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                         data.details.prizes = angular.fromJson(data.details.prizes);
                     if(data.details.credits)
                         data.details.credits = angular.fromJson(data.details.credits);
+                    if(data.details.location)
+                        data.details.location = angular.fromJson(data.details.location);
                 }
                 else if(data.createdDate != undefined)
                 {

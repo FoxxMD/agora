@@ -481,3 +481,15 @@ a.withDecoration {
   right: 100px;
   z-index: 1000;
 }
+.fc-event.tournament {
+  background-color: #ee4c00;
+}
+.fc-event.freeplay {
+  background-color: blue;
+}
+.fc-event.showcase {
+  background-color: green;
+}
+.fc-event.administrative {
+  background-color: red;
+}

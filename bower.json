@@ -14,7 +14,6 @@
     "angular-sanitize": "*",
     "angular-payments": "*",
     "angular-xeditable": "latest",
-    "fullcalendar": "~2.1.1",
     "angular-masonry": "*",
     "ngInfiniteScroll": "latest",
     "ng-tags-input": "latest",
@@ -29,7 +28,8 @@
     "AngularJS-Toaster": "latest",
     "angular-ui-router": "latest",
     "Flowtype.js": "~1.1.0",
-    "angular-flowtype": "*"
+    "angular-flowtype": "*",
+    "moment": "~2.8.3"
   },
   "devDependencies": {
     "angular-mocks": "*",

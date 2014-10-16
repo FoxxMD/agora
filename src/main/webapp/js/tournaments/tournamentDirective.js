@@ -27,6 +27,13 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             this.updateTime = function() {
               return Tournaments.update({timeStart: that.tour.details.timeStart, timeEnd: that.tour.details.timeEnd});
             };
+
+            this.updateLocation = function(){
+                that.tour.details.location = that.tour.details.location.map(function(x){return x.text});
+                return Tournaments.update({location: that.tour.details.location, locationsub: that.tour.details.locationsub}).then(function(){
+                    that.showLocationSave = false;
+                });
+            };
             this.filterType = function(ttype) {
                 if(that.tour.tournamentType.teamPlay && that.tour.teams.length > 0)
                     return ttype.teamPlay;

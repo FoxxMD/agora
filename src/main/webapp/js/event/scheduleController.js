@@ -7,21 +7,51 @@ angular.module('gtfest')
 // @ngInject
 function schController($scope, eventData, tourData, Events, Account, $state){
     var that = this;
-    console.log(tourData);
     this.event = eventData;
     this.isAdmin = function() {
         return Account.isEventAdmin(that.event.id) && Account.adminEnabled();
     };
+    this.tour = tourData.plain().map(function(x){
+        x.details.location = x.details.location || ['TBD'];
+        return x
+    });
+
+    var theResources = function() {
+        var locations = _.uniq(
+            _.flatten(that.tour.map(function(x){return x.details}),'location')
+                .concat(that.event.details.scheduledEvents.map(function(x){return x.resourcesName})), function(u){
+                return u.toLowerCase();
+            });
+        return _.map(locations, function(loc) {
+           return {
+               'id': loc.replace(/[^A-Z0-9]+/ig, "_").toLowerCase(),
+               'name': loc,
+               'className':[]
+           }
+        });
+    };
+    if(that.event.details.scheduledEvents != undefined) {
+        that.event.details.scheduledEvents = _.map(that.event.details.scheduledEvents, function(e) {
+            e.resources = e.resources != undefined ? e.resources.replace(/[^A-Z0-9]+/ig, "_").toLowerCase() : 'tbd';
+            return e;
+        });
+    }
+    else{
+        that.event.details.scheduledEvents = [];
+    }
     this.uiConfig = {
         calendar:{
             height:'auto',
-            aspectRatio: 2,
-            header:{
+            //aspectRatio: 2,
+/*            header:{
                 left: 'title',
                 center: '',
                 right: 'today prev,next'
-            },
-            defaultView: 'agendaDay',
+            },*/
+            resources: theResources(),
+            minTime: that.event.details.timeStart.format('hh:mm:ss'),
+            slotEventOverlap: false,
+            defaultView: 'resourceDay',
             defaultDate: that.event.details.timeStart,
             timezone: 'local',
             eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
@@ -46,13 +76,24 @@ function schController($scope, eventData, tourData, Events, Account, $state){
                 Events.updateEvent(that.event)
             },
             eventRender: function(event, element) {
+                var content = element.find('.fc-content');
+                if(event.cssClass)
+                {
+                    element.addClass(event.cssClass);
+                }
                 if(that.isAdmin())
                 {
                     element.find('.fc-content').append('<button id="'+event.id+event.title+'" class="btn btn-danger btn-sm calendarAction">Delete</button>');
                 }
-
-                if(event.location) {
-                    element.find('.fc-title').after("<p>Location: " + event.location + "</p>");
+                if(event.tourType) {
+                    content.append('<p style="margin-bottom:0px">'+event.tourType+'</p>');
+                }
+                if(event.details)
+                {
+                    content.append('<p>'+event.details+'</p>');
+                }
+                if(event.location != undefined) {
+                    element.find('.fc-content').append('<p style="margin-top:5px;"><strong>Location:</strong> ' + event.location + '</p>');
                 }
                 if (event.description)  {
                     element.find('.fc-content').append("<p>" + event.description + "</p>");
@@ -60,15 +101,17 @@ function schController($scope, eventData, tourData, Events, Account, $state){
             }
         }
     };
-    that.event.details.scheduledEvents = that.event.details.scheduledEvents || [];
     var tourneys = tourData.plain().map(function(x) {
        return {
-           title: '[TOURNAMENT] ' +  x.game.name + ' - ' + x.tournamentType.name + ' : ' + x.details.name,
-           location: x.details.location,
+           title: x.game.name,
+           tourType: x.tournamentType.name,
+           details: x.details.name,
+           location: x.details.locationsub,
+           resources: _.map(x.details.location, function(u){ return u.replace(/[^A-Z0-9]+/ig, "_").toLowerCase() }),
            start: x.details.timeStart,
            end: x.details.timeEnd,
            editable: false,
-           backgroundColor: '#ee4c00',
+           cssClass:'tournament',
            url:  $state.href('eventSkeleton.tournament.roster',{eventId: eventData.id, tournamentId: x.id})
        }
     });
@@ -76,7 +119,7 @@ function schController($scope, eventData, tourData, Events, Account, $state){
     function getNewTime() {
         return {
             start: that.event.details.timeStart,
-            end: that.event.details.timeStart,
+            end: that.event.details.timeStart.clone().add(1, 'h'),
             editable: true,
             startEditable: true,
             durationEditable: true,
@@ -86,6 +129,7 @@ function schController($scope, eventData, tourData, Events, Account, $state){
     this.newTime = getNewTime();
     this.tryAddActivity = function(){
         if($scope.newActivityForm.$valid) {
+            that.newTime.resourcesName = that.newTime.resources;
             that.event.details.scheduledEvents.push(that.newTime);
             Events.updateEvent(that.event).then(function(){
                 $scope.$emit('notify','notice','Event added.');
