@@ -2,7 +2,7 @@
 // @ngInject
 angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'angular-loading-bar', 'ngSanitize','angular-ladda',
-        'xeditable','angularPayments', 'toggle-switch', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree',
+        'xeditable','angularPayments', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree',
         'angulartics', 'angulartics.google.analytics', 'toaster', 'ngFlowtype'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", "$analyticsProvider",
         function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider, $analyticsProvider) {

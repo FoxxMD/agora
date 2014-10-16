@@ -238,6 +238,10 @@ module.exports = function (grunt) {
                         cwd: '<%= yeoman.app %>/js/',
                         src: ['**/*.js', '!**/gtresources/**'],
                         dest: '<%= yeoman.app %>/js/'
+                    },
+                    {
+                        //Since this project doesn't include a min it needs to be annotated or else angular gets grumpy about strict annotation
+                        '<%= yeoman.app %>/lib/angular-flowtype/angular-flowtype.js':'<%= yeoman.app %>/lib/angular-flowtype/angular-flowtype.js'
                     }
                 ]
             },
@@ -248,6 +252,10 @@ module.exports = function (grunt) {
                         cwd: '<%= yeoman.app %>/js/',
                         src: ['**/*.js', '!**/gtresources/**'],
                         dest: '<%= yeoman.app %>/js/'
+                    },
+                    {
+                        //Since this project doesn't include a min it needs to be annotated or else angular gets grumpy about strict annotation
+                        '<%= yeoman.app %>/lib/angular-flowtype/angular-flowtype.js':'<%= yeoman.app %>/lib/angular-flowtype/angular-flowtype.js'
                     }
                 ]
             }

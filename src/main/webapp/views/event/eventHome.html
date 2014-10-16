@@ -15,7 +15,7 @@
         <h2 class="text-center">Where?</h2>
 
         <div ng-click="eventCtrl.editPlace = true" ng-class="{halloEditable: eventCtrl.isAdmin(),inEditMode: eventCtrl.editPlace && eventCtrl.isAdmin()}">
-            <h4 ng-show="!eventCtrl.editPlace && eventCtrl.isAdmin()">
+            <h4 ng-show="!eventCtrl.editPlace">
                 <address>
                     {{eventCtrl.event.details.locationName}}<br/>
                     {{eventCtrl.event.details.address}}<br/>
