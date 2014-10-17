@@ -106,11 +106,16 @@ class UserRepository(returnEntity: Entity[Int,Persisted, User]) extends GenericM
 }
 
 trait UserIdentityRepo extends GenericMRepo[UserIdentity] {
-    def getByUser(user: User with Persisted): Option[UserIdentity with Persisted]
+    def getByUser(user: User with Persisted): List[UserIdentity with Persisted]
 }
 class UserIdentityRepository(returnEntity: Entity[Int,Persisted, UserIdentity]) extends GenericMRepository[UserIdentity](returnEntity) with UserIdentityRepo
 {
-    def getByUser(user: User with Persisted): Option[UserIdentity with Persisted] = queryDao.querySingleResult(select from UserIdentityEntity where UserIdentityEntity.user === user)
+    def getByUser(user: User with Persisted): List[UserIdentity with Persisted] = {
+        val uie = UserIdentityEntity
+        val ue = UserEntity
+
+       queryDao.query(select from uie join(uie, uie.user, ue) where ue.id === user.id)
+    }
 }
 
 trait GuildRepo extends GenericMRepo[Guild]

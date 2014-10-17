@@ -11,6 +11,7 @@ import org.json4s.JsonDSL._
 import models.{GamePlatform, UserPlatformProfile}
 import org.json4s.Extraction
 import org.scalatra.{InternalServerError, Ok}
+import com.googlecode.mapperdao.jdbc.Transaction
 
 /**
  * Created by Matthew on 8/6/2014.
@@ -31,18 +32,32 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
   }
   patch("/:id") {
     auth()
-
     if (params("id").toInt != requestUser.get.id && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
     val handle = parsedBody.\("globalHandle").extractOpt[String]
     val email = parsedBody.\("email").extractOpt[String]
+    val tx = inject[Transaction]
 
-    var editUser = requestUser.get.copy()
-    if (handle.isDefined)
-      editUser = user.copy(globalHandle = handle.get)
-    if (email.isDefined)
-      editUser = user.copy(email = email.get)
-    userRepo.update(requestUser.get, editUser)
+      tx { () =>
+
+          var editUser = requestUser.get.copy()
+          if (handle.isDefined)
+              editUser = user.copy(globalHandle = handle.get)
+          if (email.isDefined) {
+              editUser = user.copy(email = email.get)
+              val identRepo = inject[UserIdentityRepo]
+              identRepo.getByUser(requestUser.get).find(x => x.userId == "userpass") match {
+                  case Some(u: UserIdentity with Persisted) =>
+                      logger.info("User " + requestUser.get.id + " is changing email, found an associated useridentity with userpass. Changing userident email.")
+                      identRepo.update(u, u.copy(providerId = email.get, email = email))
+                  case None => logger.info("User " + requestUser.get.id + " is changing email but we did not find a userpass associated.")
+                  case _ => logger.warn("This should have matched earlier, uh oh..")
+              }
+
+          }
+
+          userRepo.update(requestUser.get, editUser)
+      }
     Ok()
   }
     delete("/:id"){
@@ -103,7 +118,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
 
         val identRepo = inject[UserIdentityRepo]
 
-        identRepo.getByUser(requestUser.get) match {
+        identRepo.getByUser(requestUser.get).find(x => x.userId == "userpass") match {
             case Some(ident: UserIdentity with Persisted) =>
                 if(PasswordSecurity.validatePassword(currentPass, ident.password))
                 {
