@@ -52,6 +52,8 @@ def sendConfirm(toAddress: String, handle: String, token: String) = {
         | Please complete your registration and confirm this email address was used by you to register for $eventName
         | by following this link: http://gtgamefest.com/confirmRegistration?token=$token
         |
+        | If you have any problems confirming or logging in please send us a note at tickets@gtgamefest.uservoice.com
+        |
         | Thanks!
         |
         | -$eventName Staff
@@ -73,7 +75,7 @@ def sendConfirm(toAddress: String, handle: String, token: String) = {
         |
         | To reset your password please follow this link: http://gtgamefest.com/passwordReset?token=$token
         |
-        | If you did not request to have your password reset or feel this was an error please contact us at feedback@gtgamefest.com
+        | If you did not request to have your password reset or feel this was an error please contact send us a note at tickets@gtgamefest.uservoice.com
         |
         | Thanks!
         |
@@ -95,7 +97,7 @@ def sendConfirm(toAddress: String, handle: String, token: String) = {
         |
         | Someone tried to use your email address to register for $eventName, but this address is already associated
         | to an account! If you have forgotten your password please visit http://gtgamefest.com/resetPassword to start
-        | the reset process. If you feel this email is an error please contact our staff.
+        | the reset process. If you feel this email is an error please contact us at tickets@gtgamefest.uservoice.com
         |
         | Thanks!
         |
