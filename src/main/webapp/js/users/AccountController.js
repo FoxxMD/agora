@@ -5,7 +5,7 @@ angular.module('gtfest')
     .controller('AccountController', accountCtrl);
 
 // @ngInject
-function accountCtrl(Account, $rootScope, Users, $scope){
+function accountCtrl(Account, $rootScope, Users, $scope, $location){
     var that = this;
     $rootScope.$on('accountStatusChange', function(){
         that.user = Account.user();
@@ -29,6 +29,12 @@ function accountCtrl(Account, $rootScope, Users, $scope){
                 $scope.$broadcast('show-errors-reset');
             });
         }
+    };
+    this.deleteUser = function() {
+      Users.deleteUser(that.user.id.toString()).then(function(){
+          $scope.$emit('notify', 'notice', 'Your account and all related information has been deleted. We\'re sorry to see you go!', 5000);
+          $location.url('/');
+      })
     }
 }
-accountCtrl.$inject = ["Account", "$rootScope", "Users", "$scope"];
+accountCtrl.$inject = ["Account", "$rootScope", "Users", "$scope", "$location"];

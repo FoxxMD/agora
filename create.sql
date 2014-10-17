@@ -147,7 +147,7 @@ CREATE TABLE nonactiveuseridentity
     password VARCHAR(100),
     firstName VARCHAR(45),
     lastName VARCHAR(45),
-    FOREIGN KEY (userId) REFERENCES nonactiveusers (id)
+    FOREIGN KEY (userId) REFERENCES nonactiveusers (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX id_UNIQUE ON nonactiveuseridentity (id);
 CREATE INDEX user_identity_id_nonactive ON nonactiveuseridentity (userId);
@@ -166,7 +166,8 @@ CREATE UNIQUE INDEX id_UNIQUE ON nonactiveusers (id);
 CREATE TABLE passwordtokens
 (
     id INT PRIMARY KEY NOT NULL,
-    token VARCHAR(70) NOT NULL
+    token VARCHAR(70) NOT NULL,
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX unique_Id ON passwordtokens (id);
 CREATE UNIQUE INDEX unique_token ON passwordtokens (token);
@@ -199,7 +200,8 @@ CREATE TABLE tokens
 (
     id INT PRIMARY KEY NOT NULL,
     token VARCHAR(100) NOT NULL,
-    issuedOn INT
+    issuedOn INT,
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX token_UNIQUE ON tokens (token);
 CREATE TABLE tournament
@@ -231,11 +233,11 @@ CREATE TABLE tournamentdetails
     timeEnd INT,
     tournamentdetailscol VARCHAR(45),
     location LONGTEXT,
-    locationsub VARCHAR(255),
     teamMaxSize INT DEFAULT 0 NOT NULL,
     teamMinSize INT,
     playerMinSize INT DEFAULT 0 NOT NULL,
     playerMaxSize INT DEFAULT 0 NOT NULL,
+    locationsub VARCHAR(255),
     FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON DELETE CASCADE
 );
 CREATE INDEX tournament_details_id_idx ON tournamentdetails (tournament_id);
@@ -285,7 +287,7 @@ CREATE TABLE useridentity
     password VARCHAR(100),
     firstName VARCHAR(45),
     lastName VARCHAR(45),
-    FOREIGN KEY (users_id) REFERENCES users (id)
+    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX id_UNIQUE ON useridentity (id);
 CREATE INDEX user_identity_id ON useridentity (users_id);
@@ -294,7 +296,7 @@ CREATE TABLE userplatformprofile
     users_id INT PRIMARY KEY NOT NULL,
     platform VARCHAR(45) NOT NULL,
     identifier VARCHAR(45) NOT NULL,
-    FOREIGN KEY (users_id) REFERENCES users (id)
+    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE INDEX user_platform_id_idx ON userplatformprofile (users_id);
 CREATE TABLE users

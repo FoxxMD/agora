@@ -45,6 +45,13 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     userRepo.update(requestUser.get, editUser)
     Ok()
   }
+    delete("/:id"){
+        auth()
+        if(user.role != "admin" && user.id != requestUser.get.id)
+            halt(403, "You don't have permission to delete this user")
+        userRepo.delete(requestUser.get)
+        Ok()
+    }
   post("/:id/platforms") {
     auth()
     if (params("id").toInt != requestUser.get.id && user.role != "admin")

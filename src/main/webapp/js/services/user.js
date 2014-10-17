@@ -51,5 +51,8 @@ angular.module('gtfest')
         this.updateGamePlatformProfile = function(userId, platformData) {
             return users.one(userId).all('platforms').patch(platformData);
         };
+        this.deleteUser = function(userId) {
+            return users.one(userId).remove();
+        }
 
     }]);

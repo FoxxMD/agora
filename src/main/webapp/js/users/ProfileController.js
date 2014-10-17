@@ -5,7 +5,7 @@ angular.module('gtfest')
     .controller('ProfileController', prof);
 
 // @ngInject
-function prof($scope, Account, Users, userData, Events) {
+function prof($scope, Account, Users, userData, Events, $state) {
     var that = this;
     this.isEventProfile = function () {
         return  Events.getCurrentEvent() != undefined;
@@ -98,6 +98,12 @@ function prof($scope, Account, Users, userData, Events) {
           $scope.$emit('notify', 'notice', 'Platform update.', 3000);
       });
     };
+    this.deleteUser = function(){
+        Users.deleteUser(that.user.id.toString()).then(function(){
+            $scope.$emit('notify', 'notice', 'User has been deleted.', 5000);
+            $state.go('eventSkeleton.users');
+        })
+    }
 
 }
-prof.$inject = ["$scope", "Account", "Users", "userData", "Events"];
+prof.$inject = ["$scope", "Account", "Users", "userData", "Events", "$state"];
