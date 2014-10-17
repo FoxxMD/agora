@@ -56,7 +56,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
                     * give away that information so instead we say "OK sent." and then notify that email address that it is already
                     * registered.
                     */
-                    Ok("Registration successful. Please check your email for a confirmation link.")
+                    Ok()
                 }
             case None =>
                 val token = nuservice.create(newuser)
@@ -64,7 +64,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
                     nuservice.associateEvent(token, eventId.get.toInt)
                 logger.info("Non-active user successfully created: " + token)
                 m.sendConfirm(email, handle, token)
-                Ok("Registration successful. Please check your email for a confirmation link.")
+                Ok()
         }
     }
     get("/confirmRegistration") {

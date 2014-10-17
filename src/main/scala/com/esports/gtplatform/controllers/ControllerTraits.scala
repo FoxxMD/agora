@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory
 import models._
 import org.springframework.jdbc.BadSqlGrammarException
 
+import scala.xml.Node
+
 /**
  * Created by Matthew on 7/24/2014.
  */
@@ -70,6 +72,39 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
         //Lets the controller know to format the response in json so we don't have to specify on each action.
         contentType = formats("json")
+    }
+    /*
+        Setting the content type to json for every response is great for automatically parsing object to json
+        but it's not useful if you want to return other non json responses and don't want to manually set it everytime.
+
+        EX. Using an ActionResult like Ok() and wanting to be able to do Ok(someUser) and Ok("some text response)
+
+        The below function checks response bodies to see if they are strings and then sets the contenttype so the client
+        knows how to parse the response.
+
+     */
+    override def renderResponse(actionResult: Any) {
+        actionResult match {
+            case a:ActionResult =>
+                a.body match {
+                    case s:String =>
+                        logger.debug("[Response Body] It's a string")
+                        if(parseOpt(s).isEmpty)
+                        {
+                            logger.debug("[Response Body] It's not json, switching format to plain/text")
+                            contentType = formats("txt")
+                        }
+                        else{
+                            logger.debug("[Response Body] It's json.")
+                        }
+
+                    case _ =>
+                    logger.debug("[Response Body] It's not a string")
+                }
+            case _ =>
+            logger.debug("[Response Body] no hit")
+        }
+        renderResponseBody(actionResult)
     }
 }
 

@@ -423,8 +423,31 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
 
     }]);
 // @ngInject
-angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state","editableOptions", "editableThemes",
-    function ($rootScope, Restangular, Account, $urlRouter, $location, $state, editableOptions, editableThemes) {
+angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state","editableOptions", "editableThemes",'$http',
+    function ($rootScope, Restangular, Account, $urlRouter, $location, $state, editableOptions, editableThemes, $http) {
+
+        //This is a stand-in for angular's regular transformer where tests must pass in order to transform
+        //Need this because I am returning all resposnes as json/application from scalatra. This needs to be fixed server side
+        //But this will do for now
+/*        var JSON_START = /^\s*(\[|\{[^\{])/,
+            JSON_END = /[\}\]]\s*$/,
+            PROTECTION_PREFIX = /^\)\]\}',?\n/,
+            APPLICATION_JSON = 'application/json',
+            CONTENT_TYPE_APPLICATION_JSON = {'Content-Type': APPLICATION_JSON + ';charset=utf-8'};
+        var parseResponse = function(data, headers) {
+            if (angular.isString(data)) {
+                // strip json vulnerability protection prefix
+                data = data.replace(PROTECTION_PREFIX, '');
+                var contentType = headers('Content-Type');
+                if ((contentType && contentType.indexOf(APPLICATION_JSON) === 0) &&
+                    (JSON_START.test(data) && JSON_END.test(data))) {
+                    data = angular.fromJson(data);
+                }
+            }
+            return data;
+        };
+
+        $http.defaults.transformResponse = parseResponse;*/
 
         editableThemes.bs3.inputClass = 'form-control input-sm';
         editableThemes.bs3.buttonsClass = 'btn-sm';

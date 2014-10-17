@@ -20,7 +20,7 @@ function register(Account, $stateParams, $rootScope) {
                    Account.register($scope.registerformData.handle, $scope.registerformData.email, $scope.registerformData.password, $stateParams.eventId).promise.then(
                         function (response) {
                             $scope.sidebar.registerVisible = false;
-                            $scope.$broadcast('notify', 'notice', response, 5000);
+                            $scope.$broadcast('notify', 'notice', "Registration successful! please check your email for a confirmation link to activate your account.", 6000);
                             $scope.$broadcast('show-errors-reset');
                             $scope.registerformData = {};
                             $rootScope.toggleMenu();
