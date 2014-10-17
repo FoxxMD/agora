@@ -48,7 +48,7 @@
 .no-touch .cbp-hsmenu > li > a:hover,
 .no-touch .cbp-hsmenu > li > a:focus,
 .cbp-hsmenu > li.cbp-hsitem-open > a {
-	color: #02639d;
+	color: #373737;
 }
 
 /* Add an arrow to the main menu link if it has a submenu (not the only child) */

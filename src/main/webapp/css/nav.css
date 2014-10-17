@@ -15,7 +15,7 @@ body,
 
 .st-content {
   overflow-y: scroll;
-  background: #494949;
+  background: #ABABAB;
   /*background: #f3efe0;*/
 }
 [mainctrl].ng-scope{
@@ -74,7 +74,7 @@ body,
   visibility: hidden;
   width: 300px;
   height: 100%;
-  background: #ff6f74;
+  background: #5B5B5B;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
 }

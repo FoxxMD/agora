@@ -50,12 +50,18 @@
         <div class="grid-sizer"></div>
         <li class="masonry-brick eventCard component" ng-class="{'outline-outward': !tourCtrl.isAdmin()}" ng-repeat="user in rosterCtrl.tour.users" on-last-repeat>
             <figure class="grid-content">
-                <div style="position:absolute;top:0;bottom:0;right:0;left:0; padding:7px;" class="content" ng-click="rosterCtrl.state.go('eventSkeleton.profile',{userId:user.id})">
-                    <h3>{{user.name}}</h3>
+                <div class="content contentClick" ng-click="rosterCtrl.state.go('eventSkeleton.profile',{userId:user.id})">
+                    <div class="tileHeader">
+                        {{user.name}}
+                    </div>
+                    <div class="tileContentContainer">
+                        <div class="tileContent">
 
-                    <div style="position:absolute; bottom:0">
-                        <h4>{{user.isAdmin ? 'Admin' : user.isModerator ? 'Moderator' : ''}}</h4>
-                        <h4>{{user.isPresent ? 'Present' : ''}}</h4>
+                        </div>
+                        <div class="tileContentBottom">
+                                <h4>{{user.isAdmin ? 'Admin' : user.isModerator ? 'Moderator' : ''}}</h4>
+                                <h4>{{user.isPresent ? 'Present' : ''}}</h4>
+                        </div>
                     </div>
                 </div>
                 <figcaption ng-if="tourCtrl.isAdmin()">
@@ -82,16 +88,21 @@
         <div class="grid-sizer"></div>
         <li class="masonry-brick eventCard component" ng-repeat="team in rosterCtrl.tour.teams" on-last-repeat style="cursor:default;">
             <figure class="grid-content">
-                <div style="position:absolute;top:0;bottom:0;right:0;left:0; padding:7px;" class="content">
-                    <h3>{{team.guildOnly ? '[GUILD]' : ''}} {{team.name}}</h3>
-                    <h4>{{(team.teamPlayers <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) ? (team.teamPlayers >=
-                        rosterCtrl.tour.details.teamMinSize || rosterCtrl.tour.details.teamMinSize == 0) ? 'Ready To Play' : 'Not Enough Players!' : 'Need More Players!' }}</h4>
-
-                    <div style="position:absolute; bottom:0">
-                        <h4>Players</h4>
-                        <ul>
-                            <li ng-repeat="teamUser in team.teamPlayers">{{teamUser.User.name}}</li>
-                        </ul>
+                <div class="content contentClick">
+                    <div class="tileHeader">
+                       {{team.guildOnly ? '[GUILD]' : ''}} {{team.name}}
+                    </div>
+                    <div class="tileContentContainer">
+                        <div class="tileContent">
+                        <h4>{{(team.teamPlayers <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) ? (team.teamPlayers >=
+                            rosterCtrl.tour.details.teamMinSize || rosterCtrl.tour.details.teamMinSize == 0) ? 'Ready To Play' : 'Not Enough Players!' : 'Need More Players!' }}</h4>
+                            <h4>Players</h4>
+                            <ul>
+                                <li ng-repeat="teamUser in team.teamPlayers">{{teamUser.User.name}}</li>
+                            </ul>
+                        <div class="tileContentBottom">
+                        </div>
+                        </div>
                     </div>
                 </div>
                 <figcaption>

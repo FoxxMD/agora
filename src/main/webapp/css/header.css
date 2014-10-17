@@ -6,7 +6,7 @@
     left: 0;*/
     width: 100%;
     /*background: #f6f6f6;*/
-    background: #47a3da;
+    background: #2D7AA6;
     z-index: 2000;
     height: 200px;
     overflow: visible;
@@ -35,7 +35,7 @@
     line-height: 200px;
 }
 .cbp-af-header nav a.topLink.active {
-    color: #02639d;
+    color: #373737;
 }
 
 .cbp-af-header h1 {

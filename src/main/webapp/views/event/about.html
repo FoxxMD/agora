@@ -42,12 +42,12 @@
         ng-click="aboutCtrl.save()">Save
 </button>
     <div class="row">
-        <h2>About This Event</h2>
+        <h1>Give Credit Where It's Due</h1>
     </div>
     <div class="row">
         <div class="col-md-9">
             <div ng-repeat="header in event.details.credits track by $index" class="col-md-12">
-                <h3 class="text-center">{{header.title}}</h3>
+                <h1 class="text-center">{{header.title}}</h1>
                 <div ng-repeat="node in header.nodes" class="col-md-3">
                     <strong>{{node.title}}</strong>
                     <i>{{node.byline}}</i>
@@ -56,9 +56,9 @@
         </div>
         <div class="col-md-3">
             <div class="well">
-                <h4>Contact Us!</h4>
-                <strong>Email</strong>
-                <a href="mailto:feedback@gtgamefest.com">feedback@gtgamfest.com</a>
+                <h2>Contact Us</h2>
+                <p><a href="https://gtgamefest.uservoice.com/" data-uv-trigger>Use the Uservoice Widget</a><br/>or<br/> <a href="mailto:tickets@gtgamefest.uservoice.com">Email Us!</a></p>
+
             </div>
         </div>
     </div>

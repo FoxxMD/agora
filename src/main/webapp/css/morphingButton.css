@@ -10,7 +10,7 @@
 	position: relative;
 	padding: 0 1em;
 	border: none;
-	background-color: #e85657;
+	background-color: #2D7AA6;
 	color: #f9f6e5;
 	/*text-transform: uppercase;*/
 	letter-spacing: 1px;
@@ -30,6 +30,7 @@
 
 .morph-button.open .morph-content {
 	pointer-events: auto;
+    color:white;
 }
 
 /* Morph Button Style: In the content flow */

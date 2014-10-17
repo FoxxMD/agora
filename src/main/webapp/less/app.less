@@ -1,28 +1,34 @@
-.myClass {
-  background-color: red;
-  font-size: 16px;
-}
-
 body {
   /*margin-top:15em;*/
+    color:#373737;
   a {
     cursor: pointer;
     color: white;
   }
-  .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6, p {
-    color: #F1F1F1;
+  .h2, .h3, .h4, .h5, .h6, h2, h3, h4, h5, h6, p {
+    color: #373737;
   }
-  color: #F1F1F1;
+    .h1, h1{
+        color: white;
+    }
+    .whiteFont {
+        color:white;
+    }
 
   .well {
     border: none;
-    background-color: #636363
+    /*background-color: #636363*/
+      background-color:transparent;
+      border-radius:0px;
+      &.bordered {
+          border:solid 2px white;
+      }
   }
   .panel.panel-default {
-    background-color: grey;
+    background-color: white;
     .panel-heading {
-      background-color: grey;
-      color: white;
+      background-color: white;
+/*      color: white;*/
     }
   }
     .btn.btn-link{
@@ -128,7 +134,10 @@ body {
 
 .morphingButtonForm {
   padding: 15px 15px 70px 15px;
-  background-color: rgb(119, 119, 119)
+  background-color: #2D7AA6;
+    h1,h2,h3,h4{
+        color:white;
+    }
 }
 
 .list-row {
@@ -346,7 +355,24 @@ fieldset[disabled] {
 }
 
 .well .well {
-  background-color: #555555;
+  /*background-color: #555555;*/
+    background-color:transparent;
+}
+.tagWell{
+
+    .blueIcon {
+        color: #2D7AA6;
+    }
+    .blueBackground {
+        &.fa-circle:before{
+            color:  #2D7AA6;
+        }
+
+    }
+    /*.tags-input-element{
+        display:inline-block;
+        overflow:visible;
+    }*/
 }
 
 .st-content .timeEditor {
@@ -380,7 +406,11 @@ fieldset[disabled] {
     margin-bottom:30px;
     width:30%;
     height: 300px;
-    background-color: grey;
+    background-color: #5B5B5B;
+      &:active,
+      &:hover{
+          background-color:#2D7AA6
+      }
       @media screen and (max-width: 800px){
           width:45%;
           height: 150px;
@@ -394,163 +424,211 @@ fieldset[disabled] {
               border-radius: 3px;
           }
       }
+      .contentClick {
+          position:relative;width:100%; height:100%;
+      }
+      .tileHeader {
+          position:relative;
+          color:white;
+          font-size:1em;
+          padding:15px 10px 15px 15px;
+          i{
+              float:right;
+              margin-right:15px;
+              margin-top:-5px;
+          }
+      }
+      .tileContentContainer {
+          background-color:white;
+            position:relative;
+          height:80.5%;
+          width:100%;
+      @media screen and (max-width: 1200px){
+          height:82%;
+      }
+          @media screen and (max-width: 800px){
+              height:73%;
+          }
+          .tileContent {
+              position:absolute;
+              top:0;
+              bottom:0;
+              right:0;
+              left:0;
+              padding:10px 5px 0px 20px;
+              .tileContentBottom{
+                  position:absolute;
+                  bottom:0;
+                  right:0;
+                  padding: 0 30px 5px 0;
+              }
+              i {
+                  float:left;
+                  margin-right:10px;
+              }
+              h3,h4 {
+                  margin: 17px 0 17px 0;
+              }
+          }
   }
 }
+}
 .actionContainer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    .btn {
-        float: right;
-        margin-bottom: 5px;
-    }
+position: absolute;
+top: 0;
+right: 0;
+.btn {
+    float: right;
+    margin-bottom: 5px;
+}
 }
 .grid.cs-style-4 {
-    li.component {
-        padding:0px;
-        overflow:hidden;
-    }
+li.component {
+    padding:0px;
+    overflow:hidden;
+}
 }
 .grid-content{
-    position:relative;
-    width:100%;
-    height:100%;
-    /*overflow:hidden;*/
-    &.expandedAction {
-        width:120%;
-    }
+position:relative;
+width:100%;
+height:100%;
+/*overflow:hidden;*/
+&.expandedAction {
+    width:120%;
+}
 }
 
 /*https://github.com/IanLunn/Hover/blob/master/css/hover.css*/
 /* SHADOW/GLOW TRANSITIONS */
 /* Glow */
 .glow {
-  display: inline-block;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-property: box-shadow;
-  transition-property: box-shadow;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+display: inline-block;
+-webkit-transition-duration: 0.3s;
+transition-duration: 0.3s;
+-webkit-transition-property: box-shadow;
+transition-property: box-shadow;
+-webkit-transform: translateZ(0);
+transform: translateZ(0);
+box-shadow: 0 0 1px rgba(0, 0, 0, 0);
 }
 .glow:hover, .glow:focus, .glow:active {
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.90);
+box-shadow: 0 0 20px rgba(255, 255, 255, 0.90);
 }
 
 /* Outline Outward */
 .outline-outward {
-  display: inline-block;
-  position: relative;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+display: inline-block;
+position: relative;
+-webkit-transform: translateZ(0);
+transform: translateZ(0);
+box-shadow: 0 0 1px rgba(0, 0, 0, 0);
 }
 .outline-outward:before {
-  content: '';
-  position: absolute;
-  border: #808080 solid 4px;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-property: top, right, bottom, left;
-  transition-property: top, right, bottom, left;
+content: '';
+position: absolute;
+border: #5B5B5B solid 8px;
+top: 0;
+right: 0;
+bottom: 0;
+left: 0;
+-webkit-transition-duration: 0.3s;
+transition-duration: 0.3s;
+-webkit-transition-property: top, right, bottom, left;
+transition-property: top, right, bottom, left;
 }
 .outline-outward:hover:before, .outline-outward:focus:before, .outline-outward:active:before {
-  top: -8px;
-  right: -8px;
-  bottom: -8px;
-  left: -8px;
+border-color:#2D7AA6;
+top: -8px;
+right: -8px;
+bottom: -8px;
+left: -8px;
 }
 
 .eventCard {
-  padding:5px;
-  cursor:pointer;
+/*padding:4px;*/
+cursor:pointer;
 }
 tags-input {
-  border:none;
-  .tags {
-    background-color: transparent;
-    padding: 5px;
-    border: none;
-    box-shadow:none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    li.tag-item {
-      background: #808080;
-    }
-  }
+border:none;
+.tags {
+background-color: transparent;
+padding: 5px;
+border: none;
+box-shadow:none;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+li.tag-item {
+  background: #808080;
+}
+}
 }
 .insert-image-dialog {
-  z-index:9999;
+z-index:9999;
 }
 
 .teamChoiceButton {
-    width:100%;
-    height:70px;
-    background-color: grey;
-    cursor:pointer;
-    &:hover,
-    &.active{
-        background-color:#636363;
-    }
-    &.member {
-        height:40px;
-    }
+width:100%;
+height:70px;
+background-color: grey;
+cursor:pointer;
+&:hover,
+&.active{
+    background-color:#636363;
+}
+&.member {
+    height:40px;
+}
 }
 
 .angular-ui-tree-handle {
-    background: #555555;
-    /*border: 1px solid #dae2ea;*/
-    color: white;
-    padding: 10px 10px;
+background: #555555;
+/*border: 1px solid #dae2ea;*/
+color: white;
+padding: 10px 10px;
 }
 
 .angular-ui-tree-handle:hover {
-    color: white;
-    background: #636363;
-    /*border-color: #dce2e8;*/
+color: white;
+background: #636363;
+/*border-color: #dce2e8;*/
 }
 
 .angular-ui-tree-placeholder {
-    background: #f0f9ff;
-    border: 2px dashed #bed2db;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+background: #f0f9ff;
+border: 2px dashed #bed2db;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
 }
 .group-title {
-    background-color: #687074 !important;
-    color: #FFF !important;
+background-color: #687074 !important;
+color: #FFF !important;
 }
 a.withDecoration{
-    text-decoration: underline;
+text-decoration: underline;
 }
 .fixedSaveButton {
-    position:fixed !important;
-    bottom:50px;
-    right:100px;
-    z-index:1000;
+position:fixed !important;
+bottom:50px;
+right:100px;
+z-index:1000;
 }
 
 .fc-event{
-    &.tournament{
-        background-color:#ee4c00;
-    }
-    &.freeplay{
-        background-color:blue;
-    }
-    &.showcase{
-        background-color:green;
-    }
-    &.administrative{
-        background-color:red;
-    }
+&.tournament{
+    background-color:#ee4c00;
+}
+&.freeplay{
+    background-color:blue;
+}
+&.showcase{
+    background-color:green;
+}
+&.administrative{
+    background-color:red;
+}
 }
 .fullWidth {
-    width:100% !important;
+width:100% !important;
 }

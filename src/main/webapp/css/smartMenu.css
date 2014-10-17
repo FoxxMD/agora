@@ -1,4 +1,4 @@
-/* -------------------------------- 
+/* --------------------------------
 
 Primary style
 
@@ -14,7 +14,7 @@ html * {
   box-sizing: border-box;
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 Modules - reusable parts of our design
 
@@ -32,9 +32,9 @@ Modules - reusable parts of our design
   clear: both;
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
-Main components 
+Main components
 
 -------------------------------- */
 
@@ -62,7 +62,7 @@ Main components
     top:8px;
     left: -37px;
     z-index:9999;
-    color:#e84a64;
+    color:#373737;
     -webkit-transition: background 0.3s;
     -moz-transition: background 0.3s;
     transition: background 0.3s;
@@ -75,7 +75,7 @@ Main components
     bottom:-8px;
     right: -10px;
     z-index:9999;
-    background-color:#e84a64;
+    background-color:#373737;
     text-indent:0;
     -webkit-transition: background 0.3s;
     -moz-transition: background 0.3s;

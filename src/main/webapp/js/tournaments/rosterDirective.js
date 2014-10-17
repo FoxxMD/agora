@@ -14,7 +14,7 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             this.tour = Tournaments.getCurrent();
             this.user = Account.user();
             this.newTeamData = {
-                teamPlayers: [that.user.id],
+                teamPlayers: [that.user != undefined ? that.user.id : undefined],
                 guildOnly: false,
                 captainId: that.user.id
             };

@@ -12,7 +12,7 @@
 
             <div class="row">
                 <div ng-if="profileCtrl.account.isAdmin()" ng-class="profileCtrl.isEventProfile() ? 'col-md-6' : 'col-md-12'">
-                    <div class="well">
+                    <div class="well bordered">
                         <h4>Global Admin Options (Not Implemented)</h4>
                         <button class="btn btn-warning">Reset Password</button>
                         <button class="btn btn-info">Make Global Admin</button>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div ng-if="profileCtrl.isEventProfile()" ng-class="{'col-md-6':profileCtrl.account.isAdmin(),'col-md-12':profileCtrl.user.accountType == 'A'}">
-                    <div class="well">
+                    <div class="well bordered">
                         <h4>Event {{profileCtrl.user.events[profileCtrl.eventIndex].isAdmin ? 'Admin' : 'Moderator'}} Options</h4>
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-6">
@@ -51,7 +51,7 @@
     <div class="col-md-6">
         <div class="row">
             <div class="col-md-12">
-                <div class="well">
+                <div class="well bordered">
                     <h3>Statistics</h3>
                     <ul>
                         <li>Joined: {{profileCtrl.user.createdDate.format("MMMM Do YYYY")}}</li>
@@ -59,8 +59,8 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <div class="well">
-                    <h4>Guilds</h4>
+                <div class="well bordered">
+                    <h3>Guilds</h3>
                     <accordion close-other="profileCtrl.openedTeamsAccordion">
                         <accordion-group heading="{{guild.Guild.name}}" ng-repeat="guild in profileCtrl.user.guilds">
                             Got yer Guild, {{guild.Guild.name}}, with the Id {{guild.Guild.id}} right here.
@@ -70,8 +70,8 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <div class="well">
-                    <h4>Your Game Profiles</h4>
+                <div class="well bordered">
+                    <h3>Your Game Profiles</h3>
                     <accordion close-other="profileCtrl.openedGameProfileAccordion">
                         <accordion-group heading="{{profile.platform}}" ng-repeat="profile in profileCtrl.user.gameProfiles">
                             <a ng-if="profileCtrl.isEditable()" editable-text="profile.identifier" onaftersave="profileCtrl.tryUpdateGameProfile(profile)">{{profile.identifier}}</a>
@@ -80,6 +80,7 @@
                         </accordion-group>
                     </accordion>
                     {{profileCtrl.users.gameProfiles.length == 0 ? 'No Profiles Added!': ''}}
+                </div>
                     <morphing-button ng-if="profileCtrl.isEditable()" title="Add New Profile">
                         <form class="form morphingButtonForm" name="createProfileForm" ng-submit="profileCtrl.tryCreateGameProfile()"
                               novalidate>
@@ -106,12 +107,12 @@
                             <button ladda="gameProfileLoading" data-style="expand-right" type="submit" class="btn btn-primary pull-right">Add</button>
                         </form>
                     </morphing-button>
-                </div>
+
             </div>
         </div>
     </div>
     <div ng-if="profileCtrl.isEventProfile()" class="col-md-6">
-        <div class="well">
+        <div class="well bordered">
             <h3>At This Event</h3>
             <ul>
                 <li>Account Type: {{profileCtrl.user.accountType == 'A' ? 'Admin' : profileCtrl.user.accountType == 'M' ? 'Moderator' : 'User'}}</li>
@@ -145,8 +146,8 @@
     <div class="col-md-6">
         <div class="row">
             <div class="col-md-12">
-                <div class="well">
-                    <h4>Events Participated In</h4>
+                <div class="well bordered">
+                    <h3>Events Participated In</h3>
                     <accordion close-other="profileCtrl.openedEventAccordion">
                         <accordion-group heading="{{pEvent.event.name}}" ng-repeat="pEvent in profileCtrl.user.events">
                             Got yer Event, {{pEvent.event.name}}, with the Id {{pEvent.event.id}} right here.
@@ -156,8 +157,8 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <div class="well">
-                    <h4>Tournaments Participated In</h4>
+                <div class="well bordered">
+                    <h3>Tournaments Participated In</h3>
                     <accordion close-other="profileCtrl.openedTournamentAccordion">
                         <accordion-group heading="{{tour.name}}" ng-repeat="tour in profileCtrl.user.tournaments">
                             <div class="row">
