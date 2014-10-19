@@ -54,12 +54,19 @@ case class User(
 def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, event: Option[Event] = None): List[Tournament] = {
 
     val allTourneys = repo.getByUser(this).map(x => x.tournament)++trepo.getByUser(this.id).map(x => x.team.tournament)
+  if(allTourneys.nonEmpty)
+  {
     event match {
-        case Some(e: Event) =>
-            allTourneys.filter(x => x.event.id == e.id)
-        case None =>
-            allTourneys
+      case Some(e: Event) =>
+        allTourneys.filter(x => x.event.id == e.id)
+      case None =>
+        allTourneys
     }
+  }
+  else{
+    List[Tournament]()
+  }
+
 }
 
   private[this] val GameProfilesLens: SimpleLens[User, List[UserPlatformProfile]] = SimpleLens[User](_.gameProfiles)((u, newProfiles) => u.copy(gameProfiles = newProfiles))
