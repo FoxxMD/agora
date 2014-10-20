@@ -45,7 +45,7 @@ function teams(Guilds, Games, $state, $stateParams, $timeout, Account, Events) {
                     });
                 }
                 else{
-                    Events.getTeamsAndGuilds($stateParams.eventId, pageNo).then(function(response){
+                    Events.getTeamsAndGuilds($stateParams.eventId.toString(), pageNo).then(function(response){
                         if(response.length > 0)
                         {
                             that.guildCollection = that.guildCollection.concat(response.plain());
