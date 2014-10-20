@@ -10,7 +10,7 @@
         </a>
         <ul>
             <li ng-if="sidebar.event() != undefined && sidebar.account.isLoggedIn()" class="menuTopLink">
-                <a ui-sref="eventSkeleton.profile({eventId: sidebar.event().id, userId: sidebar.account.user().id})"><i class="fa fa-user"></i> Profile</a>
+                <a ui-sref="eventSkeleton.profile({eventId: sidebar.event().id, userId: sidebar.account.user().id})" ng-click="toggleMenu()"><i class="fa fa-user"></i> Profile</a>
             </li>
             <li ng-if="sidebar.event() == undefined && sidebar.account.isLoggedIn()" class="menuTopLink">
                 <a ui-sref="globalSkeleton.profile({userId: sidebar.account.user().id})"><i class="fa fa-user"></i> Profile</a>
@@ -28,12 +28,12 @@
                 <ul ng-if="sidebar.account.isLoggedIn() && sidebar.account.user().tournaments.length > 0"
                     ng-show="sidebar.toggleTournaments" class="subsection myEvents fa-ul">
                     <li ng-repeat="tour in sidebar.account.user().tournaments">
-                        <a ui-sref="eventSkeleton.tournament({tournamentId:tour.id})" ng-click="sidebar.toggleTournaments = false; toggleMenu();"><i class="fa fa-li fa-arrow-right"></i>{{tour.game}} - {{tour.tournamentType}}: {{tour.name}}</a>
+                        <a ui-sref="eventSkeleton.tournament.roster({tournamentId:tour.id})" ng-click="sidebar.toggleTournaments = false; toggleMenu();"><i class="fa fa-li fa-arrow-right"></i>{{tour.game}} - {{tour.tournamentType}}: {{tour.name}}</a>
                     </li>
                 </ul></li>
 <!--            <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"><i class="fa fa-group"></i> Friends</a>-->
             </li>
-            <li ui-sref-active="active" class="menuTopLink"><a ui-sref="eventSkeleton.account"><i class="fa fa-gears"></i> Account Settings</a></li>
+            <li ui-sref-active="active" class="menuTopLink"><a ui-sref="eventSkeleton.account" ng-click="toggleMenu()"><i class="fa fa-gears"></i> Account Settings</a></li>
             <li class="menuTopLink"><a ui-sref="globalSkeleton.about"><i class="fa fa-question"></i> About Gamefest</a></li>
             <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"
                                        ng-click="sidebar.account.logout()">Logout</a></li>
