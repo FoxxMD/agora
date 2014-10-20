@@ -79,7 +79,7 @@
         infinite-scroll-container="'#st-content'" infinite-scroll-disabled="toursCtrl.busy">
         <div class="grid-sizer"></div>
         <li class="masonry-brick outline-outward eventCard component tournamentComponent"
-            ng-repeat="tour in toursCtrl.toursCollection | filter: toursCtrl.filterTours track by $index" on-last-repeat>
+            ng-repeat="tour in toursCtrl.toursCollection | filter: toursCtrl.filterTours | orderBy: 'game.name' track by $index" on-last-repeat>
             <div ng-click="toursCtrl.state.go('eventSkeleton.tournament.roster',{tournamentId:tour.id})" class="contentClick">
                 <div class="tileHeader">{{tour.game.name}} <i class="fa fa-gamepad fa-2x"></i></div>
                 <div class="tileContentContainer">
