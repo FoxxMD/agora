@@ -21,8 +21,10 @@ function paymentController($scope, eventData, $state, Events, Account){
     checkPaid();
 
     $scope.handleStripe = function(status, response) {
+        $scope.paymentLoading = true;
         if(response.error)
         {
+            $scope.paymentLoading = false;
             $scope.$emit('notify','error',response,5000);
         }
         else
@@ -32,6 +34,10 @@ function paymentController($scope, eventData, $state, Events, Account){
                 $scope.$emit('notify','notice','Successfully payed!',5000);
                 Account.initUser();
                 $state.go('eventSkeleton.event',{eventId: eventData.id.toString()});
+            }, function(error){
+                $scope.$emit('notify','error',error,5000);
+            }).finally(function(){
+                $scope.paymentLoading = false;
             });
         }
     }
