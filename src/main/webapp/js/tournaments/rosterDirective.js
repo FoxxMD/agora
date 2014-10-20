@@ -13,17 +13,18 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             var that = this;
             this.tour = Tournaments.getCurrent();
             this.user = Account.user();
+            this.account = Account;
             this.newTeamData = {
-                teamPlayers: [that.user != undefined ? that.user.id : undefined],
+                teamPlayers: [Account.isLoggedIn() ? that.user.id : undefined],
                 guildOnly: false,
-                captainId: that.user.id
+                captainId: Account.isLoggedIn() ? that.user.id : undefined
             };
             this.state = $state;
-            this.showTeamForm = that.user.guilds.length == 0;
+            this.showTeamForm = Account.isLoggedIn() ? that.user.guilds.length == 0 : false;
             if (that.tour.tournamentType.teamPlay)
-                this.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id);
+                this.isOnTeam = Account.isLoggedIn() ? Tournaments.isOnTeamInRoster(Account.user().id) : false;
             else
-                this.isOnRoster = Tournaments.isUserInRoster(Account.user().id);
+                this.isOnRoster = Account.isLoggedIn() ? Tournaments.isUserInRoster(Account.user().id) : false;
             this.toggleGuildMemberSelection = function (player) {
                 if (!player.selected) {
                     if (Tournaments.canAddTeamMember(that.newTeamData.teamPlayers)) {
@@ -86,10 +87,16 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
                 }
             };
             this.isCaptain = function (team, userId) {
-                userId = userId || that.user.id;
-                return _.find(team.teamPlayers, function (player) {
-                    return player.User.isCaptain && player.User.id == userId;
-                });
+                if(Account.isLoggedIn()){
+                    userId = userId || that.user.id;
+                    return _.find(team.teamPlayers, function (player) {
+                        return player.User.isCaptain && player.User.id == userId;
+                    });
+                }
+                else{
+                    return false;
+                }
+
             };
             this.joinTeam = function (team) {
                 team.teamJoinLoading = true;
