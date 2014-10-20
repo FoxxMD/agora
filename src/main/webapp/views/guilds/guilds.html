@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                             <div ng-if="guildsCtrl.isEvent" class="contentClick"
-                                 ng-click="guild.guildOnly ? guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id}) : guildsCtrl.state.go('eventSkeleton.tournament.roster',{eventId:guildsCtrl.stateParams.eventId, tournamentId: guild.tournament.id})">
+                                 ng-click="guild.guildOnly ? guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.guildId}) : guildsCtrl.state.go('eventSkeleton.tournament.roster',{eventId:guildsCtrl.stateParams.eventId, tournamentId: guild.tournament.id})">
                                 <div class="tileHeader">
                                     {{guild.guildOnly ? '[GUILD]' : ''}} {{guild.name}}
                                 </div>

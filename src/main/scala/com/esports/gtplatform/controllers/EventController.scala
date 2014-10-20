@@ -313,7 +313,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
 
             val members = guild.members.filter(x => teamPlayerIds.contains(x.user.id))
 
-            val newTeam = Team(guild.name, JoinType.Invite, requestTournament.get, guildOnly = true)
+            val newTeam = Team(guild.name, JoinType.Invite, requestTournament.get, guildOnly = true, guildId = Option(guildId))
             val inserted = tx { () =>
                 val insertedTeam = teamRepo.create(newTeam)
                 val newPlayers = members.map(x => TeamUser(insertedTeam, x.user, isCaptain = captainId.isDefined && x.user.id == captainId.get))

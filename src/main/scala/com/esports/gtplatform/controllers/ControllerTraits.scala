@@ -107,38 +107,13 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
                     case _ =>
                     logger.debug("[Response Body] It's not a string")
                 }
+            case s: String =>
+                logger.debug("[Response Body] Result was a string")
+                contentType = formats("txt")
             case _ =>
             logger.debug("[Response Body] no hit")
         }
-        try{
             renderResponseBody(actionResult)
-        }
-        catch{
-            case p: JsonParseException =>
-                logger.error(p.getMessage, p)
-                halt(400, "Request data was malformed. Make sure JSON is formatted properly.")
-            case m: org.json4s.MappingException =>
-                logger.error(m.getMessage, m)
-                halt(400, "Request was badly formed, are you missing a parameter?")
-            case n: NotImplementedError =>
-                logger.error(n.getMessage, n)
-                halt(500, "We forgot to implement something...")
-            case q: QueryException =>
-                logger.error(q.getMessage, q)
-                halt(500, "Database problems...")
-            case my: BadSqlGrammarException =>
-                logger.error(my.getMessage, my)
-                halt(500, "Database problems...")
-            case np: NullPointerException =>
-                logger.error(np.getMessage, np)
-                halt(500, "Something went wrong!")
-            case e: Error =>
-                logger.error(e.getMessage, e)
-                halt(500, "Something went wrong!")
-            case t: Throwable =>
-                logger.error(t.getMessage, t)
-                halt(500, "Something went wrong!")
-        }
     }
 }
 
@@ -192,25 +167,28 @@ trait GuildControllerT extends StandardController {
     val guildRepo = inject[GuildRepo]
     var requestGuild: Guild with Persisted = null
     before("/:id/?*") {
-        requestGuild = params.get("id").fold {
+/*        requestGuild = params.get("id").fold {
             halt(400, idType + " Id parameter is missing")
         }(toInt)
             .fold {
             halt(400, idType + " Id was not a valid integer")
         } {
             guildRepo.get(_).getOrElse(halt(400, "No team exists with the Id " + _))
-        }
-        /*    val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+        }*/
+/*            val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
             val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
             paramId = Some(i)*/
     }
-    /*  before("/:id/?*") {
+      before("/:id/?*") {
+          val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+          val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+          paramId = Some(i)
         guildRepo.get(paramId.get) match {
           case Some(t: Guild with Persisted) =>
-            requestGuild = Some(t)
+            requestGuild = t
           case None => halt(400, "No team exists with the Id " + paramId.get)
         }
-      }*/
+      }
 }
 
 trait GameControllerT extends StandardController {

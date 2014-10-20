@@ -79,7 +79,7 @@
                              <button ng-click="profileCtrl.tryRemoveGameProfile(profile)" class="btn btn-sm btn-danger pull-right">Remove</button>
                         </accordion-group>
                     </accordion>
-                    {{profileCtrl.users.gameProfiles.length == 0 ? 'No Profiles Added!': ''}}
+                    {{profileCtrl.user.gameProfiles.length == 0 ? 'No Profiles Added!': ''}}
                 </div>
                     <morphing-button ng-if="profileCtrl.isEditable()" title="Add New Profile">
                         <form class="form morphingButtonForm" name="createProfileForm" ng-submit="profileCtrl.tryCreateGameProfile()"
@@ -115,11 +115,11 @@
         <div class="well bordered">
             <h3>At This Event</h3>
             <ul>
-                <li>Account Type: {{profileCtrl.user.accountType == 'A' ? 'Admin' : profileCtrl.user.accountType == 'M' ? 'Moderator' : 'User'}}</li>
+                <li>Account Type: {{profileCtrl.user.accountType == 'A' ? 'Admin' : profileCtrl.user.accountType == 'M' ? 'Moderator' : 'Normal'}}</li>
             </ul>
             <h4>Tournaments</h4>
             <accordion>
-                <accordion-group heading="{{tour.name}}" ng-repeat="tour in profileCtrl.user.tournaments | filter:{eventId: that.event.id}">
+                <accordion-group heading="{{tour.game}} - {{tour.tournamentType}}" ng-repeat="tour in profileCtrl.user.tournaments | filter:{eventId: that.event.id}">
                     <div class="row">
                         <div class="col-md-6">
                             <strong>Stats</strong>
@@ -133,6 +133,7 @@
                         <div class="col-md-6">
                             <strong>Info</strong>
                             <ul>
+                                <li ng-if="tour.name"><strong>Tournament Name:</strong> {{tour.name}}</li>
                                 <li><strong>Game:</strong> {{tour.game}}</li>
                                 <li><strong>Type:</strong> {{tour.tournamentType}}</li>
                                 <!--<li><strong>Roster Status:</strong> Open!</li>-->
@@ -150,7 +151,24 @@
                     <h3>Events Participated In</h3>
                     <accordion close-other="profileCtrl.openedEventAccordion">
                         <accordion-group heading="{{pEvent.event.name}}" ng-repeat="pEvent in profileCtrl.user.events">
-                            Got yer Event, {{pEvent.event.name}}, with the Id {{pEvent.event.id}} right here.
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Stats</strong>
+                                    <ul>
+                                        <li>{{pEvent.tournaments}} Tournament</li>
+<!--                                        <li>{{pEvent.guilds}} Teams</li>
+                                        <li>{{pEvent.users}} Users</li>-->
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Info</strong>
+                                    <ul>
+<!--                                        <li>{{pEvent.createdDate.format("MMMM Do YYYY")}}</li>
+                                        <li>{{pEvent.location}}</li>-->
+                                        <li><strong>Account Type:</strong> {{pEvent.isAdmin ? 'Admin' : pEvent.isModerator ? 'Moderator' : 'Normal'}}</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </accordion-group>
                     </accordion>
                     {{profileCtrl.user.events.length == 0 ? 'None to report!' :''}}
@@ -160,7 +178,7 @@
                 <div class="well bordered">
                     <h3>Tournaments Participated In</h3>
                     <accordion close-other="profileCtrl.openedTournamentAccordion">
-                        <accordion-group heading="{{tour.name}}" ng-repeat="tour in profileCtrl.user.tournaments">
+                        <accordion-group heading="{{tour.game}} - {{tour.tournamentType}}" ng-repeat="tour in profileCtrl.user.tournaments">
                             <div class="row">
                                 <div class="col-md-6">
                                     <strong>Stats</strong>
@@ -174,6 +192,7 @@
                                 <div class="col-md-6">
                                     <strong>Info</strong>
                                     <ul>
+                                        <li ng-if="tour.name"><strong>Tournament Name:</strong> {{tour.name}}</li>
                                         <li><strong>Game:</strong> {{tour.game}}</li>
                                         <li><strong>Type:</strong> {{tour.tournamentType}}</li>
                                         <!--<li><strong>Roster Status:</strong> Open!</li>-->
