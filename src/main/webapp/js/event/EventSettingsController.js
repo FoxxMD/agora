@@ -25,9 +25,9 @@ function eventSettingsController($scope, eventData, $rootScope, Events) {
             });
         }
     };
-    this.tryCreatePayment = function(){
+    this.tryCreatePayment = function(form){
         $scope.$broadcast('show-errors-check-validity');
-        if($scope.$$childTail.createPayment.$valid) {
+        if(form.$valid) {
             that.paymentLoading = true;
             Events.createPayment(eventData.id.toString(), that.paymentCreation).then(function(response){
                 that.event.payments = response;
