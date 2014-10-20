@@ -10,7 +10,7 @@
                     <li ng-show="eventCtrl != undefined" class="menuLink"><a id="gamesHeaderLink" class="topLink">Games <span class="badge">{{eventCtrl.event.games.length}}</span></a>
                         <ul ng-if="eventCtrl.event.games != undefined" class="cbp-hssubmenu cbp-hssub-rows">
                             <li ng-repeat="game in eventCtrl.event.games">
-                                <a ng-click="menu._openMenu($event.currentTarget, $event)" ui-sref="eventSkeleton.tournaments({gameFilter: game.name})"><img ng-src="{{headerCtrl.games.getImageUrl(game)}}"/><span>{{game.name}}<br/>{{game.count}} tournaments</span></a>
+                                <a ng-click="headerCtrl.closeMenu($event, game.name)"><img ng-src="{{headerCtrl.games.getImageUrl(game)}}"/><span>{{game.name}}<br/>{{game.count}} tournaments</span></a>
                             </li>
                         </ul></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.users" ui-sref-active="active" class="topLink">Users <span class="badge">{{eventCtrl.event.users}}</span></a></li>

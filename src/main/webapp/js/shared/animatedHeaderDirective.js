@@ -5,13 +5,17 @@ angular.module('gtfest')
 .directive('animatedheader', animatedheader);
 
 // @ngInject
-function animatedheader(Events, $rootScope, Games){
+function animatedheader(Events, $rootScope, Games, $state){
     return {
         templateUrl:'views/shared/animatedheader.html',
         restrict:'E',
        controllerAs:'headerCtrl',
         controller: /*@ngInject*/ ["$scope", function($scope){
             this.games = Games;
+            this.closeMenu = function(event, name) {
+                $scope.menu._openMenu(event.currentTarget, event);
+                $state.go('eventSkeleton.tournaments',{gameFilter: name});
+            }
         }],
         link: function(scope,elem,attrs)
         {
@@ -20,8 +24,7 @@ function animatedheader(Events, $rootScope, Games){
                 content = $(document).find('.st-content')[0],
                 contentPane = $(document).find('.contentPane')[0],
                 didScroll = false,
-                changeHeaderOn = 100,
-                isinit = false;
+                changeHeaderOn = 100;
 
             function init() {
                 content.addEventListener( 'scroll', function( event ) {
@@ -49,12 +52,12 @@ function animatedheader(Events, $rootScope, Games){
 
             init();
 
-            if(!isinit)
+            if(!scope.isinit)
             {
-                $rootScope.menu = new cbpHorizontalSlideOutMenu( elem.find('#cbp-hsmenu-wrapper' )[0] );
-                isinit = true;
+                scope.menu = new cbpHorizontalSlideOutMenu( elem.find('#cbp-hsmenu-wrapper' )[0] );
+                scope.isinit = true;
             }
         }
     }
 }
-animatedheader.$inject = ["Events","$rootScope", "Games"];
+animatedheader.$inject = ["Events","$rootScope", "Games", "$state"];
