@@ -12,7 +12,7 @@
     <h4 class="text-center">Minimum players: {{rosterCtrl.tour.details.playerMinSize == 0 ? 'No Minimum' : rosterCtrl.tour.details.playerMinSize}}</h4>
     <h4 class="text-center">Maximum players: {{rosterCtrl.tour.details.playerMaxSize == 0 ? 'No Maximum' : rosterCtrl.tour.details.playerMaxSize}}</h4>
 </div>
-<morphing-button ng-if="rosterCtrl.tour.tournamentType.teamPlay && rosterCtrl.isOnTeam == undefined && (rosterCtrl.tour.teams.length < rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) " title="Create Team">
+<morphing-button ng-if="rosterCtrl.account.isLoggedIn() && rosterCtrl.tour.tournamentType.teamPlay && rosterCtrl.isOnTeam == undefined && (rosterCtrl.tour.teams.length < rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) " title="Create Team">
     <form class="form morphingButtonForm" name="newTeamForm" ng-submit="rosterCtrl.createNewTeam(newTeamForm)">
         <div ng-show="!rosterCtrl.showTeamForm">
             <div ng-click="rosterCtrl.showTeamForm = true;" class="teamChoiceButton">
@@ -46,7 +46,7 @@
     </form>
 </morphing-button>
 
-<button ng-if=rosterCtrl.account.isLoggedIn() && !rosterCtrl.tour.tournamentType.teamPlay && ((rosterCtrl.tour.users.length < rosterCtrl.tour.details.playerMaxSize || rosterCtrl.tour.details.playerMaxSize == 0) || rosterCtrl.isOnRoster)" ladda="rosterCtrl.rosterStatusLoading" data-style="expand-right" class="btn btn-lg"
+<button ng-if="rosterCtrl.account.isLoggedIn() && !rosterCtrl.tour.tournamentType.teamPlay && ((rosterCtrl.tour.users.length < rosterCtrl.tour.details.playerMaxSize || rosterCtrl.tour.details.playerMaxSize == 0) || rosterCtrl.isOnRoster)" ladda="rosterCtrl.rosterStatusLoading" data-style="expand-right" class="btn btn-lg"
         ng-click="rosterCtrl.changeRosterStatus()" ng-class="rosterCtrl.isOnRoster ? 'btn-warning' : 'btn-info'">{{rosterCtrl.isOnRoster ? 'Leave' : 'Join Tournament'}}
 </button>
 
@@ -114,11 +114,11 @@
                 <figcaption>
                     <h3>Actions</h3>
                     <button ladda="team.teamJoinLoading" data-style="expand-right"
-                            ng-if="rosterCtrl.isLoggedIn() && !rosterCtrl.isOnTeam && (team.teamPlayers.length <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0)
+                            ng-if="rosterCtrl.account.isLoggedIn() && !rosterCtrl.isOnTeam && (team.teamPlayers.length <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0)
                             && (!team.guildOnly  || (team.guildOnly && rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam))"
                             ng-click="rosterCtrl.joinTeam(team)" class="btn btn-success">Join Team
                     </button>
-                    <button ng-if="rosterCtrl.isLoggedIn() && team.guildOnly && !rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam" ng-click="rosterCtrl.guildTip()" class="btn btn-disable">Join Team</button>
+                    <button ng-if="rosterCtrl.account.isLoggedIn() && team.guildOnly && !rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam" ng-click="rosterCtrl.guildTip()" class="btn btn-disable">Join Team</button>
                     <button ladda="team.teamLeaveLoading" data-style="expand-right" ng-if="rosterCtrl.isOnTeam.id == team.id && !rosterCtrl.isCaptain(team)"
                             ng-click="rosterCtrl.leaveTeam(team)" class="btn btn-warning">Leave Team
                     </button>
