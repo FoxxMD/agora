@@ -33,7 +33,7 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, 
         implicit val formats: Formats = DefaultFormats + new DateSerializer
         Extraction.decompose(td.copy())
     case up: UserPlatformProfile =>
-        implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(GamePlatform)
+        implicit val formats: Formats = DefaultFormats
         Extraction.decompose(up.copy())
     case tt: TournamentType =>
         implicit val formats: Formats = DefaultFormats

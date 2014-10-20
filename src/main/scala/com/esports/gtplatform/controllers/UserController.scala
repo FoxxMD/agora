@@ -5,10 +5,10 @@ import com.esports.gtplatform.Utilities.PasswordSecurity
 import com.esports.gtplatform.business.UserIdentityRepo
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
-import models.GamePlatform.{GamePlatform}
+
 import models.UserIdentity
 import org.json4s.JsonDSL._
-import models.{GamePlatform, UserPlatformProfile}
+import models.{UserPlatformProfile}
 import org.json4s.Extraction
 import org.scalatra.{InternalServerError, Ok}
 import com.googlecode.mapperdao.jdbc.Transaction
@@ -72,7 +72,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     if (params("id").toInt != requestUser.get.id && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
 
-    val platformType = parsedBody.\("platform").extract[GamePlatform]
+    val platformType = parsedBody.\("platform").extract[String]
     val identity = parsedBody.\("identifier").extract[String]
 
     if(requestUser.get.gameProfiles.exists(x => x.platform == platformType))
@@ -87,7 +87,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
       halt(403, "You don't have permission to edit this user.")
     val pbody = parsedBody
 
-    val platformType = GamePlatform.fromString(params("platform"))
+    val platformType = params("platform")
 
     if(!requestUser.get.gameProfiles.exists(x => x.platform == platformType))
       halt(400, "User does not have a platform with this type to delete.")
@@ -100,7 +100,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     if (params("id").toInt != requestUser.get.id && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
 
-    val platformType = parsedBody.\("platform").extract[GamePlatform]
+    val platformType = parsedBody.\("platform").extract[String]
     val identity = parsedBody.\("identifier").extract[String]
 
     if(!requestUser.get.gameProfiles.exists(x => x.platform == platformType))

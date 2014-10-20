@@ -81,7 +81,7 @@
                     </accordion>
                     {{profileCtrl.user.gameProfiles.length == 0 ? 'No Profiles Added!': ''}}
                 </div>
-                    <morphing-button ng-if="profileCtrl.isEditable()" title="Add New Profile">
+                    <morphing-button ng-if="profileCtrl.isEditable() && profileCtrl.user.gameProfiles.length < 3" title="Add New Profile">
                         <form class="form morphingButtonForm" name="createProfileForm" ng-submit="profileCtrl.tryCreateGameProfile()"
                               novalidate>
                             <div class="row">
@@ -90,9 +90,9 @@
                                         <h4>Choose A Platform</h4>
                                         <div class="btn-group">
                                             <!--TODO make these disappear if user already has one -->
-                                            <label class="btn btn-info" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Steam'">Steam</label>
-                                            <label class="btn btn-info" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Battle.net'">Battle.net</label>
-                                            <label class="btn btn-info" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Riot'">Riot</label>
+                                            <label class="btn btn-info" ng-show="!profileCtrl.hasGameProfile('Steam')" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Steam'">Steam</label>
+                                            <label class="btn btn-info" ng-show="!profileCtrl.hasGameProfile('Battle.net')" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Battle.net'">Battle.net</label>
+                                            <label class="btn btn-info" ng-show="!profileCtrl.hasGameProfile('Riot')" ng-model="profileCtrl.newPlatformData.platform" btn-radio="'Riot'">Riot</label>
                                         </div>
                                     </div>
                                 </div>

@@ -79,18 +79,21 @@ function prof($scope, Account, Users, userData, Events, $state) {
         that.gameProfileLoading = true;
         Users.addGamePlatformProfile(that.user.id.toString(), that.newPlatformData).then(function(){
             $scope.$broadcast('toggleMorph');
+            that.user.gameProfiles.push(that.newPlatformData);
             that.newPlatformData = {};
             $scope.$broadcast('show-errors-reset');
             $scope.$emit('notify', 'notice', 'Platform added.', 3000);
-            that.user.profiles.push(that.newPlatformData);
         }).finally(function(){
             that.gameProfileLoading = false;
         });
     };
+    this.hasGameProfile = function(profile){
+        return _.some(that.user.gameProfiles, {'platform': profile})
+    };
     this.tryRemoveGameProfile = function(platform){
         Users.removeGamePlatformProfile(that.user.id.toString(), platform.platform).then(function(){
             $scope.$emit('notify', 'notice', 'Platform removed.', 3000);
-            that.user.profiles.slice(that.user.profiles.indexOf(platform),1);
+            that.user.gameProfiles.slice(that.user.gameProfiles.indexOf(platform),1);
         });
     };
     this.tryUpdateGameProfile = function(platform) {

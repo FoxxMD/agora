@@ -2,27 +2,27 @@ package models
 
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Invitee
-import models.GamePlatform.GamePlatform
+//import models.GamePlatform.GamePlatform
 import monocle.SimpleLens
 import monocle.syntax._
 import org.joda.time.DateTime
 
-object GamePlatform extends Enumeration {
-  type GamePlatform = Value
-  val Steam, Battlenet, Riot = Value
-
-  def toString(j: GamePlatform) = j match {
-    case Steam => "Steam"
-    case Battlenet => "Battle.net"
-    case Riot => "Riot"
-  }
-
-  def fromString(j: String): GamePlatform = j match {
-    case "Steam" => Steam
-    case "Battle.net" => Battlenet
-    case "Riot" => Riot
-  }
-}
+//object GamePlatform extends Enumeration {
+//  type GamePlatform = Value
+//  val Steam, Battlenet, Riot = Value
+//
+//  def toString(j: GamePlatform) = j match {
+//    case Steam => "Steam"
+//    case Battlenet => "Battle.net"
+//    case Riot => "Riot"
+//  }
+//
+//  def fromString(j: String): GamePlatform = j match {
+//    case "Steam" => Steam
+//    case "Battle.net" => Battlenet
+//    case "Riot" => Riot
+//  }
+//}
 
 /**
  * Created by Matthew on 6/30/2014.
@@ -69,7 +69,7 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
   private[this] val GameProfilesLens: SimpleLens[User, List[UserPlatformProfile]] = SimpleLens[User](_.gameProfiles)((u, newProfiles) => u.copy(gameProfiles = newProfiles))
 
   def addGameProfile(gp: UserPlatformProfile): User = this applyLens GameProfilesLens modify(_.+:(gp))
-  def removeGameProfile(ptype: GamePlatform): User = this applyLens GameProfilesLens modify(_.filter(x => x.platform != ptype))
+  def removeGameProfile(ptype: String): User = this applyLens GameProfilesLens modify(_.filter(x => x.platform != ptype))
   def changeGameProfile(gp: UserPlatformProfile) = this.removeGameProfile(gp.platform).addGameProfile(gp)
 
   //TODO work on related entities
@@ -94,4 +94,4 @@ case class UserIdentity(
 
 /* Right now more of a placeholder than anything. This will eventually serve as a list linked popular game profiles for this user
 * EX Steam, Battle.NET, etc. etc. */
-case class UserPlatformProfile(user: User, platform: GamePlatform.Value, identifier: String)
+case class UserPlatformProfile(user: User, platform: String, identifier: String, id: Int = 0)
