@@ -26,6 +26,9 @@ body h1 {
 body .whiteFont {
   color: white;
 }
+body .toast {
+  color: white;
+}
 body .well {
   border: none;
   /*background-color: #636363*/
