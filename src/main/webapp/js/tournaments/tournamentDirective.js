@@ -12,7 +12,7 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
         controller: /*@ngInject*/ ["$scope", function ($scope) {
             var that = this;
             this.tour = Tournaments.getCurrent();
-            console.log(that.tour.plain());
+            //console.log(that.tour.plain());
 
             this.isAdmin = function() {
                 return Account.isEventAdmin($stateParams.eventId) && Account.adminEnabled();

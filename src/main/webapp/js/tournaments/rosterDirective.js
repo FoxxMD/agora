@@ -201,6 +201,11 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
                     return false;
 
             };
+            this.changeTeamSize = function() {
+              Tournaments.update({teamMaxSize: that.tour.details.teamMaxSize, teamMinSize: that.tour.details.teamMinSize}).then(function(){
+               return true;
+            });
+            };
             this.guildTip = function(){
                 $scope.$emit('notify','notice',"You can't join this team because you are not part of the Guild! Visit the guild's page to join.",5000);
             }

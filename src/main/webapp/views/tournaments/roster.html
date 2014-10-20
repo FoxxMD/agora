@@ -1,6 +1,12 @@
 <div ng-if="rosterCtrl.tour.tournamentType.teamPlay">
-    <h4 class="text-center">Minimum players per team: {{rosterCtrl.tour.details.teamMinSize == 0 ? 'No Minimum' : rosterCtrl.tour.details.teamMinSize}}</h4>
-    <h4 class="text-center">Maximum players per team: {{rosterCtrl.tour.details.teamMaxSize == 0 ? 'No Maximum' : rosterCtrl.tour.details.teamMaxSize}}</h4>
+    <h4 class="text-center">Minimum players per team: <a ng-if="tourCtrl.isAdmin()"
+                                                         editable-number="rosterCtrl.tour.details.teamMinSize"
+                                                         onaftersave="rosterCtrl.changeTeamSize()">{{rosterCtrl.tour.details.teamMinSize}}</a>
+        <span ng-if="!tourCtrl.isAdmin()">{{rosterCtrl.tour.details.teamMinSize == 0 ? 'No Minimum' : rosterCtrl.tour.details.teamMinSize}}</span></h4>
+    <h4 class="text-center">Maximum players per team: <a ng-if="tourCtrl.isAdmin()"
+                                                         editable-number="rosterCtrl.tour.details.teamMaxSize"
+                                                         onaftersave="rosterCtrl.changeTeamSize()">{{rosterCtrl.tour.details.teamMaxSize}}</a>
+        <span ng-if="!tourCtrl.isAdmin()">{{rosterCtrl.tour.details.teamMaxSize == 0 ? 'No Maximum' : rosterCtrl.tour.details.teamMaxSize}}</span></h4>
 </div>
 <div ng-if="!rosterCtrl.tour.tournamentType.teamPlay">
     <h4 class="text-center">Minimum players: {{rosterCtrl.tour.details.playerMinSize == 0 ? 'No Minimum' : rosterCtrl.tour.details.playerMinSize}}</h4>
@@ -94,8 +100,8 @@
                     </div>
                     <div class="tileContentContainer">
                         <div class="tileContent">
-                        <h4>{{(team.teamPlayers <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) ? (team.teamPlayers >=
-                            rosterCtrl.tour.details.teamMinSize || rosterCtrl.tour.details.teamMinSize == 0) ? 'Ready To Play' : 'Not Enough Players!' : 'Need More Players!' }}</h4>
+                        <h4>{{(team.teamPlayers.length <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) ? (team.teamPlayers.length >=
+                            rosterCtrl.tour.details.teamMinSize || rosterCtrl.tour.details.teamMinSize == 0) ? 'Ready To Play' : 'Not Enough Players!' : 'Too Many players!!' }}</h4>
                             <h4>Players</h4>
                             <ul>
                                 <li ng-repeat="teamUser in team.teamPlayers">{{teamUser.User.name}}</li>

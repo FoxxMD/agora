@@ -33,7 +33,7 @@ function scroller($timeout){
                         anim._scrollPage();
                     }
 
-                    console.log(anim);
+                    //console.log(anim);
                 },100);
             });
         }

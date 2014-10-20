@@ -238,6 +238,12 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         parsedBody.\("timeEnd").extractOpt[DateTime].fold() { x =>
             tourDetails = tourDetails.copy(timeEnd = Option(x))
         }
+        parsedBody.\("teamMaxSize").extractOpt[Int].fold() { x =>
+            tourDetails = tourDetails.copy(teamMaxSize = x)
+        }
+        parsedBody.\("teamMinSize").extractOpt[Int].fold() { x =>
+            tourDetails = tourDetails.copy(teamMinSize = x)
+        }
         if(parsedBody.\("servers").toOption.isDefined)
         {
             tourDetails = tourDetails.copy(servers = Option(compact(render(parsedBody.\("servers")))))
