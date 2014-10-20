@@ -25,7 +25,7 @@
         <div ng-show="rosterCtrl.showTeamForm">
             <div ng-if="!rosterCtrl.newTeamData.guildOnly" class="form-group" show-errors>
                 <label class="form-label"><h4>Team Name</h4></label>
-                <input type="text" name="name" ng-model="rosterCtrl.newTeamData.name" ng-required="!rosterCtrl.newTeamData.guildOnly"/>
+                <input type="text" name="name" class="form-control" ng-model="rosterCtrl.newTeamData.name" ng-required="!rosterCtrl.newTeamData.guildOnly"/>
             </div>
             <div ng-show="rosterCtrl.newTeamData.guildOnly">
                 <div class="form-group" show-errors>

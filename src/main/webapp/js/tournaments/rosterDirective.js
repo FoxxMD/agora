@@ -101,13 +101,20 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             this.joinTeam = function (team) {
                 team.teamJoinLoading = true;
                 userId = that.user.id;
-                Tournaments.joinTeam(team.id.toString(), userId, false).then(function (response) {
-                    team.teamPlayers = response.teamPlayers;
-                    that.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id, that.tour);
-                    $scope.$emit('notify', 'notice', "Succesfully joined team.", 2000);
-                }).finally(function () {
+                if(that.account.hasPaid($stateParams.eventId)){
+                    Tournaments.joinTeam(team.id.toString(), userId, false).then(function (response) {
+                        team.teamPlayers = response.teamPlayers;
+                        that.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id, that.tour);
+                        $scope.$emit('notify', 'notice', "Succesfully joined team.", 2000);
+                    }).finally(function () {
+                        team.teamJoinLoading = false;
+                    })
+                }
+                else{
                     team.teamJoinLoading = false;
-                })
+                    $scope.$emit('notify', 'notice', 'You need to pre-register in order to join a tournament! Visit the <a href="'+$state.href('eventSkeleton.pay',{eventId:$stateParams.eventId})+'">Pay</a> page to do so. ', 5000);
+                }
+
             };
             this.leaveTeam = function (team, userId) {
                 team.teamLeaveLoading = true;
@@ -174,13 +181,20 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
                     });
                 }
                 else{
-                    Tournaments.addPlayer().then(function(response){
-                        that.tour.users.push(response);
-                        that.isOnRoster = true;
-                        $scope.$emit('notify', 'notice', "Succesfully joined tournament.", 2000);
-                    }).finally(function(){
+                    if(that.account.hasPaid($stateParams.eventId)){
+                        Tournaments.addPlayer().then(function(response){
+                            that.tour.users.push(response);
+                            that.isOnRoster = true;
+                            $scope.$emit('notify', 'notice', "Succesfully joined tournament.", 2000);
+                        }).finally(function(){
+                            that.rosterStatusLoading = false;
+                        });
+                    }
+                    else{
                         that.rosterStatusLoading = false;
-                    });
+                        $scope.$emit('notify', 'notice', 'You need to pre-register in order to join a tournament! Visit the <a href="'+$state.href('eventSkeleton.pay',{eventId:$stateParams.eventId})+'">Pay</a> page to do so. ', 5000);
+                    }
+
                 }
             };
             this.bootPlayer = function(userId) {
