@@ -112,7 +112,7 @@
                             && (!team.guildOnly  || (team.guildOnly && rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam))"
                             ng-click="rosterCtrl.joinTeam(team)" class="btn btn-success">Join Team
                     </button>
-                    <button ng-if="team.guildOnly && !rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam" ng-click="rosterCtrl.guildTip()" class="btn btn-disable">Join Team</button>
+                    <button ng-if="rosterCtrl.isLoggedIn() && team.guildOnly && !rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam" ng-click="rosterCtrl.guildTip()" class="btn btn-disable">Join Team</button>
                     <button ladda="team.teamLeaveLoading" data-style="expand-right" ng-if="rosterCtrl.isOnTeam.id == team.id && !rosterCtrl.isCaptain(team)"
                             ng-click="rosterCtrl.leaveTeam(team)" class="btn btn-warning">Leave Team
                     </button>

@@ -35,6 +35,9 @@ body .well {
 body .well.bordered {
   border: solid 2px white;
 }
+body .well a {
+  color: black;
+}
 body .panel.panel-default {
   background-color: white;
 }

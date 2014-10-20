@@ -152,7 +152,15 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
     case t: Guild =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new EntityDetailsSerializer + new org.json4s.ext.EnumNameSerializer(JoinType) ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
         Extraction.decompose(t.copy()) merge
-            render("captain" -> t.getCaptain.globalHandle) removeField {
+            render(("captain" -> t.getCaptain.globalHandle) ~
+                ("tournaments" ->
+                    t.getTournaments(new TeamRepository).map(x =>
+                        ("id" -> x.id) ~
+                            ("name" -> x.details.flatMap(u => u.name)) ~
+                            ("game" -> x.game.name) ~
+                            ("tournamentType" -> x.tournamentType.name) ~
+                            ("eventId" -> x.event.id) ~
+                            ("teams" -> x.teams.size)))) removeField {
             case ("Team", _) => true
             case _ => false
         }

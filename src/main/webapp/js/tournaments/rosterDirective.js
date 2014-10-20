@@ -192,9 +192,14 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
               })
             };
             this.hasGuild = function(guildName) {
-              return _.find(that.user.guilds, function(guild){
-                    return guild.name == guildName;
-                })
+                if(Account.isLoggedIn()){
+                    return _.find(that.user.guilds, function(guild){
+                        return guild.name == guildName;
+                    })
+                }
+                else
+                    return false;
+
             };
             this.guildTip = function(){
                 $scope.$emit('notify','notice',"You can't join this team because you are not part of the Guild! Visit the guild's page to join.",5000);

@@ -38,8 +38,7 @@
                 <div class="well">
                     <h4>Users</h4>
                     <accordion close-other="guildCtrl.openedguildsAccordion">
-                        <accordion-group heading="{{guild.User.name}}" ng-repeat="guild in guildCtrl.guild.members">
-                            Got yer User, {{guild.User.name}}, with the Id {{guild.User.id}} right here. And they {{guild.User.isCaptain ? 'ARE' :'ARE NOT'}} captain.
+                        <accordion-group heading="{{guild.User.name}} {{guild.User.isCaptain ? '- Captain' : ''}}" ng-repeat="guild in guildCtrl.guild.members">
                         </accordion-group>
                     </accordion>
                     {{guildCtrl.guild.guildPlayers.length == 0 ? 'None to show!' : ''}}
@@ -70,22 +69,18 @@
             <h3>At This Event</h3>
             <h4>Tournaments</h4>
             <accordion>
-                <accordion-group heading="1v1 Rust Me Bro">
+                <accordion-group heading="{{tour.game}} - {{tour.tournamentType}}" ng-repeat="tour in guildCtrl.guild.tournaments">
                     <div class="row">
                         <div class="col-md-6">
                             <strong>Stats</strong>
-                            <ul class="list-unstyled">
-                                <li>Participating with <strong>guild Honkey</strong></li>
-                                <li><strong>Starts</strong> in two days at 11:45am</li>
-                                <li><strong>5 other guilds are participating</strong></li>
+                            <ul>
+                                <li>{{tour.teams}} Teams</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
                             <strong>Info</strong>
                             <ul>
-                                <li><strong>Game:</strong> League of Legends</li>
-                                <li><strong>Type:</strong> Round-Robin</li>
-                                <li><strong>Roster Status:</strong> Open!</li>
+                                <a ui-sref="eventSkeleton.tournament.roster({tournamentId:tour.id})">View Tournament</a>
                             </ul>
                         </div>
                     </div>
@@ -93,7 +88,7 @@
             </accordion>
         </div>
     </div>
-    <div class="col-md-6">
+<!--    <div class="col-md-6">
         <div class="row">
             <div class="col-md-12">
                 <div class="well">
@@ -114,9 +109,9 @@
                             Got yer Tournament, {{tour.name}}, with the Id {{tour.id}} right here.
                         </accordion-group>
                     </accordion>
-                    {{guildCtrl.guild.tournaments == undefined ? 'None to report!' : ''}} <!--TODO make this .length == 0 once tournaments are included -->
+                    {{guildCtrl.guild.tournaments == undefined ? 'None to report!' : ''}} &lt;!&ndash;TODO make this .length == 0 once tournaments are included &ndash;&gt;
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->
 </div>
