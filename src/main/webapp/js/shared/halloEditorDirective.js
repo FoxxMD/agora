@@ -10,7 +10,8 @@ function halloEditor($q) {
         restrict: 'A',
         require: '?ngModel',
         scope: {
-            updateProperty: '&'
+            updateProperty: '&',
+            showUpdateStatus: '&'
         },
         link: function (scope, element, attrs, ngModel) {
             if (!ngModel) {
@@ -38,6 +39,7 @@ function halloEditor($q) {
                 if (isModified) {
                     element.hallo({editable: false});
                     scope.updateProperty({content: element.html()}).then(function () {
+                            if(scope.showUpdateStatus() == undefined || scope.showUpdateStatus())
                             scope.$emit('notify', 'notice', 'Update successful.', 1000);
                             ngModel.$setViewValue(element.html());
                             isModified = false;

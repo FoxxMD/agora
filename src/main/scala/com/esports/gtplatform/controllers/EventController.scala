@@ -56,7 +56,8 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val extractedDetails = parsedBody.\("details").extract[EventDetails].copy(
             event = requestEvent.get,
             credits = Some(compact(render(parsedBody.\("details").\("credits")))),
-            scheduledEvents = Some(compact(render(parsedBody.\("details").\("scheduledEvents")))))
+            scheduledEvents = Some(compact(render(parsedBody.\("details").\("scheduledEvents")))),
+            faq = Some(compact(render(parsedBody.\("details").\("faq")))))
 
         val newEvent = requestEvent.get.copy(name = parsedBody.\("name").extract[String],
             joinType = parsedBody.\("joinType").extract[JoinType]).setDetails(extractedDetails)

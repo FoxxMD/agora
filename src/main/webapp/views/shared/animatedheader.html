@@ -16,6 +16,7 @@
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.users" ui-sref-active="active" class="topLink">Users <span class="badge">{{eventCtrl.event.users}}</span></a></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.guilds" ui-sref-active="active" class="topLink">Teams and Guilds<span class="badge">{{eventCtrl.event.teams}}</span></a></li>
                     <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.about" ui-sref-active="active" class="topLink">About</a></li>
+                    <li ng-show="eventCtrl != undefined"><a ui-sref="eventSkeleton.faq" ui-sref-active="active" class="topLink">FAQ</a></li>
                     <li ng-show="cncCtrl.account.isLoggedIn() && eventCtrl != undefined && cncCtrl.account.isRegisteredForEvent(eventCtrl.event.id) && !cncCtrl.account.hasPaid(eventCtrl.event.id)" ui-sref-active="active"><a ui-sref="eventSkeleton.pay" class="topLink">Pay</a></li>
                     <li ng-show="eventCtrl != undefined && (eventCtrl.isAdmin() || (cncCtrl.account.isAdmin() && cncCtrl.account.adminEnabled()))"><a ui-sref="eventSkeleton.settings" ui-sref-active="active" class="topLink">Settings</a></li>
 <!--                    <li ng-if="cncCtrl.account.isLoggedIn()" ng-show="eventCtrl != undefined && !eventCtrl.isAdmin()" ng-switch="cncCtrl.account.isRegisteredForEvent(eventCtrl.event.id)">

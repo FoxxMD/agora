@@ -30,6 +30,7 @@ CREATE TABLE eventdetails
     servers LONGTEXT,
     scheduledevents LONGTEXT,
     credits LONGTEXT,
+    faq LONGTEXT,
     FOREIGN KEY (events_id) REFERENCES events (id) ON DELETE CASCADE
 );
 CREATE TABLE eventpayments

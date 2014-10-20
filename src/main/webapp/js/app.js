@@ -297,6 +297,14 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                     eventId:{}
                 },
                 controller:'EventAboutController as aboutCtrl'
+            })
+            .state('eventSkeleton.faq', {
+                url:'/faq',
+                templateUrl:'/views/event/faq.html',
+                params:{
+                    eventId:{}
+                },
+                controller: 'EventFaqController as faqCtrl'
             });
 
         //Account related states
@@ -384,6 +392,8 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                                data[i].details.prizes = angular.fromJson(data[i].details.prizes);
                            if(data[i].details.location)
                                data[i].details.location = angular.fromJson(data[i].details.location);
+                           if(data[i].details.faq)
+                               data[i].details.faq = angular.fromJson(data[i].details.faq);
                        }
                     }
                     if(data[0].createdDate != undefined)
@@ -410,6 +420,8 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                         data.details.credits = angular.fromJson(data.details.credits);
                     if(data.details.location)
                         data.details.location = angular.fromJson(data.details.location);
+                    if(data.details.faq)
+                        data.details.faq = angular.fromJson(data.details.faq);
                 }
                 else if(data.createdDate != undefined)
                 {
