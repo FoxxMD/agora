@@ -14,7 +14,7 @@
                     <div ui-tree-handle class="tree-node tree-node-content" ng-class="{'group-title':this.$nodeScope.$parentNodeScope == null}">
                         <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><i class="fa" ng-class="{'fa-chevron-up': collapsed, 'fa-chevron-down': !collapsed}"></i></a>
                         <div style="display:inline-table" data-nodrag>
-                            <div>Section Title: <a editable-text="$modelValue.title">{{$modelValue.title}}</a></div>
+                            <div>Section Title: <a editable-text="$modelValue.title">{{$modelValue.title || 'No title'}}</a></div>
                         </div>
                         <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><i class="fa fa-close"></i></a>
                         <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><i class="fa fa-plus"></i></a>
@@ -31,7 +31,7 @@
                             <form class="form-inline" name="newGroupForm" role="form" ng-submit="faqCtrl.addGroup(newGroupForm)" novalidate>
                                 <div class="form-group" show-errors>
                                     <label class="sr-only" for="groupName">Section Name</label>
-                                    <input type="text" class="form-control" ng-model="ssCtrl.newGroupName" name="groupName" id="groupName" placeholder="Section Name" required>
+                                    <input type="text" class="form-control" ng-model="faqCtrl.newGroupName" name="groupName" id="groupName" placeholder="Section Name" required>
                                 </div>
                                 <button type="submit" class="btn btn-info btn-sm">Add Section</button>
                             </form>
