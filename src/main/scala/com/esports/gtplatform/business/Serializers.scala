@@ -101,7 +101,7 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
             ("id" -> eu.user.id) ~
             ("platforms" -> Extraction.decompose(eu.user.gameProfiles)) ~
             ("guilds" -> Extraction.decompose(eu.user.guilds)) ~
-            ("tournaments" -> eu.user.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository, Option(eu.event)).size)//TODO clean this shit up
+            ("tournaments" -> eu.user.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository, new TournamentRepository, Option(eu.event)).size)//TODO clean this shit up
     case tu: TournamentUser =>
         implicit val formats: Formats = DefaultFormats + new EntityDetailsSerializer + new EntityAuxillarySerializer
         ("name" -> tu.user.globalHandle) ~
@@ -136,7 +136,7 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
                 ("tournaments" -> {
                     val tRepo = new TeamRepository
                     /*Extraction.decompose(u.getAssociatedTournaments(new TournamentUserRepository))*/
-                    val utour = u.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository)
+                    val utour = u.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository, new TournamentRepository)
 
                     utour.map(x =>
                         ("id" -> x.id) ~

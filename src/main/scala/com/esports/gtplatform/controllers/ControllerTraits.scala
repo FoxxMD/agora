@@ -53,6 +53,12 @@ trait BasicServletWithLogging extends ScalatraServlet {
         case my: BadSqlGrammarException =>
             logger.error(my.getMessage, my)
             halt(500, "Database problems...")
+        case np: NullPointerException =>
+            logger.error(np.getMessage, np)
+            halt(500, "Something went wrong!")
+        case e: Error =>
+            logger.error(e.getMessage, e)
+            halt(500, "Something went wrong!")
         case t: Throwable =>
             logger.error(t.getMessage, t)
             halt(500, "Something went wrong!")
@@ -104,7 +110,35 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
             case _ =>
             logger.debug("[Response Body] no hit")
         }
-        renderResponseBody(actionResult)
+        try{
+            renderResponseBody(actionResult)
+        }
+        catch{
+            case p: JsonParseException =>
+                logger.error(p.getMessage, p)
+                halt(400, "Request data was malformed. Make sure JSON is formatted properly.")
+            case m: org.json4s.MappingException =>
+                logger.error(m.getMessage, m)
+                halt(400, "Request was badly formed, are you missing a parameter?")
+            case n: NotImplementedError =>
+                logger.error(n.getMessage, n)
+                halt(500, "We forgot to implement something...")
+            case q: QueryException =>
+                logger.error(q.getMessage, q)
+                halt(500, "Database problems...")
+            case my: BadSqlGrammarException =>
+                logger.error(my.getMessage, my)
+                halt(500, "Database problems...")
+            case np: NullPointerException =>
+                logger.error(np.getMessage, np)
+                halt(500, "Something went wrong!")
+            case e: Error =>
+                logger.error(e.getMessage, e)
+                halt(500, "Something went wrong!")
+            case t: Throwable =>
+                logger.error(t.getMessage, t)
+                halt(500, "Something went wrong!")
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 package models
 
-import com.esports.gtplatform.business.{TeamUserRepo, TeamRepo, TournamentUserRepo, EventUserRepo}
+import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Invitee
 import models.GamePlatform.GamePlatform
 import monocle.SimpleLens
@@ -51,22 +51,19 @@ case class User(
   def getTournaments: List[Tournament] = ???
 
   def getAssociatedEvents(repo: EventUserRepo): List[EventUser] = repo.getByUser(this)
-def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, event: Option[Event] = None): List[Tournament] = {
+def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tourRepo: TournamentRepo, event: Option[Event] = None): List[Tournament] = {
 
-    val allTourneys = repo.getByUser(this).map(x => x.tournament)++trepo.getByUser(this.id).map(x => x.team.tournament)
-  if(allTourneys.nonEmpty)
-  {
     event match {
-      case Some(e: Event) =>
-        allTourneys.filter(x => x.event.id == e.id)
-      case None =>
-        allTourneys
+        case Some(e: Event) =>
+            e.tournaments.filter(x =>
+                x.users.exists(u => u.user.id == this.id) ||
+                x.teams.exists(u => u.teamPlayers.exists(p => p.id == this.id))).toList
+        case None =>
+            val tourneysTourRepo = repo.getByUser(this).map(x => x.tournament)
+            val tourneysTeamRepo = trepo.getByUser(this.id).flatMap(x => tourRepo.get(x.team.tournament.id))
+            tourneysTourRepo++tourneysTeamRepo //TODO why does this cause a recursive call?
+            //allTourneys.filter(x => x.event.id == e.id)
     }
-  }
-  else{
-    List[Tournament]()
-  }
-
 }
 
   private[this] val GameProfilesLens: SimpleLens[User, List[UserPlatformProfile]] = SimpleLens[User](_.gameProfiles)((u, newProfiles) => u.copy(gameProfiles = newProfiles))
