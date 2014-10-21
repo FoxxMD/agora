@@ -177,6 +177,7 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
                 .map(y => ("name" -> y._1.name) ~
                 ("id" -> y._1.id) ~
                 ("gameType" -> Extraction.decompose(y._1.gameType)) ~
+                ("filename" -> y._1.logoFilename) ~
                 ("count" -> y._2.size)
                 )
             ) merge
