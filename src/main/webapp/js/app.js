@@ -276,7 +276,7 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                            return Account.user();
                         else {
                             var deferred = $q.defer();
-                            Events.getUser($stateParams.eventId,$stateParams.userId.toString()).then(function(response){
+                            Events.getUser($stateParams.eventId.toString(),$stateParams.userId.toString()).then(function(response){
                                 return deferred.resolve(response);
                             }, function(error){
                                 $state.go('eventSkeleton.event',{eventId:$stateParams.eventId});

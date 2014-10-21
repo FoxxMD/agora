@@ -6,7 +6,7 @@
                 <li ng-repeat="user in adminCtrl.tour.users | filter:filterAdminUsers">
                     {{user.name}} <span class="pull-right"><button class="btn btn-danger btn-sm" ng-click="adminCtrl.removeAdmin(user)">Remove</button></span>
                 </li>
-                    <input placeholder="Add Admin" class="form-control" style="margin-top:20px;" type="text" ng-model="adminCtrl.selectedUser" typeahead="user as user.globalHandle for user in adminCtrl.potentialUsers | filter:nonAdminUsers" typeahead-on-select="adminCtrl.addAdmin($item)">
+                    <input placeholder="Add Admin" class="form-control" style="margin-top:20px;" type="text" ng-model="adminCtrl.selectedUser" typeahead="user as user.globalHandle for user in adminCtrl.potentialUsers | filter:nonAdminUsers | filter:{globalHandle: $viewValue}" typeahead-on-select="adminCtrl.addAdmin($item)">
             </ul>
         </div>
     </div>

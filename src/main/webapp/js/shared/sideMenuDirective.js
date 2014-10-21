@@ -26,7 +26,7 @@ function sidebar($rootScope, $timeout, Account, Events, $stateParams){
             });
 
             this.adminToggleVisible = function(){
-                return Account.isAdmin() || (Events.getCurrentEvent() != undefined ? Account.isEventAdmin(Events.getCurrentEvent().id) : false);
+                return Account.isLoggedIn() && (Account.isAdmin() || (Events.getCurrentEvent() != undefined ? Events.isModerator(Account.user())  : false));
             }
         }],
         link: function(scope, elem, attrs)

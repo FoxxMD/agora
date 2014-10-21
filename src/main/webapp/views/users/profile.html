@@ -6,43 +6,43 @@
             <h1 ng-switch-default>{{profileCtrl.user.globalHandle}}</h1>
         </div>
     </div>
-    <div ng-if="profileCtrl.isAdmin()" class="col-md-12">
+    <div ng-if="eventCtrl.isModerator()" class="col-md-12">
         <div class="well">
             <h3>Admin Panel</h3>
 
             <div class="row">
-                <div ng-if="profileCtrl.account.isAdmin()" ng-class="profileCtrl.isEventProfile() ? 'col-md-6' : 'col-md-12'">
+                <div ng-if="eventCtrl.isAdmin()" ng-class="profileCtrl.isEventProfile() ? 'col-md-6' : 'col-md-12'">
                     <div class="well bordered">
                         <h4>Global Admin Options (Not Implemented)</h4>
                         <button class="btn btn-warning">Reset Password</button>
-                        <button class="btn btn-info">Make Global Admin</button>
                         <div class="alert alert-danger">
                             <h4>Dangaaa Zoooone</h4>
                             <button class="btn btn-danger" ng-click="profileCtrl.deleteUser()">Delete Account</button>
                         </div>
                     </div>
                 </div>
-                <div ng-if="profileCtrl.isEventProfile()" ng-class="{'col-md-6':profileCtrl.account.isAdmin(),'col-md-12':profileCtrl.user.accountType == 'A'}">
+                <div ng-if="profileCtrl.isEventProfile()" ng-class="{'col-md-6':eventCtrl.isModerator(),'col-md-12':eventCtrl.isAdmin()}">
                     <div class="well bordered">
-                        <h4>Event {{profileCtrl.user.events[profileCtrl.eventIndex].isAdmin ? 'Admin' : 'Moderator'}} Options</h4>
+                        <h4>Event {{eventCtrl.isAdmin() ? 'Admin' : 'Moderator'}} Options</h4>
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-6">
                                 <button ladda="profileCtrl.paidLoading" data-style="expand-right" ng-click="profileCtrl.tryChangePaid()" ng-class="profileCtrl.user.events[profileCtrl.eventIndex].hasPaid ? 'btn-success' : 'btn-danger'" class="btn">{{profileCtrl.user.events[profileCtrl.eventIndex].hasPaid ? 'Has Paid' : 'Has Not Paid'}}</button>
                                 <button ladda="profileCtrl.presentLoading" data-style="expand-right" ng-click="profileCtrl.tryChangePresent()" ng-class="profileCtrl.user.events[profileCtrl.eventIndex].isPresent ? 'btn-success' : 'btn-danger'" class="btn">{{profileCtrl.user.events[profileCtrl.eventIndex].isPresent ? 'Is Present' : 'Is Not Present'}}</button>
                             </div>
-                            <div ng-if="profileCtrl.user.events[profileCtrl.eventIndex].isAdmin" class="col-md-6 col-sm-6 col-xs-6">
+                            <!--profileCtrl.user.events[profileCtrl.eventIndex].isAdmin-->
+                            <div ng-if="eventCtrl.isAdmin()" class="col-md-6 col-sm-6 col-xs-6">
                                 <button ladda="profileCtrl.modLoading" data-style="expand-right" ng-click="profileCtrl.tryChangeModerator()" ng-class="profileCtrl.user.events[profileCtrl.eventIndex].isModerator ? 'btn-warning' : 'btn-info'" class="btn">{{profileCtrl.user.events[profileCtrl.eventIndex].isModerator ? 'Remove Mod' : 'Make Mod'}}</button>
                                 <button ladda="profileCtrl.eventAdminLoading" data-style="expand-right" ng-click="profileCtrl.tryChangeEventAdmin()" ng-class="profileCtrl.user.events[profileCtrl.eventIndex].isAdmin ? 'btn-warning' : 'btn-info'" class="btn">{{profileCtrl.user.events[profileCtrl.eventIndex].isAdmin ? 'Remove Admin' : 'Make Admin'}}</button>
                             </div>
                         </div>
-                        <div class="row">
+<!--                        <div class="row">
                             <div class="col-md-12">
                                 <div class="alert alert-danger">
                                     <h4>Dangaaa Zoooone</h4>
                                     <button ng-click="profileCtrl.tryRemoveUser()" class="btn btn-danger">Remove User From Event</button>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div>

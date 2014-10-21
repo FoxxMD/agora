@@ -16,10 +16,10 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
 
             this.isAdmin = function() {
                 //return Account.isEventAdmin($stateParams.eventId) && Account.adminEnabled();
-                return Account.isLoggedIn() && Tournaments.isAdmin(Account.user().id);
+                return Account.isLoggedIn() && (Tournaments.isAdmin(Account.user().id) || Events.isAdmin(Account.user())) && Account.adminEnabled();
             };
             this.isModerator = function (){
-                return Account.isLoggedIn() && Tournaments.isModerator(Account.user().id);
+                return Account.isLoggedIn() && (Tournaments.isModerator(Account.user().id) || Events.isModerator(Account.user())) && Account.adminEnabled();
             };
             this.updateName = function(name) {
                 Tournaments.update({name:name}).then(function(){

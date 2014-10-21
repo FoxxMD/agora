@@ -138,26 +138,26 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         }
     }
     //Delete a user from an event
-    delete("/:id/users") {
-        val userId = parsedBody.\("userId").extractOpt[Int]
+    delete("/:id/users/:userId") {
+        val userId = params("userId").toInt
         auth()
-        userId match {
-            case Some(uid: Int) =>
+/*        userId match {
+            case Some(uid: Int) =>*/
                 if (user.role != "admin" && !requestEvent.get.isAdmin(user))
                     halt(403, "You do not have permission to remove users from this event.")
                 val userRepo = inject[UserRepo]
-                userRepo.get(uid) match {
+                userRepo.get(userId) match {
                     case Some(u: User) =>
                         eventRepo.update(requestEvent.get, requestEvent.get.removeUser(u))
                         logger.info("[Admin] with " + user.id + " removed User " + u.id + " from Event " + requestEvent.get.id)
                         Ok()
                     case None =>
                         BadRequest("No user exists with that Id")
-                }
+/*                }
             case None =>
                 eventRepo.update(requestEvent.get, requestEvent.get.removeUser(user))
                 logger.info("User " + user.id + " left Event " + requestEvent.get.id)
-                Ok()
+                Ok()*/
         }
     }
     patch("/:id/users/:userId") {
@@ -435,12 +435,12 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                     tourUser = tuRepo.update(tourUser, tourUser.copy(isPresent = x))
                 }
                 parsedBody.\("isModerator").extractOpt[Boolean].fold() { x =>
-                    if(!requestTournament.get.isAdmin(user))
+                    if(!requestTournament.get.isAdmin(user) && !requestEvent.get.isAdmin(user))
                         halt(403, "You do not have permission to assign moderator status.")
                     tourUser = tuRepo.update(tourUser, tourUser.copy(isModerator = x))
                 }
                 parsedBody.\("isAdmin").extractOpt[Boolean].fold() { x =>
-                    if(!requestTournament.get.isAdmin(user))
+                    if(!requestTournament.get.isAdmin(user) && !requestEvent.get.isAdmin(user))
                         halt(403, "You do not have permission to assign admin status.")
                     tourUser = tuRepo.update(tourUser, tourUser.copy(isAdmin = x))
                 }

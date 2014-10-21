@@ -76,7 +76,7 @@ angular.module('gtfest')
         };
         this.leaveEvent = function(eventId, userId) {
             if(userId)
-                return events.one(eventId).one('users').remove({userId: userId});
+                return events.one(eventId).all('users').one(userId).remove();
             else
                 return events.one(eventId).one('users').remove();
         };

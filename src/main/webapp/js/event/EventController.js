@@ -14,7 +14,10 @@ function eventController($scope, Account, $q, eventData, $rootScope, Events, $sc
     this.frontPage = that.event.details.description || "<h3>This is your description page, please edit it!</h3>";
 
     this.isAdmin = function() {
-        return Account.isEventAdmin(that.event.id) && Account.adminEnabled();
+        return Account.isLoggedIn() && Events.isAdmin(Account.user()) && Account.adminEnabled();
+    };
+    this.isModerator = function() {
+        return Account.isLoggedIn() && Events.isModerator(Account.user()) && Account.adminEnabled();
     };
 
     $rootScope.$on('accountStatusChange', function(){

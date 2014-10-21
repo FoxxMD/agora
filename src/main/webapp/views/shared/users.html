@@ -24,7 +24,7 @@
         infinite-scroll-container="'#st-content'" infinite-scroll-immediate-check="false" infinite-scroll-disabled="usersCtrl.busy">
         <div class="grid-sizer"></div>
         <li class="masonry-brick outline-outward eventCard component" ng-repeat="user in usersCtrl.filtered = (usersCtrl.userCollection | filter: usersCtrl.filterUsers) track by $index" on-last-repeat>
-                <div ng-if="usersCtrl.isEvent && usersCtrl.isAdmin()" class="actionContainer">
+                <div ng-if="usersCtrl.isEvent && eventCtrl.isModerator()" class="actionContainer">
                     <button ladda="user.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="usersCtrl.tryChangePresent(user)"
                             ng-class="user.isPresent ? 'btn-success': 'btn-danger'">{{user.isPresent ? 'Is Present' : 'Not Present'}}
                     </button>
