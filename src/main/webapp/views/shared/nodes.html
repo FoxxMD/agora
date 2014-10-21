@@ -1,6 +1,6 @@
 <div ui-tree-handle class="tree-node tree-node-content" ng-class="{'group-title':this.$nodeScope.$parentNodeScope == null}">
     <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><i class="fa" ng-class="{'fa-chevron-up': collapsed, 'fa-chevron-down': !collapsed}"></i></a>
-    <div style="display:inline;" data-nodrag><a editable-text="$modelValue.title">{{$modelValue.title}}</a></div>
+    <div style="display:inline;" data-nodrag><a editable-text="$modelValue.title">{{$modelValue.title || 'Your input here'}}</a></div>
     <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><i class="fa fa-close"></i></a>
     <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><i class="fa fa-plus"></i></a>
 </div>

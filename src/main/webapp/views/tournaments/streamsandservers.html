@@ -38,8 +38,8 @@
                     <li ng-repeat="node in tour.details.streams track by $index" ui-tree-node class="angular-ui-tree-node">
                         <div ui-tree-handle class="tree-node tree-node-content" ng-class="{'group-title':this.$nodeScope.$parentNodeScope == null}">
                             <div style="display:inline-block;" data-nodrag>
-                                <div>Stream Name: <a editable-text="$modelValue.title">{{$modelValue.title}}</a></div>
-                                <div>Stream Link: <a editable-text="$modelValue.link">{{$modelValue.link}}</a></div>
+                                <div>Stream Name: <a editable-text="$modelValue.title">{{$modelValue.title || 'Stream Title'}}</a></div>
+                                <div>Stream Link: <a editable-text="$modelValue.link">{{$modelValue.link || 'http://streamexample.com'}}</a></div>
                             </div>
                             <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><i class="fa fa-close"></i></a>
                         </div>
