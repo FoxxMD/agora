@@ -104,7 +104,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     get("/:id/users") {
         params.get("page") match {
             case Some(p: String) =>
-                Ok(requestEvent.get.users.slice(pageSize * (p.toInt - 1), pageSize))
+                Ok(requestEvent.get.users.drop(pageSize * (p.toInt - 1)).take(pageSize))
             case None =>
                 Ok(requestEvent.get.users.take(pageSize))
         }

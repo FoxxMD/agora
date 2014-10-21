@@ -21,9 +21,9 @@
 </div>
 <infinite-scroller-animated>
     <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="usersCtrl.getMoreUsers()"
-        infinite-scroll-container="'#st-content'" infinite-scroll-disabled="usersCtrl.busy">
+        infinite-scroll-container="'#st-content'" infinite-scroll-immediate-check="false" infinite-scroll-disabled="usersCtrl.busy">
         <div class="grid-sizer"></div>
-        <li class="masonry-brick outline-outward eventCard component" ng-repeat="user in usersCtrl.userCollection | filter: usersCtrl.filterUsers track by $index" on-last-repeat>
+        <li class="masonry-brick outline-outward eventCard component" ng-repeat="user in usersCtrl.filtered = (usersCtrl.userCollection | filter: usersCtrl.filterUsers) track by $index" on-last-repeat>
                 <div ng-if="usersCtrl.isEvent && usersCtrl.isAdmin()" class="actionContainer">
                     <button ladda="user.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="usersCtrl.tryChangePresent(user)"
                             ng-class="user.isPresent ? 'btn-success': 'btn-danger'">{{user.isPresent ? 'Is Present' : 'Not Present'}}

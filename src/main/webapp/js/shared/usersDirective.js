@@ -20,6 +20,13 @@ function users(Users, Events, $state, $stateParams, Account, $q){
             this.isAdmin = function(){
                 return (Account.isAdmin() || Account.isEventAdmin()) && Account.adminEnabled();
             };
+            $scope.$watch(function(){
+                if(that.filtered != undefined)
+                    return that.filtered.length;
+            }, function(newVal, oldVal){
+                if(oldVal != undefined && newVal == 0 && !that.busy)
+                    that.getMoreUsers();
+            });
 
             this.userCollection = [];
             if ($state.$current.includes.globalSkeleton) {
@@ -97,7 +104,7 @@ function users(Users, Events, $state, $stateParams, Account, $q){
             this.tryChangePaid = function(user) {
                 user.paidLoading = true;
                 Events.payRegistration(Events.getCurrentEvent().id.toString(), undefined, undefined, user.id.toString(), !user.hasPaid).then(function(){
-                    that.userCollection[that.userCollection.indexOf(user)].hasPaid = paidStatus;
+                    that.userCollection[that.userCollection.indexOf(user)].hasPaid = !user.hasPaid;
                     $scope.$emit('notify','notice', 'Payment status successfully changed.',3000);
                 }).finally(function(){
                     user.paidLoading = false;
