@@ -20,6 +20,8 @@ case class Tournament(tournamentType: TournamentType = TournamentType(),
     private[this] val DetailsLens: SimpleLens[Tournament, Option[TournamentDetails]] = SimpleLens[Tournament](_.details)((e, newDetails) => e.copy(details = newDetails))
 
     def setDetails(e: TournamentDetails): Tournament = this applyLens DetailsLens set Option(e)
+    def isAdmin(u: User) = this.users.exists(x => x.user.id == u.id && x.isAdmin)
+    def isModerator(u: User) = this.users.exists(x => x.user.id == u.id && (x.isModerator || x.isAdmin))
 }
 
 case class TournamentDetails(tournament: Tournament = Tournament(),

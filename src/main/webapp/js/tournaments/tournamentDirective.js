@@ -15,7 +15,11 @@ function tourDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
             //console.log(that.tour.plain());
 
             this.isAdmin = function() {
-                return Account.isEventAdmin($stateParams.eventId) && Account.adminEnabled();
+                //return Account.isEventAdmin($stateParams.eventId) && Account.adminEnabled();
+                return Account.isLoggedIn() && Tournaments.isAdmin(Account.user().id);
+            };
+            this.isModerator = function (){
+                return Account.isLoggedIn() && Tournaments.isModerator(Account.user().id);
             };
             this.updateName = function(name) {
                 Tournaments.update({name:name}).then(function(){

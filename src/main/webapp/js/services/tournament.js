@@ -5,6 +5,7 @@
 angular.module('gtfest')
     .service('Tournaments', ["Restangular", "$q", "$stateParams", "$rootScope","Account","Events", function (Restangular, $q, $stateParams, $rootScope, Account, Events) {
         var currentTournament = undefined;
+        var that = this;
 
         //var tournaments = Restangular.all('events').one($stateParams.eventId.toString()).all('tournaments');
         function restNew() {
@@ -44,15 +45,17 @@ angular.module('gtfest')
 
         this.isModerator = function(userId, tour) {
             tour = tour || currentTournament;
-            return _.find(tour.users, function(tuser) {
+            return tour != undefined && (that.isAdmin(userId, tour) || _.some(tour.users, {'id': userId, 'idModerator': true}));
+/*            return _.find(tour.users, function(tuser) {
                 return tuser.id == userId && (tuser.isModerator || tuser.isAdmin);
-            });
+            });*/
         };
         this.isAdmin = function(userId, tour) {
             tour = tour || currentTournament;
-            return _.find(tour.users, function(tuser) {
+            return tour != undefined && _.some(tour.users, {'id': userId, 'isAdmin': true});
+/*            return _.find(tour.users, function(tuser) {
                 return tuser.id == userId && tuser.isAdmin;
-            });
+            });*/
         };
         this.isOnTeamInRoster = function(userId, tour) {
             tour = tour || currentTournament;

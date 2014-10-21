@@ -8,6 +8,8 @@ angular.module('gtfest')
         var events = Restangular.all('events'),
             currentEvent = undefined;
 
+        var that = this;
+
         this.getEvents = function(pageNo){
             var deferred = $q.defer();
             events.getList({page: pageNo}).then(function(response){
@@ -96,6 +98,14 @@ angular.module('gtfest')
         this.getTeamsAndGuilds = function(eventId, pageNo) {
             var eid = eventId || currentEvent.id.toString();
             return events.one(eid).all('teamsAndGuilds').getList({page: pageNo});
-        }
+        };
+        this.isAdmin = function(user, event){
+            var e = event || currentEvent;
+            return e != undefined && (_.some(currentEvent.admins, {'id':user.id}));
+        };
+        this.isModerator = function(user, event){
+            var e = event || currentEvent;
+            return e != undefined && (that.isAdmin(user, event) || _.some(currentEvent.moderators, {'id':user.id}));
+        };
 
     }]);
