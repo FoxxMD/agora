@@ -29,6 +29,17 @@ body .whiteFont {
 body .toast {
   color: white;
 }
+body .fc table {
+  font-size: 0.9em;
+  /*,
+        .fc-event*/
+}
+body .fc table th {
+  font-size: 0.8em;
+}
+body .fc table tr {
+  line-height: 2;
+}
 body .well {
   border: none;
   /*background-color: #636363*/
@@ -585,4 +596,5 @@ a.withDecoration {
 }
 .fullWidth {
   width: 100% !important;
+  min-width: 1300px;
 }

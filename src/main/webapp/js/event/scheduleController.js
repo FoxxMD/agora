@@ -48,6 +48,7 @@ function schController($scope, eventData, tourData, Events, Account, $state){
                 center: '',
                 right: 'today prev,next'
             },*/
+            slotDuration: '01:00:00',
             resources: theResources(),
             minTime: that.event.details.timeStart.format('hh:mm:ss'),
             slotEventOverlap: false,
