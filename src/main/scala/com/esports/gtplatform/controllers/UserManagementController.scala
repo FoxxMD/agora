@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.{PasswordSecurity, Mailer}
-import com.esports.gtplatform.business.{GenericMRepo, UserRepo}
+import com.esports.gtplatform.business.{EventRepo, GenericMRepo, UserRepo}
 import com.esports.gtplatform.business.services.NewUserService
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.jdbc.Transaction
@@ -35,6 +35,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
         Ok(response.getHeader("Authorization"))
     }
     post("/register") {
+        val noConfirm = parsedBody.\("noconfirm").extractOpt[Boolean]
         val nuservice = new NewUserService
         //you can get any parameters in the queryString of a POST or GET using params("key")
 
@@ -59,12 +60,36 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
                     Ok()
                 }
             case None =>
-                val token = nuservice.create(newuser)
-                if (eventId.isDefined)
-                    nuservice.associateEvent(token, eventId.get.toInt)
-                logger.info("Non-active user successfully created: " + token)
-                m.sendConfirm(email, handle, token)
-                Ok()
+                if(noConfirm.isDefined && eventId.isDefined && noConfirm.get)
+                {
+                    auth()
+                    val eventRepo = inject[EventRepo]
+                    val event = eventRepo.get(eventId.get.toInt)
+                    if(event.get.getAdmins.exists(x => x.id == user.id) || user.role == "admin")
+                    {
+                        logger.info("[Admin] ("+user.id+") attempting On-Site registration")
+                        val status = nuservice.create(newuser,noConfirm = true, event)
+                        if(status == "ok")
+                        {
+                            logger.info("[Admin] ("+user.id+") On-Site registration complete")
+                            Ok()
+                        }
+                        else
+                            InternalServerError("Problem creating new user with no confirmation.")
+                    }
+                    else{
+                        halt(403, "You do not have permission to create users")
+                    }
+
+                }
+                else{
+                    val token = nuservice.create(newuser)
+                    if (eventId.isDefined)
+                        nuservice.associateEvent(token, eventId.get.toInt)
+                    logger.info("Non-active user successfully created: " + token)
+                    m.sendConfirm(email, handle, token)
+                    Ok()
+                }
         }
     }
     get("/confirmRegistration") {

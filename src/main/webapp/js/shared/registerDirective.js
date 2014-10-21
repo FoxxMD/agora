@@ -9,7 +9,9 @@ function register(Account, $stateParams, $rootScope) {
     return {
         templateUrl: '/views/shared/register.html',
         restrict: 'E',
-        scope:'true',
+        scope:{
+            onsite:'='
+        },
         controllerAs: 'registerCtrl',
         controller: /*@ngInject*/ ["$scope", function ($scope) {
             var that = this;
@@ -17,13 +19,23 @@ function register(Account, $stateParams, $rootScope) {
                 $scope.registerLoading = true;
                 $scope.$broadcast('show-errors-check-validity');
                 if ($scope.registerForm.$valid) {
-                   Account.register($scope.registerformData.handle, $scope.registerformData.email, $scope.registerformData.password, $stateParams.eventId).promise.then(
+                    if($scope.onsite){
+                        $scope.registerformData.noconfirm = true;
+                    }
+                   Account.register($scope.registerformData.handle, $scope.registerformData.email, $scope.registerformData.password, $stateParams.eventId, $scope.registerformData.noconfirm).promise.then(
                         function (response) {
-                            $scope.sidebar.registerVisible = false;
-                            $scope.$broadcast('notify', 'notice', "Registration successful! please check your email for a confirmation link to activate your account.", 6000);
-                            $scope.$broadcast('show-errors-reset');
-                            $scope.registerformData = {};
-                            $rootScope.toggleMenu();
+                            if($scope.onsite){
+                                $scope.registerformData = {};
+                                $scope.$broadcast('show-errors-reset');
+                                $scope.$emit('notify', 'notice', "Registration successful!", 6000);
+                            }
+                            else{
+                                $scope.$parent.sidebar.registerVisible = false;
+                                $scope.$emit('notify', 'notice', "Registration successful! please check your email for a confirmation link to activate your account.", 6000);
+                                $scope.registerformData = {};
+                                $scope.$broadcast('show-errors-reset');
+                                $rootScope.toggleMenu();
+                            }
                         }).finally(function(){
                            $scope.registerLoading = false;
                        });

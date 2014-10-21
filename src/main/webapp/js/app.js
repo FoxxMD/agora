@@ -249,6 +249,21 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                     eventId:{}
                 }
             })
+            .state('eventSkeleton.onSiteRegister', {
+                url:'',
+                templateUrl:'/views/event/adminRegister.html',
+                resolve:{
+                    nothing:/*@ngInject*/ ["Account","$stateParams","$state", function(Account, $stateParams, $state){
+                        if(Account.isAdmin() || Account.isEventAdmin($stateParams.eventId.toString())){
+                            return true;
+                        }
+                        else{
+                            $state.go('eventSkeleton.event');
+                            return false;
+                        }
+                    }]
+                }
+            })
             .state('eventSkeleton.profile', {
                 url:'/users/:userId',
                 params:{

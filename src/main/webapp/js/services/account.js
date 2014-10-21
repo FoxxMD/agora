@@ -100,9 +100,9 @@ angular.module('gtfest')
             return Restangular.all('passwordReset').post(data);
         };
         //eventId is OPTIONAL
-        this.register = function(handle, email, password, eventId) {
+        this.register = function(handle, email, password, eventId, noconfirm) {
             var deferred = $q.defer();
-            Restangular.all('register').post({handle: handle, email: email, password: password, eventId: eventId}).then(function(response)
+            Restangular.all('register').post({handle: handle, email: email, password: password, eventId: eventId, noconfirm: noconfirm}).then(function(response)
             {
                 deferred.resolve(response);
             },

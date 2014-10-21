@@ -53,6 +53,7 @@
                     <register></register>
                 </div>
             </li>
+            <li class="menuTopLink" ng-show="sidebar.account.isLoggedIn() && sidebar.adminToggleVisible()"><a ui-sref="eventSkeleton.onSiteRegister" ng-click="toggleMenu()">On-Site Registration</a></li>
         </ul>
         <div ng-cloak ng-show="sidebar.adminToggleVisible()" class="pull-right" style="margin-top:30px; padding:20px;">
             <h4>Admin Toggle</h4> <input type="checkbox" ng-model="sidebar.admin">

@@ -8,14 +8,15 @@ import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import com.esports.gtplatform.Utilities.PasswordSecurity
 import com.esports.gtplatform.business._
 import com.googlecode.mapperdao.Persisted
-import models.{User, UserIdentity}
+import models.{User, UserIdentity, Event}
 import org.slf4j.LoggerFactory
 import com.googlecode.mapperdao.jdbc.Transaction
 
-class NewUserService(implicit val bindingModule: BindingModule) extends Injectable with GenericService[UserIdentity] {
+class NewUserService(implicit val bindingModule: BindingModule) extends Injectable {
 
   val logger = LoggerFactory.getLogger(getClass)
   private val userRepo = inject[UserRepo]
+    private val identRepo = inject[UserIdentityRepo]
   private val nonActiveUserRepo = inject[NonActiveUserRepo]
   private val nonActiveUserIdentRepo = inject[NonActiveUserIdentityRepo]
   private val sql = inject[SqlAccess]
@@ -24,7 +25,7 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
   def newUserPass(handle: String, email: String, password: String): UserIdentity = {
     val newu = User(email, "user", None, None, handle)
     val salted = PasswordSecurity.createHash(password)
-    UserIdentity(newu, "userpass", email, None, None, None, Option(email), None, salted)
+    UserIdentity(newu, email, "userpass",  None, None, None, Option(email), None, salted)
   }
 
   def isUnique(obj: UserIdentity): Option[String] = {
@@ -39,17 +40,29 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
     }
   }
 
-  def create(obj: UserIdentity): String = {
-    val token = java.util.UUID.randomUUID.toString
+  def create(obj: UserIdentity, noConfirm: Boolean = false, event: Option[Event with Persisted] = None): String = {
+      if(noConfirm && event.isDefined)
+      {
+          val eventRepo = inject[EventRepo]
+          val tx = inject[Transaction]
+          tx { () =>
+              val inserted = identRepo.create(obj)
+              eventRepo.update(event.get, event.get.addUser(inserted.user))
+          }
+          "ok"
+      }
+      else{
+          val token = java.util.UUID.randomUUID.toString
 
-    val tx = inject[Transaction]
+          val tx = inject[Transaction]
 
-    tx { () =>
-      val inserted = nonActiveUserIdentRepo.create(obj)
-      sql.lowLevelUpdate("insert into confirmationtokens values(?,?,?)", List(inserted.id, token, null))
-    }
-    logger.info("Successfully inserted confirmation token " + token + "into db.")
-    token
+          tx { () =>
+              val inserted = nonActiveUserIdentRepo.create(obj)
+              sql.lowLevelUpdate("insert into confirmationtokens values(?,?,?)", List(inserted.id, token, null))
+          }
+          logger.info("Successfully inserted confirmation token " + token + "into db.")
+          token
+      }
   }
 
   def associateEvent(token: String, eventId: Int) = {

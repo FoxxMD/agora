@@ -107,7 +107,7 @@ object NonActiveUserIdentityEntity extends Entity[Int, SurrogateIntId, UserIdent
     val password = column("password") to (_.password)
 
     def constructor(implicit m: ValuesMap) = {
-        new UserIdentity(user, userId, providerId, firstName, lastName, Option(firstName + " " + lastName), email, None, password, id) with Stored
+        new UserIdentity(user, providerId, userId, firstName, lastName, Option(firstName + " " + lastName), email, None, password, id) with Stored
     }
 }
 
