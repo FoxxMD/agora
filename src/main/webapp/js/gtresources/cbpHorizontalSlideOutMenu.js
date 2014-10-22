@@ -93,38 +93,20 @@
                         {
                             self._openMenu( el, ev);
                         }
-                        $(document).off('vmouseup', closer);
-                        //window.removeEventListener("touchend", closer);
+                        $(document).off('tap', ':not(#gamesHeaderLink)', closer);
                     };
 
-                    $(document).on('vmouseup', closer);
-/*                    if(self.touch)
+                    if(self.touch)
                     {
-*//*                        $(document).on('tap', function(ev){
-                            if( item.getAttribute( 'data-open' ) === 'open' )
-                            {
-                                self._openMenu( el, ev);
+                        $(document).on('tap', ':not(#gamesHeaderLink)', closer);
 
-                            }
-
-                            $(document).unbind('tap', arguments.callee);
-                            //window.removeEventListener("tap", arguments.callee, false)
-                        });*//*
-                        //$(document).on('vmouseup', ':not(#gamesHeaderLink)', closer);
-                        window.addEventListener('vmouseup', function(ev){
-                            if( item.getAttribute( 'data-open' ) === 'open' )
-                                self._openMenu( el, ev);
-                            window.removeEventListener("vmouseup", arguments.callee, false)
-                        });
-
-                        //window.addEventListener('touchend', closer);
                     }else{
-                        window.addEventListener('vmouseup', function(ev){
+                        window.addEventListener('mouseup', function(ev){
                             if( item.getAttribute( 'data-open' ) === 'open' )
                                 self._openMenu( el, ev);
-                            window.removeEventListener("vmouseup", arguments.callee, false)
+                            window.removeEventListener("mouseup", arguments.callee, false)
                         });
-                    }*/
+                    }
 				}
 			}
 			else {
