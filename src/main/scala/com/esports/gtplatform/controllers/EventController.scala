@@ -310,7 +310,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val teamPlayerIds = parsedBody.\("teamPlayers").extractOrElse[List[Int]](halt(400, "No members specified"))
         val captainId = parsedBody.\("captainId").extractOpt[Int]
 
-        if (requestTournament.get.teams.exists(x => x.teamPlayers.exists(u => teamPlayerIds.contains(u.id))))
+        if (requestTournament.get.teams.exists(x => x.teamPlayers.exists(u => teamPlayerIds.contains(u.user.id))))
             halt(400, "One or more members already belongs to a Team in this Tournament.")
 
         if (guildOnly) {
