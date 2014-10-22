@@ -101,11 +101,17 @@
 
                     if(self.touch)
                     {
-                        window.addEventListener('touchstart', function(ev){
+                        $(document).on('tap', function(ev){
                             if( item.getAttribute( 'data-open' ) === 'open' )
                                 self._openMenu( el, ev);
-                            window.removeEventListener("touchstart", arguments.callee, false)
+                            $(document).unbind('tap', arguments.callee);
+                            //window.removeEventListener("tap", arguments.callee, false)
                         });
+/*                        window.addEventListener('tap', function(ev){
+                            if( item.getAttribute( 'data-open' ) === 'open' )
+                                self._openMenu( el, ev);
+                            window.removeEventListener("tap", arguments.callee, false)
+                        });*/
                     }else{
                         window.addEventListener('click', function(ev){
                             if( item.getAttribute( 'data-open' ) === 'open' )
