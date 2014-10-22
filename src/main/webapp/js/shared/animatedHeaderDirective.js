@@ -12,8 +12,7 @@ function animatedheader(Events, $rootScope, Games, $state){
        controllerAs:'headerCtrl',
         controller: /*@ngInject*/ ["$scope", function($scope){
             this.games = Games;
-            this.closeMenu = function(event, name) {
-                $scope.menu._openMenu(event.currentTarget, event);
+            this.goToTournaments = function(name) {
                 $state.go('eventSkeleton.tournaments',{gameFilter: name});
             }
         }],

@@ -258,7 +258,8 @@
 	.cbp-hssubmenu {
 		background: #f7f7f7;
 		/*position: relative;*/
-		overflow: hidden;
+		/*overflow: hidden;*/
+        overflow: scroll;
 		height: 0;
 	}
 
@@ -269,6 +270,7 @@
 	/* Let's only allow 3 item in a row now */
 	.cbp-hssubmenu > li {
 		width: 30%;
+        max-height:150px;
 	}
 
 	/* Reset box shadows for the 6 items in row case */
@@ -317,3 +319,9 @@
 		margin: 0;
 	}
 }*/
+@media screen and (max-width: 600px) {
+ .cbp-hsmenu > li.cbp-hsitem-open > .cbp-hssubmenu > li {
+     max-height:135px;
+     font-size:0.6em;
+ }
+}

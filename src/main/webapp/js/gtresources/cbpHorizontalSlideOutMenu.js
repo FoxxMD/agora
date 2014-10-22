@@ -10,7 +10,7 @@
  */
 ;( function( window ) {
 
-	'use strict';
+	//'use strict';
 
 	var document = window.document;
 
@@ -48,6 +48,7 @@
 				item = el.parentNode,
 				items = Array.prototype.slice.call( this.menuItems ),
 				submenu = item.querySelector( '.cbp-hssubmenu' ),
+                headerEl = document.querySelector('.headerWrapper'),
 				closeCurrent = function( current ) {
 					var current = current || self.menuItems[ self.current ];
 					current.className = '';
@@ -56,11 +57,27 @@
 				closePanel = function() {
 					self.current = -1;
 					self.menuBg.style.height = '0px';
+/*                    if(self.touch)
+                    {
+                        window.removeEventListener('touchstart', function(el, ev){
+                            self._openMenu( el, ev);
+                        });
+                    }else{
+                        window.removeEventListener('click', function(el, ev){
+                            self._openMenu( el, ev);
+                        });
+                    }*/
+
 				};
 
 			if( submenu ) {
                 if(ev != undefined)
-				    ev.preventDefault();
+                {
+                    ev.preventDefault();
+                    if(ev.target.offsetParent.className.indexOf('cbp') == -1)
+                        ev.stopPropagation();
+                }
+
 
 				if( item.getAttribute( 'data-open' ) === 'open' ) {
 					closeCurrent( item );
@@ -73,7 +90,29 @@
 					}
 					self.current = items.indexOf( item );
 					item.className = 'cbp-hsitem-open';
-					self.menuBg.style.height = submenu.offsetHeight + 'px';
+                    if(submenu.offsetHeight > window.innerHeight-headerEl.offsetHeight)
+                    {
+                        submenu.style.height = window.innerHeight-headerEl.offsetHeight +'px';
+                    }
+                    else{
+                        submenu.removeAttribute("style");
+                    }
+                    self.menuBg.style.height = submenu.offsetHeight + 'px';
+
+                    if(self.touch)
+                    {
+                        window.addEventListener('touchstart', function(ev){
+                            if( item.getAttribute( 'data-open' ) === 'open' )
+                                self._openMenu( el, ev);
+                            window.removeEventListener("touchstart", arguments.callee, false)
+                        });
+                    }else{
+                        window.addEventListener('click', function(ev){
+                            if( item.getAttribute( 'data-open' ) === 'open' )
+                                self._openMenu( el, ev);
+                            window.removeEventListener("click", arguments.callee, false)
+                        });
+                    }
 				}
 			}
 			else {
@@ -96,6 +135,7 @@
 					trigger.addEventListener( 'click', function( ev ) { self._openMenu( this, ev ); } );
 				}
 			} );
+
 
 			window.addEventListener( 'resize', function( ev ) { self._resizeHandler(); } );
 
