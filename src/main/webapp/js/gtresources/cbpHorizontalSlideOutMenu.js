@@ -57,17 +57,6 @@
 				closePanel = function() {
 					self.current = -1;
 					self.menuBg.style.height = '0px';
-/*                    if(self.touch)
-                    {
-                        window.removeEventListener('touchstart', function(el, ev){
-                            self._openMenu( el, ev);
-                        });
-                    }else{
-                        window.removeEventListener('click', function(el, ev){
-                            self._openMenu( el, ev);
-                        });
-                    }*/
-
 				};
 
 			if( submenu ) {
@@ -99,26 +88,43 @@
                     }
                     self.menuBg.style.height = submenu.offsetHeight + 'px';
 
-                    if(self.touch)
+                    var closer = function(){
+                        if( item.getAttribute( 'data-open' ) === 'open' )
+                        {
+                            self._openMenu( el, ev);
+                        }
+                        $(document).off('vmouseup', closer);
+                        //window.removeEventListener("touchend", closer);
+                    };
+
+                    $(document).on('vmouseup', closer);
+/*                    if(self.touch)
                     {
-                        $(document).on('tap', function(ev){
+*//*                        $(document).on('tap', function(ev){
                             if( item.getAttribute( 'data-open' ) === 'open' )
+                            {
                                 self._openMenu( el, ev);
+
+                            }
+
                             $(document).unbind('tap', arguments.callee);
                             //window.removeEventListener("tap", arguments.callee, false)
-                        });
-/*                        window.addEventListener('tap', function(ev){
+                        });*//*
+                        //$(document).on('vmouseup', ':not(#gamesHeaderLink)', closer);
+                        window.addEventListener('vmouseup', function(ev){
                             if( item.getAttribute( 'data-open' ) === 'open' )
                                 self._openMenu( el, ev);
-                            window.removeEventListener("tap", arguments.callee, false)
-                        });*/
+                            window.removeEventListener("vmouseup", arguments.callee, false)
+                        });
+
+                        //window.addEventListener('touchend', closer);
                     }else{
-                        window.addEventListener('click', function(ev){
+                        window.addEventListener('vmouseup', function(ev){
                             if( item.getAttribute( 'data-open' ) === 'open' )
                                 self._openMenu( el, ev);
-                            window.removeEventListener("click", arguments.callee, false)
+                            window.removeEventListener("vmouseup", arguments.callee, false)
                         });
-                    }
+                    }*/
 				}
 			}
 			else {
@@ -135,7 +141,8 @@
 			Array.prototype.slice.call( this.menuItems ).forEach( function( el, i ) {
 				var trigger = el.querySelector( 'a' );
 				if( self.touch ) {
-					trigger.addEventListener( 'touchstart', function( ev ) { self._openMenu( this, ev ); } );
+                    $(trigger).on('tap',  function( ev ) { self._openMenu( this, ev ); });
+					//trigger.addEventListener( 'touchstart', function( ev ) { self._openMenu( this, ev ); } );
 				}
 				else {
 					trigger.addEventListener( 'click', function( ev ) { self._openMenu( this, ev ); } );

@@ -453,6 +453,7 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
 angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRouter", "$location", "$state","editableOptions", "editableThemes",'$http',
     function ($rootScope, Restangular, Account, $urlRouter, $location, $state, editableOptions, editableThemes, $http) {
 
+        FastClick.attach(document.body);
         //This is a stand-in for angular's regular transformer where tests must pass in order to transform
         //Need this because I am returning all resposnes as json/application from scalatra. This needs to be fixed server side
         //But this will do for now
