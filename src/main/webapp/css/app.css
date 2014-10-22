@@ -1,4 +1,5 @@
 body {
+  font-family: 'Lato', sans-serif;
   /*margin-top:15em;*/
   color: #373737;
 }
@@ -337,10 +338,10 @@ fieldset[disabled] {
         overflow:visible;
     }*/
 }
-.tagWell .blueIcon {
+.blueIcon {
   color: #2D7AA6;
 }
-.tagWell .blueBackground.fa-circle:before {
+.blueBackground.fa-circle:before {
   color: #2D7AA6;
 }
 .st-content .timeEditor input {
@@ -693,4 +694,12 @@ a.withDecoration {
 .logo {
   width: 100%;
   padding: 15px;
+}
+.heroLogoWrapper {
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+.heroLogoWrapper .heroLogo {
+  max-width: 600px;
+  width: 70%;
 }
