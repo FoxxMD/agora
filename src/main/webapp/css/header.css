@@ -93,7 +93,7 @@
         font-size:2.5em;
     }
 }
-@media screen and (max-width: 1550px) {
+@media screen and (max-width: 1600px) {
 
     .cbp-af-header .cbp-af-inner {
         width: 100%;
@@ -147,7 +147,7 @@
         margin: 0 10px;
     }
 
-    .cbp-af-header.cbp-af-header-shrink h1,
+    .cbp-af-header> h1,
     .cbp-af-header.cbp-af-header-shrink nav a {
         line-height: 45px;
     }
@@ -198,5 +198,8 @@
     .cbp-af-header nav a.topLink {
         font-weight:400;
         line-height:35px;
+    }
+    .gfBranding img{
+        max-height:55px;
     }
 }

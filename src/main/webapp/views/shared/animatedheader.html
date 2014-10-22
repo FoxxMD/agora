@@ -1,7 +1,11 @@
 <div class="headerWrapper">
     <div class="cbp-af-header cbp-hsmenu-wrapper" ng-class="{'globalHeader': eventCtrl == undefined }" id="cbp-hsmenu-wrapper">
         <div class="cbp-af-inner">
-            <h1><a ui-sref="eventSkeleton.event({eventId: eventCtrl.event.id})">{{eventCtrl.event.name}}</a></h1>
+            <h1 style="display:none;"><a ui-sref="eventSkeleton.event({eventId: eventCtrl.event.id})">{{eventCtrl.event.name}}</a></h1>
+            <div class="gfBranding">
+                <a ui-sref="eventSkeleton.event({eventId: eventCtrl.event.id})"><img src="../../images/gfbranding.svg"></a>
+
+            </div>
             <nav>
                 <ul class="cbp-hsmenu">
                     <!-- Event Header Links -->
