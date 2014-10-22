@@ -1,6 +1,6 @@
 // Declare app level module which depends on filters, and services
 // @ngInject
-angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage',
+angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage', 'ngTouch',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'angular-loading-bar', 'ngSanitize','angular-ladda',
         'xeditable','angularPayments', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree',
         'angulartics', 'angulartics.google.analytics', 'toaster', 'ngFlowtype'],
