@@ -21,6 +21,10 @@ function notify($rootScope, toaster)
                 if(type == 'notice')
                     type = 'note';
 
+                if(typeof message === 'object')
+                {
+                    message = message.error || message.message || message.response;
+                }
                 toaster.pop(type, type, message, time == undefined ? 6000 : time, 'trustedHtml');
             });
         }

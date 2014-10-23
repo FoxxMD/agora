@@ -494,20 +494,22 @@ angular.module('gtfest').run(["$rootScope", "Restangular", "Account", "$urlRoute
         });
 
     Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
-        if (response.status === 400) {
-            $rootScope.$broadcast('notify', 'warning', response.data, 6000);
-        }
-        if (response.status === 401) {
-            if (response.headers('ignoreError') == "true")
-                return true;
-            //TODO redirect user to login page
-            $rootScope.$broadcast('notify', 'notice', 'You need to be logged in to do that!', 4000);
-        }
-        else if (response.status === 403) {
-            $rootScope.$broadcast('notify', 'error', response.data, 4000);
-        }
-        else if (response.status === 500) {
-            $rootScope.$broadcast('notify', 'error', response.data, 5000);
+        if(typeof response.data === 'string'){
+            if (response.status === 400) {
+                $rootScope.$broadcast('notify', 'warning', response.data, 6000);
+            }
+            if (response.status === 401) {
+                if (response.headers('ignoreError') == "true")
+                    return true;
+                //TODO redirect user to login page
+                $rootScope.$broadcast('notify', 'notice', 'You need to be logged in to do that!', 4000);
+            }
+            else if (response.status === 403) {
+                $rootScope.$broadcast('notify', 'error', response.data, 4000);
+            }
+            else if (response.status === 500) {
+                $rootScope.$broadcast('notify', 'error', response.data, 5000);
+            }
         }
     });
     //on startup try and get the user from memory

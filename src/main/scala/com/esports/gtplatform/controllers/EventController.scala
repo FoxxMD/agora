@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.services.{PaymentService, StripePayment}
+import com.esports.gtplatform.business.services.{PaymentException, CustomerException, PaymentService, StripePayment}
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.Persisted
@@ -485,14 +485,50 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 case Some("Stripe") =>
                     val card = parsedBody.\("card").extract[String]
                     val paymentService: PaymentService = new StripePayment(requestEvent.get)
-                    paymentService.makePayment(user, mutable.Map("card" -> card)) match {
-                        case (false, s: String) =>
-                            logger.info("[Event] (" + requestEvent.get.id + ") User " + user.id + " payment was not successful")
-                            BadRequest("Payment was not successful. Reason: " + s)
-                        case (true, s: String) =>
-                            eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(user, paid = true, Some(s)))
-                            logger.info("[Event] (" + requestEvent.get.id + ") User " + user.id + " payed successfully.")
+                    paymentService.checkForExistingUser(user) match {
+                        case None =>
+                            logger.info("No user with customer or payment Id found.")
+                            val eventUserRepo = inject[EventUserRepo]
+                            val payingUser = eventUserRepo.getByUser(user).headOption.getOrElse(halt(500,"Could not find you in our system! Contact an admin to sort this out."))
+
+                           val evWithCustomer = try {
+                                paymentService.createCustomer(payingUser,mutable.Map("card" -> card))
+                            }
+                            catch {
+                                case cust: CustomerException =>
+                                    halt(500,
+                                      s"""There was a problem with stripe. Your card has NOT been charged. Please check your payment details and try again.
+                                         | The problem: ${cust.getMessage} .
+                                         | The error: ${cust.getCause.getMessage}""".stripMargin)
+                                case e: Exception =>
+                                   val json = render(("message" -> "We had a problem storing your payment Id. Your card has NOT been charged. DO NOT attempt to pay again, please contact an admin or send us a ticket.") ~
+                                                    ("customerId" -> e.getMessage))
+                                    halt(500, json)
+                            }
+
+                            try {
+                                paymentService.makePayment(evWithCustomer)
+                            }
+                            catch {
+                                case p: PaymentException =>
+                                    val msg =
+                                      s"""There was a problem with stripe. Your card has NOT been charged. DO NOT attempt to pay again, please contact an admin or send us a ticket.
+                                         |The problem: ${p.getMessage} .
+                                         |The error: ${p.getCause.getMessage} """.stripMargin
+                                    val json = render(("message" -> msg) ~
+                                        ("customerId" -> evWithCustomer.customerId))
+                                    halt(500, json)
+                                case e: Exception =>
+                                    val msg = "We had a problem storing your payment receipt. Your card HAS been charged. Please contact an admin or send us a ticket."
+                                    val json = render(("message" -> msg) ~
+                                        ("customerId" -> evWithCustomer.customerId))
+                                    halt(500, json)
+                            }
                             Ok("Payment successful!")
+
+                        case _ =>
+                            logger.warn("User with customer or payment Id found!")
+                            halt(500, "You already have already payment information in our system! Please contact an admin or send us a ticket letting us know the problem.")
                     }
                 case Some(s: String) =>
                     NotImplemented

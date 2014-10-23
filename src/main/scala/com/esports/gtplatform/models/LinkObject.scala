@@ -19,7 +19,7 @@ case class GuildUser(guild: Guild, user: User, isCaptain: Boolean = false, id: I
 
 }
 
-case class EventUser(event: Event, user: User, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, receiptId: Option[String] = None){
+case class EventUser(event: Event, user: User, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, receiptId: Option[String] = None, customerId: Option[String] = None){
 
 }
 

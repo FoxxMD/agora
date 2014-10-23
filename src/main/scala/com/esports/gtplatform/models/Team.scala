@@ -29,7 +29,7 @@ case class Team(
   def getCaptain = this.teamPlayers.find(u => u.isCaptain).get.user
 
   def setCaptain(u: User): Team = {
-    val modifiedTP = this.teamPlayers.map(x => x.copy(isCaptain = x.user == u))
+    val modifiedTP = this.teamPlayers.map(x => x.copy(isCaptain = x.user.id == u.id))
     this applyLens TPListLens set modifiedTP
   }
 }

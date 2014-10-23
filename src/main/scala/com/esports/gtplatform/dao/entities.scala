@@ -332,8 +332,9 @@ object EventUserEntity extends Entity[Int, SurrogateIntId, EventUser]("user_even
     val isModerator = column("isModerator") to (_.isModerator)
     val hasPaid = column("hasPaid") to (_.hasPaid)
     val receipt = column("receiptId") option (_.receiptId)
+    val customer = column("customerId") option (_.customerId)
 
-    def constructor(implicit m: ValuesMap) = new EventUser(event, user, isPresent, isAdmin, isModerator, hasPaid, receipt) with Stored {
+    def constructor(implicit m: ValuesMap) = new EventUser(event, user, isPresent, isAdmin, isModerator, hasPaid, receipt, customer) with Stored {
         val id: Int = EventUserEntity.id
     }
 }

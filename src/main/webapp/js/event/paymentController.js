@@ -25,7 +25,7 @@ function paymentController($scope, eventData, $state, Events, Account){
         if(response.error)
         {
             $scope.paymentLoading = false;
-            $scope.$emit('notify','error',response,5000);
+            $scope.$emit('notify','error',"There was a problem processing your information, please check your details and try again. Reason: "+ response.error,5000);
         }
         else
         {
@@ -35,7 +35,7 @@ function paymentController($scope, eventData, $state, Events, Account){
                 Account.initUser();
                 $state.go('eventSkeleton.event',{eventId: eventData.id.toString()});
             }, function(error){
-                $scope.$emit('notify','error',error,5000);
+
             }).finally(function(){
                 $scope.paymentLoading = false;
             });
