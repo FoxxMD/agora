@@ -2,9 +2,7 @@
   "name": "gtfest",
   "version": "0.0.0",
   "description": "Description for gtfest",
-  "dependencies": {
-    "connect-gzip": "https://github.com/medseek-engineering/connect-gzip/tarball/01c85be14dc2ce7d8adeb6e98034b06b222dbaf6"
-  },
+  "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-autoprefixer": "~0.4.2",
@@ -46,7 +44,8 @@
     "install": "~0.1.7",
     "npm": "~2.1.3",
     "express": "~4.9.7",
-    "nconf": "~0.6.9"
+    "nconf": "~0.6.9",
+    "connect-gzip": "https://github.com/medseek-engineering/connect-gzip/tarball/01c85be14dc2ce7d8adeb6e98034b06b222dbaf6"
   },
   "engines": {
     "node": ">=0.8.15"
