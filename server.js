@@ -7,7 +7,8 @@ var connect = require('connect'),
     https = require('https'),
     fs = require('fs'),
     express = require('express'),
-    nconf = require('nconf');
+    nconf = require('nconf'),
+    gzip = require('connect-gzip');
 
 //get configuration from arguments
 nconf.argv();
@@ -78,7 +79,8 @@ var app = connect()
      */
     .use(modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.gif\\.jpg$ /index.html [L]']))
     //Make node act as a static server
-    .use(serveStatic(require('path').resolve(basePath)));
+    //.use(serveStatic(require('path').resolve(basePath)));
+    .use(gzip.staticGzip(require('path').resolve(basePath)));
 
 //create main server
 

@@ -2,7 +2,9 @@
   "name": "gtfest",
   "version": "0.0.0",
   "description": "Description for gtfest",
-  "dependencies": {},
+  "dependencies": {
+    "connect-gzip": "~0.1.6"
+  },
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-autoprefixer": "~0.4.2",
