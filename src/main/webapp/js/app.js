@@ -320,6 +320,13 @@ angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage
                     eventId:{}
                 },
                 controller: 'EventFaqController as faqCtrl'
+            })
+            .state('eventSkeleton.aboutPlatform',{
+                url:'',
+                templateUrl:'/views/global/about.html',
+                params:{
+                    eventId:{}
+                }
             });
 
         //Account related states

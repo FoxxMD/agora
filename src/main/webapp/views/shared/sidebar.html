@@ -34,7 +34,7 @@
 <!--            <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"><i class="fa fa-group"></i> Friends</a>-->
             </li>
             <li ui-sref-active="active" class="menuTopLink"><a ui-sref="eventSkeleton.account" ng-click="toggleMenu()"><i class="fa fa-gears"></i> Account Settings</a></li>
-            <li class="menuTopLink"><a ui-sref="globalSkeleton.about"><i class="fa fa-question"></i> About Gamefest</a></li>
+            <li ui-sref-active="active" class="menuTopLink"><a ui-sref="eventSkeleton.aboutPlatform({eventId: sidebar.event().id})"><i class="fa fa-question"></i> About The Platform</a></li>
             <li class="menuTopLink"><a ng-show="sidebar.account.isLoggedIn()"
                                        ng-click="sidebar.account.logout()">Logout</a></li>
             <li class="menuTopLink"><a ng-click="sidebar.loginVisible = !sidebar.loginVisible"
