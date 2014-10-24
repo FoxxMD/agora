@@ -69,7 +69,7 @@
                     <div class="tileContent">
                         <h4>{{user.isAdmin ? 'Admin' : user.isModerator ? 'Moderator' : ''}}</h4>
                         <h4>{{user.isPresent ? 'Present' : ''}}</h4>
-                        <div class="tileContentRight" nf-if="tourCtrl.isModerator()">
+                        <div class="tileContentRight" ng-if="tourCtrl.isModerator()">
                             <div class="content">
                                 <button  ladda="user.presentLoading" data-style="expand-right" class="btn btn-sm"
                                         ng-click="rosterCtrl.changeUserPresent(user)"
