@@ -22,9 +22,10 @@ function users(Users, Events, $state, $stateParams, Account, $q){
             };
             $scope.$watch(function(){
                 if(that.filtered != undefined)
-                    return that.filtered.length;
+                    return that.filtered.length == 0 && !that.busy;
             }, function(newVal, oldVal){
-                if(oldVal != undefined && newVal == 0 && !that.busy)
+                //newVal == 0 &&
+                if(oldVal != undefined && newVal)
                     that.getMoreUsers();
             });
 
