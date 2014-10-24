@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Description for gtfest",
   "dependencies": {
-    "connect-gzip": "~0.1.6"
+    "connect-gzip": "https://github.com/medseek-engineering/connect-gzip/tarball/01c85be14dc2ce7d8adeb6e98034b06b222dbaf6"
   },
   "devDependencies": {
     "grunt": "~0.4.2",

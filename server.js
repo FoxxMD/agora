@@ -8,7 +8,8 @@ var connect = require('connect'),
     fs = require('fs'),
     express = require('express'),
     nconf = require('nconf'),
-    gzip = require('connect-gzip');
+    gzip = require('connect-gzip'),
+    path = require('path');
 
 //get configuration from arguments
 nconf.argv();
@@ -23,7 +24,7 @@ nconf.defaults({
 //If anything else(prod) uses 80 as default redirect, 443 as main (assuming HTTPS)
 var env = nconf.get('env'),
     redirectPort = (env == 'dev') ? nconf.get('redirectPort') || '8000' : nconf.get('redirectPort') || '80',
-    mainPort = (env == 'dev') ? nconf.get('mainPort') || '9000' : nconf.get('redirectPort') || '443',
+    mainPort = (env == 'dev') ? nconf.get('mainPort') || '9000' : nconf.get('mainPort') || '443',
     basePath = 'src/main/webapp/build/dist/';
 
 console.log('Environment: ' + env);
@@ -80,7 +81,7 @@ var app = connect()
     .use(modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.gif\\.jpg$ /index.html [L]']))
     //Make node act as a static server
     //.use(serveStatic(require('path').resolve(basePath)));
-    .use(gzip.staticGzip(require('path').resolve(basePath)));
+    .use(gzip.staticGzip(path.resolve(basePath)));
 
 //create main server
 
