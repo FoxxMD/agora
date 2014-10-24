@@ -12,7 +12,7 @@
     <h4 class="text-center">Minimum players: {{rosterCtrl.tour.details.playerMinSize == 0 ? 'No Minimum' : rosterCtrl.tour.details.playerMinSize}}</h4>
     <h4 class="text-center">Maximum players: {{rosterCtrl.tour.details.playerMaxSize == 0 ? 'No Maximum' : rosterCtrl.tour.details.playerMaxSize}}</h4>
 </div>
-<morphing-button ng-if="rosterCtrl.account.isLoggedIn() && rosterCtrl.tour.tournamentType.teamPlay && rosterCtrl.isOnTeam == undefined && (rosterCtrl.tour.teams.length < rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) " title="Create Team">
+<morphing-button ng-if="rosterCtrl.account.isLoggedIn() && rosterCtrl.tour.tournamentType.teamPlay && rosterCtrl.isOnTeam == undefined" title="Create Team">
     <form class="form morphingButtonForm" name="newTeamForm" ng-submit="rosterCtrl.createNewTeam(newTeamForm)">
         <div ng-show="!rosterCtrl.showTeamForm">
             <div ng-click="rosterCtrl.showTeamForm = true;" class="teamChoiceButton">
