@@ -63,7 +63,22 @@
                     <h3>Guilds</h3>
                     <accordion close-other="profileCtrl.openedTeamsAccordion">
                         <accordion-group heading="{{guild.Guild.name}}" ng-repeat="guild in profileCtrl.user.guilds">
-                            Got yer Guild, {{guild.Guild.name}}, with the Id {{guild.Guild.id}} right here.
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Stats</strong>
+                                    <ul>
+                                        <li><strong>Members:</strong> {{guild.Guild.members}}</li>
+                                        <li><strong>Games:</strong> {{guild.Guild.games}}</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Info</strong>
+                                    <ul>
+                                        <li><strong>Established</strong> {{profileCtrl.parseTime(guild.Guild.createdDate).format("MMMM Do YYYY")}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <a ui-sref="eventSkeleton.guild({guildId:guild.Guild.id})" class="pull-right">View</a>
                         </accordion-group>
                     </accordion>
                     {{profileCtrl.user.guilds.length == 0 ? 'None to report!' : ''}}

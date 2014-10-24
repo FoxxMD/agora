@@ -66,11 +66,14 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[In
     PartialFunction.empty
 }, {
     case tu: GuildUser =>
-        implicit val formats: Formats = DefaultFormats
+        implicit val formats: Formats = DefaultFormats + new DateSerializer
         ("Guild" ->
             ("name" -> tu.guild.name) ~
-                ("id" -> tu.guild.id) ~
-                ("isCaptain" -> tu.isCaptain)) ~
+            ("id" -> tu.guild.id) ~
+            ("isCaptain" -> tu.isCaptain) ~
+            ("createdDate" -> Extraction.decompose(tu.guild.createdDate)) ~
+            ("members" -> tu.guild.members.size) ~
+            ("games" -> tu.guild.games.size)) ~
             ("User" ->
                 ("name" -> tu.user.globalHandle) ~
                     ("id" -> tu.user.id) ~

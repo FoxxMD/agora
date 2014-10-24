@@ -110,6 +110,9 @@ function prof($scope, Account, Users, userData, Events, $state) {
             $state.go('eventSkeleton.users');
         })
     }
+    this.parseTime = function(time){
+        return moment(time);
+    }
 
 }
 prof.$inject = ["$scope", "Account", "Users", "userData", "Events", "$state"];
