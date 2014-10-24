@@ -46,30 +46,53 @@
     </form>
 </morphing-button>
 
-<button ng-if="rosterCtrl.account.isLoggedIn() && !rosterCtrl.tour.tournamentType.teamPlay && ((rosterCtrl.tour.users.length < rosterCtrl.tour.details.playerMaxSize || rosterCtrl.tour.details.playerMaxSize == 0) || rosterCtrl.isOnRoster)" ladda="rosterCtrl.rosterStatusLoading" data-style="expand-right" class="btn btn-lg"
-        ng-click="rosterCtrl.changeRosterStatus()" ng-class="rosterCtrl.isOnRoster ? 'btn-warning' : 'btn-info'">{{rosterCtrl.isOnRoster ? 'Leave' : 'Join Tournament'}}
+<button
+    ng-if="rosterCtrl.account.isLoggedIn() && !rosterCtrl.tour.tournamentType.teamPlay && ((rosterCtrl.tour.users.length < rosterCtrl.tour.details.playerMaxSize || rosterCtrl.tour.details.playerMaxSize == 0) || rosterCtrl.isOnRoster)"
+    ladda="rosterCtrl.rosterStatusLoading" data-style="expand-right" class="btn btn-lg"
+    ng-click="rosterCtrl.changeRosterStatus()" ng-class="rosterCtrl.isOnRoster ? 'btn-warning' : 'btn-info'">{{rosterCtrl.isOnRoster ? 'Leave' : 'Join Tournament'}}
 </button>
 
 <infinite-scroller-animated ng-if="!rosterCtrl.tour.tournamentType.teamPlay">
-    <ul class="grid effect-6" ng-class="{'cs-style-4':tourCtrl.isAdmin()}" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="rosterCtrl.dumb()"
+    <ul class="grid effect-6" ng-class="{'cs-style-4':tourCtrl.isAdmin()}" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer"
+        infinite-scroll="rosterCtrl.dumb()"
         infinite-scroll-container="'#st-content'" infinite-scroll-disabled="true">
         <div class="grid-sizer"></div>
-        <li class="masonry-brick eventCard component outline-outward" ng-class="{'outline-outward': !tourCtrl.isAdmin()}" ng-repeat="user in rosterCtrl.tour.users" on-last-repeat>
+        <li class="masonry-brick eventCard component outline-outward tournamentComponent" ng-class="{'outline-outward': !tourCtrl.isAdmin()}"
+            ng-repeat="user in rosterCtrl.tour.users" on-last-repeat>
             <!--<figure class="grid-content">-->
             <div ng-if="tourCtrl.isModerator()" class="actionContainer">
 
             </div>
-                <div class="contentClick" ng-click="rosterCtrl.state.go('eventSkeleton.profile',{userId:user.id})">
-                    <div class="tileHeader">
-                        {{user.name}}
+            <div class="contentClick" ng-click="rosterCtrl.state.go('eventSkeleton.profile',{userId:user.id})">
+                <div class="tileHeader">
+                    {{user.name}}
+                </div>
+                <div class="tileContentContainer">
+                    <div class="tileContent">
+                        <div class="tileContentBottom">
+                            <div ng-if="!tourCtrl.isModerator()">
+                                <h4>{{user.isAdmin ? 'Admin' : user.isModerator ? 'Moderator' : ''}}</h4>
+                                <h4>{{user.isPresent ? 'Present' : ''}}</h4>
+                            </div>
+                            <button ng-if="tourCtrl.isModerator()" ladda="user.presentLoading" data-style="expand-right" class="btn btn-sm"
+                                    ng-click="rosterCtrl.changeUserPresent(user)"
+                                    ng-class="user.isPresent ? 'btn-success': 'btn-danger'">{{user.isPresent ? 'Is Present' : 'Not Present'}}
+                            </button>
+                            <button ng-if="tourCtrl.isAdmin()" ladda="user.moderatorLoading" data-style="expand-right" class="btn btn-sm"
+                                    ng-click="rosterCtrl.changeUserModerator(user)"
+                                    ng-class="user.isModerator ? 'btn-success': 'btn-danger'">{{user.isModerator ? 'Is Moderator' : 'Not Moderator'}}
+                            </button>
+                            <button ng-if="tourCtrl.isAdmin()" ladda="user.adminLoading" data-style="expand-right" class="btn btn-sm" ng-click="rosterCtrl.changeUserAdmin(user)"
+                                    ng-class="user.isAdmin ? 'btn-success': 'btn-danger'">{{user.isAdmin ? 'Is Admin' : 'Not Admin'}}
+                            </button>
+                            <button ng-if="tourCtrl.isAdmin()" ng-click="rosterCtrl.bootPlayer(user.id)" class="btn btn-danger">Boot User</button>
+                        </div>
                     </div>
-                    <div class="tileContentContainer">
-                        <div class="tileContent">
-                            <div class="tileContentBottom">
-                                <div ng-if="!tourCtrl.isModerator()">
-                                    <h4>{{user.isAdmin ? 'Admin' : user.isModerator ? 'Moderator' : ''}}</h4>
-                                    <h4>{{user.isPresent ? 'Present' : ''}}</h4>
-                                </div>
+
+                </div>
+            </div>
+            <!--                <figcaption ng-if="tourCtrl.isModerator()">
+                                <h3>Actions</h3>
                                 <button ng-if="tourCtrl.isModerator()" ladda="user.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="rosterCtrl.changeUserPresent(user)"
                                         ng-class="user.isPresent ? 'btn-success': 'btn-danger'">{{user.isPresent ? 'Is Present' : 'Not Present'}}
                                 </button>
@@ -80,71 +103,75 @@
                                         ng-class="user.isAdmin ? 'btn-success': 'btn-danger'">{{user.isAdmin ? 'Is Admin' : 'Not Admin'}}
                                 </button>
                                 <button ng-if="tourCtrl.isAdmin()" ng-click="rosterCtrl.bootPlayer(user.id)" class="btn btn-danger">Boot User</button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-<!--                <figcaption ng-if="tourCtrl.isModerator()">
-                    <h3>Actions</h3>
-                    <button ng-if="tourCtrl.isModerator()" ladda="user.presentLoading" data-style="expand-right" class="btn btn-sm" ng-click="rosterCtrl.changeUserPresent(user)"
-                            ng-class="user.isPresent ? 'btn-success': 'btn-danger'">{{user.isPresent ? 'Is Present' : 'Not Present'}}
-                    </button>
-                    <button ng-if="tourCtrl.isAdmin()" ladda="user.moderatorLoading" data-style="expand-right" class="btn btn-sm" ng-click="rosterCtrl.changeUserModerator(user)"
-                            ng-class="user.isModerator ? 'btn-success': 'btn-danger'">{{user.isModerator ? 'Is Moderator' : 'Not Moderator'}}
-                    </button>
-                    <button ng-if="tourCtrl.isAdmin()" ladda="user.adminLoading" data-style="expand-right" class="btn btn-sm" ng-click="rosterCtrl.changeUserAdmin(user)"
-                            ng-class="user.isAdmin ? 'btn-success': 'btn-danger'">{{user.isAdmin ? 'Is Admin' : 'Not Admin'}}
-                    </button>
-                    <button ng-if="tourCtrl.isAdmin()" ng-click="rosterCtrl.bootPlayer(user.id)" class="btn btn-danger">Boot User</button>
-                </figcaption>-->
+                            </figcaption>-->
             <!--</figure>-->
         </li>
     </ul>
 </infinite-scroller-animated>
 
 <infinite-scroller-animated ng-if="rosterCtrl.tour.tournamentType.teamPlay">
-    <ul class="grid effect-6 cs-style-4" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="toursCtrl.dumb()"
+    <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="toursCtrl.dumb()"
         infinite-scroll-container="'#st-content'" infinite-scroll-disabled="true">
         <div class="grid-sizer"></div>
-        <li class="masonry-brick eventCard component" ng-repeat="team in rosterCtrl.tour.teams" on-last-repeat style="cursor:default;">
-            <figure class="grid-content">
-                <div class="content contentClick">
-                    <div class="tileHeader">
-                       {{team.guildOnly ? '[GUILD]' : ''}} {{team.name}}
-                    </div>
-                    <div class="tileContentContainer">
-                        <div class="tileContent">
-                        <h4>{{(team.teamPlayers.length <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0) ? (team.teamPlayers.length >=
-                            rosterCtrl.tour.details.teamMinSize || rosterCtrl.tour.details.teamMinSize == 0) ? 'Ready To Play' : 'Not Enough Players!' : 'Too Many players!!' }}</h4>
-                            <h4>Players</h4>
-                            <ul>
-                                <li ng-repeat="teamUser in team.teamPlayers">{{teamUser.User.name}}</li>
-                            </ul>
-                        <div class="tileContentBottom">
+        <li class="masonry-brick eventCard component tournamentComponent" ng-repeat="team in rosterCtrl.tour.teams" on-last-repeat style="cursor:default;">
+            <!--content -->
+            <div class="actionContainer">
+                <button ladda="team.teamJoinLoading" data-style="expand-right"
+                        ng-if="rosterCtrl.account.isLoggedIn() && !rosterCtrl.isOnTeam && (team.teamPlayers.length < rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0)
+                            && (!team.guildOnly  || (team.guildOnly && rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam))"
+                        ng-click="rosterCtrl.joinTeam(team)" class="btn btn-success btn-sm">Join Team
+                </button>
+                <button ng-if="rosterCtrl.account.isLoggedIn() && team.guildOnly && !rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam" ng-click="rosterCtrl.guildTip()"
+                        class="btn btn-disable btn-sm">Join Team
+                </button>
+                <button ladda="team.teamLeaveLoading" data-style="expand-right" ng-if="rosterCtrl.isOnTeam.id == team.id && !rosterCtrl.isCaptain(team)"
+                        ng-click="rosterCtrl.leaveTeam(team)" class="btn btn-warning">Leave Team
+                </button>
+            </div>
+            <div class="contentClick">
+                <div class="tileHeader">
+                    {{team.guildOnly ? '[GUILD]' : ''}} {{team.name}}
+                </div>
+                <div class="tileContentContainer">
+                    <div class="tileContent">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-3 col-xs-3"><h4>{{(team.teamPlayers.length <= rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize ==
+                                0) ? (team.teamPlayers.length >=
+                                rosterCtrl.tour.details.teamMinSize || rosterCtrl.tour.details.teamMinSize == 0) ? 'Ready To Play' : 'Not Enough Players!' : 'Too Many players!!'
+                                }}</h4></div>
+                            <div class="col-md-12 col-sm-9 col-xs-9"><h4>Players</h4>
+                                <ul class="list-unstyled playerList">
+                                    <li ng-repeat="teamUser in team.teamPlayers">
+                                        <button class="btn btn-danger btn-xs" ng-if="team.editToggle" ng-show="!teamUser.confirmDelete && teamUser.User.id != rosterCtrl.user.id" ng-click="teamUser.confirmDelete = true">{{teamUser.User.name}}<i class="fa fa-close"></i></button>
+                                        <div style="margin:5px 0 5px 0;" ng-show="teamUser.confirmDelete">
+                                            Are you sure?
+                                            <button class="btn btn-success btn-xs" style="display:inline;margin-right:10px;" ng-click="rosterCtrl.leaveTeam(team,teamUser.User.id);">Yes</button>
+                                            <button class="btn btn-warning btn-xs" style="display:inline;" ng-click="teamUser.confirmDelete = false">No</button></div>
+                                        {{team.editToggle ? '' : teamUser.User.name}}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
+
+                        <div class="tileContentRight" ng-if="tourCtrl.isModerator() || rosterCtrl.isCaptain(team) || tourCtrl.isAdmin() ">
+                            <div class="text-center">Actions</div>
+                            <div class="content">
+                                <div style="position:absolute; bottom:0; left:0; right:0; font-size:12px; padding:0 5px 5px 5px;" class="text-center">
+                                    Edit Players
+                                    <toggle-switch ng-model="team.editToggle"></toggle-switch>
+                                </div>
+                                <button ladda="team.teamPresentLoading" data-style="expand-right" ng-show="tourCtrl.isModerator()" ng-click="rosterCtrl.changeTeamPresent(team)"
+                                        class="btn btn-sm"
+                                        ng-class="team.isPresent ? 'btn-success' : 'btn-warning'">{{team.isPresent ? 'Is Present' : 'Not Present'}}
+                                </button>
+                                <button ng-show="rosterCtrl.isCaptain(team) || tourCtrl.isAdmin()" ng-click="rosterCtrl.deleteTeam(team)" class="btn btn-danger btn-sm">Delete
+                                    Team
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <figcaption>
-                    <h3>Actions</h3>
-                    <button ladda="team.teamJoinLoading" data-style="expand-right"
-                            ng-if="rosterCtrl.account.isLoggedIn() && !rosterCtrl.isOnTeam && (team.teamPlayers.length < rosterCtrl.tour.details.teamMaxSize || rosterCtrl.tour.details.teamMaxSize == 0)
-                            && (!team.guildOnly  || (team.guildOnly && rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam))"
-                            ng-click="rosterCtrl.joinTeam(team)" class="btn btn-success">Join Team
-                    </button>
-                    <button ng-if="rosterCtrl.account.isLoggedIn() && team.guildOnly && !rosterCtrl.hasGuild(team.name) && !rosterCtrl.isOnTeam" ng-click="rosterCtrl.guildTip()" class="btn btn-disable">Join Team</button>
-                    <button ladda="team.teamLeaveLoading" data-style="expand-right" ng-if="rosterCtrl.isOnTeam.id == team.id && !rosterCtrl.isCaptain(team)"
-                            ng-click="rosterCtrl.leaveTeam(team)" class="btn btn-warning">Leave Team
-                    </button>
-                    <div style="position:absolute; bottom:0;left:0;right:0">
-                        <button ladda="team.teamPresentLoading" data-style="expand-right" ng-if="tourCtrl.isModerator()" ng-click="rosterCtrl.changeTeamPresent(team)" class="btn"
-                                ng-class="team.isPresent ? 'btn-success' : 'btn-warning'">{{team.isPresent ? 'Is Present' : 'Not Present'}}
-                        </button>
-                        <button ng-if="rosterCtrl.isCaptain(team) || tourCtrl.isAdmin()" ng-click="rosterCtrl.deleteTeam(team)" class="btn btn-danger">Delete Team</button>
-                    </div>
-                </figcaption>
-            </figure>
+            </div>
         </li>
     </ul>
 </infinite-scroller-animated>

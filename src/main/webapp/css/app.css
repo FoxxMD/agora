@@ -376,7 +376,11 @@ fieldset[disabled] {
 }
 #grid.grid li.component:active,
 #grid.grid li.component:hover {
-  background-color: #2d7aa6;
+  background-color: #2D7AA6;
+}
+#grid.grid li.component:active .tileContentRight,
+#grid.grid li.component:hover .tileContentRight {
+  background-color: #2D7AA6 !important;
 }
 @media screen and (max-width: 800px) {
   #grid.grid li.component {
@@ -422,7 +426,7 @@ fieldset[disabled] {
 }
 @media screen and (max-width: 800px) {
   #grid.grid li.component .tileContentContainer {
-    height: 73%;
+    height: 75%;
   }
 }
 #grid.grid li.component .tileContentContainer .tileContent {
@@ -431,7 +435,7 @@ fieldset[disabled] {
   bottom: 0;
   right: 0;
   left: 0;
-  padding: 10px 5px 0px 20px;
+  padding: 5px 5px 0 10px;
 }
 #grid.grid li.component .tileContentContainer .tileContent .tileContentBottom {
   position: absolute;
@@ -439,18 +443,45 @@ fieldset[disabled] {
   right: 0;
   padding: 0 30px 5px 0;
 }
+#grid.grid li.component .tileContentContainer .tileContent .tileContentRight {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  color: white !important;
+  background-color: #5B5B5B;
+}
+#grid.grid li.component .tileContentContainer .tileContent .tileContentRight .content {
+  padding: 15px 5px 15px 5px;
+}
+#grid.grid li.component .tileContentContainer .tileContent .tileContentRight .content button {
+  display: block;
+  margin: 0 0 10px 0;
+}
+#grid.grid li.component .tileContentContainer .tileContent .tileContentRight .content .toggle-switch {
+  min-width: 0;
+  width: 100%;
+}
+#grid.grid li.component .tileContentContainer .tileContent .playerList {
+  font-size: 0.8em;
+}
+#grid.grid li.component .tileContentContainer .tileContent .playerList i {
+  line-height: 1.5;
+  margin-right: 5px;
+}
 #grid.grid li.component .tileContentContainer .tileContent i {
   float: left;
   margin-right: 10px;
 }
 #grid.grid li.component .tileContentContainer .tileContent h3,
 #grid.grid li.component .tileContentContainer .tileContent h4 {
-  margin: 17px 0 17px 0;
+  /*margin: 17px 0 17px 0;*/
 }
 .actionContainer {
   position: absolute;
   top: 0;
   right: 0;
+  padding: 10px 10px 0 0;
 }
 .actionContainer .btn {
   float: right;

@@ -3,7 +3,7 @@
 angular.module('gtfest', ['ui.bootstrap', 'restangular', 'ui.router', 'ngStorage', 'ngTouch',
         'ui.bootstrap.showErrors', 'ngAnimate', 'ui.validate', 'angular-loading-bar', 'ngSanitize','angular-ladda',
         'xeditable','angularPayments', 'ui.calendar','infinite-scroll','wu.masonry','ngTagsInput','ui.tree',
-        'angulartics', 'angulartics.google.analytics', 'toaster', 'ngFlowtype'],
+        'angulartics', 'angulartics.google.analytics', 'toaster', 'ngFlowtype', 'toggle-switch'],
     ["$stateProvider", "$urlRouterProvider", "$locationProvider", "$httpProvider", "RestangularProvider", "$analyticsProvider",
         function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider, $analyticsProvider) {
         $stateProvider

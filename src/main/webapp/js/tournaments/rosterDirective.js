@@ -117,15 +117,22 @@ function rostDirective(Tournaments, Events, Guilds, $state, $stateParams, Accoun
 
             };
             this.leaveTeam = function (team, userId) {
-                team.teamLeaveLoading = true;
-                userId = userId || that.user.id;
-                Tournaments.leaveTeam(team.id.toString(), userId).then(function (response) {
-                    team.teamPlayers = response.teamPlayers;
-                    that.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id, that.tour);
-                    $scope.$emit('notify', 'notice', "Succesfully left team.", 2000);
-                }).finally(function () {
-                    team.teamLeaveLoading = false;
-                });
+                if(that.user.id == userId || that.isCaptain(team, that.user.id) || $scope.tourCtrl.isAdmin() || $scope.tourCtrl.isModerator())
+                {
+                    team.teamLeaveLoading = true;
+                    userId = userId || that.user.id;
+                    Tournaments.leaveTeam(team.id.toString(), userId).then(function (response) {
+                        team.teamPlayers = response.teamPlayers;
+                        that.isOnTeam = Tournaments.isOnTeamInRoster(Account.user().id, that.tour);
+                        $scope.$emit('notify', 'notice', "Succesfully left team.", 2000);
+                    }).finally(function () {
+                        team.teamLeaveLoading = false;
+                    });
+                }
+                else{
+                    $scope.$emit('notify', 'error', "You do not have permission to kick this player.", 4000);
+                }
+
             };
             this.deleteTeam = function (team) {
                 Tournaments.deleteTeam(team.id.toString()).then(function () {
