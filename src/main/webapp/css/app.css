@@ -413,6 +413,10 @@ fieldset[disabled] {
   margin-right: 15px;
   margin-top: -5px;
 }
+#grid.grid li.component .tileHeader a:hover {
+  color: white;
+  font-weight: bold;
+}
 #grid.grid li.component .tileContentContainer {
   background-color: white;
   position: relative;

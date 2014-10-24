@@ -113,7 +113,7 @@
     <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="toursCtrl.dumb()"
         infinite-scroll-container="'#st-content'" infinite-scroll-disabled="true">
         <div class="grid-sizer"></div>
-        <li class="masonry-brick eventCard component tournamentComponent" ng-repeat="team in rosterCtrl.tour.teams" on-last-repeat style="cursor:default;">
+        <li class="masonry-brick eventCard component outline-outward tournamentComponent" ng-repeat="team in rosterCtrl.tour.teams" on-last-repeat style="cursor:default;">
             <!--content -->
             <div class="actionContainer">
                 <button ladda="team.teamJoinLoading" data-style="expand-right"
@@ -130,7 +130,8 @@
             </div>
             <div class="contentClick">
                 <div class="tileHeader">
-                    {{team.guildOnly ? '[GUILD]' : ''}} {{team.name}}
+                    <a ng-if="team.guildOnly" ui-sref="eventSkeleton.guild({guildId:team.guildId})">[GUILD]{{team.name}}</a>
+                    {{team.guildOnly ? '' : team.name}}
                 </div>
                 <div class="tileContentContainer">
                     <div class="tileContent">

@@ -55,7 +55,7 @@
             <ul class="grid effect-6" masonry="{transitionDuration: 0}" id="grid" load-images="false" column-width=".grid-sizer" infinite-scroll="guildsCtrl.getMoreGuilds()"
                 infinite-scroll-container="'#st-content'" infinite-scroll-disabled="guildsCtrl.busy">
                 <div class="grid-sizer"></div>
-                <li class="masonry-brick outline-outward eventCard component" ng-repeat="guild in guildsCtrl.guildCollection | filter: guildsCtrl.filterGuilds track by $index" on-last-repeat>
+                <li class="masonry-brick outline-outward eventCard component tournamentComponent" ng-repeat="guild in guildsCtrl.guildCollection | filter: guildsCtrl.filterGuilds track by $index" on-last-repeat>
                        <!-- <div ng-switch="guildsCtrl.isEvent" style="position:relative; height:100%; width:100%;">-->
                             <div ng-if="!guildsCtrl.isEvent" class="contentClick"
                                  ng-click="!guildsCtrl.isEvent ? guildsCtrl.state.go('globalSkeleton.guild',{guildId:guild.id}) : guildsCtrl.state.go('eventSkeleton.guild',{eventId:guildsCtrl.stateParams.eventId, guildId:guild.id})">
