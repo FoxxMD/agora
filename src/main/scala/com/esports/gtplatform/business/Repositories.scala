@@ -1,11 +1,17 @@
 package com.esports.gtplatform.business
 
+import com.escalatesoft.subcut.inject.{AutoInjectable, BindingModule, Injectable}
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.Query._
 import com.googlecode.mapperdao.jdbc.JdbcMap
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
 import com.googlecode.mapperdao.{Entity, Persisted, QueryConfig}
 import dao.Daos._
+import dao.Tables._
+import models.Tournament
+import org.slf4j.LoggerFactory
+import scala.slick.jdbc.JdbcBackend
+import scala.slick.jdbc.JdbcBackend.Database
 import dao._
 import models._
 
@@ -24,7 +30,10 @@ import models._
 * concrete class implementation they should stay relatively agnostic so that they can be reused by (future) other implementations.
 * */
 
+
+
 trait SqlAccess {
+
   def lowLevelQuery(query: String, args: List[Any]): Option[JdbcMap]
   def lowLevelUpdate(query: String, args: List[Any]): Int
 }
@@ -69,6 +78,7 @@ trait GenericMRepo[T] extends GenericRepo[T]{
 }
 
 class SqlAccessRepository extends SqlAccess{
+
   def lowLevelQuery(query: String, args: List[Any]): Option[JdbcMap] = jdbc.queryForMap(query, args)
   def lowLevelUpdate(query: String, args: List[Any]): Int = jdbc.update(query, args).rowsAffected
 }
@@ -134,12 +144,53 @@ class GameRepository(returnEntity: Entity[Int,Persisted, Game]) extends GenericM
   def getByName(name: String): Option[Game] = queryDao.querySingleResult(select from GameEntity where GameEntity.name === name)
 }
 
+trait GamesRowRepo
+{
+    def get(id: Int): Option[GamesRow]
+    def getAll():  List[GamesRow]
+}
+class GamesRowRepository(implicit val bindingModule: BindingModule) extends GamesRowRepo with Injectable{
+    val db = inject[JdbcBackend.DatabaseDef]
+    import dao.Tables._
+    import dao.Tables.profile.simple._
+
+    def get(id: Int): Option[GamesRow] = {
+        db.withSession {
+            implicit session =>
+                Games.filter(e => e.id === id).hydrated.headOption
+        }
+
+    }
+    def getAll: List[GamesRow] = {
+        db.withSession {
+            implicit session =>
+            Games.hydrated
+        }
+    }
+}
+
 trait EventRepo extends GenericMRepo[Event]
 {
   def getByName(name: String): Option[Event]
 }
-class EventRepository(returnEntity: Entity[Int,Persisted, Event]) extends GenericMRepository[Event](returnEntity) with EventRepo{
-  def getByName(name: String): Option[Event] = queryDao.querySingleResult(select from EventEntity where EventEntity.name === name)
+class EventRepository(returnEntity: Entity[Int,Persisted, Event])(implicit val bindingModule: BindingModule) extends GenericMRepository[Event](returnEntity) with EventRepo with Injectable{
+    val db = inject[JdbcBackend.DatabaseDef]
+    import dao.Tables._
+    import dao.Tables.profile.simple._
+  def getByName(name: String): Option[Event] = {
+      //Events.filter(e => e.name === name).firstOption
+      queryDao.querySingleResult(select from EventEntity where EventEntity.name === name)
+  }
+    override def get(id: Int): Option[Event with Persisted] = {
+        val logger = LoggerFactory.getLogger(getClass)
+       val a = db.withSession {
+            implicit sessions =>
+            Events.filter(e => e.id === id).firstOption
+        }
+
+       val e = mapperDao.select(returnEntity, id)
+        e
+    }
 }
 
 trait EventUserRepo extends GenericMRepo[EventUser]

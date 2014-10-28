@@ -5,6 +5,7 @@ import com.esports.gtplatform.business.services.TeamService
 import com.esports.gtplatform.json.DateSerializer
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.{Entity, Persisted}
+import dao.Tables.GamesRow
 import models._
 import org.json4s.JsonAST.JValue
 import org.json4s.JsonDSL._
@@ -199,6 +200,16 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persist
 }
     ))
 
+class NewSerializers extends CustomSerializer[GamesRow](formats => ( {
+    PartialFunction.empty
+}, {
+    case gr: GamesRow =>
+        implicit val formats: Formats = DefaultFormats
+        val a = Extraction.decompose(gr) merge
+            render("tournamentTypes" -> Extraction.decompose(gr.tt))
+        a
+}))
+
 object GTSerializers {
-    val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer, new EntityAuxillarySerializer)
+    val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer, new EntityAuxillarySerializer, new NewSerializers)
 }

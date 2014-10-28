@@ -8,6 +8,9 @@ import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.{Entity, Persisted}
 import com.googlecode.mapperdao.jdbc.{JdbcMap, Transaction}
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
+import com.mchange.v2.c3p0.ComboPooledDataSource
+import scala.slick.jdbc.JdbcBackend
+import scala.slick.jdbc.JdbcBackend.Database
 import dao.Daos._
 import dao._
 import models._
@@ -28,9 +31,11 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
        *  GenericMDaoTypedRepository is the concrete implementation with Game as the generic parameter -- we also pass the corresponding mapperDao entity so it knows what to do later
        */
         //TODO move database configuration and init into this module
+        module.bind[JdbcBackend.DatabaseDef] toSingle Database.forDataSource(cpds)
         module.bind[SqlAccess] toSingle new SqlAccessRepository
         module.bind[GenericMRepo[Game]] toSingle new GenericMRepository[Game](GameEntity)
         module.bind[GameRepo] toSingle new GameRepository(GameEntity)
+        module.bind[GamesRowRepo] toSingle new GamesRowRepository()(module)
         module.bind[GenericMRepo[UserIdentity]] toSingle new GenericMRepository[UserIdentity](UserIdentityEntity)
         module.bind[UserIdentityRepo] toSingle new UserIdentityRepository(UserIdentityEntity)
         module.bind[GenericMRepo[Guild]] toSingle new GenericMRepository[Guild](GuildEntity)
@@ -42,7 +47,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
         //Created a separate set of tables/repositories for non-confirmed users.
         module.bind[NonActiveUserIdentityRepo] toSingle new NonActiveUserIdentityRepository
         module.bind[NonActiveUserRepo] toSingle new NonActiveUserRepository
-        module.bind[EventRepo] toSingle new EventRepository(EventEntity)
+        module.bind[EventRepo] toSingle new EventRepository(EventEntity)(module)
         module.bind[EventUserRepo] toSingle new EventUserRepository
         module.bind[GenericMRepo[EventUser]] toSingle new GenericMRepository[EventUser](EventUserEntity)
         module.bind[GenericMRepo[TournamentUser]] toSingle new GenericMRepository[TournamentUser](TournamentUserEntity)
@@ -56,6 +61,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
             Transaction.default(Transaction.transactionManager(jdbc))
         }
     }
+
     )
 
     //Eventually there will be different configurations depending on environment, such as for testing with mock repos.
@@ -63,7 +69,8 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
 
 
     override def init(context: ServletContext) {
-        //configureDb()
+        configureDb()
+        //val db = Database.forDataSource(cpds)
 
         //Here we assign our Standard Configuration for DI with subcut to the variable that will inject into our controllers
         implicit val bindingModule = StandardConfiguration
@@ -78,6 +85,6 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
     }
 
     override def destroy(context: ServletContext) {
-        //closeDbConnection()
+        closeDbConnection()
     }
 }

@@ -32,6 +32,8 @@ object ScalatraBuild extends Build {
                 "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
                 "org.scalatra" %% "scalatra-auth" % "2.3.0",
                 "org.scalatra" %% "scalatra-json" % "2.3.0",
+                "com.typesafe.slick" %% "slick" % "2.1.0",
+                "com.typesafe.slick" %% "slick-codegen" % "2.1.0-RC3",
                 "org.json4s" %% "json4s-jackson" % "3.2.10",
                 "org.json4s" %% "json4s-ext" % "3.2.10",
                 "org.json4s" %% "json4s-core" % "3.2.10",
@@ -51,7 +53,7 @@ object ScalatraBuild extends Build {
                 "c3p0" % "c3p0" % "0.9.1.2",
                 "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "compile;container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar")),
                 "com.googlecode.mapperdao" %% "mapperdao" % "1.0.1",
-                "mysql" % "mysql-connector-java" % "5.1.18",
+                "mysql" % "mysql-connector-java" % "5.1.33",
                 "commons-dbcp" % "commons-dbcp" % "1.4",
                 "com.stripe" % "stripe-java" % "1.18.0"
             ),
