@@ -1,5 +1,3 @@
-CREATE DATABASE `gtgamfest_scal` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE gtgamfest_scal;
 CREATE TABLE apikeys
 (
     id INT PRIMARY KEY NOT NULL,
@@ -14,7 +12,7 @@ CREATE TABLE confirmationtokens
     token VARCHAR(50) NOT NULL,
     eventId INT
 );
-CREATE TABLE eventdetails
+CREATE TABLE event_details
 (
     events_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     location VARCHAR(45),
@@ -33,7 +31,7 @@ CREATE TABLE eventdetails
     faq LONGTEXT,
     FOREIGN KEY (events_id) REFERENCES events (id) ON DELETE CASCADE
 );
-CREATE TABLE eventpayments
+CREATE TABLE event_payments
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     events_id INT NOT NULL,
@@ -45,7 +43,7 @@ CREATE TABLE eventpayments
     isenabled SMALLINT DEFAULT 1 NOT NULL,
     FOREIGN KEY (events_id) REFERENCES events (id) ON DELETE CASCADE
 );
-CREATE INDEX event_payment_id ON eventpayments (events_id);
+CREATE INDEX event_payment_id ON event_payments (events_id);
 CREATE TABLE events
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -53,6 +51,23 @@ CREATE TABLE events
     name VARCHAR(45) NOT NULL
 );
 CREATE UNIQUE INDEX id_UNIQUE ON events (id);
+CREATE TABLE events_users
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    users_id INT NOT NULL,
+    events_id INT NOT NULL,
+    isPresent TINYINT DEFAULT 0 NOT NULL,
+    isAdmin TINYINT DEFAULT 0 NOT NULL,
+    isModerator TINYINT DEFAULT 0 NOT NULL,
+    hasPaid TINYINT DEFAULT 0 NOT NULL,
+    receiptId VARCHAR(45),
+    customerId VARCHAR(45),
+    FOREIGN KEY (events_id) REFERENCES events (id) ON DELETE CASCADE,
+    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX id_UNIQUE ON events_users (id);
+CREATE INDEX event_user_id_idx ON events_users (events_id);
+CREATE INDEX user_event_id_idx ON events_users (users_id);
 CREATE TABLE games
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -65,15 +80,6 @@ CREATE TABLE games
     logoFilename VARCHAR(30)
 );
 CREATE UNIQUE INDEX id_UNIQUE ON games (id);
-CREATE TABLE games_events
-(
-    games_id INT NOT NULL,
-    events_id INT NOT NULL,
-    FOREIGN KEY (events_id) REFERENCES events (id) ON DELETE CASCADE,
-    FOREIGN KEY (games_id) REFERENCES games (id) ON DELETE CASCADE
-);
-CREATE INDEX event_game_id_idx ON games_events (events_id);
-CREATE INDEX game_event_id_idx ON games_events (games_id);
 CREATE TABLE games_tournamenttypes
 (
     games_id INT NOT NULL,
@@ -205,22 +211,22 @@ CREATE TABLE tokens
     FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX token_UNIQUE ON tokens (token);
-CREATE TABLE tournament
+CREATE TABLE tournaments
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     tournamenttypes_id INT NOT NULL,
     registrationType VARCHAR(15) NOT NULL,
     games_id INT NOT NULL,
     events_id INT NOT NULL,
-    FOREIGN KEY (tournamenttypes_id) REFERENCES tournamenttypes (Id),
+    FOREIGN KEY (tournamenttypes_id) REFERENCES tournaments_types (Id),
     FOREIGN KEY (games_id) REFERENCES games (id),
     FOREIGN KEY (events_id) REFERENCES events (id)
 );
-CREATE UNIQUE INDEX id_UNIQUE ON tournament (id);
-CREATE INDEX tournament_event_id ON tournament (games_id);
-CREATE INDEX tournament_game_id ON tournament (events_id);
-CREATE INDEX tournament_type_id_idx1 ON tournament (tournamenttypes_id);
-CREATE TABLE tournamentdetails
+CREATE UNIQUE INDEX id_UNIQUE ON tournaments (id);
+CREATE INDEX tournament_event_id ON tournaments (games_id);
+CREATE INDEX tournament_game_id ON tournaments (events_id);
+CREATE INDEX tournament_type_id_idx1 ON tournaments (tournamenttypes_id);
+CREATE TABLE tournaments_details
 (
     tournament_id INT PRIMARY KEY NOT NULL,
     name VARCHAR(45),
@@ -234,37 +240,21 @@ CREATE TABLE tournamentdetails
     timeEnd INT,
     tournamentdetailscol VARCHAR(45),
     location LONGTEXT,
+    locationsub VARCHAR(255),
     teamMaxSize INT DEFAULT 0 NOT NULL,
     teamMinSize INT,
     playerMinSize INT DEFAULT 0 NOT NULL,
     playerMaxSize INT DEFAULT 0 NOT NULL,
-    locationsub VARCHAR(255),
     FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON DELETE CASCADE
 );
-CREATE INDEX tournament_details_id_idx ON tournamentdetails (tournament_id);
-CREATE TABLE tournamenttypes
+CREATE INDEX tournament_details_id_idx ON tournaments_details (tournament_id);
+CREATE TABLE tournaments_types
 (
     Id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    name VARCHAR(45) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     teamPlay TINYINT NOT NULL
 );
-CREATE TABLE user_events
-(
-    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    users_id INT NOT NULL,
-    events_id INT NOT NULL,
-    isPresent TINYINT DEFAULT 0 NOT NULL,
-    isAdmin TINYINT DEFAULT 0 NOT NULL,
-    isModerator TINYINT DEFAULT 0 NOT NULL,
-    hasPaid TINYINT DEFAULT 0 NOT NULL,
-    receiptId VARCHAR(45),
-    FOREIGN KEY (events_id) REFERENCES events (id) ON DELETE CASCADE,
-    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
-);
-CREATE UNIQUE INDEX id_UNIQUE ON user_events (id);
-CREATE INDEX event_user_id_idx ON user_events (events_id);
-CREATE INDEX user_event_id_idx ON user_events (users_id);
-CREATE TABLE user_tournaments
+CREATE TABLE tournaments_users
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     users_id INT NOT NULL,
@@ -272,34 +262,12 @@ CREATE TABLE user_tournaments
     isPresent TINYINT DEFAULT 0 NOT NULL,
     isAdmin TINYINT DEFAULT 0 NOT NULL,
     isModerator TINYINT DEFAULT 0 NOT NULL,
-    FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON DELETE CASCADE,
+    FOREIGN KEY (tournament_id) REFERENCES tournaments (id) ON DELETE CASCADE,
     FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX id_UNIQUE ON user_tournaments (id);
-CREATE INDEX tournament_user_id_idx ON user_tournaments (tournament_id);
-CREATE INDEX user_tournament_id_idx ON user_tournaments (users_id);
-CREATE TABLE useridentity
-(
-    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    users_id INT NOT NULL,
-    userIdentifier VARCHAR(50) NOT NULL,
-    providerId VARCHAR(45) NOT NULL,
-    email VARCHAR(45),
-    password VARCHAR(100),
-    firstName VARCHAR(45),
-    lastName VARCHAR(45),
-    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
-);
-CREATE UNIQUE INDEX id_UNIQUE ON useridentity (id);
-CREATE INDEX user_identity_id ON useridentity (users_id);
-CREATE TABLE userplatformprofile
-(
-    users_id INT PRIMARY KEY NOT NULL,
-    platform VARCHAR(45) NOT NULL,
-    identifier VARCHAR(45) NOT NULL,
-    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
-);
-CREATE INDEX user_platform_id_idx ON userplatformprofile (users_id);
+CREATE UNIQUE INDEX id_UNIQUE ON tournaments_users (id);
+CREATE INDEX tournament_user_id_idx ON tournaments_users (tournament_id);
+CREATE INDEX user_tournament_id_idx ON tournaments_users (users_id);
 CREATE TABLE users
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -312,3 +280,27 @@ CREATE TABLE users
     role VARCHAR(11) NOT NULL
 );
 CREATE UNIQUE INDEX id_UNIQUE ON users (id);
+CREATE TABLE users_identity
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    users_id INT NOT NULL,
+    userIdentifier VARCHAR(50) NOT NULL,
+    providerId VARCHAR(45) NOT NULL,
+    email VARCHAR(45),
+    password VARCHAR(100),
+    firstName VARCHAR(45),
+    lastName VARCHAR(45),
+    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX id_UNIQUE ON users_identity (id);
+CREATE INDEX user_identity_id ON users_identity (users_id);
+CREATE TABLE users_platform_profile
+(
+    users_id INT NOT NULL,
+    platform VARCHAR(45) NOT NULL,
+    identifier VARCHAR(45) NOT NULL,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX id_UNIQUE ON users_platform_profile (id);
+CREATE INDEX user_platform_id_idx ON users_platform_profile (users_id);
