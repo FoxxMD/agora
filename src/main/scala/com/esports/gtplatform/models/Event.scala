@@ -37,19 +37,19 @@ case class Event(id: Int = 0, name: String = "A New Event", joinType: String = "
   private[this] val DetailsDescriptionLens: SimpleLens[Option[EventDetail], Option[String]] = SimpleLens[Option[EventDetail]](_.get.description)((ev, newDesc) => Option(ev.get.copy(description = newDesc))) //DetailsLenser(_.rules)
   //private[this] val DetailsDescriptionLens = DetailsLenser(_.description)
 
-  def getModerators: Set[User] = this.users.filter(x => x.isModerator).map(u => u.userId)
-  def getAdmins: Set[User] = this.users.filter(x => x.isAdmin).map(u => u.userId)
-  def getPresentUsers: Set[User] = this.users.filter(x => x.isPresent).map(u => u.userId)
-  def isModerator(u: User): Boolean = this.users.exists(x => (x.isModerator || x.isAdmin) && x.userId.id == u.id)
-  def isAdmin(u: User): Boolean = this.users.exists(x => x.isAdmin && x.userId.id == u.id)
-  def isPresent(u: User): Boolean = this.users.exists(x => x.isPresent && x.userId.id == u.id)
+  def getModerators: Set[User] = this.users.filter(x => x.isModerator).map(u => u.user.get)
+  def getAdmins: Set[User] = this.users.filter(x => x.isAdmin).map(u => u.user.get)
+  def getPresentUsers: Set[User] = this.users.filter(x => x.isPresent).map(u => u.user.get)
+  def isModerator(u: User): Boolean = this.users.exists(x => (x.isModerator || x.isAdmin) && x.userId == u.id)
+  def isAdmin(u: User): Boolean = this.users.exists(x => x.isAdmin && x.userId == u.id)
+  def isPresent(u: User): Boolean = this.users.exists(x => x.isPresent && x.userId == u.id)
 
   override def addUser(u: User): Event = this applyLens UserListLens modify (_.+(EventUser(this,u,isPresent = false,isAdmin = false,isModerator = false)))
   def addUser(eu:EventUser): Event = this applyLens UserListLens modify (_.+(eu))
-  override def removeUser(u: User): Event = this applyLens UserListLens modify (_.filter(x => x.userId.id != u.id))
+  override def removeUser(u: User): Event = this applyLens UserListLens modify (_.filter(x => x.userId != u.id))
   def removeUser(eu: EventUser): Event = this applyLens UserListLens modify (_.-(eu))
   def setUserPayment(u: User, paid: Boolean, receipt: Option[String]): Event = {
-    val ue = this.users.find(x => x.userId.id == u.id).getOrElse(throw new NoSuchElementException("User " + u.id + " does not exist in the event " + this.id))
+    val ue = this.users.find(x => x.userId == u.id).getOrElse(throw new NoSuchElementException("User " + u.id + " does not exist in the event " + this.id))
     this applyLens UserListLens set this.users - ue + ue.copy(hasPaid = paid, receiptId = receipt)
   }
   def addPayment(e: EventPayment): Event = this applyLens PaymentListLens modify(_+ e)
@@ -58,7 +58,7 @@ case class Event(id: Int = 0, name: String = "A New Event", joinType: String = "
   def changePayment(id: Int, e: EventPayment): Event = this.removePayment(id).addPayment(e)
 
   def setPresentStatus(u: User, status: Boolean): Event = {
-    val eu = this.users.find(x => x.userId.id == u.id).getOrElse(throw new NoSuchElementException("User " + u.id + " does not exist in the event " + this.id))
+    val eu = this.users.find(x => x.userId == u.id).getOrElse(throw new NoSuchElementException("User " + u.id + " does not exist in the event " + this.id))
     this.removeUser(u).addUser(eu.copy(isPresent = status))
   }
 

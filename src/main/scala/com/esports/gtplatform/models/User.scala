@@ -47,11 +47,11 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
     event match {
         case Some(e: Event) =>
             e.tournaments.filter(x =>
-                x.users.exists(u => u.userId.id == this.id) ||
+                x.users.exists(u => u.userId == this.id) ||
                 x.teams.exists(u => u.teamPlayers.exists(p => p.id == this.id))).toList
         case None =>
             val tourneysTourRepo = repo.getByUser(this).map(x => x.tournamentId)
-            val tourneysTeamRepo = trepo.getByUser(this.id).flatMap(x => tourRepo.get(x.teamId.tournamentId.id))
+            val tourneysTeamRepo = trepo.getByUser(this.id).flatMap(x => tourRepo.get(x.team.tournamentId))
             tourneysTourRepo++tourneysTeamRepo //TODO why does this cause a recursive call?
             //allTourneys.filter(x => x.event.id == e.id)
     }
