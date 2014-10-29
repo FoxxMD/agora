@@ -239,7 +239,7 @@ trait EventControllerT extends StandardController {
     }
     before("/:id/users/:userId/?*") {
         if (userParamId.isDefined) {
-            requestEvent.get.users.find(x => x.user.id == userParamId.get) match {
+            requestEvent.get.users.find(x => x.userId.id == userParamId.get) match {
                 case Some(eu: EventUser with Persisted) =>
                     requestEventUser = Some(eu)
                 case None =>
@@ -271,11 +271,11 @@ trait EventControllerT extends StandardController {
         }
     }
     before("\"/:id/tournaments/:tourId/teams/") {
-        if(!requestTournament.get.tournamentType.teamPlay)
+        if(!requestTournament.get.tournamentTypeId.teamPlay)
             halt(400,"This tournament is using a User Only play type. Change the game and play type to allow users.")
     }
     before("\"/:id/tournaments/:tourId/players/") {
-        if(requestTournament.get.tournamentType.teamPlay)
+        if(requestTournament.get.tournamentTypeId.teamPlay)
             halt(400,"This tournament is using a Team Only play type. Change the game and play type to allow teams.")
     }
     before("/:id/tournaments/:tourId/teams/:teamId/?*"){

@@ -36,13 +36,13 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val inserted = tx { () =>
 
             val insertedEvent = eventRepo.create(newEvent)
-            val eventDetails = EventDetails(insertedEvent, timeStart = parsedBody.\("details").\("timeStart").extractOpt[DateTime], timeEnd = parsedBody.\("details").\("timeEnd").extractOpt[DateTime])
+            val eventDetails = EventDetail(insertedEvent, timeStart = parsedBody.\("details").\("timeStart").extractOpt[DateTime], timeEnd = parsedBody.\("details").\("timeEnd").extractOpt[DateTime])
             eventRepo.update(insertedEvent, insertedEvent.setDetails(eventDetails))
             val userEvent = EventUser(insertedEvent, user, isPresent = false, isAdmin = true, isModerator = true, hasPaid = false)
 
             eventUserRepo.create(userEvent)
         }
-        Ok(inserted.event.id)
+        Ok(inserted.eventId.id)
     }
 
     get("/:id") {
@@ -53,7 +53,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         if (!requestEvent.get.isAdmin(user) && user.role != "admin")
             halt(403, "You do not have permission to edit this event.")
         //val activitiesraw =  compact(render(parsedBody.\("details").\("scheduledEvents")))
-        val extractedDetails = parsedBody.\("details").extract[EventDetails].copy(
+        val extractedDetails = parsedBody.\("details").extract[EventDetail].copy(
             event = requestEvent.get,
             credits = Some(compact(render(parsedBody.\("details").\("credits")))),
             scheduledEvents = Some(compact(render(parsedBody.\("details").\("scheduledEvents")))),
@@ -110,7 +110,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         }
     }
     get("/:id/users/:userId") {
-        Ok(requestEventUser.get.user)
+        Ok(requestEventUser.get.userId)
     }
     //Add a user to an event
     post("/:id/users") {
@@ -169,7 +169,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val admin = parsedBody.\("isAdmin").extractOpt[Boolean]
         val mod = parsedBody.\("isModerator").extractOpt[Boolean]
 
-        var eu = requestEvent.get.users.find(x => x.user.id == params("userId").toInt).getOrElse {
+        var eu = requestEvent.get.users.find(x => x.userId.id == params("userId").toInt).getOrElse {
             logger.warn("[Admin] " + user.id + " tried to modify an EventUser for a non-existent user " + params("userId") + " on Event " + requestEvent.get.id)
             halt(400, "This user is not in this event.")
         } //TODO make this work with requestEventUser
@@ -180,14 +180,14 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         if (admin.isDefined)
         {
             eu = eu.copy(isAdmin = admin.get)
-            logger.info("[Admin] " + user.id + "set Event Admin = " + admin.get + " on User " + eu.user.id + " for Event " + requestEvent.get.id)
+            logger.info("[Admin] " + user.id + "set Event Admin = " + admin.get + " on User " + eu.userId.id + " for Event " + requestEvent.get.id)
         }
         if (mod.isDefined)
         {
             eu = eu.copy(isModerator = mod.get)
-            logger.info("[Admin] " + user.id + "set Event Moderator = " + mod.get + " on User " + eu.user.id + " for Event " + requestEvent.get.id)
+            logger.info("[Admin] " + user.id + "set Event Moderator = " + mod.get + " on User " + eu.userId.id + " for Event " + requestEvent.get.id)
         }
-        eventRepo.update(requestEvent.get, requestEvent.get.removeUser(eu.user).addUser(eu))
+        eventRepo.update(requestEvent.get, requestEvent.get.removeUser(eu.userId).addUser(eu))
         Ok()
     }
     //get a list of tournaments for an event
@@ -221,7 +221,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             halt(403, "You do not have permission to edit users at this event.")
 
         var reqTour = requestTournament.get //TODO tournament security
-        var tourDetails = requestTournament.get.details.getOrElse(TournamentDetails(reqTour))
+        var tourDetails = requestTournament.get.details.getOrElse(TournamentDetail(reqTour))
 
         parsedBody.\("name").extractOpt[String].fold() { x =>
             tourDetails = tourDetails.copy(name = Option(x))
@@ -268,7 +268,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         if(parsedBody.\("tournamentType").toOption.isDefined){
             val ttRepo = inject[GenericMRepo[TournamentType]]
             val tt = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).getOrElse(halt(400, "No tournament type with that Id found."))
-            reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails).copy(tournamentType = tt))
+            reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails).copy(tournamentTypeId = tt))
         } //TODO this is a hack job
         else{
             reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails))
@@ -294,8 +294,8 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
 
         val inserted = tx { () =>
             val insertedTour = tourRepo.create(newTour)
-            val extractedTD = parsedBody.\("details").extract[TournamentDetails]
-            val completedTour = tourRepo.update(insertedTour, insertedTour.copy(details = Some(extractedTD.copy(tournament = insertedTour))))
+            val extractedTD = parsedBody.\("details").extract[TournamentDetail]
+            val completedTour = tourRepo.update(insertedTour, insertedTour.copy(details = Some(extractedTD.copy(tournamentId = insertedTour))))
             completedTour
         }
         logger.info("[Tournament] (" + inserted.id + ") New Tournament created for Event " + requestEvent.get.id)
@@ -310,7 +310,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val teamPlayerIds = parsedBody.\("teamPlayers").extractOrElse[List[Int]](halt(400, "No members specified"))
         val captainId = parsedBody.\("captainId").extractOpt[Int]
 
-        if (requestTournament.get.teams.exists(x => x.teamPlayers.exists(u => teamPlayerIds.contains(u.user.id))))
+        if (requestTournament.get.teams.exists(x => x.teamPlayers.exists(u => teamPlayerIds.contains(u.userId.id))))
             halt(400, "One or more members already belongs to a Team in this Tournament.")
 
         if (guildOnly) {
@@ -318,12 +318,12 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             val guildRepo = inject[GuildRepo]
             val guild = guildRepo.get(guildId).getOrElse(halt(400, "No guild exists with that Id"))
 
-            val members = guild.members.filter(x => teamPlayerIds.contains(x.user.id))
+            val members = guild.members.filter(x => teamPlayerIds.contains(x.userId.id))
 
             val newTeam = Team(guild.name, JoinType.Invite, requestTournament.get, guildOnly = true, guildId = Option(guildId))
             val inserted = tx { () =>
                 val insertedTeam = teamRepo.create(newTeam)
-                val newPlayers = members.map(x => TeamUser(insertedTeam, x.user, isCaptain = captainId.isDefined && x.user.id == captainId.get))
+                val newPlayers = members.map(x => TeamUser(insertedTeam, x.userId, isCaptain = captainId.isDefined && x.userId.id == captainId.get))
                 teamRepo.update(insertedTeam, insertedTeam.copy(teamPlayers = newPlayers))
             }
             logger.info("[Tournament] ("+ requestTournament.get.id +") New Guild Team \"" + inserted.name + "\" created.")
@@ -380,15 +380,15 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     delete("/:id/tournaments/:tourId/teams/:teamId/members") {
         auth()
-        if (user.role != "admin" && requestTeam.get.getCaptain.id != user.id && !requestEvent.get.isModerator(user) && !requestTeam.get.teamPlayers.exists(x => x.user.id == user.id))
+        if (user.role != "admin" && requestTeam.get.getCaptain.id != user.id && !requestEvent.get.isModerator(user) && !requestTeam.get.teamPlayers.exists(x => x.userId.id == user.id))
             halt(403, "You do not have permission to delete a user from this team.")
 
         val uExist = params.getOrElse("userId", halt(400, "No user Id specified."))
         val userId = toInt(uExist).getOrElse(halt(400, "User id was not a valid integer"))
         val teamRepo = inject[GenericMRepo[Team]]
-        requestTeam.get.teamPlayers.find(x => x.user.id == userId) match {
+        requestTeam.get.teamPlayers.find(x => x.userId.id == userId) match {
             case Some(x: TeamUser with Persisted) =>
-                val updated = teamRepo.update(requestTeam.get, requestTeam.get.removeUser(x.user))
+                val updated = teamRepo.update(requestTeam.get, requestTeam.get.removeUser(x.userId))
                 Ok(updated)
             case None => halt(400, "User is not on team. Could not remove.")
             case _ => logger.warn("Not hitting a match here!")
@@ -428,7 +428,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val uExist = params("userId")
         val userId = toInt(uExist).getOrElse(halt(400, "User id was not a valid integer"))
         val tuRepo = inject[GenericMRepo[TournamentUser]]
-        requestTournament.get.users.find(x => x.user.id == userId) match {
+        requestTournament.get.users.find(x => x.userId.id == userId) match {
             case Some(tu: TournamentUser with Persisted) =>
                 var tourUser = tu
                 parsedBody.\("isPresent").extractOpt[Boolean].fold() { x =>
@@ -456,7 +456,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val uExist = params("userId")
         val userId = toInt(uExist).getOrElse(halt(400, "User id was not a valid integer"))
         val tuRepo = inject[GenericMRepo[TournamentUser]]
-        requestTournament.get.users.find(x => x.user.id == userId) match {
+        requestTournament.get.users.find(x => x.userId.id == userId) match {
             case Some(tu: TournamentUser with Persisted) =>
                 tuRepo.delete(tu)
                 Ok()
@@ -472,7 +472,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             val paid = parsedBody.\("paid").extractOrElse[Boolean](halt(400, "Missing payment status"))
             val receipt = parsedBody.\("receipt").extractOpt[String]
             val userRepo = inject[UserRepo]
-            val theuser = requestEventUser.get.user //userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
+            val theuser = requestEventUser.get.userId //userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
             eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(theuser, paid = paid, receipt))
             val atype = if (user.role == "admin") "Admin" else "Event Admin"
             logger.info("[" + atype + "] (" + user.id + ") Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)

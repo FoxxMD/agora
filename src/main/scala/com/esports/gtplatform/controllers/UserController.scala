@@ -46,7 +46,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
           if (email.isDefined) {
               editUser = user.copy(email = email.get)
               val identRepo = inject[UserIdentityRepo]
-              identRepo.getByUser(requestUser.get).find(x => x.userId == "userpass") match {
+              identRepo.getByUser(requestUser.get).find(x => x.userIdentifier == "userpass") match {
                   case Some(u: UserIdentity with Persisted) =>
                       logger.info("User " + requestUser.get.id + " is changing email, found an associated useridentity with userpass. Changing userident email.")
                       identRepo.update(u, u.copy(providerId = email.get, email = email))
@@ -118,7 +118,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
 
         val identRepo = inject[UserIdentityRepo]
 
-        identRepo.getByUser(requestUser.get).find(x => x.userId == "userpass") match {
+        identRepo.getByUser(requestUser.get).find(x => x.userIdentifier == "userpass") match {
             case Some(ident: UserIdentity with Persisted) =>
                 if(PasswordSecurity.validatePassword(currentPass, ident.password))
                 {

@@ -1,13 +1,11 @@
-package dao
+package com.esports.gtplatform.dao.mapperdao
 
 import java.util.Properties
 
-import com.esports.gtplatform.models.{Team, InviteT}
-import com.googlecode.mapperdao.{MapperDao, NaturalIntId, Entity, QueryDao}
+import com.esports.gtplatform.models.{InviteT, Team}
 import com.googlecode.mapperdao.utils._
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import models._
-import org.springframework.transaction.PlatformTransactionManager
 
 /*Here we initialize the DAOs(Data Access Objects) we will use to interact with the database using MapperDao's DSL(domain specific language).
 * It's basically a way to write queries/interactions with MySQL without having to write actual MySQL -- you use instead these objects and in application objects to construct queries.

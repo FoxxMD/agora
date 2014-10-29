@@ -66,7 +66,29 @@ object ScalatraBuild extends Build {
                         Some("templates")
                     )
                 )
-            }
+            },
+            slick <<= slickCodeGenTask,
+            sourceGenerators in Compile <+= slickCodeGenTask
+        )
+    ).dependsOn(codegenProject)
+
+    lazy val codegenProject = Project(
+        id="codegen",
+        base=file("codegen"),
+        settings = Defaults.defaultConfigs ++ Seq(
+            scalaVersion := "2.11.1",
+            libraryDependencies ++= List(
+                "com.typesafe.slick" %% "slick-codegen" % "2.1.0-RC3"
+            )
         )
     )
+    // code generation task that calls the customized code generator
+    lazy val slick = TaskKey[Seq[File]]("gen-tables")
+    lazy val slickCodeGenTask = (sourceManaged, dependencyClasspath in Compile, runner in Compile, streams) map { (dir, cp, r, s) =>
+        val outputDir = (dir / "slick").getPath // place generated files in sbt's managed sources folder
+        toError(r.run("CustomCodeGenerator", cp.files, Array(outputDir), s.log))
+        val fname = outputDir + "/CustomTables/CustomTables.scala"
+        Seq(file(fname))
+    }
+
 }

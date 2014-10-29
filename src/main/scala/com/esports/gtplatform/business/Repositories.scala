@@ -1,12 +1,13 @@
 package com.esports.gtplatform.business
 
 import com.escalatesoft.subcut.inject.{AutoInjectable, BindingModule, Injectable}
+import com.esports.gtplatform.dao.mapperdao._
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.Query._
 import com.googlecode.mapperdao.jdbc.JdbcMap
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
 import com.googlecode.mapperdao.{Entity, Persisted, QueryConfig}
-import dao.Daos._
+import Daos._
 import dao.Tables._
 import models.Tournament
 import org.slf4j.LoggerFactory

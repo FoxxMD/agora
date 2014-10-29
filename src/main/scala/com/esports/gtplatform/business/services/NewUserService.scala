@@ -29,8 +29,8 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
   }
 
   def isUnique(obj: UserIdentity): Option[String] = {
-    if (!userRepo.getByEmail(obj.user.email).isDefined && !nonActiveUserRepo.getByEmail(obj.user.email).isDefined) {
-      if (!userRepo.getByHandle(obj.user.globalHandle).isDefined && !nonActiveUserRepo.getByHandle(obj.user.globalHandle).isDefined)
+    if (!userRepo.getByEmail(obj.userId.email).isDefined && !nonActiveUserRepo.getByEmail(obj.userId.email).isDefined) {
+      if (!userRepo.getByHandle(obj.userId.globalHandle).isDefined && !nonActiveUserRepo.getByHandle(obj.userId.globalHandle).isDefined)
         None
       else
         Some("handle")
@@ -47,7 +47,7 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
           val tx = inject[Transaction]
           tx { () =>
               val inserted = identRepo.create(obj)
-              eventRepo.update(event.get, event.get.addUser(inserted.user))
+              eventRepo.update(event.get, event.get.addUser(inserted.userId))
           }
           "ok"
       }
@@ -77,16 +77,16 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
       case Some(t: Int) =>
         logger.info("User is confirming registration with valid token")
         val returnedUserIdentity = nonActiveUserIdentRepo.get(t).get
-        val inactiveUserId = returnedUserIdentity.user.id
+        val inactiveUserId = returnedUserIdentity.userId.id
         //need to return clean objects with IDs or else mapperDao gets cranky
         val temp = returnedUserIdentity.copy()
-        val newuserIdentity = temp.copy(user = temp.user.copy())
+        val newuserIdentity = temp.copy(userId = temp.userId.copy())
         val realUserIdentRepo = inject[GenericMRepo[UserIdentity]]
         var newUser:Option[User] = None
         tx { () =>
 
           val newident = realUserIdentRepo.create(newuserIdentity)
-          newUser = Some(newident.user)
+          newUser = Some(newident.userId)
 
 
 

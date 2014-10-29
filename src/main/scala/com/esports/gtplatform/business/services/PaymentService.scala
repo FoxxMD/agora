@@ -48,7 +48,7 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
             None
         }
         else {
-            otherEvents.flatMap(x => x.users).find(y => y.user.id == u.id && (y.receiptId.isDefined || y.customerId.isDefined)) /*match {
+            otherEvents.flatMap(x => x.users).find(y => y.userId.id == u.id && (y.receiptId.isDefined || y.customerId.isDefined)) /*match {
         case Some(ev: EventUser) =>
           if(ev.event.id == event.id)
           {
@@ -63,14 +63,14 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
     }
 
     def createCustomer(ev: EventUser with Persisted, info: mutable.Map[String, String]): EventUser with Persisted = {
-        logger.info(logPrefix + "Attempting to create Stripe customer for User " + ev.user.id)
+        logger.info(logPrefix + "Attempting to create Stripe customer for User " + ev.userId.id)
         if (info.get("card").isEmpty) {
             logger.error(logPrefix + "Card info was not passed for payment.")
             throw new IllegalArgumentException("Card token was not passed from stripe.")
         }
         else {
-            info.put("email", ev.user.email)
-            info.put("description", "User " + ev.user.id)
+            info.put("email", ev.userId.email)
+            info.put("description", "User " + ev.userId.id)
 
             val customerId = try {
                 Customer.create(info, eventPayment.secretKey.get).getId
@@ -89,7 +89,7 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
                     throw new CustomerException("Illegal argument", ill)
             }
 
-            logger.info("[Payment][Event](" + ev.event.id + ") Customer " + customerId + " created successfully.")
+            logger.info("[Payment][Event](" + ev.eventId.id + ") Customer " + customerId + " created successfully.")
 
             try {
                 eventUserRepo.update(ev, ev.copy(customerId = Option(customerId)))
@@ -110,7 +110,7 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
         charge.put("currency", "usd")
         charge.put("description", "Registration for " + event.name)
         charge.put("customer", ev.customerId.getOrElse(throw new IllegalArgumentException("EventUser does not have a customer Id, cannot make a charge.")))
-        charge.put("receipt_email", ev.user.email)
+        charge.put("receipt_email", ev.userId.email)
         val chargeId = try {
             logger.info(logPrefix + "Attempting to charge card...")
             Charge.create(charge, eventPayment.secretKey.get)

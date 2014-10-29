@@ -4,12 +4,12 @@ import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.{PasswordSecurity, Mailer}
 import com.esports.gtplatform.business.{EventRepo, GenericMRepo, UserRepo}
 import com.esports.gtplatform.business.services.NewUserService
+import com.esports.gtplatform.dao.mapperdao.{UserIdentityEntity, Daos}
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.jdbc.Transaction
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException
-import dao.UserIdentityEntity
 import models.{UserIdentity, User}
-import dao.Daos._
+import Daos._
 import com.googlecode.mapperdao.Query._
 import org.scalatra.{InternalServerError, BadRequest, Ok}
 import org.springframework.jdbc.BadSqlGrammarException

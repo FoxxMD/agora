@@ -3,6 +3,7 @@ import javax.servlet.ServletContext
 import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.controllers._
+import com.esports.gtplatform.dao.mapperdao._
 import com.esports.gtplatform.data.DatabaseInit
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.{Entity, Persisted}
@@ -11,7 +12,7 @@ import com.googlecode.mapperdao.queries.v2.WithQueryInfo
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import scala.slick.jdbc.JdbcBackend
 import scala.slick.jdbc.JdbcBackend.Database
-import dao.Daos._
+import Daos._
 import dao._
 import models._
 import org.scalatra.LifeCycle

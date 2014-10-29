@@ -94,7 +94,7 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
     val userRepo = inject[GenericMRepo[User]]
     userRepo.get(addingUser) match {
       case Some(u: User with Persisted) =>
-        if (!requestGuild.members.exists(x => x.user == u)) {
+        if (!requestGuild.members.exists(x => x.userId == u)) {
           guildRepo.update(requestGuild, requestGuild.addUser(u))
           Ok()
         }
@@ -114,7 +114,7 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
     val userRepo = inject[GenericMRepo[User]]
     userRepo.get(removingUser) match {
       case Some(u: User) =>
-        if (requestGuild.members.exists(x => x.user.id == u.id)) {
+        if (requestGuild.members.exists(x => x.userId.id == u.id)) {
           guildRepo.update(requestGuild, requestGuild.removeUser(u))
         }
         else {

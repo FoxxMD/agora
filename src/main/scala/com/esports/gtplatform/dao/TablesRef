@@ -233,32 +233,12 @@ trait Tables {
     prs => import prs._
     GamesRow.tupled((<<[Int], <<[String], <<?[String], <<?[String], <<[String], <<[Byte], <<[Byte], <<?[String]))
   }
-    implicit class GamesExtensions[C[_]](q: Query[Games, GamesRow, C]) {
 
-/*        def tournamentTypes: List[TournamenttypesRow] ={
-                val blah = for {
-                    link <- GamesTournamenttypes if link.gamesId == this
-                    tt <- Tournamenttypes if tt.id == link.tournamenttypesId
-                } yield tt
-                blah.list
-            }*/
-def tournamentTypes(db: JdbcBackend.DatabaseDef): List[TournamenttypesRow] = {
-    val blah = db.withSession { implicit session =>
-        q.leftJoin(GamesTournamenttypes).on { case (g, gt) => g.id === gt.gamesId}
-            .leftJoin(Tournamenttypes).on { case ((g, gt), tt) => gt.tournamenttypesId === tt.id}
-            .map { case ((g, gt), tt) =>
-            tt
-        }.list
-    }
-    blah
-}
+    implicit class GamesExtensions[C[_]](q: Query[Games, GamesRow, C]) {
 
         def hydrated(implicit session: JdbcBackend.Session): List[GamesRow] = {
             q.leftJoin(GamesTournamenttypes).on { case (g, gt) => g.id === gt.gamesId}
                 .leftJoin(Tournamenttypes).on { case ((g, gt), tt) => gt.tournamenttypesId === tt.id}
-                /*                   .map { case ((g, gt), tt) =>
-                                    (gt,tt)
-                                }.list*/
                 .mapResult { case ((g, gt), tt) =>
                 g.tt = g.tt.:+(tt)
                 g.link = g.link.:+(gt)
@@ -273,7 +253,6 @@ def tournamentTypes(db: JdbcBackend.DatabaseDef): List[TournamenttypesRow] = {
             }.values.toList
         }
 
-        //q.join(GamesTournamenttypes).on(_.id === _.gamesId).map(_.)
     }
 
   /** Table description of table games. Objects of this class serve as prototypes for rows in queries. */
