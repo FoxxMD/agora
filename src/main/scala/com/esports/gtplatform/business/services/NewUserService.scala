@@ -47,7 +47,7 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
           val tx = inject[Transaction]
           tx { () =>
               val inserted = identRepo.create(obj)
-              eventRepo.update(event.get, event.get.addUser(inserted.userId))
+              eventRepo.update(event.get)
           }
           "ok"
       }
@@ -101,7 +101,7 @@ class NewUserService(implicit val bindingModule: BindingModule) extends Injectab
           case Some(e: Int) =>
             val eventRepo = inject[EventRepo]
             val event = eventRepo.get(e)
-            eventRepo.update(event.get, event.get.addUser(newUser.get))
+            eventRepo.update(event.get)
             logger.info("Event Id found with token, registering the user for an event. EventId:"+ e)
             (true, Option(e))
           case _ =>

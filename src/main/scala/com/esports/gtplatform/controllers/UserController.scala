@@ -49,14 +49,14 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
               identRepo.getByUser(requestUser.get).find(x => x.userIdentifier == "userpass") match {
                   case Some(u: UserIdentity with Persisted) =>
                       logger.info("User " + requestUser.get.id + " is changing email, found an associated useridentity with userpass. Changing userident email.")
-                      identRepo.update(u, u.copy(providerId = email.get, email = email))
+                      identRepo.update(u)
                   case None => logger.info("User " + requestUser.get.id + " is changing email but we did not find a userpass associated.")
                   case _ => logger.warn("This should have matched earlier, uh oh..")
               }
 
           }
 
-          userRepo.update(requestUser.get, editUser)
+          userRepo.update(requestUser.get)
       }
     Ok()
   }
@@ -78,7 +78,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     if(requestUser.get.gameProfiles.exists(x => x.platform == platformType))
       halt(400, "User already has this platform added.")
 
-    userRepo.update(requestUser.get, requestUser.get.addGameProfile(UserPlatformProfile(requestUser.get, platformType, identity)))
+    userRepo.update(requestUser.get)
     Ok()
   }
   delete("/:id/platforms") {
@@ -92,7 +92,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
     if(!requestUser.get.gameProfiles.exists(x => x.platform == platformType))
       halt(400, "User does not have a platform with this type to delete.")
 
-    userRepo.update(requestUser.get, requestUser.get.removeGameProfile(platformType))
+    userRepo.update(requestUser.get)
     Ok()
   }
   patch("/:id/platforms") {
@@ -108,7 +108,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
 
     val editedPlatform = requestUser.get.gameProfiles.find(x => x.platform == platformType).get.copy(identifier = identity)
 
-    userRepo.update(requestUser.get, requestUser.get.removeGameProfile(platformType).addGameProfile(editedPlatform))
+    userRepo.update(requestUser.get)
     Ok()
   }
     post("/:id/password") {
@@ -123,7 +123,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
                 if(PasswordSecurity.validatePassword(currentPass, ident.password))
                 {
                     val newIdent = ident.copy(password = PasswordSecurity.createHash(newPass))
-                    identRepo.update(ident, newIdent)
+                    identRepo.update(ident)
                     Ok()
                 }
                 else{

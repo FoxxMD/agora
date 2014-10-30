@@ -37,7 +37,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
 
             val insertedEvent = eventRepo.create(newEvent)
             val eventDetails = EventDetail(insertedEvent, timeStart = parsedBody.\("details").\("timeStart").extractOpt[DateTime], timeEnd = parsedBody.\("details").\("timeEnd").extractOpt[DateTime])
-            eventRepo.update(insertedEvent, insertedEvent.setDetails(eventDetails))
+            eventRepo.update(insertedEvent)
             val userEvent = EventUser(insertedEvent, user, isPresent = false, isAdmin = true, isModerator = true, hasPaid = false)
 
             eventUserRepo.create(userEvent)
@@ -62,7 +62,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val newEvent = requestEvent.get.copy(name = parsedBody.\("name").extract[String],
             joinType = parsedBody.\("joinType").extract[JoinType]).setDetails(extractedDetails)
 
-        eventRepo.update(requestEvent.get, newEvent)
+        eventRepo.update(requestEvent.get)
         Ok()
     }
     //Change the description of the event(front page)
@@ -71,7 +71,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         if (!requestEvent.get.isAdmin(user) && user.role != "admin")
             halt(403, "You do not have permission to edit this event.")
         val newEvent = requestEvent.get.setDescription(parsedBody.\("description").extract[String])
-        eventRepo.update(requestEvent.get, requestEvent.get.setDescription(parsedBody.\("description").extract[String]))
+        eventRepo.update(requestEvent.get)
         Ok()
     }
     //Get a list of teams that are participating in tournaments at this event
@@ -125,14 +125,14 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 val userRepo = inject[UserRepo]
                 userRepo.get(uid) match {
                     case Some(u: User) =>
-                        eventRepo.update(requestEvent.get, requestEvent.get.addUser(u))
+                        eventRepo.update(requestEvent.get)
                         logger.info("[Admin] (" + user.id + ") Added User " + u.id + " to Event " + requestEvent.get.id)
                         Ok()
                     case None =>
                         BadRequest("No user exists with that Id")
                 }
             case None =>
-                eventRepo.update(requestEvent.get, requestEvent.get.addUser(user))
+                eventRepo.update(requestEvent.get)
                 logger.info("[Event] ("+ requestEvent.get.id +")User " + user.id + " joined Event ")
                 Ok()
         }
@@ -148,7 +148,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
                 val userRepo = inject[UserRepo]
                 userRepo.get(userId) match {
                     case Some(u: User) =>
-                        eventRepo.update(requestEvent.get, requestEvent.get.removeUser(u))
+                        eventRepo.update(requestEvent.get)
                         logger.info("[Admin] with " + user.id + " removed User " + u.id + " from Event " + requestEvent.get.id)
                         Ok()
                     case None =>
@@ -187,7 +187,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             eu = eu.copy(isModerator = mod.get)
             logger.info("[Admin] " + user.id + "set Event Moderator = " + mod.get + " on User " + eu.userId.id + " for Event " + requestEvent.get.id)
         }
-        eventRepo.update(requestEvent.get, requestEvent.get.removeUser(eu.userId).addUser(eu))
+        eventRepo.update(requestEvent.get)
         Ok()
     }
     //get a list of tournaments for an event
@@ -268,10 +268,10 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         if(parsedBody.\("tournamentType").toOption.isDefined){
             val ttRepo = inject[GenericMRepo[TournamentType]]
             val tt = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).getOrElse(halt(400, "No tournament type with that Id found."))
-            reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails).copy(tournamentTypeId = tt))
+            reqTour = tournamentRepo.update(reqTour)
         } //TODO this is a hack job
         else{
-            reqTour = tournamentRepo.update(reqTour, reqTour.setDetails(tourDetails))
+            reqTour = tournamentRepo.update(reqTour)
         }
 
         Ok()
@@ -295,7 +295,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val inserted = tx { () =>
             val insertedTour = tourRepo.create(newTour)
             val extractedTD = parsedBody.\("details").extract[TournamentDetail]
-            val completedTour = tourRepo.update(insertedTour, insertedTour.copy(details = Some(extractedTD.copy(tournamentId = insertedTour))))
+            val completedTour = tourRepo.update(insertedTour)
             completedTour
         }
         logger.info("[Tournament] (" + inserted.id + ") New Tournament created for Event " + requestEvent.get.id)
@@ -324,7 +324,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             val inserted = tx { () =>
                 val insertedTeam = teamRepo.create(newTeam)
                 val newPlayers = members.map(x => TeamUser(insertedTeam, x.userId, isCaptain = captainId.isDefined && x.userId.id == captainId.get))
-                teamRepo.update(insertedTeam, insertedTeam.copy(teamPlayers = newPlayers))
+                teamRepo.update(insertedTeam)
             }
             logger.info("[Tournament] ("+ requestTournament.get.id +") New Guild Team \"" + inserted.name + "\" created.")
             Ok(inserted)
@@ -339,7 +339,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             val inserted = tx { () =>
                 val insertedTeam = teamRepo.create(newTeam)
                 val newPlayers = members.map(x => TeamUser(insertedTeam, x, isCaptain = captainId.isDefined && x.id == captainId.get))
-                teamRepo.update(insertedTeam, insertedTeam.copy(teamPlayers = newPlayers))
+                teamRepo.update(insertedTeam)
             }
             logger.info("[Tournament] ("+ requestTournament.get.id +") New Team \"" + inserted.name + "\" created.")
             Ok(inserted)
@@ -353,7 +353,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val teamRepo = inject[GenericMRepo[Team]]
 
         parsedBody.\("isPresent").extractOpt[Boolean].fold() { x =>
-            teamRepo.update(requestTeam.get, requestTeam.get.copy(isPresent = x))
+            teamRepo.update(requestTeam.get)
         }
 
         Ok()
@@ -371,7 +371,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
 
         userRepo.get(userId) match {
             case Some(u: User with Persisted) =>
-                val updated = teamRepo.update(requestTeam.get, requestTeam.get.addUser(u))
+                val updated = teamRepo.update(requestTeam.get)
                 Ok(updated)
             case None =>
                 halt(400, "No user with the specified Id " + userId + " exists.")
@@ -388,7 +388,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val teamRepo = inject[GenericMRepo[Team]]
         requestTeam.get.teamPlayers.find(x => x.userId.id == userId) match {
             case Some(x: TeamUser with Persisted) =>
-                val updated = teamRepo.update(requestTeam.get, requestTeam.get.removeUser(x.userId))
+                val updated = teamRepo.update(requestTeam.get)
                 Ok(updated)
             case None => halt(400, "User is not on team. Could not remove.")
             case _ => logger.warn("Not hitting a match here!")
@@ -432,17 +432,17 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             case Some(tu: TournamentUser with Persisted) =>
                 var tourUser = tu
                 parsedBody.\("isPresent").extractOpt[Boolean].fold() { x =>
-                    tourUser = tuRepo.update(tourUser, tourUser.copy(isPresent = x))
+                    tourUser = tuRepo.update(tourUser)
                 }
                 parsedBody.\("isModerator").extractOpt[Boolean].fold() { x =>
                     if(!requestTournament.get.isAdmin(user) && !requestEvent.get.isAdmin(user))
                         halt(403, "You do not have permission to assign moderator status.")
-                    tourUser = tuRepo.update(tourUser, tourUser.copy(isModerator = x))
+                    tourUser = tuRepo.update(tourUser)
                 }
                 parsedBody.\("isAdmin").extractOpt[Boolean].fold() { x =>
                     if(!requestTournament.get.isAdmin(user) && !requestEvent.get.isAdmin(user))
                         halt(403, "You do not have permission to assign admin status.")
-                    tourUser = tuRepo.update(tourUser, tourUser.copy(isAdmin = x))
+                    tourUser = tuRepo.update(tourUser)
                 }
                 Ok(tourUser)
             case None => halt(400, "No user with the Id " + userId + " is in this tournament.")
@@ -473,7 +473,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             val receipt = parsedBody.\("receipt").extractOpt[String]
             val userRepo = inject[UserRepo]
             val theuser = requestEventUser.get.userId //userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
-            eventRepo.update(requestEvent.get, requestEvent.get.setUserPayment(theuser, paid = paid, receipt))
+            eventRepo.update(requestEvent.get)
             val atype = if (user.role == "admin") "Admin" else "Event Admin"
             logger.info("[" + atype + "] (" + user.id + ") Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)
             Ok()
@@ -549,7 +549,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             parsedBody.\("publicKey").extractOpt[String],
             parsedBody.\("address").extractOpt[String],
             parsedBody.\("amount").extract[Double])
-        val updated = eventRepo.update(requestEvent.get, requestEvent.get.addPayment(ep))
+        val updated = eventRepo.update(requestEvent.get)
         Ok(updated.payments.filter(x => x.isEnabled))
     }
     //Change details of a payment option
@@ -565,7 +565,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             parsedBody.\("amount").extract[Double],
             parsedBody.\("isEnabled").extract[Boolean],
             parsedBody.\("id").extract[Int])
-        val updated = eventRepo.update(requestEvent.get, requestEvent.get.changePayment(params("payId").toInt, ep))
+        val updated = eventRepo.update(requestEvent.get)
         Ok(updated.payments.filter(x => x.isEnabled))
     }
     //delete a payment option
@@ -573,7 +573,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         auth()
         if (!requestEvent.get.isAdmin(user) && user.role != "admin")
             halt(403, "You do not have permission to do that")
-        val updated = eventRepo.update(requestEvent.get, requestEvent.get.removePayment(params("payId").toInt))
+        val updated = eventRepo.update(requestEvent.get)
         Ok(updated.payments.filter(x => x.isEnabled))
     }
     //change privacy settings
@@ -581,7 +581,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         auth()
         if (!requestEvent.get.isAdmin(user) && user.role != "admin")
             halt(403, "You do not have permission to do that")
-        eventRepo.update(requestEvent.get, requestEvent.get.copy(joinType = parsedBody.\("privacy").extract[JoinType]))
+        eventRepo.update(requestEvent.get)
         Ok()
     }
 }

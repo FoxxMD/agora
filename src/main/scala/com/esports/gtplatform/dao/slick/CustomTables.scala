@@ -2,12 +2,17 @@
 package com.esports.gtplatform.dao.slick
 
 //auto-generated
+
+import com.esports.gtplatform.business.IdentifiableTable
 import com.esports.gtplatform.models._
 import models.{EventDetail, _}
 
+import scala.slick.jdbc.JdbcBackend
+import scala.slick.lifted._
+
 object Tables extends {
     val profile = scala.slick.driver.MySQLDriver
-} with Tables
+} with Tables with TablesWithCustomQueries
 
 trait Tables extends {
     val profile: scala.slick.driver.JdbcProfile
@@ -298,11 +303,11 @@ trait Tables extends {
     /** Collection-like TableQuery object for table GuildsUsers */
     lazy val GuildsUsers = new TableQuery(tag => new GuildsUsers(tag))
 
-    /** GetResult implicit for fetching UserIdentity objects using plain SQL queries */
-    implicit def GetResultUserIdentity(implicit e0: GR[Int], e1: GR[String], e2: GR[Option[String]]): GR[UserIdentity] = GR{
+/*    /** GetResult implicit for fetching UserIdentity objects using plain SQL queries */
+    implicit def GetResultNonActiveUserIdentity(implicit e0: GR[Int], e1: GR[String], e2: GR[Option[String]]): GR[UserIdentity] = GR{
         prs => import prs._
             UserIdentity.tupled((<<[Int], <<[Int], <<[String], <<[String], <<?[String], <<?[String], <<?[String], <<?[String]))
-    }
+    }*/
     /** Table description of table nonactiveuseridentity. Objects of this class serve as prototypes for rows in queries. */
     class Nonactiveuseridentity(_tableTag: Tag) extends Table[UserIdentity](_tableTag, "nonactiveuseridentity") {
         def * = (id, usersId, useridentifier, providerid, email, password, firstname, lastname) <> (UserIdentity.tupled, UserIdentity.unapply)
@@ -332,11 +337,11 @@ trait Tables extends {
     /** Collection-like TableQuery object for table Nonactiveuseridentity */
     lazy val Nonactiveuseridentity = new TableQuery(tag => new Nonactiveuseridentity(tag))
 
-    /** GetResult implicit for fetching User objects using plain SQL queries */
+/*    /** GetResult implicit for fetching User objects using plain SQL queries */
     implicit def GetResultUser(implicit e0: GR[Int], e1: GR[String], e2: GR[org.joda.time.DateTime], e3: GR[Option[String]]): GR[User] = GR{
         prs => import prs._
             User.tupled((<<[Int], <<[String], <<[org.joda.time.DateTime], <<?[String], <<?[String], <<[String], <<[String]))
-    }
+    }*/
     /** Table description of table nonactiveusers. Objects of this class serve as prototypes for rows in queries. */
     class Nonactiveusers(_tableTag: Tag) extends Table[User](_tableTag, "nonactiveusers") {
         def * = (id, email, createddate, firstname, lastname, globalhandle, role) <> (User.tupled, User.unapply)

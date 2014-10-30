@@ -35,7 +35,7 @@ class GameController(implicit val bindingModule: BindingModule) extends Standard
     auth()
     if(user.role != "admin")
       halt(403, "You don not have permissions to create new Games.")
-    gameRepo.update(requestGame.get, parsedBody.extract[Game])
+    gameRepo.update(requestGame.get)
     Ok()
   }
 }

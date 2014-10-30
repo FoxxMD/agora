@@ -26,7 +26,7 @@ object CustomCodeGenerator {
                       |
                       |object Tables extends {
                       |val profile = scala.slick.driver.MySQLDriver
-                      |} with Tables
+                      |} with Tables with TablesWithCustomQueries
                       |
                       |trait Tables extends {
                       |  val profile: scala.slick.driver.JdbcProfile

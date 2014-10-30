@@ -4,6 +4,7 @@ import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.dao.mapperdao._
+import com.esports.gtplatform.dao.slick.Tables
 import com.esports.gtplatform.data.DatabaseInit
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.{Entity, Persisted}
@@ -11,7 +12,7 @@ import com.googlecode.mapperdao.jdbc.{JdbcMap, Transaction}
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import scala.slick.jdbc.JdbcBackend
-import scala.slick.jdbc.JdbcBackend.Database
+import scala.slick.jdbc.JdbcBackend.{SessionDef, Database}
 import Daos._
 import dao._
 import models._
@@ -32,18 +33,18 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
        *  GenericMDaoTypedRepository is the concrete implementation with Game as the generic parameter -- we also pass the corresponding mapperDao entity so it knows what to do later
        */
         //TODO move database configuration and init into this module
-        module.bind[JdbcBackend.DatabaseDef] toSingle Database.forDataSource(cpds)
+        implicit val session = module.bind[JdbcBackend.Session] toSingle Database.forDataSource(cpds).createSession()
+        module.bind[JdbcBackend.Database] toSingle Database.forDataSource(cpds)
         module.bind[SqlAccess] toSingle new SqlAccessRepository
-        module.bind[GenericMRepo[Game]] toSingle new GenericMRepository[Game](GameEntity)
-        module.bind[GameRepo] toSingle new GameRepository(GameEntity)
+        module.bind[GameRepo] toSingle new GenericSlickRepository[Game, Tables.Games]
+        module.bind[GameRepo] toSingle new GameRepository
         module.bind[GamesRowRepo] toSingle new GamesRowRepository()(module)
-        module.bind[GenericMRepo[UserIdentity]] toSingle new GenericMRepository[UserIdentity](UserIdentityEntity)
-        module.bind[UserIdentityRepo] toSingle new UserIdentityRepository(UserIdentityEntity)
+        module.bind[UserIdentityRepo] toSingle new UserIdentityRepository
         module.bind[GenericMRepo[Guild]] toSingle new GenericMRepository[Guild](GuildEntity)
         module.bind[GuildRepo] toSingle new GuildRepository(GuildEntity)
         module.bind[GenericMRepo[GuildUser]] toSingle new GenericMRepository[GuildUser](GuildUserEntity)
         module.bind[GenericMRepo[User]] toSingle new GenericMRepository[User](UserEntity)
-        module.bind[UserRepo] toSingle new UserRepository(UserEntity)
+        module.bind[UserRepo] toSingle new UserRepository
         module.bind[GenericMRepo[Tournament]] toSingle new GenericMRepository[Tournament](TournamentEntity)
         //Created a separate set of tables/repositories for non-confirmed users.
         module.bind[NonActiveUserIdentityRepo] toSingle new NonActiveUserIdentityRepository

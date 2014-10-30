@@ -92,7 +92,7 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
             logger.info("[Payment][Event](" + ev.eventId.id + ") Customer " + customerId + " created successfully.")
 
             try {
-                eventUserRepo.update(ev, ev.copy(customerId = Option(customerId)))
+                eventUserRepo.update(ev)
             }
             catch {
                 case e: Exception =>
@@ -133,7 +133,7 @@ class StripePayment(event: Event)(implicit override val bindingModule: BindingMo
         logger.info(logPrefix + "Attempting to add charge id to Event User")
 
         val chargedUser = try {
-            eventUserRepo.update(ev, ev.copy(receiptId = Option(chargeId.getId), hasPaid = true))
+            eventUserRepo.update(ev)
         }
         catch {
             case e: Exception =>

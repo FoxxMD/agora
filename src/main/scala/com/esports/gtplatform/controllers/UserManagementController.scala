@@ -190,7 +190,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
 
         val inserted = tx { trans =>
             try {
-            identRepo.update(identity.get, identity.get.copy(password = salted))
+            identRepo.update(identity.get)
           val update = jdbc.update(
             """
               |DELETE FROM passwordtokens
