@@ -1,13 +1,16 @@
 package com.esports.gtplatform.dao.slick
 
+import io.strongtyped.active.slick.ActiveSlick
 import models._
+import scala.slick.driver.JdbcDriver
 import scala.slick.jdbc.JdbcBackend
 
 /**
  * Created by Matthew on 10/29/2014.
  */
-trait TablesWithCustomQueries extends Tables{
-    import profile.simple._
+trait TablesWithCustomQueries {
+    this: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
 
     implicit class GamesExtensions[C[_]](q: Query[Games, Game, C]) {
 
@@ -47,7 +50,7 @@ trait TablesWithCustomQueries extends Tables{
             }.values.toList*/
         }
     }
-    implicit class UsersExtensions[C[_]](q: Query[Users, User, C]) {
+/*    implicit class UsersExtensions[C[_]](q: Query[Users, User, C]) {
 
         def hydrated(implicit session: JdbcBackend.Session): List[User] = {
             GuildsUsers.filter(x => x.usersId).hydrated
@@ -68,8 +71,16 @@ trait TablesWithCustomQueries extends Tables{
                 }
             }.values.toList
         }
+    }*/
+    //val Users = EntityTableQuery[User, Users](tag => new Users(tag))
+
+    implicit class UsersExtensions(val model: User) extends ActiveRecord[User] {
+
+        /*override def table = Users*/
+
     }
 }
+/*
 trait Profile {
     val profile: scala.slick.driver.JdbcProfile
     val simple:profile.simple.type = profile.simple
@@ -111,3 +122,4 @@ trait Entity[PK] {
 trait IdentifiableTable[I] {
     def id: scala.slick.lifted.Column[I]
 }
+*/

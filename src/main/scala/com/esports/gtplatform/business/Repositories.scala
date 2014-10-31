@@ -3,18 +3,31 @@ package com.esports.gtplatform.business
 import com.escalatesoft.subcut.inject.{AutoInjectable, BindingModule, Injectable}
 import com.esports.gtplatform.business
 import com.esports.gtplatform.dao.slick.CrudComponent.Crud
+import com.esports.gtplatform.dao.slick.Schema.Users
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.Query._
 import com.mysql.jdbc
 import com.googlecode.mapperdao.queries.v2.WithQueryInfo
+import io.strongtyped.active.slick.TableQueries.EntityTableQuery
+import io.strongtyped.active.slick.TableQueries.EntityTableQuery
+import io.strongtyped.active.slick.TableQueries.EntityTableQuery
+import io.strongtyped.active.slick.TableQueries.EntityTableQuery
+import io.strongtyped.active.slick.Tables.IdTable
+import io.strongtyped.active.slick.Tables.IdTable
+import io.strongtyped.active.slick.Tables.IdTable
+import io.strongtyped.active.slick.Tables.IdTable
+import io.strongtyped.active.slick.models.Identifiable
+import io.strongtyped.active.slick.{ActiveSlick, TableQueries, Tables}
 import models.Tournament
 import org.slf4j.LoggerFactory
+import scala.reflect.ClassTag
 import scala.slick.jdbc.JdbcBackend
 import scala.slick.jdbc.JdbcBackend.{SessionDef, Database}
 import scala.slick.jdbc.{GetResult, StaticQuery => Q}
 import models._
 import com.esports.gtplatform.dao.slick._
+import scala.reflect.runtime.universe._
 import scala.slick.lifted.TableQuery
 import scala.slick.model.Table
 import scala.slick.driver._
@@ -34,15 +47,21 @@ trait SqlAccessRepository extends SqlAccess{
 
 }*/
 
-class GenericSlickRepository[T,E](implicit val bindingModule: BindingModule, implicit val session: JdbcBackend.Session) extends Crud[E,T,Int] with GenericRepo[T] with SqlAccessRepository with Injectable with Profile {
-    override val profile = super.profile
-    override val query: this.simple.TableQuery[E] = _
+class GenericSlickRepository[T <: Identifiable[T]](implicit val bindingModule: BindingModule, implicit val session: JdbcBackend.Session) extends GenericRepo[T] with SqlAccessRepository with Injectable with TablesWithCustomQueries {
+    this: ActiveSlick with Schema =>
+
+   val entity = typeOf[T] match {
+       case User => Users
+       case Tournament => Tournaments
+    }
+    def get(id: Int) = entity.findOptionById(id)
+
+
     val db = inject[JdbcBackend.Database]
 
 }
 
 class GameRepository extends GenericSlickRepository[Game, Tables.Games] with GameRepo{
-    import profile.simple._
 
     override def get(id: Int): Option[Game] = {
         db.withSession {

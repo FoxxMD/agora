@@ -11,12 +11,7 @@ import org.joda.time.DateTime
  * Created by Matthew on 6/30/2014.
  */
 
-case class Guild(id: Int = 0,
-                 name: String,
-                 description: Option[String] = None,
-                 maxPlayers: Option[Int],
-                 joinType: String = "Public",
-                 createdDate: DateTime = DateTime.now()) extends Invitee with Inviteable with Requestable with GuildT {
+case class Guild(name: String, description: Option[String] = None, maxPlayers: Option[Int], joinType: String = "Public", createdDate: DateTime = DateTime.now(), id: Option[Int] = 0) extends Invitee with Inviteable with Requestable with GuildT {
 
     var games: List[Game] = List()
     var gamesLink: List[GuildGame] = List()

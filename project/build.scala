@@ -34,6 +34,7 @@ object ScalatraBuild extends Build {
                 "org.scalatra" %% "scalatra-json" % "2.3.0",
                 "com.typesafe.slick" %% "slick" % "2.1.0",
                 "com.typesafe.slick" %% "slick-codegen" % "2.1.0-RC3",
+                "io.strongtyped" %% "active-slick" % "0.2.2",
                 "org.json4s" %% "json4s-jackson" % "3.2.10",
                 "org.json4s" %% "json4s-ext" % "3.2.10",
                 "org.json4s" %% "json4s-core" % "3.2.10",

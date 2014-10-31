@@ -22,7 +22,7 @@ import org.joda.time.DateTime
   }
 }*/
 
-case class Event(id: Int = 0, name: String = "A New Event", joinType: String = "Public") extends Inviteable with Requestable with MeetingT[Event] {
+case class Event(name: String = "A New Event", joinType: String = "Public", id: Option[Int] = 0) extends Inviteable with Requestable with MeetingT[Event] {
 
     var details: Option[EventDetail] = None
     var payments: Set[EventPayment] = Set()
@@ -72,21 +72,7 @@ case class Event(id: Int = 0, name: String = "A New Event", joinType: String = "
  *
  * */
 
-case class EventDetail(eventId: Int = 0,
-                       locationName: Option[String] = None,
-                       address: Option[String] = None,
-                       city: Option[String] = None,
-                       state: Option[String] = None,
-                       description: Option[String] = None,
-                       rules: Option[String] = None,
-                       prizes: Option[String] = None,
-                       streams: Option[String] = None,
-                       servers: Option[String] = None,
-                       timeStart: Option[DateTime] = None,
-                       timeEnd: Option[DateTime] = None,
-                       scheduledEvents: Option[String] = None,
-                       credits: Option[String] = None,
-                       faq: Option[String] = None)
+case class EventDetail(locationName: Option[String] = None, address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None, streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None, scheduledEvents: Option[String] = None, credits: Option[String] = None, faq: Option[String] = None, eventId: Int = 0)
 {
 
 }
@@ -110,11 +96,4 @@ case class EventDetail(eventId: Int = 0,
   }
 }*/
 
-case class EventPayment(id: Int = 0,
-                        eventsId: Int,
-                        payType: String,
-                        secretKey: Option[String],
-                        publicKey: Option[String],
-                        address: Option[String],
-                        amount: Double,
-                        isEnabled: Boolean = true)
+case class EventPayment(eventsId: Int, payType: String, secretKey: Option[String], publicKey: Option[String], address: Option[String], amount: Double, isEnabled: Boolean = true, id: Option[Int] = None)

@@ -2,6 +2,8 @@ package models
 
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Invitee
+import io.strongtyped.active.slick.models.Identifiable
+
 //import models.GamePlatform.GamePlatform
 import monocle.SimpleLens
 import monocle.syntax._
@@ -28,13 +30,10 @@ import org.joda.time.DateTime
  * Created by Matthew on 6/30/2014.
  */
 
-case class User(id: Int = 0,
-                email: String,
-                createdDate: DateTime = DateTime.now(),
-                firstName: Option[String],
-                lastName: Option[String],
-                globalHandle: String,
-                role: String) extends Invitee {
+case class User(email: String, createdDate: DateTime = DateTime.now(), firstName: Option[String], lastName: Option[String], globalHandle: String, role: String, id: Option[Int] = None) extends Identifiable[User] {
+
+    override type Id = Int
+    override def withId(id: Id): User = copy(id = Some(id))
 
     var guilds: List[GuildUser] = List()
     var gameProfiles: List[UserPlatformProfile] = List()
@@ -71,20 +70,10 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
 /* UserIdentity is a descriptor for a user's login credentials. It's separated from the main user because blah blah decoupling.
 *
 * I've left fields OAuth implementation needs.*/
-case class UserIdentity(id: Int = 0,
-                        userId: Int,
-                        userIdentifier: String,
-                        providerId: String,
-                        email: Option[String] = None,
-                        password: Option[String] = None,
-                        firstName: Option[String] = None,
-                        lastName: Option[String])
+case class UserIdentity(userId: Int, userIdentifier: String, providerId: String, email: Option[String] = None, password: Option[String] = None, firstName: Option[String] = None, lastName: Option[String], id: Option[Int] = None)
 
 /* Right now more of a placeholder than anything. This will eventually serve as a list linked popular game profiles for this user
 * EX Steam, Battle.NET, etc. etc. */
-case class UserPlatformProfile(id: Int = 0,
-                               userId: Int,
-                               platform: String,
-                               identifier: String) {
+case class UserPlatformProfile(userId: Int, platform: String, identifier: String, id: Option[Int] = None) {
     var user: User = null
 }

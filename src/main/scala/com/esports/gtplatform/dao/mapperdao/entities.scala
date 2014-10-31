@@ -39,7 +39,7 @@ object UserEntity extends Entity[Int, SurrogateIntId, User]("users") {
     //It uses variables assigned above with an implicit "map of values"(ValuesMap) and adds the Key if specified(with Stored)
     def constructor(implicit m: ValuesMap) = {
         val cd = new DateTime(m(createdDate) * 1000L, DateTimeZone.UTC)
-        new User(id, email, cd, firstName, lastName, globalHandle, role) with Stored {
+        new User(email, cd, firstName, lastName, globalHandle, role, id) with Stored {
             //override val id: Int = UserEntity.id
         }
     }
@@ -59,7 +59,7 @@ object NonActiveUserEntity extends Entity[Int, SurrogateIntId, User]("nonactiveu
     //val gameProfiles = onetomany(UserPlatformProfileEntity) to (_.gameProfiles)
     //val teams = onetomany(TeamUserEntity) to (_.teams)
 
-    def constructor(implicit m: ValuesMap) = new User(id, email, createdDate, firstName, lastName, globalHandle, role) with Stored {
+    def constructor(implicit m: ValuesMap) = new User(email, createdDate, firstName, lastName, globalHandle, role, id) with Stored {
     }
 }
 
@@ -71,7 +71,7 @@ object UserPlatformProfileEntity extends Entity[Int, SurrogateIntId, UserPlatfor
     val identifier = column("identifier") to (_.identifier)
 
     def constructor(implicit m: ValuesMap) = {
-        new UserPlatformProfile(id, user, platform, identifier) with Stored
+        new UserPlatformProfile(user, platform, identifier, id) with Stored
     }
 }
 
@@ -86,7 +86,7 @@ object UserIdentityEntity extends Entity[Int, SurrogateIntId, UserIdentity]("use
     val password = column("password") to (_.password)
 
     def constructor(implicit m: ValuesMap) = {
-        new UserIdentity(id, user, userId, providerId, email, password, firstName, lastName) with Stored
+        new UserIdentity(user, userId, providerId, email, password, firstName, lastName, id) with Stored
         /*    {
               val id: Int = UserIdentityEntity.id
             }*/
@@ -107,7 +107,7 @@ object NonActiveUserIdentityEntity extends Entity[Int, SurrogateIntId, UserIdent
     val password = column("password") to (_.password)
 
     def constructor(implicit m: ValuesMap) = {
-        new UserIdentity(id, user, userId, providerId, email, password, firstName, lastName) with Stored
+        new UserIdentity(user, userId, providerId, email, password, firstName, lastName, id) with Stored
     }
 }
 
@@ -126,7 +126,7 @@ object TeamEntity extends Entity[Int, SurrogateIntId, Team]("teams") {
     def constructor(implicit m: ValuesMap) = {
         val cd = new DateTime(m(createdDate) * 1000L, DateTimeZone.UTC)
         val jtype = JoinType.fromString(m(joinType))
-        new Team(id, name, jtype, tournament, cd, isPresent, guildOnly, guildId) with Stored {
+        new Team(name, jtype, tournament, cd, isPresent, guildOnly, guildId, id) with Stored {
         }
     }
 }
@@ -138,7 +138,7 @@ object TeamUserEntity extends Entity[Int, SurrogateIntId, TeamUser]("teams_users
     val user = manytoone(UserEntity) to (_.userId)
     val captain = column("isCaptain") to (_.isCaptain)
 
-    def constructor(implicit m: ValuesMap) = new TeamUser(id, team, user, captain) with Stored
+    def constructor(implicit m: ValuesMap) = new TeamUser(team, user, captain, id) with Stored
 }
 
 object GuildUserEntity extends Entity[Int, SurrogateIntId, GuildUser]("guilds_users") {
@@ -147,7 +147,7 @@ object GuildUserEntity extends Entity[Int, SurrogateIntId, GuildUser]("guilds_us
     val user = manytoone(UserEntity) to (_.userId)
     val captain = column("isCaptain") to (_.isCaptain)
 
-    def constructor(implicit m: ValuesMap) = new GuildUser(id, guild, user, captain) with Stored
+    def constructor(implicit m: ValuesMap) = new GuildUser(guild, user, captain, id) with Stored
 }
 
 object GuildEntity extends Entity[Int, SurrogateIntId, Guild]("guilds") {
@@ -163,7 +163,7 @@ object GuildEntity extends Entity[Int, SurrogateIntId, Guild]("guilds") {
     def constructor(implicit m: ValuesMap) = {
         val cd = new DateTime(m(createdDate) * 1000L, DateTimeZone.UTC)
         val jtype = JoinType.fromString(m(joinType))
-        new Guild(id, name, maxPlayers = maxPlayers, joinType = jtype, createdDate = cd) with Stored
+        new Guild(name, maxPlayers = maxPlayers, joinType = jtype, createdDate = cd, id = id) with Stored
     }
 }
 
@@ -179,7 +179,7 @@ object GameEntity extends Entity[Int, NaturalIntId, Game]("games") {
     val tt = manytomany(TournamentTypeEntity) join("games_tournamenttypes", "games_id", "tournamenttypes_id") to (_.tournamentTypes)
 
     def constructor(implicit m: ValuesMap) = {
-        new Game(id, name, publisher, website, gt, uPlay, tPlay, logo) with Stored {
+        new Game(name, publisher, website, gt, uPlay, tPlay, logo, id) with Stored {
         }
     }
 }
@@ -189,7 +189,7 @@ object TournamentTypeEntity extends Entity[Int, NaturalIntId, TournamentType]("t
     val name = column("name") to (_.name)
     val tPlay = column("teamPlay") to (_.teamPlay)
 
-    def constructor(implicit m: ValuesMap) = new TournamentType(id, name, tPlay) with Stored
+    def constructor(implicit m: ValuesMap) = new TournamentType(name, tPlay, id) with Stored
 }
 
 object TournamentEntity extends Entity[Int, SurrogateIntId, Tournament]("tournament") {
@@ -204,7 +204,7 @@ object TournamentEntity extends Entity[Int, SurrogateIntId, Tournament]("tournam
 
     def constructor(implicit m: ValuesMap) = {
         val j = JoinType.fromString(m(rt))
-        new Tournament(id, bt, j, game, event) with Stored {
+        new Tournament(bt, j, game, event, id) with Stored {
             //val id: Int = TournamentEntity.id
         }
     }
@@ -269,7 +269,7 @@ object EventEntity extends Entity[Int, SurrogateIntId, Event]("events") {
 
     def constructor(implicit m: ValuesMap) = {
         val e = JoinType.fromString(m(eventType))
-        new Event(id, name, e) with Stored
+        new Event(name, e, id) with Stored
     }
 }
 
@@ -319,7 +319,7 @@ object EventPaymentEntity extends Entity[Int, SurrogateIntId, EventPayment]("eve
 
     def constructor(implicit m: ValuesMap) = {
         val p = PaymentType.fromString(m(paytype))
-        new EventPayment(id, event, p, secret, public, add, amount, enabled) with Stored
+        new EventPayment(event, p, secret, public, add, amount, enabled, id) with Stored
     }
 }
 

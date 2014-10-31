@@ -12,50 +12,29 @@ import com.esports.gtplatform.models.Team
   *
   * These really should be case classes but ATM they are easier to handle as mutable datas.*/
 
-case class TeamUser(id: Int = 0,
-                    teamId: Int,
-                    userId: Int,
-                    isCaptain: Boolean = false) {
+case class TeamUser(teamId: Int, userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
     var team: Team = null
     var user: User = null
 
 }
-case class GuildUser(id: Int = 0,
-                     guildId: Int,
-                     userId: Int,
-                     isCaptain: Boolean = false) {
+case class GuildUser(guildId: Int, userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
    var guild: Guild = null
     var user: User = null
 }
 
-case class EventUser(id: Int = 0,
-                     eventId: Int,
-                     userId: Int,
-                     isPresent: Boolean = false,
-                     isAdmin: Boolean = false,
-                     isModerator: Boolean = false,
-                     hasPaid: Boolean = false,
-                     receiptId: Option[String] = None,
-                     customerId: Option[String] = None) {
+case class EventUser(eventId: Int, userId: Int, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, receiptId: Option[String] = None, customerId: Option[String] = None, id: Option[Int] = None) {
     //For hydration
     var event: Option[Event] = None
     var user: Option[User] = None
 
 }
 
-case class TournamentUser(id: Int = 0,
-                          userId: Int,
-                          tournamentId: Int,
-                          isPresent: Boolean = false,
-                          isAdmin: Boolean = false,
-                          isModerator: Boolean = false) {
+case class TournamentUser(userId: Int, tournamentId: Int, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, id: Option[Int] = None) {
     var tournament: Tournament = null
     var user: User = null
 }
 
-case class TournamentType(id: Int = 0,
-                          name: String = "A Tourney Type",
-                          teamPlay: Boolean = true)
+case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Option[Int] = None)
 
 /*
  * The classes below are purely boilerplate so that slick will work
@@ -63,5 +42,5 @@ case class TournamentType(id: Int = 0,
  *
  */
 
-case class GameTournamentType(gameId: Int = 0, tournamentTypeId: Int = 0, id: Int = 0)
-case class GuildGame(id: Int, guildId: Int, gameId: Int)
+case class GameTournamentType(gameId: Int = 0, tournamentTypeId: Int = 0, id: Option[Int] = None)
+case class GuildGame(guildId: Int, gameId: Int, id: Option[Int] = None)
