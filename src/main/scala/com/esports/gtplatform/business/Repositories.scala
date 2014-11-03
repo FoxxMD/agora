@@ -1,36 +1,19 @@
 package com.esports.gtplatform.business
 
 import com.escalatesoft.subcut.inject.{AutoInjectable, BindingModule, Injectable}
-import com.esports.gtplatform.business
-import com.esports.gtplatform.dao.slick.CrudComponent.Crud
-import com.esports.gtplatform.dao.slick.Schema.Users
+import com.esports.gtplatform.dao.slick.{TablesWithCustomQueries, SchemaTables, Schema}
 import com.esports.gtplatform.models.Team
-import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.Query._
-import com.mysql.jdbc
-import com.googlecode.mapperdao.queries.v2.WithQueryInfo
-import io.strongtyped.active.slick.TableQueries.EntityTableQuery
-import io.strongtyped.active.slick.TableQueries.EntityTableQuery
-import io.strongtyped.active.slick.TableQueries.EntityTableQuery
-import io.strongtyped.active.slick.TableQueries.EntityTableQuery
-import io.strongtyped.active.slick.Tables.IdTable
-import io.strongtyped.active.slick.Tables.IdTable
-import io.strongtyped.active.slick.Tables.IdTable
-import io.strongtyped.active.slick.Tables.IdTable
 import io.strongtyped.active.slick.models.Identifiable
 import io.strongtyped.active.slick.{ActiveSlick, TableQueries, Tables}
 import models.Tournament
 import org.slf4j.LoggerFactory
 import scala.reflect.ClassTag
+import scala.slick.driver.JdbcDriver
 import scala.slick.jdbc.JdbcBackend
 import scala.slick.jdbc.JdbcBackend.{SessionDef, Database}
 import scala.slick.jdbc.{GetResult, StaticQuery => Q}
 import models._
-import com.esports.gtplatform.dao.slick._
-import scala.reflect.runtime.universe._
-import scala.slick.lifted.TableQuery
-import scala.slick.model.Table
-import scala.slick.driver._
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -46,24 +29,29 @@ trait SqlAccessRepository extends SqlAccess{
     import simple._
 
 }*/
-
-class GenericSlickRepository[T <: Identifiable[T]](implicit val bindingModule: BindingModule, implicit val session: JdbcBackend.Session) extends GenericRepo[T] with SqlAccessRepository with Injectable with TablesWithCustomQueries {
+//scala.slick.profile.RelationalTableComponent.Table[M]
+class GenericSlickRepository[M <: Identifiable[M], T <: io.strongtyped.active.slick.Tables#EntityTable](implicit val bindingModule: BindingModule, implicit val session: JdbcBackend#Session) extends GenericRepo[M] with SqlAccessRepository with Injectable with TablesWithCustomQueries {
     this: ActiveSlick with Schema =>
 
-   val entity = typeOf[T] match {
-       case User => Users
-       case Tournament => Tournaments
-    }
+
+    val entity = new EntityTableQuery[M, T](tag => new T(tag))
+
     def get(id: Int) = entity.findOptionById(id)
+    def getPaginated(pageNo: Int, pageSize: Int = 50) = entity.pagedList((pageNo-1)*pageSize,pageSize)
+    def getAll = entity.fetchAll
+    def update(obj: M): M = entity.save(obj)
+    def create(obj: M): M = {entity.withId(obj,entity.add(obj))}
+    def delete(id: Int) = entity.deleteById(id)
+    def delete(obj: M) = entity.delete(obj)
 
-
-    val db = inject[JdbcBackend.Database]
+    val db = inject[JdbcBackend#Database]
 
 }
 
-class GameRepository extends GenericSlickRepository[Game, Tables.Games] with GameRepo{
+class SlickGameRepository extends GenericSlickRepository[Game, SchemaTables.Games] with GameRepo{
 
-    override def get(id: Int): Option[Game] = {
+    import JdbcDriver.simple._
+/*    override def get(id: Int): Option[Game] = {
         db.withSession {
             implicit session =>
                 Tables.Games.filter(e => e.id === id).hydrated.headOption
@@ -80,102 +68,111 @@ class GameRepository extends GenericSlickRepository[Game, Tables.Games] with Gam
         db.withDynSession {
             Tables.Games.filter(e => e.name === name).hydrated.headOption
         }
-    }
+    }*/
+    override def get(id: Int) = entity.findById(id).withRelationships.headOption
+    override def getAll = entity.fetchAll.flatMap(x => x.withRelationships)
+    override def create(obj: Game)  = entity.save(obj).withRelationships.head
+
+
 }
 
-class UserRepository extends GenericSlickRepository[User, Tables.Users] with UserRepo
+class SlickUserRepository extends GenericSlickRepository[User, SchemaTables.Users] with UserRepo
 {
+    this: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
 
-  def getByEmail(email: String):Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.email === email)
-  def getByHandle(handle: String): Option[User] = queryDao.querySingleResult(select from UserEntity where UserEntity.globalHandle === handle)
+
+    override def get(id: Int) = entity.findOptionById(id).flatMap(x => x.withRelationships.headOption)
+  def getByEmail(email: String) = entity.filter(_.email === email).firstOption.flatMap(x => x.withRelationships.headOption)
+  def getByHandle(handle: String) = entity.filter(_.globalhandle === handle).firstOption.flatMap(x => x.withRelationships.headOption)
+
   //def getByEvent(id: Int): List[User] = queryDao.query(select from EventUserEntity where EventUserEntity.event.id === id)
 }
 
 
-class UserIdentityRepository(returnEntity: Entity[Int,Persisted, UserIdentity]) extends GenericMRepository[UserIdentity](returnEntity) with UserIdentityRepo
+class SlickUserIdentityRepository extends GenericSlickRepository[UserIdentity, SchemaTables.UsersIdentity] with UserIdentityRepo
 {
-    def getByUser(user: User with Persisted): List[UserIdentity with Persisted] = {
-        val uie = UserIdentityEntity
-        val ue = UserEntity
+    this: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
 
-       queryDao.query(select from uie join(uie, uie.user, ue) where ue.id === user.id)
+    def getByUser(user: User): List[UserIdentity] = {
+        entity.filter(_.usersId === user.id.get).list
     }
 }
 
 
-class GuildRepository(returnEntity: Entity[Int,Persisted, Guild]) extends GenericMRepository[Guild](returnEntity) with GuildRepo{
-  def getByName(name: String): Option[Guild] = queryDao.querySingleResult(select from GuildEntity where GuildEntity.name === name)
+class SlickGuildRepository extends GenericSlickRepository[Guild, SchemaTables.Guilds] with GuildRepo{
+    his: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
+
+  def getByName(name: String): Option[Guild] = entity.filter(_.name === name).firstOption
 }
 
 
 
-class EventRepository(returnEntity: Entity[Int,Persisted, Event])(implicit val bindingModule: BindingModule) extends GenericMRepository[Event](returnEntity) with EventRepo with Injectable{
-    val db = inject[JdbcBackend.DatabaseDef]
-    import dao.Tables._
-    import dao.Tables.profile.simple._
+class SlickEventRepository extends GenericSlickRepository[Event, SchemaTables.Events] with EventRepo{
+    his: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
+
   def getByName(name: String): Option[Event] = {
-      //Events.filter(e => e.name === name).firstOption
-      queryDao.querySingleResult(select from EventEntity where EventEntity.name === name)
-  }
-    override def get(id: Int): Option[Event with Persisted] = {
-        val logger = LoggerFactory.getLogger(getClass)
-       val a = db.withSession {
-            implicit sessions =>
-            Events.filter(e => e.id === id).firstOption
-        }
-
-       val e = mapperDao.select(returnEntity, id)
-        e
-    }
-}
-
-
-class EventUserRepository extends GenericMRepository[EventUser](EventUserEntity) with EventUserRepo{
-    val eve = EventUserEntity
-    val ue = UserEntity
-  def getByUser(u: User): List[EventUser with Persisted] = {
-    queryDao.query(select from eve join (eve, eve.user, ue) where ue.id === u.id)
+      entity.filter(e => e.name === name).firstOption
   }
 }
 
 
-class TournamentRepository extends GenericMRepository[Tournament](TournamentEntity) with TournamentRepo{
-  //def getByTeam(t: Team): List[Tournament] = queryDao.query(select from TournamentEntity where TournamentEntity.teams)
+class SlickEventUserRepository extends GenericSlickRepository[EventUser, SchemaTables.EventsUsers] with EventUserRepo{
+    his: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
+
+  def getByUser(u: User): List[EventUser] = {
+    entity.filter(_.usersId === u.id).list
+  }
 }
 
 
-class TeamRepository extends GenericMRepository[Team](TeamEntity) with TeamRepo {
-    //def getByEvent: List[Team] = queryDao.query(select from TeamEntity where TeamEntity.tournament.)
-    def getByGuild(id: Int): List[Team] = {
-        val te = TeamEntity
-        val ge = GuildEntity
-        //queryDao.query(select from te join (te, te.guild, ge) where ge.id === id)
-        queryDao.query(select from te where te.guildId === id)
+class SlickTournamentRepository extends GenericSlickRepository[Tournament, SchemaTables.Tournaments] with TournamentRepo{
+    his: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
+
+  def getByName(name: String): Option[Tournament] = ???
+}
+
+
+class SlickTeamRepository extends GenericSlickRepository[Team, SchemaTables.Teams] with TeamRepo {
+    his: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
+
+    def getByName(name: String): Option[Team] = entity.filter(_.name === name).firstOption
+    def getByGuild(id: Int): List[Team] = ???
+
+}
+
+class SlickTeamUserRepository extends GenericSlickRepository[TeamUser, SchemaTables.TeamsUsers] with TeamUserRepo {
+    this: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
+
+    def getByUser(user: User): List[TeamUser] = {
+        entity.filter(_.usersId === user.id).list
     }
-
-}
-
-class TeamUserRepository extends GenericMRepository[TeamUser](TeamUserEntity) with TeamUserRepo {
-
-    def getByUser(id: Int): List[TeamUser] = {
-        val tu = TeamUserEntity
-        val ue = UserEntity
-        queryDao.query(select from tu join (tu, tu.user, ue) where ue.id === id)
-    }
 }
 
 
-class TournamentUserRepository extends GenericMRepository[TournamentUser](TournamentUserEntity) with TournamentUserRepo{
+class SlickTournamentUserRepository extends GenericSlickRepository[TournamentUser, SchemaTables.TournamentsUsers] with TournamentUserRepo{
+    this: ActiveSlick with Schema =>
+    import JdbcDriver.simple._
+
   def getByUser(u: User): List[TournamentUser] = {
-      val tu = TournamentUserEntity
-      val uentity = UserEntity
-      queryDao.query(select from tu join (tu, tu.user, uentity) where uentity.id === u.id)
+      entity.filter(_.usersId === u.id).list
   }
 }
 
-trait NonActiveUserIdentityRepo extends GenericMRepo[UserIdentity]
+trait NonActiveUserIdentityRepo extends UserIdentityRepo
 trait NonActiveUserRepo extends UserRepo
 
-class NonActiveUserIdentityRepository extends GenericMRepository(NonActiveUserIdentityEntity) with NonActiveUserIdentityRepo
-class NonActiveUserRepository extends UserRepository(NonActiveUserEntity) with NonActiveUserRepo
+class SlickNonActiveUserIdentityRepository extends UserIdentityRepository with NonActiveUserIdentityRepo {
+    this: ActiveSlick with Schema =>
+}
+class SlickNonActiveUserRepository extends UserRepository with NonActiveUserRepo {
+    this: ActiveSlick with Schema =>
+}
 

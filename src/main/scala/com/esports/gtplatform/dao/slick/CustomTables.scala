@@ -9,9 +9,9 @@ import io.strongtyped.active.slick.{ActiveSlick, Profile, TableQueries, Tables}
 
 import scala.slick.driver.JdbcDriver
 
-/*object Tables extends {
+object SchemaTables extends {
     val profile = scala.slick.driver.MySQLDriver
-} with Tables with TablesWithCustomQueries with TableQueries with Profile*/
+} with Schema with TablesWithCustomQueries with TableQueries with Profile
 
     trait Schema extends {
         //this: Tables with TableQueries with Profile =>
@@ -73,6 +73,7 @@ import scala.slick.driver.JdbcDriver
             def * = (eventsId, paytype, secret, public, address, amount, isenabled, id.?) <> (EventPayment.tupled, EventPayment.unapply)
             /** Maps whole row to an option. Useful for outer joins. */
             def ? = (eventsId.?, paytype.?, secret, public, address, amount.?, isenabled.?, id.?).shaped.<>({r=>import r._; _1.map(_=> EventPayment.tupled((_1.get, _2.get, _3, _4, _5, _6.get, _7.get, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
 
             /** Database column events_id DBType(INT) */
             val eventsId: Column[Int] = column[Int]("events_id")
@@ -502,6 +503,7 @@ import scala.slick.driver.JdbcDriver
         }
         /** Collection-like EntityTableQuery object for table Users */
         lazy val Users = new EntityTableQuery[User, Users](tag => new Users(tag))
+
 
         /** Table description of table users_identity. Objects of this class serve as prototypes for rows in queries. */
         class UsersIdentity(_tableTag: Tag) extends EntityTable[UserIdentity](_tableTag, "users_identity") {

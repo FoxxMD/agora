@@ -1,6 +1,7 @@
 package com.esports.gtplatform.dao.slick
 
 import io.strongtyped.active.slick.ActiveSlick
+import io.strongtyped.active.slick.models.Identifiable
 import models._
 import scala.slick.driver.JdbcDriver
 import scala.slick.jdbc.JdbcBackend
@@ -12,26 +13,77 @@ trait TablesWithCustomQueries {
     this: ActiveSlick with Schema =>
     import JdbcDriver.simple._
 
-    implicit class GamesExtensions[C[_]](q: Query[Games, Game, C]) {
 
-        def hydrated(implicit session: JdbcBackend.Session): List[Game] = {
-            q.leftJoin(GamesTournamentsTypes).on { case (g, gt) => g.id === gt.gamesId}
-                .leftJoin(TournamentsTypes).on { case ((g, gt), tt) => gt.tournamenttypesId === tt.id}
-                .mapResult { case ((g, gt), tt) =>
-                g.tournamentTypes = g.tournamentTypes.+(tt)
-                g.ttLink = g.ttLink.+(gt)
-                g
-            }
-                .list.groupBy(_.id).mapValues { groupsWithSameId =>
+/*    implicit class QueryExtensions2[T,E]
+    ( val q: Query[T,E] ){
+        def autoJoin[T2,E2]
+        ( q2:Query[T2,E2] )
+        ( implicit condition: (T,T2) => Column[Boolean] )
+        : Query[(T,T2),(E,E2)]
+        = q.join(q2).on(condition)
+    }*/
+
+    implicit class GamesExtensions(val model: Game) extends ActiveRecord[Game] {
+
+        override val table = Games
+        def withRelationships = {
+            model.table.join(GamesTournamentsTypes).on(_.id === _.gamesId)
+                .join(TournamentsTypes).on(_._2.tournamenttypesId === _.id)
+                .mapResult[Game]{
+                case ((g,link),tt) =>
+                   model.ttLink = model.ttLink + link.copy()
+                   model.tournamentTypes = model.tournamentTypes + tt.copy()
+                model
+            }.list
+        }
+    }
+    implicit class  GuildUsersExtensions(val model: GuildUser) extends ActiveRecord[GuildUser] {
+        override val table = GuildsUsers
+        def withRelationships = {
+            model.table.join(Guilds).on(_.guildsId === _.id)
+            .join(Users).on(_._1.usersId === _.id)
+            .mapResult[GuildUser] {
+                case((gu,g),u) =>
+                model.guild = g
+                model.user = u
+                model
+            }.list
+        }
+    }
+    implicit class UsersExtensions(val model: User) extends ActiveRecord[User] {
+        override val table = Users
+        def withRelationships = {
+            model.table.join(GuildsUsers).on(_.id === _.usersId)
+                .join(UsersPlatformProfile).on(_._1.id === _.usersId)
+                .mapResult[User]{
+                case ((u, gu),p) =>
+                    model.guilds = model.guilds ++ gu.withRelationships
+                    model.gameProfiles = model.gameProfiles.::(p)
+                model
+            }.list
+        }
+    }
+/*    implicit class GamesExtensions[C[_]](q: Query[Games, Game, C]) {
+
+        def withGameTournaments = {
+            q.join(GamesTournamentsTypes).on(_.id === _.gamesId)
+            .join(TournamentsTypes).on(_._2.tournamenttypesId === _.id)
+                .mapResult[Game]{
+                case ((g,link),tt) =>
+                g.ttLink = link
+                g.tournamentTypes = tt
+            }.list
+
+                /*.list.groupBy(_.id).mapValues { groupsWithSameId =>
                 groupsWithSameId.reduce { (previousGroup, group) =>
                     previousGroup.tournamentTypes = previousGroup.tournamentTypes.++(group.tournamentTypes)
                     previousGroup.ttLink = previousGroup.ttLink.++(group.ttLink)
                     previousGroup
                 }
-            }.values.toList
+            }.values.toList*/
         }
-    }
-    implicit class GuildUsersExtensions[C[_]](q: Query[GuildsUsers, GuildUser, C]) {
+            }*/
+/*    implicit class GuildUsersExtensions[C[_]](q: Query[GuildsUsers, GuildUser, C]) {
 
         def hydrated(implicit session: JdbcBackend.Session): List[GuildUser] = {
             q.leftJoin(Users).on { case (gu, user) => gu.usersId === user.id}
@@ -49,7 +101,27 @@ trait TablesWithCustomQueries {
                 }
             }.values.toList*/
         }
-    }
+    }*/
+/*    implicit class UsersExtensions[C[_]](q: Query[Users, User, C]) {
+
+        def withRelationships = {
+            q.join(GamesTournamentsTypes).on(_.id === _.gamesId)
+                .join(TournamentsTypes).on(_._2.tournamenttypesId === _.id)
+                .mapResult[Game]{
+                case ((g,link),tt) =>
+                    g.ttLink = link
+                    g.tournamentTypes = tt
+            }.list
+
+            /*.list.groupBy(_.id).mapValues { groupsWithSameId =>
+            groupsWithSameId.reduce { (previousGroup, group) =>
+                previousGroup.tournamentTypes = previousGroup.tournamentTypes.++(group.tournamentTypes)
+                previousGroup.ttLink = previousGroup.ttLink.++(group.ttLink)
+                previousGroup
+            }
+        }.values.toList*/
+        }
+    }*/
 /*    implicit class UsersExtensions[C[_]](q: Query[Users, User, C]) {
 
         def hydrated(implicit session: JdbcBackend.Session): List[User] = {
@@ -74,11 +146,11 @@ trait TablesWithCustomQueries {
     }*/
     //val Users = EntityTableQuery[User, Users](tag => new Users(tag))
 
-    implicit class UsersExtensions(val model: User) extends ActiveRecord[User] {
+/*    implicit class UsersExtensions(val model: User) extends ActiveRecord[User] {
 
         /*override def table = Users*/
 
-    }
+    }*/
 }
 /*
 trait Profile {

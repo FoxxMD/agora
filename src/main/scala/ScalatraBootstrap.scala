@@ -36,11 +36,9 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
         implicit val session = module.bind[JdbcBackend.Session] toSingle Database.forDataSource(cpds).createSession()
         module.bind[JdbcBackend.Database] toSingle Database.forDataSource(cpds)
         module.bind[SqlAccess] toSingle new SqlAccessRepository
-        module.bind[GameRepo] toSingle new GenericSlickRepository[Game, Tables.Games]
-        module.bind[GameRepo] toSingle new GameRepository
-        module.bind[GamesRowRepo] toSingle new GamesRowRepository()(module)
-        module.bind[UserIdentityRepo] toSingle new UserIdentityRepository
-        module.bind[GenericMRepo[Guild]] toSingle new GenericMRepository[Guild](GuildEntity)
+        module.bind[GameRepo] toSingle new SlickGameRepository
+        module.bind[UserIdentityRepo] toSingle new SlickUserIdentityRepository
+        module.bind[GuildRepo] toSingle new SlickGuildRepository
         module.bind[GuildRepo] toSingle new GuildRepository(GuildEntity)
         module.bind[GenericMRepo[GuildUser]] toSingle new GenericMRepository[GuildUser](GuildUserEntity)
         module.bind[GenericMRepo[User]] toSingle new GenericMRepository[User](UserEntity)
