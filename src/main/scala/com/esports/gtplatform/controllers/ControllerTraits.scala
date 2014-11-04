@@ -195,6 +195,7 @@ trait GuildControllerT extends StandardController {
 trait GameControllerT extends StandardController {
     idType = "Game"
     def gameRepo: GameRepo
+    def gameTTLinkRepo: GameTTLinkRepo
     var requestGame: Option[Game with Persisted] = None
     before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
@@ -290,7 +291,7 @@ trait EventControllerT extends StandardController {
     }
     before("/:id/tournaments/:tourId/teams/:teamId/?*"){
         if(teamParamId.isDefined) {
-            requestTournament.get.teams.find(x => x.id == teamParamId.get) match {
+            requestTournament.get.teams.find(x => x.id.get == teamParamId.get) match {
                 case Some(t: Team with Persisted) =>
                 requestTeam = Some(t)
                 case None => halt(400, "No team with the Id " + teamParamId.get + " exists.")
@@ -307,7 +308,8 @@ trait UserControllerT extends StandardController {
     idType = "User"
     def userRepo: UserRepo
     def userIdentRepo: UserIdentityRepo
-    var requestUser: Option[User] = None
+    def requestUser: User = possibleUser.get
+    def possibleUser: Option[User] = None
     before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
         if (p == "me")
@@ -321,8 +323,9 @@ trait UserControllerT extends StandardController {
         if (paramId.isDefined)
             userRepo.get(paramId.get) match {
                 case Some(t: User) =>
-                    requestUser = Some(t)
-                case None => halt(400, "No user exists with the Id " + paramId.get)
+                    val possibleUser = Some(t)
+                case None =>
+                    halt(400, "No user exists with the Id " + paramId.get)
             }
     }
 }

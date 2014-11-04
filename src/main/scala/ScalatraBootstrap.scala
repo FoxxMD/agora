@@ -54,10 +54,13 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     })*/
 
     bind[GameRepo] to None
+    bind[GameTTLinkRepo] to None
+    bind[GameTTLinkRepo] to None
     bind[SqlAccess] to None
     bind[UserIdentityRepo] to None
     bind[GuildRepo] to None
     bind[GuildUserRepo] to None
+    bind[GuildGameLinkRepo] to None
     bind[UserRepo] to None
     bind[TournamentRepo] to None
     //Created a separate set of tables/repositories for non-confirmed users.
@@ -87,7 +90,8 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
         ), "/api/")
 
         context.mount(new GameController(
-            gameRepo = inject[GameRepo]
+            gameRepo = inject[GameRepo],
+            gameTTLinkRepo = inject[GameTTLinkRepo]
         ), "/api/games")
 
         context.mount(new GuildController(
@@ -102,11 +106,11 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             ), "/api/users")
 
         context.mount(new EventController(
-        eventRepo = inject[EventRepo],
-        eventUserRepo = inject[EventUserRepo],
-        tournamentRepo = inject[TournamentRepo],
-        userRepo = inject[UserRepo],
-        ttRepo = inject[TournamentTypeRepo]
+            eventRepo = inject[EventRepo],
+            eventUserRepo = inject[EventUserRepo],
+            tournamentRepo = inject[TournamentRepo],
+            userRepo = inject[UserRepo],
+            ttRepo = inject[TournamentTypeRepo]
         ), "/api/events")
 
     }
