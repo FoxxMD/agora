@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.PasswordSecurity
-import com.esports.gtplatform.business.UserIdentityRepo
+import com.esports.gtplatform.business.{UserRepo, UserIdentityRepo}
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
 
@@ -16,7 +16,7 @@ import com.googlecode.mapperdao.jdbc.Transaction
 /**
  * Created by Matthew on 8/6/2014.
  */
-class UserController(implicit val bindingModule: BindingModule) extends UserControllerT {
+class UserController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo) extends UserControllerT {
   get("/:id") {
     if (params("id") == "me") {
       auth()
@@ -116,14 +116,12 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
         val currentPass = parsedBody.\("current").extract[String]
         val newPass = parsedBody.\("new").extract[String]
 
-        val identRepo = inject[UserIdentityRepo]
-
-        identRepo.getByUser(requestUser.get).find(x => x.userIdentifier == "userpass") match {
-            case Some(ident: UserIdentity with Persisted) =>
-                if(PasswordSecurity.validatePassword(currentPass, ident.password))
+        userIdentRepo.getByUser(requestUser.get).find(x => x.userIdentifier == "userpass") match {
+            case Some(ident: UserIdentity) =>
+                if(PasswordSecurity.validatePassword(currentPass, ident.password.get))
                 {
-                    val newIdent = ident.copy(password = PasswordSecurity.createHash(newPass))
-                    identRepo.update(ident)
+                    val newIdent = ident.copy(password = Option(PasswordSecurity.createHash(newPass)))
+                    userIdentRepo.update(ident)
                     Ok()
                 }
                 else{

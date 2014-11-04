@@ -1,13 +1,13 @@
 package com.esports.gtplatform.controllers
 
-import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.GamesRowRepo
+import com.esports.gtplatform.business.GameRepo
 import models.Game
 import org.json4s.JsonDSL._
 import org.json4s.Extraction
 import org.scalatra.Ok
+import scaldi.Injector
 
-class GameController(implicit val bindingModule: BindingModule) extends StandardController with GameControllerT {
+class GameController(val gameRepo: GameRepo) extends StandardController with GameControllerT {
   get("/") {
     //Full path is "/games/" because of relative mounting
     Ok(gameRepo.getAll)
@@ -22,14 +22,7 @@ class GameController(implicit val bindingModule: BindingModule) extends Standard
     Ok(gameRepo.create(parsedBody.extract[Game]).id)
   }
   get("/:id") {
-      val newRepo= inject[GamesRowRepo]
-      val gr = newRepo.get(paramId.get)
-    //Ok(requestGame.get)
-      //val grjson = Extraction.decompose(gr.get)
-      //val json = grjson merge render("tTypes" -> Extraction.decompose(gr.get.tt))
-
-
-      Ok(gr)
+      Ok(gameRepo.get(paramId.get))
   }
   post("/:id") {
     auth()

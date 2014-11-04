@@ -4,7 +4,7 @@ import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.dao.mapperdao._
-import com.esports.gtplatform.dao.slick.Tables
+
 import com.esports.gtplatform.data.DatabaseInit
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.{Entity, Persisted}
@@ -13,9 +13,6 @@ import com.googlecode.mapperdao.queries.v2.WithQueryInfo
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import scala.slick.jdbc.JdbcBackend
 import scala.slick.jdbc.JdbcBackend.{SessionDef, Database}
-import Daos._
-import dao._
-import models._
 import org.scalatra.LifeCycle
 
 /* This is where we bootstrap the back-end service -- it's basically a "Global" file in any other context. Not much
@@ -23,14 +20,12 @@ import org.scalatra.LifeCycle
 *
 *  */
 
-class ScalatraBootstrap extends LifeCycle with DatabaseInit {
+class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
 
     //  This object acts as the standard configuration for DI with Subcut.
-    object StandardConfiguration extends NewBindingModule(module => {
+/*    object StandardConfiguration extends NewBindingModule(module => {
 
         /* Each repository Trait that will be used gets wired up here to a concrete implementation(class) that actually does the work.
-       *  GenericRepo is the Trait we're injecting, with a Generic parameter for the type of Domain Object being injected.
-       *  GenericMDaoTypedRepository is the concrete implementation with Game as the generic parameter -- we also pass the corresponding mapperDao entity so it knows what to do later
        */
         //TODO move database configuration and init into this module
         implicit val session = module.bind[JdbcBackend.Session] toSingle Database.forDataSource(cpds).createSession()
@@ -39,33 +34,43 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
         module.bind[GameRepo] toSingle new SlickGameRepository
         module.bind[UserIdentityRepo] toSingle new SlickUserIdentityRepository
         module.bind[GuildRepo] toSingle new SlickGuildRepository
-        module.bind[GuildRepo] toSingle new GuildRepository(GuildEntity)
-        module.bind[GenericMRepo[GuildUser]] toSingle new GenericMRepository[GuildUser](GuildUserEntity)
-        module.bind[GenericMRepo[User]] toSingle new GenericMRepository[User](UserEntity)
+        module.bind[GuildUserRepo] toSingle new GenericMRepository[GuildUser](GuildUserEntity)
         module.bind[UserRepo] toSingle new UserRepository
-        module.bind[GenericMRepo[Tournament]] toSingle new GenericMRepository[Tournament](TournamentEntity)
+        module.bind[TournamentRepo] toSingle new GenericMRepository[Tournament](TournamentEntity)
         //Created a separate set of tables/repositories for non-confirmed users.
         module.bind[NonActiveUserIdentityRepo] toSingle new NonActiveUserIdentityRepository
         module.bind[NonActiveUserRepo] toSingle new NonActiveUserRepository
         module.bind[EventRepo] toSingle new EventRepository(EventEntity)(module)
         module.bind[EventUserRepo] toSingle new EventUserRepository
-        module.bind[GenericMRepo[EventUser]] toSingle new GenericMRepository[EventUser](EventUserEntity)
-        module.bind[GenericMRepo[TournamentUser]] toSingle new GenericMRepository[TournamentUser](TournamentUserEntity)
+        module.bind[TournamentUserRepo] toSingle new GenericMRepository[TournamentUser](TournamentUserEntity)
         module.bind[TournamentUserRepo] toSingle new TournamentUserRepository
-        module.bind[GenericMRepo[TournamentType]] toSingle new GenericMRepository[TournamentType](TournamentTypeEntity)
-        module.bind[GenericMRepo[Tournament]] toSingle new GenericMRepository[Tournament](TournamentEntity)
-        module.bind[GenericMRepo[Team]] toSingle new GenericMRepository[Team](TeamEntity)
+        module.bind[TournamentTypeRepo] toSingle new GenericMRepository[TournamentType](TournamentTypeEntity)
+        module.bind[TeamRepo] toSingle new GenericMRepository[Team](TeamEntity)
         module.bind[TeamUserRepo] toSingle new TeamUserRepository
 
         module.bind[Transaction] toSingle {
             Transaction.default(Transaction.transactionManager(jdbc))
         }
-    }
+    })*/
 
-    )
-
-    //Eventually there will be different configurations depending on environment, such as for testing with mock repos.
-    //object TestingConfiguration extends NewBindingModule(module =>)
+    bind[GameRepo] to None
+    bind[SqlAccess] to None
+    bind[UserIdentityRepo] to None
+    bind[GuildRepo] to None
+    bind[GuildUserRepo] to None
+    bind[UserRepo] to None
+    bind[TournamentRepo] to None
+    //Created a separate set of tables/repositories for non-confirmed users.
+    bind[NonActiveUserIdentityRepo] to None
+    bind[NonActiveUserRepo] to None
+    bind[EventRepo] to None
+    bind[EventUserRepo] to None
+    bind[TournamentUserRepo] to None
+    bind[TournamentUserRepo] to None
+    bind[TournamentTypeRepo] to None
+    bind[TeamRepo] to None
+    bind[TeamUserRepo] to None
+    bind[Transaction] to None
 
 
     override def init(context: ServletContext) {
@@ -73,14 +78,36 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit {
         //val db = Database.forDataSource(cpds)
 
         //Here we assign our Standard Configuration for DI with subcut to the variable that will inject into our controllers
-        implicit val bindingModule = StandardConfiguration
+        //implicit val bindingModule = StandardConfiguration
 
         //This is how we mount individual controllers to a route. Each controller's url argument is relative to this path.
-        context.mount(new UserManagementController, "/api/")
-        context.mount(new GameController, "/api/games")
-        context.mount(new GuildController, "/api/guilds")
-        context.mount(new UserController, "/api/users")
-        context.mount(new EventController, "/api/events")
+        context.mount(new UserManagementController(
+            userRepo = inject [UserRepo],
+            userIdentRepo = inject[UserIdentityRepo]
+        ), "/api/")
+
+        context.mount(new GameController(
+            gameRepo = inject[GameRepo]
+        ), "/api/games")
+
+        context.mount(new GuildController(
+            guildRepo = inject[GuildRepo],
+            guildUserRepo = inject[GuildUserRepo],
+            userRepo = inject[UserRepo]
+        ), "/api/guilds")
+
+        context.mount(new UserController(
+            userRepo = inject[UserRepo],
+            userIdentRepo = inject[UserIdentityRepo]
+            ), "/api/users")
+
+        context.mount(new EventController(
+        eventRepo = inject[EventRepo],
+        eventUserRepo = inject[EventUserRepo],
+        tournamentRepo = inject[TournamentRepo],
+        userRepo = inject[UserRepo],
+        ttRepo = inject[TournamentTypeRepo]
+        ), "/api/events")
 
     }
 

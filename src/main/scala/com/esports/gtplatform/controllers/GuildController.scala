@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.{GameRepo, GenericMRepo}
+import com.esports.gtplatform.business._
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.jdbc.Transaction
 import models._
@@ -10,7 +10,7 @@ import org.scalatra.{BadRequest, Forbidden, Ok}
 /**
  * Created by Matthew on 7/29/2014.
  */
-class GuildController(implicit val bindingModule: BindingModule) extends APIController with GuildControllerT {
+class GuildController(val guildRepo: GuildRepo, val guildUserRepo: GuildUserRepo, val userRepo: UserRepo) extends APIController with GuildControllerT {
   get("/?") {
     val guilds = guildRepo.getPaginated(params.getOrElse("page", "1").toLong)
     Ok(guilds)
@@ -18,7 +18,6 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
   post("/") {
     auth()
     val gameRepo = inject[GameRepo]
-    val guildUserRepo = inject[GenericMRepo[GuildUser]]
 
     val extractedGuild = parsedBody.extract[Guild]
     val persistedGames = extractedGuild.games.map { x => gameRepo.get(x.id).get}
@@ -32,8 +31,7 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
     params.get("captainId") match {
       case Some(a: String) =>
         if (user.role == "admin") {
-          val personRepo = inject[GenericMRepo[User]]
-          val thisUser = personRepo.get(a.toInt)
+          val thisUser = userRepo.get(a.toInt)
           if (thisUser == None)
             halt(400, "No user found with that Id")
           userFT = thisUser
@@ -91,7 +89,6 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
 /*    if (user.role != "admin" && requestGuild.getCaptain != user)
       halt(403, "You don't have permission to edit this team.")*/ //TODO after getting invites working...
 
-    val userRepo = inject[GenericMRepo[User]]
     userRepo.get(addingUser) match {
       case Some(u: User with Persisted) =>
         if (!requestGuild.members.exists(x => x.userId == u)) {
@@ -111,10 +108,9 @@ class GuildController(implicit val bindingModule: BindingModule) extends APICont
     /*if (user.role != "admin" && requestGuild.getCaptain != user)
       halt(403, "You don't have permission to edit this team")*/ //TODO after getting invites working...
 
-    val userRepo = inject[GenericMRepo[User]]
     userRepo.get(removingUser) match {
       case Some(u: User) =>
-        if (requestGuild.members.exists(x => x.userId.id == u.id)) {
+        if (requestGuild.members.exists(x => x.userId == u.id)) {
           guildRepo.update(requestGuild)
         }
         else {

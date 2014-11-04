@@ -51,12 +51,14 @@ trait TeamRepo extends GenericEntityRepo[Team]
 }
 
 trait GuildRepo extends GenericEntityRepo[Guild]
+trait GuildUserRepo extends GenericEntityRepo[GuildUser]
 trait GameRepo extends GenericEntityRepo[Game]
 trait EventRepo extends GenericEntityRepo[Event]
 trait TournamentRepo extends GenericEntityRepo[Tournament]
 trait EventUserRepo extends GenericUserLinkRepo[EventUser]
 trait TeamUserRepo extends GenericUserLinkRepo[TeamUser]
 trait TournamentUserRepo extends GenericUserLinkRepo[TournamentUser]
+trait TournamentTypeRepo extends GenericRepo[TournamentType]
 trait NonActiveUserIdentityRepo extends UserIdentityRepo
 trait NonActiveUserRepo extends UserRepo
 

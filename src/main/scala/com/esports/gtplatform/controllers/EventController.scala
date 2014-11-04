@@ -15,11 +15,16 @@ import org.scalatra.{BadRequest, NotImplemented, Ok}
 import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
+import scaldi.Injector
 
 /**
  * Created by Matthew on 8/22/2014.
  */
-class EventController(implicit val bindingModule: BindingModule) extends APIController with EventControllerT {
+class EventController(val eventRepo: EventRepo,
+                      val eventUserRepo: EventUserRepo,
+                      val tournamentRepo: TournamentRepo,
+                      val userRepo: UserRepo,
+                      val ttRepo: TournamentTypeRepo) extends APIController with EventControllerT {
 
     get("/") {
         val events = eventRepo.getPaginated(params.getOrElse("page", "1").toInt)
@@ -27,12 +32,11 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     }
     post("/") {
         auth()
-        val newEvent: Event = Event(parsedBody.\("name").extract[String], parsedBody.\("joinType").extract[JoinType])
+        val newEvent: Event = Event(parsedBody.\("name").extract[String], parsedBody.\("joinType").extract[String])
         if (eventRepo.getByName(newEvent.name).isDefined)
             halt(400, "Event with this name already exists.")
 
         val tx = inject[Transaction]
-        val eventUserRepo = inject[GenericMRepo[EventUser]]
         val inserted = tx { () =>
 
             val insertedEvent = eventRepo.create(newEvent)
@@ -116,13 +120,12 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
     post("/:id/users") {
         val userId = parsedBody.\("userId").extractOpt[Int]
         auth()
-        if (requestEvent.get.joinType == JoinType.Invite && user.role != "admin")
+        if (requestEvent.get.joinType == "Invite" && user.role != "admin")
             halt(403, "This event is invite only. In order to join a moderator must invite you or accept your join request.")
         userId match {
             case Some(uid: Int) =>
                 if (user.role != "admin")
                     halt(403, "You do not have permission to add users to this event.")
-                val userRepo = inject[UserRepo]
                 userRepo.get(uid) match {
                     case Some(u: User) =>
                         eventRepo.update(requestEvent.get)
@@ -145,7 +148,6 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             case Some(uid: Int) =>*/
                 if (user.role != "admin" && !requestEvent.get.isAdmin(user))
                     halt(403, "You do not have permission to remove users from this event.")
-                val userRepo = inject[UserRepo]
                 userRepo.get(userId) match {
                     case Some(u: User) =>
                         eventRepo.update(requestEvent.get)
@@ -169,7 +171,7 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         val admin = parsedBody.\("isAdmin").extractOpt[Boolean]
         val mod = parsedBody.\("isModerator").extractOpt[Boolean]
 
-        var eu = requestEvent.get.users.find(x => x.userId.id == params("userId").toInt).getOrElse {
+        var eu = requestEvent.get.users.find(x => x.userId == params("userId").toInt).getOrElse {
             logger.warn("[Admin] " + user.id + " tried to modify an EventUser for a non-existent user " + params("userId") + " on Event " + requestEvent.get.id)
             halt(400, "This user is not in this event.")
         } //TODO make this work with requestEventUser
@@ -266,7 +268,6 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
             tourDetails = tourDetails.copy(description = Option(compact(render(parsedBody.\("description")))))
         }
         if(parsedBody.\("tournamentType").toOption.isDefined){
-            val ttRepo = inject[GenericMRepo[TournamentType]]
             val tt = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).getOrElse(halt(400, "No tournament type with that Id found."))
             reqTour = tournamentRepo.update(reqTour)
         } //TODO this is a hack job
@@ -281,21 +282,18 @@ class EventController(implicit val bindingModule: BindingModule) extends APICont
         if (user.role != "admin" && !requestEvent.get.isAdmin(user))
             halt(403, "You do not have permission to edit users at this event.")
 
-        val ttRepo = inject[GenericMRepo[TournamentType]]
-        val gameRepo = inject[GameRepo]
         val tx = inject[Transaction]
-        val tourRepo = inject[GenericMRepo[Tournament]]
 
-        val regType = parsedBody.\("registrationType").extract[JoinType]
+        val regType = parsedBody.\("registrationType").extract[String]
         val tourType = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).get
-        val game = gameRepo.get(parsedBody.\("game").\("id").extract[Int]).get
+        val game = parsedBody.\("game").extract[Game]
 
         val newTour = Tournament(tourType, regType, game, requestEvent.get)
 
         val inserted = tx { () =>
-            val insertedTour = tourRepo.create(newTour)
+            val insertedTour = tournamentRepo.create(newTour)
             val extractedTD = parsedBody.\("details").extract[TournamentDetail]
-            val completedTour = tourRepo.update(insertedTour)
+            val completedTour = tournamentRepo.update(insertedTour)
             completedTour
         }
         logger.info("[Tournament] (" + inserted.id + ") New Tournament created for Event " + requestEvent.get.id)

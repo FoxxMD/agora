@@ -46,6 +46,7 @@ object ScalatraBuild extends Build {
                 "com.roundeights" %% "scalon" % "0.2",
                 "net.databinder.dispatch" %% "dispatch-core" % "0.11.1",
                 "com.escalatesoft.subcut" %% "subcut" % "2.1",
+                "org.scaldi" %% "scaldi" % "0.4",
                 "com.typesafe" % "config" % "1.2.1",
                 "ch.qos.logback" % "logback-classic" % "1.0.13" % "runtime",
                 "org.codehaus.janino" % "janino" % "2.6.1",

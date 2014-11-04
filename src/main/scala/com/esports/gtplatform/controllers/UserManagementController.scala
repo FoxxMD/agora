@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.{PasswordSecurity, Mailer}
-import com.esports.gtplatform.business.{EventRepo, GenericMRepo, UserRepo}
+import com.esports.gtplatform.business.{UserIdentityRepo, EventRepo, GenericMRepo, UserRepo}
 import com.esports.gtplatform.business.services.NewUserService
 import com.esports.gtplatform.dao.mapperdao.{UserIdentityEntity, Daos}
 import com.googlecode.mapperdao.Persisted
@@ -23,7 +23,7 @@ import org.springframework.jdbc.BadSqlGrammarException
  * */
 
 //Mounted at /
-class UserManagementController(implicit val bindingModule: BindingModule) extends StandardController {
+class UserManagementController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo) extends StandardController {
 
     get("/login") {
         //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
@@ -108,7 +108,6 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
     }
     post("/forgotPassword") {
         val email = parsedBody.\("email").extractOrElse[String](halt(400, "No email address specified."))
-        val userRepo = inject[UserRepo]
         val m = new Mailer()
         val newToken = java.util.UUID.randomUUID.toString
 
@@ -165,8 +164,6 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
     post("/passwordReset") {
         val token = parsedBody.\("token").extractOrElse[String](halt(400,"No token specified"))
         val password = parsedBody.\("password").extractOrElse[String](halt(400,"No password specified"))
-        val userRepo = inject[UserRepo]
-        val identRepo = inject[GenericMRepo[UserIdentity]]
         val tx = inject[Transaction]
 
         val uie = UserIdentityEntity
@@ -190,7 +187,7 @@ class UserManagementController(implicit val bindingModule: BindingModule) extend
 
         val inserted = tx { trans =>
             try {
-            identRepo.update(identity.get)
+            userIdentRepo.update(identity.get)
           val update = jdbc.update(
             """
               |DELETE FROM passwordtokens
