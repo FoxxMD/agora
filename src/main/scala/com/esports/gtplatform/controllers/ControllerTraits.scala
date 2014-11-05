@@ -1,6 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.esports.gtplatform.business._
+import com.esports.gtplatform.business.services.TeamServiceT
 import com.esports.gtplatform.models.Team
 import com.fasterxml.jackson.core.JsonParseException
 import com.googlecode.mapperdao.Persisted
@@ -25,7 +26,7 @@ import scala.xml.Node
 *
 * In this file we are building the characteristics that we will make up a controller. */
 
-trait BasicServletWithLogging extends ScalatraServlet {
+trait BasicServletWithLogging extends ScalatraFilter {
 
     def toInt(s: String): Option[Int] = {
         try {
@@ -326,6 +327,63 @@ trait UserControllerT extends StandardController {
                     val possibleUser = Some(t)
                 case None =>
                     halt(400, "No user exists with the Id " + paramId.get)
+            }
+    }
+}
+
+trait TournamentT extends StandardController {
+    idType = "Tournament"
+    def tournamentRepo: TournamentRepo
+    def tournamentUserRepo: TournamentUserRepo
+    def tournamentDetailsRepo: TournamentDetailsRepo
+    def possibleTournament: Option[Tournament] = None
+    def requestTournament: Tournament = possibleTournament.get
+
+    before("/:id/?*") {
+        val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+        if (p == "me")
+            paramId = None
+        else {
+            val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+            paramId = Some(i)
+        }
+    }
+    before("/:id/?*") {
+        if (paramId.isDefined)
+            tournamentRepo.get(paramId.get) match {
+                case Some(t: Tournament) =>
+                    val possibleTournament = Some(t)
+                case None =>
+                    halt(400, "No "+idType+" exists with the Id " + paramId.get)
+            }
+    }
+
+}
+
+trait TeamT extends StandardController {
+    idType = "Team"
+    def teamRepo: TeamRepo
+    def teamUserRepo: TeamUserRepo
+    def teamService: TeamServiceT
+    def possibleTeam: Option[Team] = None
+    def requestTeam: Team = possibleTeam.get
+
+    before("/events/:eventId/tournaments/:tourId/teams/:id/?*") {
+        val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+        if (p == "me")
+            paramId = None
+        else {
+            val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+            paramId = Some(i)
+        }
+    }
+    before("/events/:eventId/tournaments/:tourId/teams/:id/?*") {
+        if (paramId.isDefined)
+            teamRepo.get(paramId.get) match {
+                case Some(t: Team) =>
+                    val possibleTeam = Some(t)
+                case None =>
+                    halt(400, "No "+idType+" exists with the Id " + paramId.get)
             }
     }
 }

@@ -11,6 +11,7 @@ import models.PaymentType.PaymentType
 import models._
 import org.joda.time.DateTime
 import org.json4s.Extraction
+import org.scalatra.scalate.ScalateUrlGeneratorSupport
 import org.scalatra.{BadRequest, NotImplemented, Ok}
 import org.json4s.JsonDSL._
 import org.json4s._
@@ -24,7 +25,7 @@ class EventController(val eventRepo: EventRepo,
                       val eventUserRepo: EventUserRepo,
                       val tournamentRepo: TournamentRepo,
                       val userRepo: UserRepo,
-                      val ttRepo: TournamentTypeRepo) extends APIController with EventControllerT {
+                      val ttRepo: TournamentTypeRepo) extends APIController with EventControllerT with ScalateUrlGeneratorSupport {
 
     get("/") {
         val events = eventRepo.getPaginated(params.getOrElse("page", "1").toInt)
@@ -194,111 +195,9 @@ class EventController(val eventRepo: EventRepo,
     }
     //get a list of tournaments for an event
     get("/:id/tournaments") {
-        params.get("page") match {
-            case Some(p: String) =>
-                val i = toInt(p).getOrElse(halt(400, "Page parmeter was not a valid integer"))
-                Ok(requestEvent.get.tournaments.drop(pageSize * (i + (-1))).take(pageSize))
-            case None =>
-                Ok(requestEvent.get.tournaments)
-        }
+     Ok(tournamentRepo.getByEvent(paramId.get))
     }
-    delete("/:id/tournaments/:tourId") {
-        if (user.role != "admin" && !requestEvent.get.isAdmin(user))
-        {
-            logger.warn("[Tournament] ("+ requestTournament.get.id +")Non-Admin User " + user.id + " attempted to delete Tournament.")
-            halt(403, "You do not have permission to delete tournaments from this event.")
-        }
-        tournamentRepo.delete(requestTournament.get)
-        Ok()
-    }
-    get("/:id/tournaments/:tourId") {
-        val jsonTour = Extraction.decompose(requestTournament.get)
-            .replace(List("users"), Extraction.decompose(requestTournament.get.users))
-            .replace(List("teams"), Extraction.decompose(requestTournament.get.teams))
-        Ok(jsonTour)
-    }
-    patch("/:id/tournaments/:tourId") {
-        auth()
-        if (user.role != "admin" && !requestEvent.get.isAdmin(user))
-            halt(403, "You do not have permission to edit users at this event.")
 
-        var reqTour = requestTournament.get //TODO tournament security
-        var tourDetails = requestTournament.get.details.getOrElse(TournamentDetail(reqTour))
-
-        parsedBody.\("name").extractOpt[String].fold() { x =>
-            tourDetails = tourDetails.copy(name = Option(x))
-        }
-        if(parsedBody.\("location").toOption.isDefined)
-        {
-            tourDetails = tourDetails.copy(location = Option(compact(render(parsedBody.\("location")))))
-        }
-        parsedBody.\("locationsub").extractOpt[String].fold() { x =>
-            tourDetails = tourDetails.copy(locationsub = Option(x))
-        }
-        parsedBody.\("timeStart").extractOpt[DateTime].fold() { x =>
-            tourDetails = tourDetails.copy(timeStart = Option(x))
-        }
-        parsedBody.\("timeEnd").extractOpt[DateTime].fold() { x =>
-            tourDetails = tourDetails.copy(timeEnd = Option(x))
-        }
-        parsedBody.\("teamMaxSize").extractOpt[Int].fold() { x =>
-            tourDetails = tourDetails.copy(teamMaxSize = x)
-        }
-        parsedBody.\("teamMinSize").extractOpt[Int].fold() { x =>
-            tourDetails = tourDetails.copy(teamMinSize = x)
-        }
-        if(parsedBody.\("servers").toOption.isDefined)
-        {
-            tourDetails = tourDetails.copy(servers = Option(compact(render(parsedBody.\("servers")))))
-        }
-        if(parsedBody.\("rules").toOption.isDefined)
-        {
-            tourDetails = tourDetails.copy(rules = Option(compact(render(parsedBody.\("rules")))))
-        }
-        if(parsedBody.\("streams").toOption.isDefined)
-        {
-            tourDetails = tourDetails.copy(streams = Option(compact(render(parsedBody.\("streams")))))
-        }
-        if(parsedBody.\("prizes").toOption.isDefined)
-        {
-            tourDetails = tourDetails.copy(prizes = Option(compact(render(parsedBody.\("prizes")))))
-        }
-        if(parsedBody.\("description").toOption.isDefined)
-        {
-            tourDetails = tourDetails.copy(description = Option(compact(render(parsedBody.\("description")))))
-        }
-        if(parsedBody.\("tournamentType").toOption.isDefined){
-            val tt = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).getOrElse(halt(400, "No tournament type with that Id found."))
-            reqTour = tournamentRepo.update(reqTour)
-        } //TODO this is a hack job
-        else{
-            reqTour = tournamentRepo.update(reqTour)
-        }
-
-        Ok()
-    }
-    post("/:id/tournaments") {
-        auth()
-        if (user.role != "admin" && !requestEvent.get.isAdmin(user))
-            halt(403, "You do not have permission to edit users at this event.")
-
-        val tx = inject[Transaction]
-
-        val regType = parsedBody.\("registrationType").extract[String]
-        val tourType = ttRepo.get(parsedBody.\("tournamentType").\("id").extract[Int]).get
-        val game = parsedBody.\("game").extract[Game]
-
-        val newTour = Tournament(tourType, regType, game, requestEvent.get)
-
-        val inserted = tx { () =>
-            val insertedTour = tournamentRepo.create(newTour)
-            val extractedTD = parsedBody.\("details").extract[TournamentDetail]
-            val completedTour = tournamentRepo.update(insertedTour)
-            completedTour
-        }
-        logger.info("[Tournament] (" + inserted.id + ") New Tournament created for Event " + requestEvent.get.id)
-        Ok(inserted.id)
-    }
     post("/:id/tournaments/:tourId/teams") {
         auth()
         val teamRepo = inject[GenericMRepo[Team]]
@@ -556,7 +455,7 @@ class EventController(val eventRepo: EventRepo,
         if (!requestEvent.get.isAdmin(user) && user.role != "admin")
             halt(403, "You do not have permission to do that")
         val ep = EventPayment(requestEvent.get,
-            parsedBody.\("payType").extract[PaymentType],
+            parsedBody.\("payType").extract[String],
             parsedBody.\("secretKey").extractOpt[String],
             parsedBody.\("publicKey").extractOpt[String],
             parsedBody.\("address").extractOpt[String],
@@ -582,4 +481,27 @@ class EventController(val eventRepo: EventRepo,
         eventRepo.update(requestEvent.get)
         Ok()
     }
+
+    /*
+    * Tournament URL Support
+    * */
+
+/*    post("/tournaments"){
+        redirect(url("tournaments"))
+    }
+    get("/tournaments/:id"){
+        redirect(url("tournaments/"+params("tid")))
+    }
+    patch("/tournaments/:id"){
+        redirect(url("tournaments/"+params("tid")))
+    }
+    delete("/tournaments/:id"){
+        redirect(url("tournaments/"+params("tid")))
+    }
+    get("/tournaments/:id/details"){
+        redirect(url("tournaments/"+params("tid")))
+    }
+    patch("/tournaments/:tid/details"){
+        redirect(url("tournaments/"+params("tid")+"/details"))
+    }*/
 }

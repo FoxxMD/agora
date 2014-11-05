@@ -48,6 +48,7 @@ trait TeamRepo extends GenericEntityRepo[Team]
 {
     //def getByEvent: List[Team]
     def getByGuild(id: Int): List[Team]
+    def getByTournament(id: Int): List[Team]
 }
 
 trait GuildRepo extends GenericEntityRepo[Guild]
@@ -56,10 +57,22 @@ trait GuildUserRepo extends GenericEntityRepo[GuildUser]
 trait GameRepo extends GenericEntityRepo[Game]
 trait GameTTLinkRepo extends GenericRepo[GameTournamentType]
 trait EventRepo extends GenericEntityRepo[Event]
-trait TournamentRepo extends GenericEntityRepo[Tournament]
+trait TournamentRepo extends GenericEntityRepo[Tournament] {
+    def getByEvent(id: Int): List[Tournament]
+}
+trait TournamentDetailsRepo extends GenericRepo[TournamentDetail] {
+    def getByTournament(id: Int): TournamentDetail
+    def getByTournament(e: Event): TournamentDetail
+}
 trait EventUserRepo extends GenericUserLinkRepo[EventUser]
-trait TeamUserRepo extends GenericUserLinkRepo[TeamUser]
-trait TournamentUserRepo extends GenericUserLinkRepo[TournamentUser]
+trait TeamUserRepo extends GenericUserLinkRepo[TeamUser] {
+    def getByTournament(id: Int): List[TeamUser]
+    def getByEvent(id: Int): List[TeamUser]
+}
+trait TournamentUserRepo extends GenericUserLinkRepo[TournamentUser] {
+    def getByTournament(id: Int): List[TournamentUser]
+    def getByTournament(tournament: Tournament): List[TournamentUser]
+}
 trait TournamentTypeRepo extends GenericRepo[TournamentType]
 trait NonActiveUserIdentityRepo extends UserIdentityRepo
 trait NonActiveUserRepo extends UserRepo

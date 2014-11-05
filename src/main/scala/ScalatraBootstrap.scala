@@ -2,6 +2,7 @@ import javax.servlet.ServletContext
 
 import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
+import com.esports.gtplatform.business.services.{TournamentServiceT, TournamentService}
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.dao.mapperdao._
 
@@ -104,6 +105,15 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             userRepo = inject[UserRepo],
             userIdentRepo = inject[UserIdentityRepo]
             ), "/api/users")
+
+        val tourController = new TournamentController(
+            tournamentRepo = inject[TournamentRepo],
+            tournamentUserRepo = inject[TournamentUserRepo],
+            tournamentDetailsRepo = inject[TournamentDetailsRepo],
+            tournamentService = inject[TournamentServiceT]
+        )
+
+        context.mount(tourController, "/api/tournaments")
 
         context.mount(new EventController(
             eventRepo = inject[EventRepo],

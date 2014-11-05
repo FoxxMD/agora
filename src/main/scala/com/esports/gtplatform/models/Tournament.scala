@@ -20,14 +20,14 @@ case class Tournament(tournamentTypeId: Int, registrationType: String = "Public"
     var users: Set[TournamentUser] = Set()
     var teams: Set[Team] = Set()
 
-    private[this] val DetailsLens: SimpleLens[Tournament, Option[TournamentDetail]] = SimpleLens[Tournament](_.details)((e, newDetails) => e.copy(details = newDetails))
+    //private[this] val DetailsLens: SimpleLens[Tournament, Option[TournamentDetail]] = SimpleLens[Tournament](_.details)((e, newDetails) => e.copy(details = newDetails))
 
-    def setDetails(e: TournamentDetail): Tournament = this applyLens DetailsLens set Option(e)
-    def isAdmin(u: User) = this.users.exists(x => x.userId.id == u.id && x.isAdmin)
-    def isModerator(u: User) = this.users.exists(x => x.userId.id == u.id && (x.isModerator || x.isAdmin))
+    //def setDetails(e: TournamentDetail): Tournament = this applyLens DetailsLens set Option(e)
+    //def isAdmin(u: User) = this.users.exists(x => x.userId.id == u.id && x.isAdmin)
+    //def isModerator(u: User) = this.users.exists(x => x.userId.id == u.id && (x.isModerator || x.isAdmin))
 }
 
-case class TournamentDetail(tournamentId: Int = Tournament(),
+case class TournamentDetail(tournamentId: Option[Int] = None,
                             name: Option[String] = None,
                             gamePlayed: Option[String] = None,
                             description: Option[String] = None,
