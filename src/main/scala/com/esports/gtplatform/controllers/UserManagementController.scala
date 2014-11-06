@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.{PasswordSecurity, Mailer}
-import com.esports.gtplatform.business.{UserIdentityRepo, EventRepo, GenericMRepo, UserRepo}
+import com.esports.gtplatform.business.{EventUserRepo, UserIdentityRepo, EventRepo, UserRepo}
 import com.esports.gtplatform.business.services.NewUserService
 import com.esports.gtplatform.dao.mapperdao.{UserIdentityEntity, Daos}
 import com.googlecode.mapperdao.Persisted
@@ -23,7 +23,7 @@ import org.springframework.jdbc.BadSqlGrammarException
  * */
 
 //Mounted at /
-class UserManagementController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo) extends StandardController {
+class UserManagementController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo, val eventUserRepo: EventUserRepo) extends StandardController {
 
     get("/login") {
         //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers

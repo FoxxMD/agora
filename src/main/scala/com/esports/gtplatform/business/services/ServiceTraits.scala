@@ -1,6 +1,6 @@
 package com.esports.gtplatform.business.services
 
-import com.esports.gtplatform.business.{TeamRepo, TeamUserRepo, TournamentUserRepo, TournamentRepo}
+import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Team
 import models._
 
@@ -9,6 +9,21 @@ import models._
  */
 trait GenericService[T] {
   def isUnique(obj: T): Boolean
+}
+
+trait RegistrationServiceT {
+    def inactiveUserRepo: NonActiveUserRepo
+    def inactiveIdentRepo: NonActiveUserIdentityRepo
+    def userRepo: UserRepo
+    def userIdentRepo: UserIdentityRepo
+    def confirmTokenRepo: ConfirmationTokenRepo
+    def eventUserRepo: EventUserRepo
+
+    def isUniqueEmail(user: User): Boolean
+    def isUniqueHandle(user: User): Boolean
+    def createInactiveUser(user: User, password: String, eventId: Option[Int] = None): User
+    def createActiveUser(user: User, password: String,  eventId: Option[Int] = None): User
+    def confirmInactiveUser(token: String): Option[Int]
 }
 
 trait AuthorizationSupport[T] {

@@ -70,7 +70,7 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
 /* UserIdentity is a descriptor for a user's login credentials. It's separated from the main user because blah blah decoupling.
 *
 * I've left fields OAuth implementation needs.*/
-case class UserIdentity(userId: Int, userIdentifier: String, providerId: String, email: Option[String] = None, password: Option[String] = None, firstName: Option[String] = None, lastName: Option[String], id: Option[Int] = None)
+case class UserIdentity(userId: Int, userIdentifier: String, providerId: String, email: Option[String] = None, password: Option[String] = None, firstName: Option[String] = None, lastName: Option[String] = None, id: Option[Int] = None)
 
 /* Right now more of a placeholder than anything. This will eventually serve as a list linked popular game profiles for this user
 * EX Steam, Battle.NET, etc. etc. */
