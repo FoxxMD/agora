@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.business.services.TeamServiceT
+import com.esports.gtplatform.business.services.{RosterServiceT, TeamServiceT}
 import com.esports.gtplatform.models.Team
 import com.fasterxml.jackson.core.JsonParseException
 import com.googlecode.mapperdao.Persisted
@@ -338,15 +338,13 @@ trait TournamentT extends StandardController {
     def tournamentDetailsRepo: TournamentDetailsRepo
     def possibleTournament: Option[Tournament] = None
     def requestTournament: Tournament = possibleTournament.get
+    var requestTournamentUser: Option[TournamentUser] = None
 
     before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
-        if (p == "me")
-            paramId = None
-        else {
             val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
             paramId = Some(i)
-        }
+
     }
     before("/:id/?*") {
         if (paramId.isDefined)
@@ -357,6 +355,17 @@ trait TournamentT extends StandardController {
                     halt(400, "No "+idType+" exists with the Id " + paramId.get)
             }
     }
+    before("/:id/players/:tuId/?*"){
+        val p = params.getOrElse("tuId", halt(400, "Tournament User Id parameter is missing"))
+        val i = toInt(p).getOrElse(halt(400, "Tournament User Id was not a valid integer"))
+        tournamentUserRepo.get(i) match {
+            case Some(tu: TournamentUser) =>
+                requestTournamentUser = Some(tu)
+            case None =>
+                halt(400, "No Tournament User with that Id exists.")
+        }
+
+    }
 
 }
 
@@ -365,6 +374,7 @@ trait TeamT extends StandardController {
     def teamRepo: TeamRepo
     def teamUserRepo: TeamUserRepo
     def teamService: TeamServiceT
+    def rosterService: RosterServiceT
     def possibleTeam: Option[Team] = None
     def requestTeam: Team = possibleTeam.get
 

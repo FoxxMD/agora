@@ -2,7 +2,7 @@ package com.esports.gtplatform.business.services
 
 import com.esports.gtplatform.business.{TeamRepo, TeamUserRepo, TournamentUserRepo, TournamentRepo}
 import com.esports.gtplatform.models.Team
-import models.{Event, Tournament, User}
+import models._
 
 /**
  * Created by Matthew on 8/26/2014.
@@ -43,8 +43,13 @@ trait TeamServiceT extends GenericService[Team] with AuthorizationSupport[Team] 
    protected def tournamentService: TournamentServiceT
    protected def eventService: EventServiceT
    protected def tournamentRepo: TournamentRepo
-
     //protected def isCaptain(user: User, obj: Team): Boolean
+}
+
+trait RosterServiceT {
+    def canJoin(tu: TeamUser): Boolean
+    def canJoin(teamUsers: List[TeamUser]): Boolean
+    def canJoin(tuser: TournamentUser): Boolean
 }
 
 trait EventServiceT extends GenericService[Event] with AuthorizationSupport[Event] with RoleSupport[Event] {

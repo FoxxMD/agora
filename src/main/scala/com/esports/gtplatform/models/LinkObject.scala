@@ -12,12 +12,12 @@ import com.esports.gtplatform.models.Team
   *
   * These really should be case classes but ATM they are easier to handle as mutable datas.*/
 
-case class TeamUser(teamId: Int, userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
+case class TeamUser(teamId: Option[Int], userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
     var team: Team = null
     var user: User = null
 
 }
-case class GuildUser(guildId: Int, userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
+case class GuildUser(guildId: Option[Int], userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
    var guild: Guild = null
     var user: User = null
 }
