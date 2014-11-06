@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.business.services.{RosterServiceT, TeamServiceT}
+import com.esports.gtplatform.business.services.{GuildServiceT, EventServiceT, RosterServiceT, TeamServiceT}
 import com.esports.gtplatform.models.Team
 import com.fasterxml.jackson.core.JsonParseException
 import com.googlecode.mapperdao.Persisted
@@ -167,7 +167,9 @@ trait GuildControllerT extends StandardController {
     def guildRepo: GuildRepo
     def guildUserRepo: GuildUserRepo
     def userRepo: UserRepo
-    var requestGuild: Guild with Persisted = null
+    def guildGameRepo: GuildGameLinkRepo
+    def guildService: GuildServiceT
+    var requestGuild: Guild = null
     before("/:id/?*") {
 /*        requestGuild = params.get("id").fold {
             halt(400, idType + " Id parameter is missing")
@@ -186,9 +188,9 @@ trait GuildControllerT extends StandardController {
           val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
           paramId = Some(i)
         guildRepo.get(paramId.get) match {
-          case Some(t: Guild with Persisted) =>
+          case Some(t: Guild) =>
             requestGuild = t
-          case None => halt(400, "No team exists with the Id " + paramId.get)
+          case None => halt(400, "No guild exists with the Id " + paramId.get)
         }
       }
 }
@@ -215,17 +217,16 @@ trait GameControllerT extends StandardController {
 trait EventControllerT extends StandardController {
     idType = "Event"
     def eventRepo: EventRepo
+    def eventDetailRepo: EventDetailRepo
     def eventUserRepo: EventUserRepo
     def tournamentRepo: TournamentRepo
     def userRepo: UserRepo
     def ttRepo: TournamentTypeRepo
+    def eventPaymentRepo: EventPaymentRepo
+    def eventService: EventServiceT
 
     var requestEvent: Option[Event] = None
     var requestEventUser: Option[EventUser] = None
-    var tournamentParamId: Option[Int] = None
-    var requestTournament: Option[Tournament] = None
-    var teamParamId: Option[Int] = None
-    var requestTeam: Option[Team] = None
 
     before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
@@ -234,7 +235,7 @@ trait EventControllerT extends StandardController {
     }
     before("/:id/?*") {
         eventRepo.get(paramId.get) match {
-            case Some(t: Event with Persisted) =>
+            case Some(t: Event) =>
                 requestEvent = Some(t)
             case None => halt(400, "No event exists with the Id " + paramId.get)
         }
@@ -247,7 +248,7 @@ trait EventControllerT extends StandardController {
     before("/:id/users/:userId/?*") {
         if (userParamId.isDefined) {
             requestEvent.get.users.find(x => x.userId == userParamId.get) match {
-                case Some(eu: EventUser with Persisted) =>
+                case Some(eu: EventUser) =>
                     requestEventUser = Some(eu)
                 case None =>
                     logger.warn("Tried to modify an EventUser for a non-existent user " + userParamId.get + " on Event " + requestEvent.get.id)
@@ -258,49 +259,6 @@ trait EventControllerT extends StandardController {
         }
         else {
             halt(400, "No user id paramter defined.")
-        }
-    }
-    before("/:id/tournaments/:tourId/?*") {
-        val ti = params.getOrElse("tourId", halt(400, "Tournament Id parameter is missing"))
-        val tii = toInt(ti).getOrElse(halt(400, "Tournament Id was not a valid integer"))
-        tournamentParamId = Some(tii)
-    }
-    before("/:id/tournaments/:tourId/?*") {
-        if (tournamentParamId.isDefined) {
-            tournamentRepo.get(tournamentParamId.get) match {
-                case Some(t: Tournament with Persisted) =>
-                    requestTournament = Some(t)
-                case None => halt(400, "No tournament exists with the Id " + tournamentParamId.get + " exists.")
-            }
-        }
-        else {
-            halt(400, "No tournament id paramter defined.")
-        }
-    }
-    before("\"/:id/tournaments/:tourId/teams/") {
-        if(!requestTournament.get.tournamentType.teamPlay)
-            halt(400,"This tournament is using a User Only play type. Change the game and play type to allow users.")
-    }
-    before("\"/:id/tournaments/:tourId/players/") {
-        if(requestTournament.get.tournamentType.teamPlay)
-            halt(400,"This tournament is using a Team Only play type. Change the game and play type to allow teams.")
-    }
-    before("/:id/tournaments/:tourId/teams/:teamId/?*"){
-        val tdefined = params.getOrElse("teamId", halt(400,"Team id is missing"))
-        val tInt = toInt(tdefined).getOrElse(halt(400,"Team Id was not a valid integer"))
-        teamParamId = Some(tInt)
-    }
-    before("/:id/tournaments/:tourId/teams/:teamId/?*"){
-        if(teamParamId.isDefined) {
-            requestTournament.get.teams.find(x => x.id.get == teamParamId.get) match {
-                case Some(t: Team with Persisted) =>
-                requestTeam = Some(t)
-                case None => halt(400, "No team with the Id " + teamParamId.get + " exists.")
-                case _ => logger.warn("We missed the match!")
-            }
-        }
-        else {
-            halt(400, "No team id paramter defined.")
         }
     }
 }
@@ -355,7 +313,7 @@ trait TournamentT extends StandardController {
                     halt(400, "No "+idType+" exists with the Id " + paramId.get)
             }
     }
-    before("/:id/players/:tuId/?*"){
+    before("/:id/users/:tuId/?*"){
         val p = params.getOrElse("tuId", halt(400, "Tournament User Id parameter is missing"))
         val i = toInt(p).getOrElse(halt(400, "Tournament User Id was not a valid integer"))
         tournamentUserRepo.get(i) match {
@@ -378,16 +336,12 @@ trait TeamT extends StandardController {
     def possibleTeam: Option[Team] = None
     def requestTeam: Team = possibleTeam.get
 
-    before("/events/:eventId/tournaments/:tourId/teams/:id/?*") {
+    before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
-        if (p == "me")
-            paramId = None
-        else {
             val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
             paramId = Some(i)
-        }
     }
-    before("/events/:eventId/tournaments/:tourId/teams/:id/?*") {
+    before("/:id/?*") {
         if (paramId.isDefined)
             teamRepo.get(paramId.get) match {
                 case Some(t: Team) =>

@@ -53,10 +53,13 @@ trait TeamRepo extends GenericEntityRepo[Team]
 
 trait GuildRepo extends GenericEntityRepo[Guild]
 trait GuildGameLinkRepo extends GenericRepo[GuildGame]
-trait GuildUserRepo extends GenericEntityRepo[GuildUser]
+trait GuildUserRepo extends GenericEntityRepo[GuildUser] {
+    def getByGuild(id: Int): List[GuildUser]
+}
 trait GameRepo extends GenericEntityRepo[Game]
 trait GameTTLinkRepo extends GenericRepo[GameTournamentType]
 trait EventRepo extends GenericEntityRepo[Event]
+trait EventDetailRepo extends GenericEntityRepo[EventDetail]
 trait TournamentRepo extends GenericEntityRepo[Tournament] {
     def getByEvent(id: Int): List[Tournament]
 }
@@ -64,7 +67,12 @@ trait TournamentDetailsRepo extends GenericRepo[TournamentDetail] {
     def getByTournament(id: Int): TournamentDetail
     def getByTournament(e: Event): TournamentDetail
 }
-trait EventUserRepo extends GenericUserLinkRepo[EventUser]
+trait EventUserRepo extends GenericUserLinkRepo[EventUser] {
+    def getByEvent(id: Int): List[EventUser]
+}
+trait EventPaymentRepo extends GenericRepo[EventPayment]{
+    def getByEvent(id: Int): List[EventPayment]
+}
 trait TeamUserRepo extends GenericUserLinkRepo[TeamUser] {
     def getByTournament(id: Int): List[TeamUser]
     def getByEvent(id: Int): List[TeamUser]

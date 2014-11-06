@@ -43,4 +43,4 @@ case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = t
  */
 
 case class GameTournamentType(gameId: Int = 0, tournamentTypeId: Int = 0, id: Option[Int] = None)
-case class GuildGame(guildId: Int, gameId: Int, id: Option[Int] = None)
+case class GuildGame(guildId: Option[Int] = None, gameId: Int, id: Option[Int] = None)

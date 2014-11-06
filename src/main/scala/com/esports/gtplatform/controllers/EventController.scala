@@ -1,15 +1,14 @@
 package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.services.{PaymentException, CustomerException, PaymentService, StripePayment}
+import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Team
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.jdbc.Transaction
-import models.JoinType.JoinType
-import models.PaymentType.PaymentType
 import models._
 import org.joda.time.DateTime
+import org.json4s
 import org.json4s.Extraction
 import org.scalatra.scalate.ScalateUrlGeneratorSupport
 import org.scalatra.{BadRequest, NotImplemented, Ok}
@@ -25,7 +24,10 @@ class EventController(val eventRepo: EventRepo,
                       val eventUserRepo: EventUserRepo,
                       val tournamentRepo: TournamentRepo,
                       val userRepo: UserRepo,
-                      val ttRepo: TournamentTypeRepo) extends APIController with EventControllerT with ScalateUrlGeneratorSupport {
+                      val ttRepo: TournamentTypeRepo,
+                         val eventService: EventServiceT,
+                         val eventDetailRepo: EventDetailRepo,
+                         val eventPaymentRepo: EventPaymentRepo) extends APIController with EventControllerT with ScalateUrlGeneratorSupport {
 
     get("/") {
         val events = eventRepo.getPaginated(params.getOrElse("page", "1").toInt)
@@ -33,21 +35,16 @@ class EventController(val eventRepo: EventRepo,
     }
     post("/") {
         auth()
-        val newEvent: Event = Event(parsedBody.\("name").extract[String], parsedBody.\("joinType").extract[String])
-        if (eventRepo.getByName(newEvent.name).isDefined)
+        val extractedEvent = parsedBody.extract[Event]
+        if (eventService.isUnique(extractedEvent))
             halt(400, "Event with this name already exists.")
 
-        val tx = inject[Transaction]
-        val inserted = tx { () =>
+            //TODO transaction
+            val insertedEvent = eventRepo.create(extractedEvent)
+            eventDetailRepo.create(extractDetails(parsedBody.\("details")).copy(eventId = insertedEvent.id))
+            eventUserRepo.create(EventUser(eventId = insertedEvent.id.get,userId = user.id.get, isPresent = false, isAdmin = true, isModerator = true, hasPaid = false))
 
-            val insertedEvent = eventRepo.create(newEvent)
-            val eventDetails = EventDetail(insertedEvent, timeStart = parsedBody.\("details").\("timeStart").extractOpt[DateTime], timeEnd = parsedBody.\("details").\("timeEnd").extractOpt[DateTime])
-            eventRepo.update(insertedEvent)
-            val userEvent = EventUser(insertedEvent, user, isPresent = false, isAdmin = true, isModerator = true, hasPaid = false)
-
-            eventUserRepo.create(userEvent)
-        }
-        Ok(inserted.eventId.id)
+        Ok(insertedEvent.id.get)
     }
 
     get("/:id") {
@@ -55,32 +52,14 @@ class EventController(val eventRepo: EventRepo,
     }
     patch("/:id") {
         auth()
-        if (!requestEvent.get.isAdmin(user) && user.role != "admin")
+        if (!eventService.canModify(user, requestEvent.get))
             halt(403, "You do not have permission to edit this event.")
-        //val activitiesraw =  compact(render(parsedBody.\("details").\("scheduledEvents")))
-        val extractedDetails = parsedBody.\("details").extract[EventDetail].copy(
-            event = requestEvent.get,
-            credits = Some(compact(render(parsedBody.\("details").\("credits")))),
-            scheduledEvents = Some(compact(render(parsedBody.\("details").\("scheduledEvents")))),
-            faq = Some(compact(render(parsedBody.\("details").\("faq")))))
-
-        val newEvent = requestEvent.get.copy(name = parsedBody.\("name").extract[String],
-            joinType = parsedBody.\("joinType").extract[JoinType]).setDetails(extractedDetails)
-
-        eventRepo.update(requestEvent.get)
+        eventRepo.update(parsedBody.extract[Event])
         Ok()
     }
-    //Change the description of the event(front page)
-    post("/:id/description") {
-        auth()
-        if (!requestEvent.get.isAdmin(user) && user.role != "admin")
-            halt(403, "You do not have permission to edit this event.")
-        val newEvent = requestEvent.get.setDescription(parsedBody.\("description").extract[String])
-        eventRepo.update(requestEvent.get)
-        Ok()
-    }
+
     //Get a list of teams that are participating in tournaments at this event
-    get("/:id/teamsAndGuilds") {
+    get("/:id/groups") {
         val teams = requestEvent.get.tournaments.flatMap { x =>
             x.teams.map { u =>
                 Extraction.decompose(u) merge render(
@@ -98,7 +77,6 @@ class EventController(val eventRepo: EventRepo,
         }
         params.get("page") match {
             case Some(p: String) =>
-
                 Ok(teams.slice(pageSize * (p.toInt - 1), pageSize))
             case None =>
                 Ok(teams)
@@ -109,88 +87,66 @@ class EventController(val eventRepo: EventRepo,
     get("/:id/users") {
         params.get("page") match {
             case Some(p: String) =>
-                Ok(requestEvent.get.users.drop(pageSize * (p.toInt - 1)).take(pageSize))
+                Ok(eventUserRepo.getByEvent(requestEvent.get.id.get).drop(pageSize * (p.toInt - 1)).take(pageSize))
             case None =>
-                Ok(requestEvent.get.users.take(pageSize))
+                Ok(eventUserRepo.getByEvent(requestEvent.get.id.get).take(pageSize))
         }
     }
     get("/:id/users/:userId") {
-        Ok(requestEventUser.get.userId)
+        Ok(requestEventUser.get)
     }
     //Add a user to an event
     post("/:id/users") {
-        val userId = parsedBody.\("userId").extractOpt[Int]
         auth()
-        if (requestEvent.get.joinType == "Invite" && user.role != "admin")
+        if (!eventService.canJoin(user))
             halt(403, "This event is invite only. In order to join a moderator must invite you or accept your join request.")
-        userId match {
-            case Some(uid: Int) =>
-                if (user.role != "admin")
-                    halt(403, "You do not have permission to add users to this event.")
-                userRepo.get(uid) match {
-                    case Some(u: User) =>
-                        eventRepo.update(requestEvent.get)
-                        logger.info("[Admin] (" + user.id + ") Added User " + u.id + " to Event " + requestEvent.get.id)
-                        Ok()
-                    case None =>
-                        BadRequest("No user exists with that Id")
-                }
-            case None =>
-                eventRepo.update(requestEvent.get)
-                logger.info("[Event] ("+ requestEvent.get.id +")User " + user.id + " joined Event ")
-                Ok()
+        val extractedEventUser = parsedBody.extract[EventUser]
+        if(extractedEventUser.userId != user.id.get && !eventService.hasAdminPermissions(user,requestEvent.get.id.get))
+        {
+            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to add User " + extractedEventUser.userId + " without permission.")
+            halt(403, "You do not have permission to add users to this event.")
         }
+        eventUserRepo.create(extractedEventUser)
+        if(extractedEventUser.userId != user.id.get)
+            logger.info("[Admin] (" + user.id + ") Added User " + extractedEventUser.userId + " to Event " + requestEvent.get.id.get)
+        else
+            logger.info("[Event] ("+ requestEvent.get.id +")User " + user.id + " joined Event ")
+        Ok()
     }
     //Delete a user from an event
     delete("/:id/users/:userId") {
-        val userId = params("userId").toInt
         auth()
-/*        userId match {
-            case Some(uid: Int) =>*/
-                if (user.role != "admin" && !requestEvent.get.isAdmin(user))
-                    halt(403, "You do not have permission to remove users from this event.")
-                userRepo.get(userId) match {
-                    case Some(u: User) =>
-                        eventRepo.update(requestEvent.get)
-                        logger.info("[Admin] with " + user.id + " removed User " + u.id + " from Event " + requestEvent.get.id)
-                        Ok()
-                    case None =>
-                        BadRequest("No user exists with that Id")
-/*                }
-            case None =>
-                eventRepo.update(requestEvent.get, requestEvent.get.removeUser(user))
-                logger.info("User " + user.id + " left Event " + requestEvent.get.id)
-                Ok()*/
+        if(requestEventUser.get.userId != user.id.get && !eventService.hasAdminPermissions(user,requestEvent.get.id.get))
+        {
+            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to delete User " + requestEventUser.get.userId + " without permission.")
+            halt(403, "You do not have permission to delete users to this event.")
         }
+
+        eventUserRepo.delete(requestEventUser.get)
+
+        if(requestEventUser.get.userId != user.id.get)
+            logger.info("[Admin] (" + user.id + ") Deleted User " + requestEventUser.get.userId + " to Event " + requestEvent.get.id.get)
+        else
+            logger.info("[Event] ("+ requestEvent.get.id +")User " + user.id + " left Event ")
+        Ok()
     }
     patch("/:id/users/:userId") {
         auth()
-        if (user.role != "admin" && !requestEvent.get.isAdmin(user) && user.id != params("userId").toInt)
+        if (!eventService.hasModeratorPermissions(user, requestEvent.get.id.get))
+        {
             halt(403, "You do not have permission to edit users at this event.")
+            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to modify User " + requestEventUser.get.userId + " without permission.")
+        }
 
-        val present = parsedBody.\("isPresent").extractOpt[Boolean]
-        val admin = parsedBody.\("isAdmin").extractOpt[Boolean]
-        val mod = parsedBody.\("isModerator").extractOpt[Boolean]
 
-        var eu = requestEvent.get.users.find(x => x.userId == params("userId").toInt).getOrElse {
-            logger.warn("[Admin] " + user.id + " tried to modify an EventUser for a non-existent user " + params("userId") + " on Event " + requestEvent.get.id)
-            halt(400, "This user is not in this event.")
-        } //TODO make this work with requestEventUser
-        if (present.isDefined)
+        val extractedEU = parsedBody.extract[EventUser]
+        if((extractedEU.isAdmin != requestEventUser.get.isAdmin || extractedEU.isModerator != requestEventUser.get.isModerator) && !eventService.hasAdminPermissions(user, requestEvent.get.id.get))
         {
-            eu = eu.copy(isPresent = present.get)
+            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to modify User " + requestEventUser.get.userId + " without admin permission.")
+            halt(403, "You do not have permission to edit users at this event.")
         }
-        if (admin.isDefined)
-        {
-            eu = eu.copy(isAdmin = admin.get)
-            logger.info("[Admin] " + user.id + "set Event Admin = " + admin.get + " on User " + eu.userId.id + " for Event " + requestEvent.get.id)
-        }
-        if (mod.isDefined)
-        {
-            eu = eu.copy(isModerator = mod.get)
-            logger.info("[Admin] " + user.id + "set Event Moderator = " + mod.get + " on User " + eu.userId.id + " for Event " + requestEvent.get.id)
-        }
-        eventRepo.update(requestEvent.get)
+
+        eventUserRepo.update(extractedEU)
         Ok()
     }
     //get a list of tournaments for an event
@@ -201,12 +157,12 @@ class EventController(val eventRepo: EventRepo,
 
     //A user paying for registration
     post("/:id/users/:userId/payRegistration") {
-        import scala.collection.mutable
+        NotImplemented()
+/*        import scala.collection.mutable
         auth()
         if (params("userId").toInt != user.id && (user.role == "admin" || requestEvent.get.isAdmin(user))) {
             val paid = parsedBody.\("paid").extractOrElse[Boolean](halt(400, "Missing payment status"))
             val receipt = parsedBody.\("receipt").extractOpt[String]
-            val userRepo = inject[UserRepo]
             val theuser = requestEventUser.get.userId //userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
             eventRepo.update(requestEvent.get)
             val atype = if (user.role == "admin") "Admin" else "Event Admin"
@@ -269,55 +225,50 @@ class EventController(val eventRepo: EventRepo,
                     NotImplemented
                 //TODO more payment types?
             }
-        }
+        }*/
     }
     //add new payment option
     post("/:id/payments") {
         auth()
-        if (!requestEvent.get.isAdmin(user) && user.role != "admin")
+        if (eventService.hasAdminPermissions(user, requestEvent.get.id.get))
             halt(403, "You do not have permission to do that")
-        if (requestEvent.get.payments.exists(x => x.payType == parsedBody.\("payType").extract[PaymentType]))
+
+        val extractedEP = parsedBody.extract[EventPayment]
+
+        if (eventPaymentRepo.getByEvent(requestEvent.get.id.get).exists(x => x.payType == extractedEP.payType))
             halt(400, "You cannot add a payment type more than once.")
-        val ep = EventPayment(requestEvent.get,
-            parsedBody.\("payType").extract[PaymentType],
-            parsedBody.\("secretKey").extractOpt[String],
-            parsedBody.\("publicKey").extractOpt[String],
-            parsedBody.\("address").extractOpt[String],
-            parsedBody.\("amount").extract[Double])
-        val updated = eventRepo.update(requestEvent.get)
-        Ok(updated.payments.filter(x => x.isEnabled))
+        eventPaymentRepo.create(extractedEP)
+        Ok()
     }
     //Change details of a payment option
-    post("/:id/payments/:payId") {
+    patch("/:id/payments/:payId") {
         auth()
-        if (!requestEvent.get.isAdmin(user) && user.role != "admin")
-            halt(403, "You do not have permission to do that")
-        val ep = EventPayment(requestEvent.get,
-            parsedBody.\("payType").extract[String],
-            parsedBody.\("secretKey").extractOpt[String],
-            parsedBody.\("publicKey").extractOpt[String],
-            parsedBody.\("address").extractOpt[String],
-            parsedBody.\("amount").extract[Double],
-            parsedBody.\("isEnabled").extract[Boolean],
-            parsedBody.\("id").extract[Int])
-        val updated = eventRepo.update(requestEvent.get)
-        Ok(updated.payments.filter(x => x.isEnabled))
+        if (eventService.hasAdminPermissions(user, requestEvent.get.id.get))
+            halt(403, "You do not have permission to edit payments")
+
+        val extractedEP = parsedBody.extract[EventPayment]
+
+        eventPaymentRepo.update(extractedEP)
+        Ok()
     }
     //delete a payment option
     delete("/:id/payments/:payId") {
         auth()
-        if (!requestEvent.get.isAdmin(user) && user.role != "admin")
-            halt(403, "You do not have permission to do that")
-        val updated = eventRepo.update(requestEvent.get)
-        Ok(updated.payments.filter(x => x.isEnabled))
-    }
-    //change privacy settings
-    post("/:id/privacy") {
-        auth()
-        if (!requestEvent.get.isAdmin(user) && user.role != "admin")
-            halt(403, "You do not have permission to do that")
-        eventRepo.update(requestEvent.get)
+        if (eventService.hasAdminPermissions(user, requestEvent.get.id.get))
+            halt(403, "You do not have permission to delete payments")
+
+        eventPaymentRepo.delete(params("payId").toInt)
         Ok()
+    }
+
+    def extractDetails(obj: json4s.JValue) = {
+        obj.extract[EventDetail].copy(
+            credits = Option(compact(render(obj.\("credits")))),
+            scheduledEvents = Option(compact(render(obj.\("scheduledEvents")))),
+            faq = Option(compact(render(obj.\("faq")))),
+            prizes = Option(compact(render(obj.\("prizes")))),
+            description = Option(compact(render(obj.\("description"))))
+        )
     }
 
     /*
