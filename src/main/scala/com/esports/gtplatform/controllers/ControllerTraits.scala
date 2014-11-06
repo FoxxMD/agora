@@ -267,6 +267,7 @@ trait UserControllerT extends StandardController {
     idType = "User"
     def userRepo: UserRepo
     def userIdentRepo: UserIdentityRepo
+    def userPlatformRepo: UserPlatformRepo
     def requestUser: User = possibleUser.get
     def possibleUser: Option[User] = None
     before("/:id/?*") {

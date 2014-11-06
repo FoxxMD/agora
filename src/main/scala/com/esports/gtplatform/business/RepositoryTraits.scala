@@ -44,6 +44,7 @@ trait UserRepo extends GenericRepo[User] {
 trait UserIdentityRepo extends GenericRepo[UserIdentity] {
     def getByUser(user: User): List[UserIdentity]
 }
+trait UserPlatformRepo extends GenericRepo[UserPlatformProfile]
 trait TeamRepo extends GenericEntityRepo[Team]
 {
     //def getByEvent: List[Team]

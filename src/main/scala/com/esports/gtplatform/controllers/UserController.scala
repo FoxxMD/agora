@@ -2,7 +2,7 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.PasswordSecurity
-import com.esports.gtplatform.business.{UserRepo, UserIdentityRepo}
+import com.esports.gtplatform.business.{UserPlatformRepo, UserRepo, UserIdentityRepo}
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
 
@@ -16,8 +16,7 @@ import com.googlecode.mapperdao.jdbc.Transaction
  * Created by Matthew on 8/6/2014.
  */
 
-class UserController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo) extends UserControllerT {
-import scaldi.Injectable._
+class UserController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo, val userPlatformRepo: UserPlatformRepo) extends UserControllerT {
 
   get("/:id") {
     if (params("id") == "me") {
@@ -36,31 +35,22 @@ import scaldi.Injectable._
     auth()
     if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
-    val handle = parsedBody.\("globalHandle").extractOpt[String]
-    val email = parsedBody.\("email").extractOpt[String]
-    val tx = inject[Transaction]
 
-      tx { () =>
+      val extractedUser = parsedBody.extract[User]
 
-          var editUser = requestUser.copy()
-          if (handle.isDefined)
-              editUser = user.copy(globalHandle = handle.get)
-          if (email.isDefined) {
-              editUser = user.copy(email = email.get)
-              val identRepo = inject[UserIdentityRepo]
-              identRepo.getByUser(requestUser).find(x => x.userIdentifier == "userpass") match {
-                  case Some(u: UserIdentity with Persisted) =>
-                      logger.info("User " + requestUser.id + " is changing email, found an associated useridentity with userpass. Changing userident email.")
-                      identRepo.update(u)
-                  case None => logger.info("User " + requestUser.id + " is changing email but we did not find a userpass associated.")
-                  case _ => logger.warn("This should have matched earlier, uh oh..")
-              }
-
+      //TODO transaction
+      if(requestUser.email != extractedUser.email)
+      {
+         val ident = userIdentRepo.getByUser(extractedUser).find(x => x.email.isDefined)
+          if(ident.isDefined)
+          {
+              logger.info("User " + requestUser.id + " is changing email, found an associated useridentity with userpass. Changing userident email.")
+              userIdentRepo.update(ident.get.copy(email = Some(extractedUser.email)))
           }
-
-          userRepo.update(requestUser)
       }
-    Ok()
+      userRepo.update(extractedUser)
+
+      Ok()
   }
     delete("/:id"){
         auth()
@@ -74,27 +64,20 @@ import scaldi.Injectable._
     if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
 
-    val platformType = parsedBody.\("platform").extract[String]
-    val identity = parsedBody.\("identifier").extract[String]
+    userPlatformRepo.create(parsedBody.extract)
 
-    if(requestUser.gameProfiles.exists(x => x.platform == platformType))
-      halt(400, "User already has this platform added.")
+/*    if(requestUser.gameProfiles.exists(x => x.platform == platformType))
+      halt(400, "User already has this platform added.")*/
 
-    userRepo.update(requestUser)
     Ok()
   }
-  delete("/:id/platforms") {
+  delete("/:id/platforms/:platformId") {
     auth()
     if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
-    val pbody = parsedBody
 
-    val platformType = params("platform")
-
-    if(!requestUser.gameProfiles.exists(x => x.platform == platformType))
-      halt(400, "User does not have a platform with this type to delete.")
-
-    userRepo.update(requestUser)
+      //TODO validate it's the user's platform object
+    userIdentRepo.delete(params("platformId").toInt)
     Ok()
   }
   patch("/:id/platforms") {
@@ -102,15 +85,8 @@ import scaldi.Injectable._
     if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
 
-    val platformType = parsedBody.\("platform").extract[String]
-    val identity = parsedBody.\("identifier").extract[String]
+      userIdentRepo.update(parsedBody.extract)
 
-    if(!requestUser.gameProfiles.exists(x => x.platform == platformType))
-      halt(400, "User does not have a platform with this type to edit.")
-
-    val editedPlatform = requestUser.gameProfiles.find(x => x.platform == platformType).get.copy(identifier = identity)
-
-    userRepo.update(requestUser)
     Ok()
   }
     post("/:id/password") {
