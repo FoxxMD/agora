@@ -17,6 +17,7 @@ trait DatabaseInit {
   properties.load(getClass.getResourceAsStream("/jdbc.mysql.properties"))
 
 
+
   def openDb() {
     val datasource = BasicDataSourceFactory.createDataSource(properties)
   }
@@ -26,12 +27,17 @@ trait DatabaseInit {
   val databaseConnection = "jdbc:mysql://localhost/gtgamefest_new"
 
   var cpds = new ComboPooledDataSource
+    logger.info("creating connection")
 
   def configureDb() {
-    cpds.setDriverClass("com.mysql.jdbc.Driver")
-    cpds.setJdbcUrl(databaseConnection)
-    cpds.setUser(databaseUsername)
-    cpds.setPassword(databasePassword)
+      cpds.setDriverClass(properties.getProperty("driveClassName"))
+      cpds.setJdbcUrl(properties.getProperty("url"))
+      cpds.setUser(properties.getProperty("username"))
+      cpds.setPassword(properties.getProperty("password"))
+    //cpds.setDriverClass("com.mysql.jdbc.Driver")
+    //cpds.setJdbcUrl(databaseConnection)
+    //cpds.setUser(databaseUsername)
+    //cpds.setPassword(databasePassword)
 
     cpds.setMinPoolSize(1)
     cpds.setAcquireIncrement(1)

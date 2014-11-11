@@ -3,9 +3,9 @@ package com.esports.gtplatform.controllers
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import com.esports.gtplatform.Utilities.{PasswordSecurity, ApiSecurity}
+import com.esports.gtplatform.dao.mapperdao.{UserIdentityEntity, UserEntity, Daos}
 import com.googlecode.mapperdao.Query._
-import dao.Daos._
-import dao.{UserEntity, UserIdentityEntity}
+import Daos._
 import models._
 import org.scalatra.auth.{ScentryConfig, ScentryStrategy, ScentrySupport}
 import org.scalatra.{ScalatraBase, Unauthorized}
@@ -225,7 +225,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
         *  inherently slower because of it. Putting it in the query would slow down query time which would increase blocking.
         * */
         if (!PasswordSecurity.validatePassword(password, ident.password)) {
-            logger.warn("Password invalid for User " + ident.user.id)
+            logger.warn("Password invalid for User " + ident.userId.id)
             None
         }
         else {
@@ -237,7 +237,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
               |from tokens t
               |where t.id=?
             """.stripMargin
-            , ident.user.id).map { m => m.string("token")}
+            , ident.userId.id).map { m => m.string("token")}
           possibleToken match {
             case Some(token: String) =>
               //They have a token, return it in the header
@@ -249,11 +249,11 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
               jdbc.update(
                 """
                   |INSERT INTO tokens VALUES(?,?,NULL)
-                """.stripMargin, List(ident.user.id, newToken))
+                """.stripMargin, List(ident.userId.id, newToken))
               //TODO ensure this udpate occurs before sending token
               response.addHeader("Authorization", newToken)
           }
-          Option(ident.user)
+          Option(ident.userId)
         }
       case None =>
         //Did not match an email

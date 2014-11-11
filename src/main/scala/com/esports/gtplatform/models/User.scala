@@ -2,6 +2,8 @@ package models
 
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Invitee
+import io.strongtyped.active.slick.models.Identifiable
+
 //import models.GamePlatform.GamePlatform
 import monocle.SimpleLens
 import monocle.syntax._
@@ -28,25 +30,13 @@ import org.joda.time.DateTime
  * Created by Matthew on 6/30/2014.
  */
 
-/* I would like User to be a case class but I'm not sure how unwieldy it will be. Once I start implementing business logic for Users
- * it will be easier to tell if this can be a case class or if it must stay mutable.
- *
- * The main user class holds only a small amount of information in order to facilitate decoupling between related objects.
- */
-case class User(
-                 email: String,
-                 role: String,
-                 firstName: Option[String],
-                 lastName: Option[String],
-                 globalHandle: String,
-                 createdDate: DateTime = DateTime.now(),
-                 id: Int = 0,
-                 guilds: List[GuildUser] = List(),
-                 gameProfiles: List[UserPlatformProfile] = List()) extends Invitee {
+case class User(email: String, createdDate: DateTime = DateTime.now(), firstName: Option[String], lastName: Option[String], globalHandle: String, role: String, id: Option[Int] = None) extends Identifiable[User] {
 
-  /* You'll notice on almost all classes that related objects will be accessed through a method rather than as child/parent objects.
-  * This is intentional as it prevents cyclical dependencies and works better with immutable data structures.
-  * */
+    override type Id = Int
+    override def withId(id: Id): User = copy(id = Some(id))
+
+    var guilds: List[GuildUser] = List()
+    var gameProfiles: List[UserPlatformProfile] = List()
 
   def getTournaments: List[Tournament] = ???
 
@@ -56,11 +46,11 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
     event match {
         case Some(e: Event) =>
             e.tournaments.filter(x =>
-                x.users.exists(u => u.user.id == this.id) ||
+                x.users.exists(u => u.userId == this.id) ||
                 x.teams.exists(u => u.teamPlayers.exists(p => p.id == this.id))).toList
         case None =>
-            val tourneysTourRepo = repo.getByUser(this).map(x => x.tournament)
-            val tourneysTeamRepo = trepo.getByUser(this.id).flatMap(x => tourRepo.get(x.team.tournament.id))
+            val tourneysTourRepo = repo.getByUser(this).map(x => x.tournamentId)
+            val tourneysTeamRepo = trepo.getByUser(this.id).flatMap(x => tourRepo.get(x.team.tournamentId))
             tourneysTourRepo++tourneysTeamRepo //TODO why does this cause a recursive call?
             //allTourneys.filter(x => x.event.id == e.id)
     }
@@ -80,18 +70,10 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
 /* UserIdentity is a descriptor for a user's login credentials. It's separated from the main user because blah blah decoupling.
 *
 * I've left fields OAuth implementation needs.*/
-case class UserIdentity(
-                         user: User,
-                         providerId: String,
-                         userId: String,
-                         firstName: Option[String],
-                         lastName: Option[String],
-                         fullName: Option[String],
-                         email: Option[String],
-                         avatarUrl: Option[String],
-                         password: String,
-                         id: Int = 0)
+case class UserIdentity(userId: Int, userIdentifier: String, providerId: String, email: Option[String] = None, password: Option[String] = None, firstName: Option[String] = None, lastName: Option[String] = None, id: Option[Int] = None)
 
 /* Right now more of a placeholder than anything. This will eventually serve as a list linked popular game profiles for this user
 * EX Steam, Battle.NET, etc. etc. */
-case class UserPlatformProfile(user: User, platform: String, identifier: String, id: Int = 0)
+case class UserPlatformProfile(userId: Int, platform: String, identifier: String, id: Option[Int] = None) {
+    var user: User = null
+}

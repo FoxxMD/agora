@@ -12,20 +12,35 @@ import com.esports.gtplatform.models.Team
   *
   * These really should be case classes but ATM they are easier to handle as mutable datas.*/
 
-case class TeamUser(team: Team, user: User, isCaptain: Boolean = false, id: Int = 0) {
+case class TeamUser(teamId: Option[Int], userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
+    var team: Team = null
+    var user: User = null
 
 }
-case class GuildUser(guild: Guild, user: User, isCaptain: Boolean = false, id: Int = 0) {
+case class GuildUser(guildId: Option[Int], userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
+   var guild: Guild = null
+    var user: User = null
+}
+
+case class EventUser(eventId: Int, userId: Int, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, receiptId: Option[String] = None, customerId: Option[String] = None, id: Option[Int] = None) {
+    //For hydration
+    var event: Option[Event] = None
+    var user: Option[User] = None
 
 }
 
-case class EventUser(event: Event, user: User, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, receiptId: Option[String] = None, customerId: Option[String] = None){
-
+case class TournamentUser(userId: Int, tournamentId: Int, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, id: Option[Int] = None) {
+    var tournament: Tournament = null
+    var user: User = null
 }
 
-case class TournamentUser(tournament: Tournament,
-                     user: User,
-                     isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false){
-}
+case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Option[Int] = None)
 
-case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Int = 0)
+/*
+ * The classes below are purely boilerplate so that slick will work
+ * ...but may come in handy one day as well
+ *
+ */
+
+case class GameTournamentType(gameId: Int = 0, tournamentTypeId: Int = 0, id: Option[Int] = None)
+case class GuildGame(guildId: Option[Int] = None, gameId: Int, id: Option[Int] = None)

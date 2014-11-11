@@ -1,26 +1,45 @@
 package com.esports.gtplatform.business.services
 
 import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
-import com.esports.gtplatform.business.{TournamentUserRepo, GuildRepo}
+import com.esports.gtplatform.business._
+import com.esports.gtplatform.models.Team
 import models._
 import org.slf4j.LoggerFactory
 
 /**
  * Created by Matthew on 9/15/2014.
  */
-class TeamService(implicit val bindingModule: BindingModule) extends Injectable with GenericService[Guild] {
+class TeamService(val teamRepo: TeamRepo,
+                  val teamUserRepo: TeamUserRepo,
+                  val tournamentService: TournamentServiceT,
+                  val eventService: EventServiceT,
+                  val tournamentRepo: TournamentRepo,
+                  val eventRepo: EventRepo) extends TeamServiceT {
+
   val logger = LoggerFactory.getLogger(getClass)
-  val teamRepo = inject[GuildRepo]
 
- override def isUnique(obj: Guild): Option[String] = ??? ///teamRepo.getByName(obj.name).isDefined
-  //def isUnique(obj: Team): Boolean = teamRepo.getByName(obj.name).isDefined
-  override def create(obj: Guild): Any = ???
+    private def isCaptain(user: User, obj: Team): Boolean = {
+        teamUserRepo.getByTournament(obj.tournamentId).exists(x => x.userId == user.id.get && x.isCaptain)
+    }
 
-/*  def getTournamentTeams(t: Guild): List[TournamentTeam] = {
-    val ttRepo = inject[TournamentTeamRepo]
-    ttRepo.getByTeam(t)
-  }
-  def getEvents(t: Guild): List[Event] = {
-    getTournamentTeams(t).map(x => x.tournament.event).distinct
-  }*/
+    override def canDelete(user: User, obj: Team): Boolean = {
+        val tourney = tournamentRepo.get(obj.tournamentId).get
+        isCaptain(user, obj) || tournamentService.canModifyRoster(user, tourney)
+    }
+
+    override def canRead(user: User, obj: Team): Boolean = true
+
+    override def canCreate(user: User, obj: Team): Boolean = {
+        val tourney = tournamentRepo.get(obj.tournamentId).get
+        tournamentService.canModifyRoster(user, tourney) || eventService.hasPaid(user, eventRepo.get(tourney.eventId).get)
+    }
+
+    override def canModify(user: User, obj: Team): Boolean = {
+        val tourney = tournamentRepo.get(obj.tournamentId).get
+        isCaptain(user, obj) || tournamentService.canModifyRoster(user, tourney)
+    }
+
+    override def isUnique(obj: Team): Boolean = {
+        !teamRepo.getByTournament(obj.tournamentId).exists(x => x.name == obj.name || obj.guildOnly && x.guildId == obj.guildId)
+    }
 }

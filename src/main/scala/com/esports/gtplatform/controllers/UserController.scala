@@ -2,13 +2,12 @@ package com.esports.gtplatform.controllers
 
 import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.PasswordSecurity
-import com.esports.gtplatform.business.UserIdentityRepo
+import com.esports.gtplatform.business.{UserPlatformRepo, UserRepo, UserIdentityRepo}
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
 
-import models.UserIdentity
+import models.{User, UserIdentity, UserPlatformProfile}
 import org.json4s.JsonDSL._
-import models.{UserPlatformProfile}
 import org.json4s.Extraction
 import org.scalatra.{InternalServerError, Ok}
 import com.googlecode.mapperdao.jdbc.Transaction
@@ -16,7 +15,9 @@ import com.googlecode.mapperdao.jdbc.Transaction
 /**
  * Created by Matthew on 8/6/2014.
  */
-class UserController(implicit val bindingModule: BindingModule) extends UserControllerT {
+
+class UserController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo, val userPlatformRepo: UserPlatformRepo) extends UserControllerT {
+
   get("/:id") {
     if (params("id") == "me") {
       auth()
@@ -24,7 +25,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
         Ok(jsonUser)
     }
     else {
-      Ok(requestUser.get)
+      Ok(requestUser)
     }
   }
   get("/") {
@@ -32,83 +33,60 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
   }
   patch("/:id") {
     auth()
-    if (params("id").toInt != requestUser.get.id && user.role != "admin")
+    if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
-    val handle = parsedBody.\("globalHandle").extractOpt[String]
-    val email = parsedBody.\("email").extractOpt[String]
-    val tx = inject[Transaction]
 
-      tx { () =>
+      val extractedUser = parsedBody.extract[User]
 
-          var editUser = requestUser.get.copy()
-          if (handle.isDefined)
-              editUser = user.copy(globalHandle = handle.get)
-          if (email.isDefined) {
-              editUser = user.copy(email = email.get)
-              val identRepo = inject[UserIdentityRepo]
-              identRepo.getByUser(requestUser.get).find(x => x.userId == "userpass") match {
-                  case Some(u: UserIdentity with Persisted) =>
-                      logger.info("User " + requestUser.get.id + " is changing email, found an associated useridentity with userpass. Changing userident email.")
-                      identRepo.update(u, u.copy(providerId = email.get, email = email))
-                  case None => logger.info("User " + requestUser.get.id + " is changing email but we did not find a userpass associated.")
-                  case _ => logger.warn("This should have matched earlier, uh oh..")
-              }
-
+      //TODO transaction
+      if(requestUser.email != extractedUser.email)
+      {
+         val ident = userIdentRepo.getByUser(extractedUser).find(x => x.email.isDefined)
+          if(ident.isDefined)
+          {
+              logger.info("User " + requestUser.id + " is changing email, found an associated useridentity with userpass. Changing userident email.")
+              userIdentRepo.update(ident.get.copy(email = Some(extractedUser.email)))
           }
-
-          userRepo.update(requestUser.get, editUser)
       }
-    Ok()
+      userRepo.update(extractedUser)
+
+      Ok()
   }
     delete("/:id"){
         auth()
-        if(user.role != "admin" && user.id != requestUser.get.id)
+        if(user.role != "admin" && user.id != requestUser.id)
             halt(403, "You don't have permission to delete this user")
-        userRepo.delete(requestUser.get)
+        userRepo.delete(requestUser)
         Ok()
     }
   post("/:id/platforms") {
     auth()
-    if (params("id").toInt != requestUser.get.id && user.role != "admin")
+    if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
 
-    val platformType = parsedBody.\("platform").extract[String]
-    val identity = parsedBody.\("identifier").extract[String]
+    userPlatformRepo.create(parsedBody.extract)
 
-    if(requestUser.get.gameProfiles.exists(x => x.platform == platformType))
-      halt(400, "User already has this platform added.")
+/*    if(requestUser.gameProfiles.exists(x => x.platform == platformType))
+      halt(400, "User already has this platform added.")*/
 
-    userRepo.update(requestUser.get, requestUser.get.addGameProfile(UserPlatformProfile(requestUser.get, platformType, identity)))
     Ok()
   }
-  delete("/:id/platforms") {
+  delete("/:id/platforms/:platformId") {
     auth()
-    if (params("id").toInt != requestUser.get.id && user.role != "admin")
+    if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
-    val pbody = parsedBody
 
-    val platformType = params("platform")
-
-    if(!requestUser.get.gameProfiles.exists(x => x.platform == platformType))
-      halt(400, "User does not have a platform with this type to delete.")
-
-    userRepo.update(requestUser.get, requestUser.get.removeGameProfile(platformType))
+      //TODO validate it's the user's platform object
+    userIdentRepo.delete(params("platformId").toInt)
     Ok()
   }
   patch("/:id/platforms") {
     auth()
-    if (params("id").toInt != requestUser.get.id && user.role != "admin")
+    if (params("id").toInt != requestUser.id.get && user.role != "admin")
       halt(403, "You don't have permission to edit this user.")
 
-    val platformType = parsedBody.\("platform").extract[String]
-    val identity = parsedBody.\("identifier").extract[String]
+      userIdentRepo.update(parsedBody.extract)
 
-    if(!requestUser.get.gameProfiles.exists(x => x.platform == platformType))
-      halt(400, "User does not have a platform with this type to edit.")
-
-    val editedPlatform = requestUser.get.gameProfiles.find(x => x.platform == platformType).get.copy(identifier = identity)
-
-    userRepo.update(requestUser.get, requestUser.get.removeGameProfile(platformType).addGameProfile(editedPlatform))
     Ok()
   }
     post("/:id/password") {
@@ -116,14 +94,12 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
         val currentPass = parsedBody.\("current").extract[String]
         val newPass = parsedBody.\("new").extract[String]
 
-        val identRepo = inject[UserIdentityRepo]
-
-        identRepo.getByUser(requestUser.get).find(x => x.userId == "userpass") match {
-            case Some(ident: UserIdentity with Persisted) =>
-                if(PasswordSecurity.validatePassword(currentPass, ident.password))
+        userIdentRepo.getByUser(requestUser).find(x => x.userIdentifier == "userpass") match {
+            case Some(ident: UserIdentity) =>
+                if(PasswordSecurity.validatePassword(currentPass, ident.password.get))
                 {
-                    val newIdent = ident.copy(password = PasswordSecurity.createHash(newPass))
-                    identRepo.update(ident, newIdent)
+                    val newIdent = ident.copy(password = Option(PasswordSecurity.createHash(newPass)))
+                    userIdentRepo.update(ident)
                     Ok()
                 }
                 else{
@@ -131,7 +107,7 @@ class UserController(implicit val bindingModule: BindingModule) extends UserCont
                     halt(400, "Current password was not correct.")
                 }
             case None =>
-            logger.warn("No identity found for User " + requestUser.get.id)
+            logger.warn("No identity found for User " + requestUser.id)
             InternalServerError("Could not find identity for requested user. Something's wrong!")
         }
     }

@@ -23,10 +23,10 @@ UNLOCK TABLES;
 --
 -- Seed the user's identity
 --
-LOCK TABLES `useridentity` WRITE;
-/*!40000 ALTER TABLE `useridentity` DISABLE KEYS */;
-INSERT INTO `useridentity` VALUES ('1', '1', 'userpass', 'test@test.com', 'test@test.com', '1000:c2435ff18bf9dc3c6f667aea9cbb:c59dfd3c27a86f6c3b56cc53367c', NULL, NULL);
-/*!40000 ALTER TABLE `useridentity` ENABLE KEYS */;
+LOCK TABLES users_identity WRITE;
+/*!40000 ALTER TABLE users_identity DISABLE KEYS */;
+INSERT INTO users_identity VALUES ('1', '1', 'userpass', 'test@test.com', 'test@test.com', '1000:c2435ff18bf9dc3c6f667aea9cbb:c59dfd3c27a86f6c3b56cc53367c', NULL, NULL);
+/*!40000 ALTER TABLE users_identity ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -38,17 +38,17 @@ INSERT INTO `games` VALUES (1,'Halo 3','Bungie','http://bungie.com','FPS',1,1,NU
 UNLOCK TABLES;
 
 /*Seed Tournament Types*/
-LOCK TABLES `tournamenttypes` WRITE;
-/*!40000 ALTER TABLE `tournamenttypes` DISABLE KEYS */;
-INSERT INTO `tournamenttypes` VALUES (1,'Deathmatch',0),(2,'Team Deathmatch',1),(3,'Capture The Flag',1),(4,'Elimination',1),(5,'Round-Robin',1);
-/*!40000 ALTER TABLE `tournamenttypes` ENABLE KEYS */;
+LOCK TABLES tournaments_types WRITE;
+/*!40000 ALTER TABLE tournaments_types DISABLE KEYS */;
+INSERT INTO tournaments_types VALUES (1,'Deathmatch',0),(2,'Team Deathmatch',1),(3,'Capture The Flag',1),(4,'Elimination',1),(5,'Round-Robin',1);
+/*!40000 ALTER TABLE tournaments_types ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*Insert tournament types for games*/
-LOCK TABLES `games_tournamenttypes` WRITE;
-/*!40000 ALTER TABLE `games_tournamenttypes` DISABLE KEYS */;
-INSERT INTO `games_tournamenttypes` VALUES (1,1,1),(1,2,2),(1,3,3),(2,4,4),(2,5,5);
-/*!40000 ALTER TABLE `games_tournamenttypes` ENABLE KEYS */;
+LOCK TABLES games_tournaments_types WRITE;
+/*!40000 ALTER TABLE games_tournaments_types DISABLE KEYS */;
+INSERT INTO games_tournaments_types VALUES (1,1,1),(1,2,2),(1,3,3),(2,4,4),(2,5,5);
+/*!40000 ALTER TABLE games_tournaments_types ENABLE KEYS */;
 UNLOCK TABLES;
 
 /* Seed one event
@@ -63,10 +63,10 @@ UNLOCK TABLES;
 --
 -- Set test user as admin for seeded event
 --
-LOCK TABLES `user_events` WRITE;
-/*!40000 ALTER TABLE `user_events` DISABLE KEYS */;
-INSERT INTO `user_events` VALUES (1,1,1,0,1,1,0,NULL);
-/*!40000 ALTER TABLE `user_events` ENABLE KEYS */;
+LOCK TABLES events_users WRITE;
+/*!40000 ALTER TABLE events_users DISABLE KEYS */;
+INSERT INTO events_users VALUES (1,1,1,0,1,1,0,NULL);
+/*!40000 ALTER TABLE events_users ENABLE KEYS */;
 UNLOCK TABLES;
 
 
