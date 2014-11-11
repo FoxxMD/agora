@@ -16,7 +16,7 @@ object ScalatraBuild extends Build {
     lazy val project = Project(
         "gamefest-platform",
         file("."),
-        settings = Defaults.defaultConfigs ++ ScalatraPlugin.scalatraWithJRebel ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ scalateSettings ++ sbtassembly.Plugin.assemblySettings ++ Seq(
+        settings = Defaults.defaultConfigs ++ ScalatraPlugin.scalatraWithJRebel ++ net.virtualvoid.sbt.graph.Plugin.graphSettings ++ sbtassembly.Plugin.assemblySettings ++ Seq(
             port in Conf := 8080,
             organization := Organization,
             name := Name,
@@ -59,16 +59,6 @@ object ScalatraBuild extends Build {
                 "commons-dbcp" % "commons-dbcp" % "1.4",
                 "com.stripe" % "stripe-java" % "1.18.0"
             ),
-                scalateTemplateConfig in Compile <<=(sourceDirectory in Compile) { base =>
-                Seq(
-                    TemplateConfig(
-                        base / "webapp" / "WEB-INF" / "templates",
-                        Seq.empty, /* default imports should be added here */
-                        Seq.empty, /* add extra bindings here */
-                        Some("templates")
-                    )
-                )
-            },
             slick <<= slickCodeGenTask,
             sourceGenerators in Compile <+= slickCodeGenTask
         )

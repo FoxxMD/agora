@@ -11,7 +11,7 @@ object JettyLauncher { // this is my entry object as specified in sbt project de
     val server = new Server(port)
     val context = new WebAppContext()
     context setContextPath "/"
-    context.setResourceBase("src/main/webapp/") //set base for serving static files
+    //context.setResourceBase("src/main/webapp/") //set base for serving static files
     context.addEventListener(new ScalatraListener)
     context.addServlet(classOf[DefaultServlet], "/")
     //context.setVirtualHosts(Array("gtgamefest.com"))
