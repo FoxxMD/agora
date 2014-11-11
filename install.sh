@@ -19,21 +19,6 @@ sudo dpkg -i sbt-0.13.5.deb
 sudo apt-get update
 sudo apt-get install sbt
 
-sudo apt-get install nodejs
-sudo apt-get install npm
-# Symlink node
-sudo ln -s /usr/bin/nodejs /usr/bin/node
-
-# Install dev dependencies
-sudo npm install -g bower
-sudo npm install -g grunt-cli
-sudo npm install -g grunt
-sudo npm install -g npm-install-missing --save
-sudo npm install
-# Make sure we get all dependencies, node ain't great about that
-npm-install-missing
-bower install
-
 # Install MySQL
 echo "Installing MySQL..."
 sudo apt-get install mysql-server
