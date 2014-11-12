@@ -45,7 +45,7 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int
     PartialFunction.empty
 }, {
     case ep: EventPayment =>
-        implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(PaymentType)
+        implicit val formats: Formats = DefaultFormats
         Extraction.decompose(ep.copy()) removeField {
             case ("secretKey", _) => true
             case _ => false
@@ -54,7 +54,7 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int
         implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
         Extraction.decompose(g.copy())
     case t: Team =>
-        implicit val formats: Formats = DefaultFormats + new org.json4s.ext.EnumNameSerializer(JoinType) + new LinkObjectEntitySerializer
+        implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer
         Extraction.decompose(t.copy())
     /*    Extraction.decompose(t.copy()) merge
           render(("userPlay" -> t.tournament.tournamentType.userPlay) ~

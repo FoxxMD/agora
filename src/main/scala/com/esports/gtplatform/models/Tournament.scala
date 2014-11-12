@@ -1,18 +1,12 @@
 package models
 
-import com.esports.gtplatform.models.{Team, Requestable, Inviteable}
-import monocle._
-import monocle.syntax._
+import com.esports.gtplatform.models._
 import org.joda.time.DateTime
-import io.strongtyped.active.slick.models.Identifiable
 
 /**
  * Created by Matthew on 6/30/2014.
  */
-case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, id: Option[Int] = None) extends Inviteable with Requestable with Identifiable[Tournament] {
-
-    override type Id = Int
-    override def withId(id: Id): Tournament = copy(id = Some(id))
+case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, id: Option[Int] = None) {
 
     var game: Game = null
     var event: Event = null

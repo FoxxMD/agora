@@ -9,7 +9,7 @@ import org.joda.time.DateTime
  * Created by Matthew on 6/30/2014.
  */
 
-case class Team(name: String, joinType: String, tournamentId: Int, createdDate: DateTime = DateTime.now(), isPresent: Boolean = false, guildOnly: Boolean = false, guildId: Option[Int] = None, id: Option[Int] = None) extends Invitee with Inviteable with Requestable with TeamT {
+case class Team(name: String, joinType: String, tournamentId: Int, createdDate: DateTime = DateTime.now(), isPresent: Boolean = false, guildOnly: Boolean = false, guildId: Option[Int] = None, id: Option[Int] = None) {
     var tournament: Tournament = null
     var teamPlayers: List[TeamUser] = List()
 

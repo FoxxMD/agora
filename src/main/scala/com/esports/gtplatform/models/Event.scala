@@ -1,12 +1,9 @@
 package models
 
-import com.esports.gtplatform.models.{MeetingT, Requestable, Inviteable}
-import monocle.{Lenser, SimpleLens}
-import monocle.syntax._
 import org.joda.time.DateTime
 
 
-case class Event(name: String = "A New Event", joinType: String = "Public", id: Option[Int] = 0) {
+case class Event(name: String = "A New Event", joinType: String = "Public", id: Option[Int] = None) {
 
     var details: Option[EventDetail] = None
     var payments: Set[EventPayment] = Set()

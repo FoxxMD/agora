@@ -6,7 +6,6 @@ import com.esports.gtplatform.business.{EventUserRepo, EventRepo}
 import com.googlecode.mapperdao.Persisted
 import com.stripe.exception._
 import com.stripe.model.{Charge, Customer}
-import models.PaymentType.PaymentType
 import models._
 import org.slf4j.LoggerFactory
 import scala.collection.mutable

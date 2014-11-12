@@ -1,11 +1,8 @@
 package com.esports.gtplatform.controllers
 
-import com.esports.gtplatform.business.{GameTTLinkRepo, GameRepo}
-import models.{GameTournamentType, TournamentType, Game}
-import org.json4s.JsonDSL._
-import org.json4s.Extraction
+import com.esports.gtplatform.business.{GameRepo, GameTTLinkRepo}
+import models.{Game, GameTournamentType, TournamentType}
 import org.scalatra.Ok
-import scaldi.Injector
 
 class GameController(val gameRepo: GameRepo, val gameTTLinkRepo: GameTTLinkRepo) extends StandardController with GameControllerT {
   get("/") {
@@ -23,7 +20,7 @@ class GameController(val gameRepo: GameRepo, val gameTTLinkRepo: GameTTLinkRepo)
       val newGame = gameRepo.create(parsedBody.extract[Game])
       val tourTypes = parsedBody.\("tournamentTypes").extract[List[TournamentType]]
       for(t <- tourTypes){
-          gameTTLinkRepo.create(GameTournamentType(gameId = newGame.id.get,t.id.get))
+          gameTTLinkRepo.create(GameTournamentType(gameId = newGame.id.get,tournamentTypeId = t.id.get))
       }
     Ok(newGame.id.get)
   }

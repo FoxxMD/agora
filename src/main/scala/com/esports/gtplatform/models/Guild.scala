@@ -1,17 +1,13 @@
 package models
 
-import com.esports.gtplatform.business.{TeamRepo, TournamentRepo}
-import com.esports.gtplatform.models._
-import models.JoinType.JoinType
-import monocle.SimpleLens
-import monocle.syntax._
+import com.esports.gtplatform.business.TeamRepo
 import org.joda.time.DateTime
 
 /**
  * Created by Matthew on 6/30/2014.
  */
 
-case class Guild(name: String, description: Option[String] = None, maxPlayers: Option[Int], joinType: String = "Public", createdDate: DateTime = DateTime.now(), id: Option[Int] = 0) extends Invitee with Inviteable with Requestable with GuildT {
+case class Guild(name: String, description: Option[String] = None, maxPlayers: Option[Int], joinType: String = "Public", createdDate: DateTime = DateTime.now(), id: Option[Int] = None) {
 
     var games: List[Game] = List()
     var gamesLink: List[GuildGame] = List()

@@ -1,19 +1,10 @@
 import javax.servlet.ServletContext
 
-import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.controllers._
-import com.esports.gtplatform.dao.mapperdao._
-
 import com.esports.gtplatform.data.DatabaseInit
-import com.esports.gtplatform.models.Team
-import com.googlecode.mapperdao.{Entity, Persisted}
-import com.googlecode.mapperdao.jdbc.{JdbcMap, Transaction}
-import com.googlecode.mapperdao.queries.v2.WithQueryInfo
-import com.mchange.v2.c3p0.ComboPooledDataSource
-import scala.slick.jdbc.JdbcBackend
-import scala.slick.jdbc.JdbcBackend.{SessionDef, Database}
+import com.googlecode.mapperdao.jdbc.Transaction
 import org.scalatra.LifeCycle
 
 /* This is where we bootstrap the back-end service -- it's basically a "Global" file in any other context. Not much
