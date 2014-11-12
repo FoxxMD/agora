@@ -1,8 +1,6 @@
 package com.esports.gtplatform.business
 
 import com.esports.gtplatform.models._
-import com.googlecode.mapperdao.Persisted
-import com.googlecode.mapperdao.jdbc.JdbcMap
 import models._
 
 /**
@@ -44,6 +42,7 @@ trait UserRepo extends GenericRepo[User] {
 trait UserIdentityRepo extends GenericRepo[UserIdentity] {
     def getByUser(user: User): List[UserIdentity]
     def getByUser(id: Int): List[UserIdentity]
+    def getByUserPass(email: String): Option[UserIdentity]
 }
 trait UserPlatformRepo extends GenericRepo[UserPlatformProfile]
 trait TeamRepo extends GenericEntityRepo[Team]

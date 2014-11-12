@@ -2,14 +2,14 @@ package com.esports.gtplatform.controllers
 
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import com.esports.gtplatform.Utilities.{PasswordSecurity, ApiSecurity}
-import com.esports.gtplatform.dao.mapperdao.{UserIdentityEntity, UserEntity, Daos}
-import com.googlecode.mapperdao.Query._
-import Daos._
+import com.esports.gtplatform.Utilities.{ApiSecurity, PasswordSecurity}
+import com.esports.gtplatform.business.{UserIdentityRepo, UserRepo, WebTokenRepo}
+import com.esports.gtplatform.models.WebToken
 import models._
 import org.scalatra.auth.{ScentryConfig, ScentryStrategy, ScentrySupport}
 import org.scalatra.{ScalatraBase, Unauthorized}
 import org.slf4j.LoggerFactory
+
 
 /**
  * Created by Matthew on 7/28/2014.
@@ -47,9 +47,11 @@ import org.slf4j.LoggerFactory
 * */
 trait AuthenticationSupport extends ScentrySupport[User] {
   self: ScalatraBase =>
+    import scaldi.Injectable._
+    val userRepo = inject[UserRepo]
 
   protected def fromSession = {
-    case id: String => queryDao.querySingleResult(select from UserEntity where UserEntity.id === id.toInt).get
+    case id: String => userRepo.get(id.toInt).get
   }
 
   protected def toSession = {
@@ -99,12 +101,15 @@ trait AuthenticationSupport extends ScentrySupport[User] {
 }
 
 class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStrategy[User] {
+    import scaldi.Injectable._
+    val webTokenRepo = inject[WebTokenRepo]
+    val userRepo = inject[UserRepo]
   val logger = LoggerFactory.getLogger("TokenStrategy")
   private val keys = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
 
   implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r, keys)
 
-  protected def getUserId(user: User): Int = user.id
+  protected def getUserId(user: User): Int = user.id.get
 
   override def isValid(implicit request: HttpServletRequest) = request.providesAuth //request.isBearerAuth && request.providesAuth
 
@@ -117,19 +122,21 @@ class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStr
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = validate(request.token)
 
   protected def validate(token: String): Option[User] = {
-    queryDao.lowLevelQuery(UserEntity,
-      """
-        |select u.*
-        |from users u
-        |inner join tokens t on t.id=u.id
-        |where t.token=?
-      """.stripMargin, List(token)).headOption match {
-      case Some(i: User) =>
-        Option(i)
-      case None =>
-          logger.warn("authenticaion failed for token " + token)
-          None
-    }
+     webTokenRepo.getByToken(token) match {
+         case Some(w: WebToken) =>
+             userRepo.get(w.id) match {
+                 case Some(u: User) =>
+                     val newToken = java.util.UUID.randomUUID.toString
+                     webTokenRepo.update(w.copy(token = newToken))
+                     Option(u)
+                 case None =>
+                     logger.error("[Authentication] Could not find user associated with token " + token)
+                     None
+             }
+         case None =>
+             logger.warn("[Authentication] Could not find token " + token)
+             None
+     }
   }
 }
 
@@ -142,12 +149,11 @@ class TokenOptStrategy(protected override val app: ScalatraBase) extends TokenSt
 }
 
 class ApiStrategy(protected override val app: ScalatraBase) extends ScentryStrategy[User] {
-
   private val keys = List("ApiKey", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
 
   implicit def request2TokenAuthRequest(r: HttpServletRequest) = new TokenAuthRequest(r, keys)
 
-  protected def getUserId(user: User): Int = user.id
+  protected def getUserId(user: User): Int = user.id.get
 
   override def isValid(implicit request: HttpServletRequest) = request.providesAuth //request.isBearerAuth && request.providesAuth
 
@@ -162,13 +168,7 @@ class ApiStrategy(protected override val app: ScalatraBase) extends ScentryStrat
   protected def validate(implicit request: HttpServletRequest, token: String): Option[User] = {
     //TODO move secret to config file and change applicationName to something more dynamic to increase security strength
     if (ApiSecurity.checkHMAC("gamefestSecret", "gamefest", request.getRemoteHost, token)) {
-      queryDao.lowLevelQuery(UserEntity,
-        """
-          |select u.*
-          |from users u
-          |inner join apikeys k on k.id=u.id
-          |where k.apiToken=?
-        """.stripMargin, List(token)).headOption
+      None//TODO implement
     }
     else
       None
@@ -197,6 +197,11 @@ class TokenAuthRequest(r: HttpServletRequest, KeyList: List[String]) {
 class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: HttpServletRequest, response: HttpServletResponse)
   extends ScentryStrategy[User] {
 
+    import scaldi.Injectable._
+    val webTokenRepo = inject[WebTokenRepo]
+    val userIdentRepo = inject[UserIdentityRepo]
+    val userRepo = inject[UserRepo]
+
   val logger = LoggerFactory.getLogger("UserPasswordStrategy")
 
   override def name: String = "UserPassword"
@@ -214,50 +219,39 @@ class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: Ht
   }
 
   def authenticate()(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = {
-    val uie = UserIdentityEntity
-    val maybeUser = queryDao.querySingleResult(select from uie where uie.userId === "userpass" and uie.providerId === login)
 
-    maybeUser match {
+    userIdentRepo.getByUserPass(login) match {
         //We found a user with this email!
       case Some(ident: UserIdentity) =>
+
         /* Hash the provided password and check against the stored hash of the valid password for this identity.
         *  We do this here because the checking method uses a technique to prevent against timing attacks and is
         *  inherently slower because of it. Putting it in the query would slow down query time which would increase blocking.
         * */
-        if (!PasswordSecurity.validatePassword(password, ident.password)) {
-            logger.warn("Password invalid for User " + ident.userId.id)
+        if (!PasswordSecurity.validatePassword(password, ident.password.get)) {
+            logger.warn("[Authentication] Password invalid for User " + ident.userId)
             None
         }
         else {
           /*logger.info("authentication succeeded for " + ident.user.id)*/
           //Check to see if this user has a token already
-          val possibleToken = jdbc.queryForMap(
-            """
-              |select t.*
-              |from tokens t
-              |where t.id=?
-            """.stripMargin
-            , ident.userId.id).map { m => m.string("token")}
-          possibleToken match {
-            case Some(token: String) =>
+          webTokenRepo.get(ident.userId) match {
+            case Some(webToken: WebToken) =>
               //They have a token, return it in the header
               //TODO token issueDate refresh
-              response.addHeader("Authorization", token)
+              response.addHeader("Authorization", webToken.token)
             case None =>
               //They don't have a token, create a new one and return it in the header
               val newToken = java.util.UUID.randomUUID.toString
-              jdbc.update(
-                """
-                  |INSERT INTO tokens VALUES(?,?,NULL)
-                """.stripMargin, List(ident.userId.id, newToken))
+              webTokenRepo.create(WebToken(ident.userId, newToken))
               //TODO ensure this udpate occurs before sending token
               response.addHeader("Authorization", newToken)
           }
-          Option(ident.userId)
+          userRepo.get(ident.userId)
         }
       case None =>
         //Did not match an email
-        logger.info("authentication failed for " + login + ", email not found in DB.")
+        logger.info("[Authentication] UserPass strategy failed, " + login + ", found in DB.")
         None
     }
   }
