@@ -166,8 +166,6 @@ class SlickTournamentUserRepository extends GenericSlickRepository[TournamentUse
   }
 }
 
-trait NonActiveUserIdentityRepo extends UserIdentityRepo
-trait NonActiveUserRepo extends UserRepo
 
 class SlickNonActiveUserIdentityRepository extends UserIdentityRepository with NonActiveUserIdentityRepo {
     this: ActiveSlick with Schema =>

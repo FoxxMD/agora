@@ -3,7 +3,6 @@ package com.esports.gtplatform.business.services
 import com.esports.gtplatform.Utilities.PasswordSecurity
 import com.esports.gtplatform.business.{PasswordTokenRepo, UserIdentityRepo, WebTokenRepo}
 import com.esports.gtplatform.models.{PasswordToken}
-import com.sun.javaws.exceptions.InvalidArgumentException
 import models.{User, UserIdentity}
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.BadSqlGrammarException

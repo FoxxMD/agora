@@ -10,7 +10,11 @@ import org.scalatra.{UrlGeneratorSupport, Ok}
 /**
  * Created by Matthew on 11/5/2014.
  */
-class TournamentController(val tournamentRepo: TournamentRepo, val tournamentUserRepo: TournamentUserRepo, val tournamentDetailsRepo: TournamentDetailsRepo, val tournamentService: TournamentServiceT, val rosterService: RosterServiceT) extends TournamentT with UrlGeneratorSupport {
+class TournamentController(val tournamentRepo: TournamentRepo,
+                           val tournamentUserRepo: TournamentUserRepo,
+                           val tournamentDetailsRepo: TournamentDetailsRepo,
+                           val tournamentService: TournamentServiceT,
+                           val rosterService: RosterServiceT) extends TournamentT with UrlGeneratorSupport {
 
     /*
     * Collection

@@ -19,7 +19,7 @@ class CustomerException(message: String = null, cause: Throwable = null) extends
 
 class PaymentException(message: String = null, cause: Throwable = null) extends RuntimeException(message, cause)
 
-abstract class PaymentService(event: Event)(implicit val bindingModule: BindingModule) extends Injectable {
+abstract class PaymentService(event: Event) {
     val logger = LoggerFactory.getLogger(getClass)
     val pType: String
     val eventUserRepo = inject[EventUserRepo]
@@ -28,12 +28,12 @@ abstract class PaymentService(event: Event)(implicit val bindingModule: BindingM
 
     def checkForExistingUser(u: User): Option[EventUser]
 
-    def createCustomer(ev: EventUser with Persisted, info: mutable.Map[String, String]): EventUser with Persisted
+    def createCustomer(ev: EventUser, info: mutable.Map[String, String]): EventUser
 
-    def makePayment(ev: EventUser with Persisted): EventUser
+    def makePayment(ev: EventUser): EventUser
 }
 
-class StripePayment(event: Event)(implicit override val bindingModule: BindingModule) extends PaymentService(event) {
+class StripePayment(event: Event) extends PaymentService(event) {
     val pType = "Stripe"
     val eventPayment = event.payments.find(x => x.payType == pType).getOrElse {
         logger.error("Event " + event.id + "does not contain payment option of type " + pType)

@@ -11,7 +11,11 @@ import org.scalatra.{NotImplemented, BadRequest, Forbidden, Ok}
 /**
  * Created by Matthew on 7/29/2014.
  */
-class GuildController(val guildRepo: GuildRepo, val guildUserRepo: GuildUserRepo, val userRepo: UserRepo, val guildService: GuildServiceT, val guildGameRepo: GuildGameLinkRepo) extends APIController with GuildControllerT {
+class GuildController(val guildRepo: GuildRepo,
+                      val guildUserRepo: GuildUserRepo,
+                      val userRepo: UserRepo,
+                      val guildService: GuildServiceT,
+                      val guildGameRepo: GuildGameLinkRepo) extends APIController with GuildControllerT {
     get("/?") {
         val guilds = guildRepo.getPaginated(params.getOrElse("page", "1").toInt)
         Ok(guilds)
