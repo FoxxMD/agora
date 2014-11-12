@@ -1,6 +1,6 @@
 package com.esports.gtplatform.business
 
-import com.esports.gtplatform.models.{ConfirmationToken, ApiKey, Team}
+import com.esports.gtplatform.models._
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.jdbc.JdbcMap
 import models._
@@ -43,6 +43,7 @@ trait UserRepo extends GenericRepo[User] {
 }
 trait UserIdentityRepo extends GenericRepo[UserIdentity] {
     def getByUser(user: User): List[UserIdentity]
+    def getByUser(id: Int): List[UserIdentity]
 }
 trait UserPlatformRepo extends GenericRepo[UserPlatformProfile]
 trait TeamRepo extends GenericEntityRepo[Team]
@@ -89,11 +90,12 @@ trait NonActiveUserRepo extends UserRepo
 trait ApiKeyRepo extends GenericRepo[ApiKey]
 trait ConfirmationTokenRepo extends GenericRepo[ConfirmationToken] {
     def getByToken(token: String): Option[ConfirmationToken]
+    def getByUser(user: User): Option[ConfirmationToken]
 }
-trait PasswordToken extends GenericRepo[PasswordToken]{
+trait PasswordTokenRepo extends GenericRepo[PasswordToken]{
     def getByToken(token: String): Option[PasswordToken]
 }
-trait WebToken extends GenericRepo[WebToken] {
+trait WebTokenRepo extends GenericRepo[WebToken] {
     def getByToken(token: String): Option[WebToken]
 }
 

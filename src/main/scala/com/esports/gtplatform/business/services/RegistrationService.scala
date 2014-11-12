@@ -12,20 +12,20 @@ import com.googlecode.mapperdao.Persisted
 import models.{EventUser, User, UserIdentity, Event}
 import org.slf4j.LoggerFactory
 import com.googlecode.mapperdao.jdbc.Transaction
-
+class ConfirmationException(message: String = null, cause: Throwable = null) extends RuntimeException(message, cause)
 class RegistrationService(val eventUserRepo: EventUserRepo, val inactiveUserRepo: NonActiveUserRepo, val inactiveIdentRepo: NonActiveUserIdentityRepo, val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo, val confirmTokenRepo: ConfirmationTokenRepo) extends RegistrationServiceT {
 
     val logger = LoggerFactory.getLogger(getClass)
 
     def isUniqueEmail(user: User): Boolean = {
-        userRepo.getByEmail(user.email).isEmpty
+        userRepo.getByEmail(user.email).isEmpty && inactiveUserRepo.getByEmail(user.email).isEmpty
     }
 
     def isUniqueHandle(user: User): Boolean = {
-        userRepo.getByHandle(user.globalHandle).isEmpty
+        userRepo.getByHandle(user.globalHandle).isEmpty && inactiveUserRepo.getByHandle(user.email).isEmpty
     }
 
-    def createInactiveUser(user: User, password: String, eventId: Option[Int] = None): Unit = {
+    def createInactiveUser(user: User, password: String, eventId: Option[Int] = None): String = {
         val token = java.util.UUID.randomUUID.toString
         val salted = PasswordSecurity.createHash(password)
 
@@ -40,12 +40,14 @@ class RegistrationService(val eventUserRepo: EventUserRepo, val inactiveUserRepo
 
         logger.info("[Registration] NON-Active User " + insertedUser.email + " created.")
 
-        confirmTokenRepo.create(ConfirmationToken(insertedIdent.id.get,token, eventId))
+        val confirmToken = confirmTokenRepo.create(ConfirmationToken(insertedIdent.id.get,token, eventId))
 
         if(eventId.isDefined)
             logger.info("[Registration] Confirmation token for " + insertedUser.email + " inserted, associated with Event " + eventId)
         else
             logger.info("[Registration] Confirmation token for " + insertedUser.email + " inserted")
+
+        confirmToken.token
 
     }
     def createActiveUser(user: User, password: String, eventId: Option[Int] = None): Unit = {
@@ -71,7 +73,7 @@ class RegistrationService(val eventUserRepo: EventUserRepo, val inactiveUserRepo
         }
 
     }
-    class ConfirmationException(message: String = null, cause: Throwable = null) extends RuntimeException(message, cause)
+
 
     def confirmInactiveUser(token: String): Option[Int] = {
 

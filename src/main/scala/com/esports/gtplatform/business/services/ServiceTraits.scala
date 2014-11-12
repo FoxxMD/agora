@@ -1,7 +1,7 @@
 package com.esports.gtplatform.business.services
 
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.models.Team
+import com.esports.gtplatform.models.{PasswordToken, ConfirmationToken, Team}
 import models._
 
 /**
@@ -12,12 +12,12 @@ trait GenericService[T] {
 }
 
 trait RegistrationServiceT {
-    def inactiveUserRepo: NonActiveUserRepo
-    def inactiveIdentRepo: NonActiveUserIdentityRepo
-    def userRepo: UserRepo
-    def userIdentRepo: UserIdentityRepo
-    def confirmTokenRepo: ConfirmationTokenRepo
-    def eventUserRepo: EventUserRepo
+    protected def inactiveUserRepo: NonActiveUserRepo
+    protected def inactiveIdentRepo: NonActiveUserIdentityRepo
+    protected def userRepo: UserRepo
+    protected def userIdentRepo: UserIdentityRepo
+    protected def confirmTokenRepo: ConfirmationTokenRepo
+    protected def eventUserRepo: EventUserRepo
 
     def isUniqueEmail(user: User): Boolean
     def isUniqueHandle(user: User): Boolean
@@ -79,4 +79,20 @@ trait EventServiceT extends GenericService[Event] with AuthorizationSupport[Even
 }
 trait GuildServiceT extends GenericService[Guild] with AuthorizationSupport[Guild] {
     def canJoin(gu: GuildUser): Boolean
+}
+
+trait UserServiceT extends GenericService[User] {
+    def hasAdminPermissions(user: User): Boolean
+    def hasModeratorPermissions(user: User): Boolean
+}
+
+trait AccountServiceT {
+    protected def passwordTokenRepo: PasswordTokenRepo
+    protected def webTokenRepo: WebTokenRepo
+    protected def userIdentRepo: UserIdentityRepo
+
+    def generatePasswordToken(user: User): String
+    def resetPassword(password: String, token: Option[PasswordToken] = None, user: Option[User] = None)
+
+    def generateWebToken(ident: UserIdentity): String
 }

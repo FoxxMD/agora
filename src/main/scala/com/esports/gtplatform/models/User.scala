@@ -30,7 +30,7 @@ import org.joda.time.DateTime
  * Created by Matthew on 6/30/2014.
  */
 
-case class User(email: String, createdDate: DateTime = DateTime.now(), firstName: Option[String], lastName: Option[String], globalHandle: String, role: String, id: Option[Int] = None) extends Identifiable[User] {
+case class User(email: String, createdDate: DateTime = DateTime.now(), firstName: Option[String] = None, lastName: Option[String] = None, globalHandle: String, role: String = "User", id: Option[Int] = None) extends Identifiable[User] {
 
     override type Id = Int
     override def withId(id: Id): User = copy(id = Some(id))
