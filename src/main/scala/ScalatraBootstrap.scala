@@ -2,7 +2,7 @@ import javax.servlet.ServletContext
 
 import com.escalatesoft.subcut.inject.NewBindingModule
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.business.services.{TournamentServiceT, TournamentService}
+import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.dao.mapperdao._
 
@@ -87,7 +87,14 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
         //This is how we mount individual controllers to a route. Each controller's url argument is relative to this path.
         context.mount(new UserManagementController(
             userRepo = inject [UserRepo],
-            userIdentRepo = inject[UserIdentityRepo]
+            userIdentRepo = inject[UserIdentityRepo],
+        eventUserRepo = inject[EventUserRepo],
+        registrationService = inject[RegistrationService],
+        userService = inject[UserServiceT],
+        eventService = inject[EventServiceT],
+        confirmTokenRepo = inject[ConfirmationTokenRepo],
+        accountService = inject[AccountServiceT],
+        passwordTokenRepo = inject[PasswordTokenRepo]
         ), "/api/")
 
         context.mount(new GameController(
@@ -98,19 +105,23 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
         context.mount(new GuildController(
             guildRepo = inject[GuildRepo],
             guildUserRepo = inject[GuildUserRepo],
-            userRepo = inject[UserRepo]
+            userRepo = inject[UserRepo],
+        guildService = inject[GuildServiceT],
+        guildGameRepo = inject[GuildGameLinkRepo]
         ), "/api/guilds")
 
         context.mount(new UserController(
             userRepo = inject[UserRepo],
-            userIdentRepo = inject[UserIdentityRepo]
+            userIdentRepo = inject[UserIdentityRepo],
+        userPlatformRepo = inject[UserPlatformRepo]
             ), "/api/users")
 
         val tourController = new TournamentController(
             tournamentRepo = inject[TournamentRepo],
             tournamentUserRepo = inject[TournamentUserRepo],
             tournamentDetailsRepo = inject[TournamentDetailsRepo],
-            tournamentService = inject[TournamentServiceT]
+            tournamentService = inject[TournamentServiceT],
+        rosterService = inject[RosterServiceT]
         )
 
         context.mount(tourController, "/api/tournaments")
@@ -120,7 +131,10 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             eventUserRepo = inject[EventUserRepo],
             tournamentRepo = inject[TournamentRepo],
             userRepo = inject[UserRepo],
-            ttRepo = inject[TournamentTypeRepo]
+            ttRepo = inject[TournamentTypeRepo],
+        eventService = inject[EventServiceT],
+        eventDetailRepo = inject[EventDetailRepo],
+        eventPaymentRepo = inject[EventPaymentRepo]
         ), "/api/events")
 
     }
