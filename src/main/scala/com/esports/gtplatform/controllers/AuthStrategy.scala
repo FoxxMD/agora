@@ -3,7 +3,7 @@ package com.esports.gtplatform.controllers
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import com.esports.gtplatform.Utilities.{ApiSecurity, PasswordSecurity}
-import com.esports.gtplatform.business.{UserIdentityRepo, UserRepo, WebTokenRepo}
+import com.esports.gtplatform.business.{ApiKeyRepo, UserIdentityRepo, UserRepo, WebTokenRepo}
 import com.esports.gtplatform.models.WebToken
 import models._
 import org.scalatra.auth.{ScentryConfig, ScentryStrategy, ScentrySupport}
@@ -47,8 +47,10 @@ import org.slf4j.LoggerFactory
 * */
 trait AuthenticationSupport extends ScentrySupport[User] {
   self: ScalatraBase =>
-    import scaldi.Injectable._
-    val userRepo = inject[UserRepo]
+    def userRepo: UserRepo
+    def webTokenRepo: WebTokenRepo
+    def userIdentRepo: UserIdentityRepo
+    def apiKeyRepo: ApiKeyRepo
 
   protected def fromSession = {
     case id: String => userRepo.get(id.toInt).get
@@ -68,10 +70,10 @@ trait AuthenticationSupport extends ScentrySupport[User] {
   }
 
   override protected def registerAuthStrategies() = {
-    scentry.register("UserPassword", app => new UserPasswordStrategy(app))
-    scentry.register("Token", app => new TokenStrategy(app))
+    scentry.register("UserPassword", app => new UserPasswordStrategy(app, webTokenRepo = webTokenRepo, userIdentRepo = userIdentRepo, userRepo = userRepo))
+    scentry.register("Token", app => new TokenStrategy(app, webTokenRepo = webTokenRepo, userRepo = userRepo))
     scentry.register("Api", app => new ApiStrategy(app))
-    scentry.register("TokenOpt", app => new TokenOptStrategy(app))
+    scentry.register("TokenOpt", app => new TokenOptStrategy(app, webTokenRepo = webTokenRepo, userRepo = userRepo))
   }
 
   // verifies if the request is a Bearer request
@@ -100,10 +102,7 @@ trait AuthenticationSupport extends ScentrySupport[User] {
   }
 }
 
-class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStrategy[User] {
-    import scaldi.Injectable._
-    val webTokenRepo = inject[WebTokenRepo]
-    val userRepo = inject[UserRepo]
+class TokenStrategy(protected override val app: ScalatraBase,val webTokenRepo: WebTokenRepo, val userRepo: UserRepo) extends ScentryStrategy[User] {
   val logger = LoggerFactory.getLogger("TokenStrategy")
   private val keys = List("Authorization", "HTTP_AUTHORIZATION", "X-HTTP_AUTHORIZATION", "X_HTTP_AUTHORIZATION")
 
@@ -140,7 +139,7 @@ class TokenStrategy(protected override val app: ScalatraBase) extends ScentryStr
   }
 }
 
-class TokenOptStrategy(protected override val app: ScalatraBase) extends TokenStrategy(app) with ScentryStrategy[User] {
+class TokenOptStrategy(protected override val app: ScalatraBase, webTokenRepo: WebTokenRepo, userRepo: UserRepo) extends TokenStrategy(app, webTokenRepo, userRepo) with ScentryStrategy[User] {
   override def isValid(implicit request: HttpServletRequest) = true
 
   override def unauthenticated()(implicit request: HttpServletRequest, response: HttpServletResponse) {
@@ -194,13 +193,8 @@ class TokenAuthRequest(r: HttpServletRequest, KeyList: List[String]) {
 
 }
 
-class UserPasswordStrategy(protected val app: ScalatraBase)(implicit request: HttpServletRequest, response: HttpServletResponse)
+class UserPasswordStrategy(protected val app: ScalatraBase, val webTokenRepo: WebTokenRepo, val userIdentRepo: UserIdentityRepo, val userRepo: UserRepo)(implicit request: HttpServletRequest, response: HttpServletResponse)
   extends ScentryStrategy[User] {
-
-    import scaldi.Injectable._
-    val webTokenRepo = inject[WebTokenRepo]
-    val userIdentRepo = inject[UserIdentityRepo]
-    val userRepo = inject[UserRepo]
 
   val logger = LoggerFactory.getLogger("UserPasswordStrategy")
 

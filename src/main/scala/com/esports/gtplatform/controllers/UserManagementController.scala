@@ -6,6 +6,7 @@ import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.models.ConfirmationToken
 import models.User
 import org.scalatra.{BadRequest, Ok}
+import scaldi.Injector
 
 /**
  * Created by Matthew on 7/29/2014.
@@ -16,15 +17,15 @@ import org.scalatra.{BadRequest, Ok}
  * */
 
 //Mounted at /
-class UserManagementController(val userRepo: UserRepo,
-                               val userIdentRepo: UserIdentityRepo,
+class UserManagementController(override val userRepo: UserRepo,
+                               override val userIdentRepo: UserIdentityRepo,
                                val eventUserRepo: EventUserRepo,
                                val registrationService: RegistrationServiceT,
                                val userService: UserServiceT,
                                   val eventService: EventServiceT,
                                   val confirmTokenRepo: ConfirmationTokenRepo,
                                   val accountService: AccountServiceT,
-                                  val passwordTokenRepo: PasswordTokenRepo) extends StandardController {
+                                  val passwordTokenRepo: PasswordTokenRepo)(implicit val inj: Injector) extends BaseController with StandardController {
 
     get("/login") {
         //Use the UserPasswordStrategy to authenticate the user and attach the token to response headers
@@ -68,8 +69,8 @@ class UserManagementController(val userRepo: UserRepo,
             Ok()
         }
         else{
-            val inactiveUser = registrationService.createInactiveUser(user, password, eventId)
-            m.sendConfirm(email,handle, confirmTokenRepo.getByUser(inactiveUser).get.token)
+            val token = registrationService.createInactiveUser(user, password, eventId)
+            m.sendConfirm(email,handle, token)
             Ok()
         }
     }

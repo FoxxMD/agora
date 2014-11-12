@@ -1,15 +1,16 @@
 package com.esports.gtplatform.controllers
 
 import com.esports.gtplatform.business.services.{RosterServiceT, TeamServiceT}
-import com.esports.gtplatform.business.{TeamUserRepo, TeamRepo}
+import com.esports.gtplatform.business.{TeamRepo, TeamUserRepo}
 import com.esports.gtplatform.models.Team
 import models.TeamUser
-import org.scalatra.{BadRequest, Ok, UrlGeneratorSupport}
+import org.scalatra.{BadRequest, Ok}
+import scaldi.Injector
 
 /**
  * Created by Matthew on 11/5/2014.
  */
-class TeamController(val teamRepo: TeamRepo, val teamUserRepo: TeamUserRepo, val teamService: TeamServiceT, val rosterService: RosterServiceT) extends TeamT with UrlGeneratorSupport {
+class TeamController(val teamRepo: TeamRepo, val teamUserRepo: TeamUserRepo, val teamService: TeamServiceT, val rosterService: RosterServiceT)(implicit val inj: Injector) extends BaseController with TeamT {
     get("/") {
         params.get("tournament") match {
             case Some(p: String) =>

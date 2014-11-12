@@ -1,20 +1,12 @@
 package com.esports.gtplatform.controllers
 
-import com.escalatesoft.subcut.inject.BindingModule
-import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.models.Team
-import com.googlecode.mapperdao.Persisted
-import com.googlecode.mapperdao.jdbc.Transaction
+import com.esports.gtplatform.business.services._
 import models._
-import org.joda.time.DateTime
 import org.json4s
-import org.json4s.Extraction
-import org.scalatra.scalate.ScalateUrlGeneratorSupport
-import org.scalatra.{BadRequest, NotImplemented, Ok}
 import org.json4s.JsonDSL._
-import org.json4s._
-import org.json4s.jackson.JsonMethods._
+import org.json4s.{Extraction, _}
+import org.scalatra.{NotImplemented, Ok}
 import scaldi.Injector
 
 /**
@@ -23,11 +15,11 @@ import scaldi.Injector
 class EventController(val eventRepo: EventRepo,
                       val eventUserRepo: EventUserRepo,
                       val tournamentRepo: TournamentRepo,
-                      val userRepo: UserRepo,
+                      override val userRepo: UserRepo,
                       val ttRepo: TournamentTypeRepo,
                          val eventService: EventServiceT,
                          val eventDetailRepo: EventDetailRepo,
-                         val eventPaymentRepo: EventPaymentRepo) extends APIController with EventControllerT with ScalateUrlGeneratorSupport {
+                         val eventPaymentRepo: EventPaymentRepo)(implicit val inj: Injector) extends BaseController with APIController with EventControllerT{
 
     get("/") {
         val events = eventRepo.getPaginated(params.getOrElse("page", "1").toInt)

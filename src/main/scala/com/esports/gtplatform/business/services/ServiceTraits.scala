@@ -1,7 +1,7 @@
 package com.esports.gtplatform.business.services
 
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.models.{PasswordToken, ConfirmationToken, Team}
+import com.esports.gtplatform.models.{PasswordToken, Team}
 import models._
 
 /**
@@ -21,8 +21,8 @@ trait RegistrationServiceT {
 
     def isUniqueEmail(user: User): Boolean
     def isUniqueHandle(user: User): Boolean
-    def createInactiveUser(user: User, password: String, eventId: Option[Int] = None): User
-    def createActiveUser(user: User, password: String,  eventId: Option[Int] = None): User
+    def createInactiveUser(user: User, password: String, eventId: Option[Int] = None): String
+    def createActiveUser(user: User, password: String,  eventId: Option[Int] = None): Unit
     def confirmInactiveUser(token: String): Option[Int]
 }
 

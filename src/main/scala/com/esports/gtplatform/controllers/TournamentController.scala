@@ -1,11 +1,12 @@
 package com.esports.gtplatform.controllers
 
-import com.esports.gtplatform.business.services.{RosterServiceT, TournamentServiceT, TournamentService}
-import com.esports.gtplatform.business.{TournamentDetailsRepo, TournamentUserRepo, TournamentRepo}
-import models.{TeamUser, TournamentUser, TournamentDetail, Tournament}
+import com.esports.gtplatform.business.services.{RosterServiceT, TournamentServiceT}
+import com.esports.gtplatform.business.{TournamentDetailsRepo, TournamentRepo, TournamentUserRepo}
+import models.{Tournament, TournamentDetail, TournamentUser}
 import org.json4s
 import org.json4s.Extraction
-import org.scalatra.{UrlGeneratorSupport, Ok}
+import org.scalatra.Ok
+import scaldi.Injector
 
 /**
  * Created by Matthew on 11/5/2014.
@@ -14,7 +15,7 @@ class TournamentController(val tournamentRepo: TournamentRepo,
                            val tournamentUserRepo: TournamentUserRepo,
                            val tournamentDetailsRepo: TournamentDetailsRepo,
                            val tournamentService: TournamentServiceT,
-                           val rosterService: RosterServiceT) extends TournamentT with UrlGeneratorSupport {
+                           val rosterService: RosterServiceT)(implicit val inj: Injector) extends BaseController with TournamentT {
 
     /*
     * Collection

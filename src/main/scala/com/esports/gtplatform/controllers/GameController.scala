@@ -3,8 +3,9 @@ package com.esports.gtplatform.controllers
 import com.esports.gtplatform.business.{GameRepo, GameTTLinkRepo}
 import models.{Game, GameTournamentType, TournamentType}
 import org.scalatra.Ok
+import scaldi.Injector
 
-class GameController(val gameRepo: GameRepo, val gameTTLinkRepo: GameTTLinkRepo) extends StandardController with GameControllerT {
+class GameController(val gameRepo: GameRepo, val gameTTLinkRepo: GameTTLinkRepo)(implicit val inj: Injector) extends BaseController with StandardController with GameControllerT {
   get("/") {
     //Full path is "/games/" because of relative mounting
     Ok(gameRepo.getAll)

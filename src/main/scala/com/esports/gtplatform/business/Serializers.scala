@@ -1,6 +1,5 @@
 package com.esports.gtplatform.business
 
-import com.escalatesoft.subcut.inject.{AutoInjectable, Injectable, BindingModule}
 import com.esports.gtplatform.business.services.TeamService
 import com.esports.gtplatform.json.DateSerializer
 import com.esports.gtplatform.models.Team
@@ -18,7 +17,7 @@ import org.json4s.jackson.JsonMethods._
 * This is all magic.
 * */
 
-class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats => ( {
+class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Class[T]](formats => ( {
     PartialFunction.empty
 }, {
     case ed: EventDetail =>
@@ -41,7 +40,7 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Entity[Int, 
 }
     ))
 
-class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats => ( {
+class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats => ( {
     PartialFunction.empty
 }, {
     case ep: EventPayment =>
@@ -62,7 +61,7 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Entity[Int
 }
     ))
 
-class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Entity[Int, Persisted, Class[T]]](formats => ( {
+class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats => ( {
     PartialFunction.empty
 }, {
     case tu: GuildUser =>

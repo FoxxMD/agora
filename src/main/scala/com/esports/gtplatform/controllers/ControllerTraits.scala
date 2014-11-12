@@ -1,21 +1,17 @@
 package com.esports.gtplatform.controllers
 
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.business.services.{GuildServiceT, EventServiceT, RosterServiceT, TeamServiceT}
+import com.esports.gtplatform.business.services.{EventServiceT, GuildServiceT, RosterServiceT, TeamServiceT}
 import com.esports.gtplatform.models.Team
 import com.fasterxml.jackson.core.JsonParseException
 import com.googlecode.mapperdao.Persisted
 import com.googlecode.mapperdao.exceptions.QueryException
-import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException
+import models._
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 import org.slf4j.LoggerFactory
-import models._
 import org.springframework.jdbc.BadSqlGrammarException
-import scaldi.Injectable
-
-import scala.xml.Node
 
 /**
  * Created by Matthew on 7/24/2014.
@@ -73,7 +69,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
     //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
     //Eventually will have to add support for all Enumeration types used.
-    protected implicit val jsonFormats: Formats = DefaultFormats ++ GTSerializers.mapperSerializers + new EntityDetailsSerializer + new EntitySerializer
+    protected implicit val jsonFormats: Formats = DefaultFormats + new com.esports.gtplatform.json.DateSerializer //++ GTSerializers.mapperSerializers + new EntityDetailsSerializer + new EntitySerializer
     before() {
 
         //Lets the controller know to format the response in json so we don't have to specify on each action.

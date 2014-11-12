@@ -1,21 +1,19 @@
 package com.esports.gtplatform.controllers
 
-import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services.GuildServiceT
-import com.googlecode.mapperdao.Persisted
-import com.googlecode.mapperdao.jdbc.Transaction
 import models._
-import org.scalatra.{NotImplemented, BadRequest, Forbidden, Ok}
+import org.scalatra.{NotImplemented, Ok}
+import scaldi.Injector
 
 /**
  * Created by Matthew on 7/29/2014.
  */
 class GuildController(val guildRepo: GuildRepo,
                       val guildUserRepo: GuildUserRepo,
-                      val userRepo: UserRepo,
+                      override val userRepo: UserRepo,
                       val guildService: GuildServiceT,
-                      val guildGameRepo: GuildGameLinkRepo) extends APIController with GuildControllerT {
+                      val guildGameRepo: GuildGameLinkRepo)(implicit val inj: Injector) extends BaseController with APIController with GuildControllerT {
     get("/?") {
         val guilds = guildRepo.getPaginated(params.getOrElse("page", "1").toInt)
         Ok(guilds)

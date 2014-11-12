@@ -1,22 +1,25 @@
 package com.esports.gtplatform.controllers
 
-import com.escalatesoft.subcut.inject.BindingModule
 import com.esports.gtplatform.Utilities.PasswordSecurity
-import com.esports.gtplatform.business.{UserPlatformRepo, UserRepo, UserIdentityRepo}
-import com.googlecode.mapperdao.Persisted
-import com.googlecode.mapperdao.exceptions.QueryException
-
-import models.{User, UserIdentity, UserPlatformProfile}
-import org.json4s.JsonDSL._
+import com.esports.gtplatform.business._
+import models.{User, UserIdentity}
 import org.json4s.Extraction
+import org.json4s.JsonDSL._
 import org.scalatra.{InternalServerError, Ok}
-import com.googlecode.mapperdao.jdbc.Transaction
+import scaldi.{Injectable, Injector}
 
 /**
  * Created by Matthew on 8/6/2014.
  */
 
-class UserController(val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo, val userPlatformRepo: UserPlatformRepo) extends UserControllerT {
+abstract class BaseController(implicit inj: Injector) extends Injectable {
+    val webTokenRepo = inject [WebTokenRepo]
+    val apiKeyRepo = inject [ApiKeyRepo]
+    val userRepo = inject [UserRepo]
+    val userIdentRepo = inject [UserIdentityRepo]
+}
+
+class UserController(override val userRepo: UserRepo, override val userIdentRepo: UserIdentityRepo, val userPlatformRepo: UserPlatformRepo)(implicit val inj: Injector) extends BaseController with UserControllerT {
 
   get("/:id") {
     if (params("id") == "me") {
