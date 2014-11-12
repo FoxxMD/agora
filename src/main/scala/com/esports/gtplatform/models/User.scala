@@ -46,24 +46,16 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
     event match {
         case Some(e: Event) =>
             e.tournaments.filter(x =>
-                x.users.exists(u => u.userId == this.id) ||
+                x.users.exists(u => u.userId == this.id.get) ||
                 x.teams.exists(u => u.teamPlayers.exists(p => p.id == this.id))).toList
         case None =>
-            val tourneysTourRepo = repo.getByUser(this).map(x => x.tournamentId)
-            val tourneysTeamRepo = trepo.getByUser(this.id).flatMap(x => tourRepo.get(x.team.tournamentId))
+            val tourneysTourRepo = repo.getByUser(this).map(x => x.tournament)
+            val tourneysTeamRepo = trepo.getByUser(this).flatMap(x => tourRepo.get(x.team.tournamentId))
             tourneysTourRepo++tourneysTeamRepo //TODO why does this cause a recursive call?
             //allTourneys.filter(x => x.event.id == e.id)
     }
 }
 
-  private[this] val GameProfilesLens: SimpleLens[User, List[UserPlatformProfile]] = SimpleLens[User](_.gameProfiles)((u, newProfiles) => u.copy(gameProfiles = newProfiles))
-
-  def addGameProfile(gp: UserPlatformProfile): User = this applyLens GameProfilesLens modify(_.+:(gp))
-  def removeGameProfile(ptype: String): User = this applyLens GameProfilesLens modify(_.filter(x => x.platform != ptype))
-  def changeGameProfile(gp: UserPlatformProfile) = this.removeGameProfile(gp.platform).addGameProfile(gp)
-
-  //TODO work on related entities
-  //def getTeams: List[TeamUser] = queryDao.query(select from TeamUserEntity where TeamUserEntity.user. === this.id).map(x => x.team)
 }
 
 

@@ -39,10 +39,10 @@ case class TournamentDetail(tournamentId: Option[Int] = None,
                             servers: Option[String] = None,
                             timeStart: Option[DateTime] = None,
                             timeEnd: Option[DateTime] = None,
-                            teamMinSize: Option[Int] = 0,
-                            teamMaxSize: Option[Int] = 0,
-                            playerMinSize: Option[Int] = 0,
-                            playerMaxSize: Option[Int] = 0) {
+                            teamMinSize: Option[Int] = None,
+                            teamMaxSize: Option[Int] = None,
+                            playerMinSize: Option[Int] = None,
+                            playerMaxSize: Option[Int] = None) {
 
     var tournament: Tournament = null
 }

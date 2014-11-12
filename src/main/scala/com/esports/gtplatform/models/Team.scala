@@ -13,16 +13,6 @@ case class Team(name: String, joinType: String, tournamentId: Int, createdDate: 
     var tournament: Tournament = null
     var teamPlayers: List[TeamUser] = List()
 
-  private[this] val TPListLens: SimpleLens[Team, List[TeamUser]] = SimpleLens[Team](_.teamPlayers)((t, tp) => t.copy(teamPlayers = tp))
 
-  def addUser(u: User): Team = this applyLens TPListLens modify (_.+:(TeamUser(this, u, isCaptain = false)))
-
-  def removeUser(u: User): Team = this applyLens TPListLens modify (_.filter(x => x.userId.id != u.id))
-
-  def getCaptain = this.teamPlayers.find(u => u.isCaptain).get.userId
-
-  def setCaptain(u: User): Team = {
-    val modifiedTP = this.teamPlayers.map(x => x.copy(isCaptain = x.userId.id == u.id))
-    this applyLens TPListLens set modifiedTP
-  }
+  def getCaptain = this.teamPlayers.find(u => u.isCaptain).get.user
 }
