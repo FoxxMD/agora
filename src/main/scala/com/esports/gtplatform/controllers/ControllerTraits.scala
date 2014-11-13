@@ -195,7 +195,7 @@ trait GameControllerT extends StandardController {
     idType = "Game"
     def gameRepo: GameRepo
     def gameTTLinkRepo: GameTTLinkRepo
-    var requestGame: Option[Game with Persisted] = None
+    var requestGame: Option[Game] = None
     before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
         val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
@@ -203,7 +203,7 @@ trait GameControllerT extends StandardController {
     }
     before("/:id/?*") {
         gameRepo.get(paramId.get) match {
-            case Some(t: Game with Persisted) =>
+            case Some(t: Game) =>
                 requestGame = Some(t)
             case None => halt(400, "No game exists with the Id " + paramId.get)
         }

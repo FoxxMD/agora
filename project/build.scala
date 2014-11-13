@@ -1,5 +1,3 @@
-import com.mojolly.scalate.ScalatePlugin.ScalateKeys._
-import com.mojolly.scalate.ScalatePlugin._
 import org.scalatra.sbt._
 import sbt.Keys._
 import sbt._
@@ -34,6 +32,8 @@ object ScalatraBuild extends Build {
                 "org.scalatra" %% "scalatra-json" % "2.3.0",
                 "com.typesafe.slick" %% "slick" % "2.1.0",
                 "com.typesafe.slick" %% "slick-codegen" % "2.1.0-RC3",
+                "org.squeryl" %% "squeryl" % "0.9.6-RC3",
+                //"org.bowlerframework" % "squeryl-mapper_2.9.1" % "0.6",
                 "io.strongtyped" %% "active-slick" % "0.2.2",
                 "org.json4s" %% "json4s-jackson" % "3.2.10",
                 "org.json4s" %% "json4s-ext" % "3.2.10",
@@ -58,29 +58,7 @@ object ScalatraBuild extends Build {
                 "mysql" % "mysql-connector-java" % "5.1.33",
                 "commons-dbcp" % "commons-dbcp" % "1.4",
                 "com.stripe" % "stripe-java" % "1.18.0"
-            ),
-            slick <<= slickCodeGenTask,
-            sourceGenerators in Compile <+= slickCodeGenTask
-        )
-    ).dependsOn(codegenProject)
-
-    lazy val codegenProject = Project(
-        id="codegen",
-        base=file("codegen"),
-        settings = Defaults.defaultConfigs ++ Seq(
-            scalaVersion := "2.11.1",
-            libraryDependencies ++= List(
-                "com.typesafe.slick" %% "slick-codegen" % "2.1.0-RC3"
             )
         )
     )
-    // code generation task that calls the customized code generator
-    lazy val slick = TaskKey[Seq[File]]("gen-tables")
-    lazy val slickCodeGenTask = (sourceManaged, dependencyClasspath in Compile, runner in Compile, streams) map { (dir, cp, r, s) =>
-        val outputDir = (dir / "slick").getPath // place generated files in sbt's managed sources folder
-        toError(r.run("CustomCodeGenerator", cp.files, Array(outputDir), s.log))
-        val fname = outputDir + "/CustomTables/CustomTables.scala"
-        Seq(file(fname))
-    }
-
 }

@@ -123,7 +123,7 @@ class TokenStrategy(protected override val app: ScalatraBase,val webTokenRepo: W
   protected def validate(token: String): Option[User] = {
      webTokenRepo.getByToken(token) match {
          case Some(w: WebToken) =>
-             userRepo.get(w.id) match {
+             userRepo.get(w.id.get) match {
                  case Some(u: User) =>
                      val newToken = java.util.UUID.randomUUID.toString
                      webTokenRepo.update(w.copy(token = newToken))
@@ -237,7 +237,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase, val webTokenRepo: We
             case None =>
               //They don't have a token, create a new one and return it in the header
               val newToken = java.util.UUID.randomUUID.toString
-              webTokenRepo.create(WebToken(ident.userId, newToken))
+              webTokenRepo.create(WebToken(Option(ident.userId), newToken))
               //TODO ensure this udpate occurs before sending token
               response.addHeader("Authorization", newToken)
           }

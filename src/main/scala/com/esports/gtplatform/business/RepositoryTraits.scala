@@ -6,13 +6,17 @@ import models._
 /**
  * Created by Matthew on 10/30/2014.
  */
+trait TransactionSupport {
+    def transaction[A](a: =>A): A
+}
+
 trait SqlAccess {
 
     def lowLevelQuery[T](query: String, args: List[Any]): List[T]
     def lowLevelUpdate(query: String, args: List[Any]): Unit
 }
 
-trait GenericRepo[T] extends SqlAccess {
+trait GenericRepo[T] {
 
     def get(id: Int) : Option[T]
     def getPaginated(pageNo: Int, pageSize: Int = 50): List[T]

@@ -1,6 +1,6 @@
 package models
 
-import com.esports.gtplatform.models.Team
+import com.esports.gtplatform.models.{DomainEntity, Team}
 
 /**
  * Created by Matthew on 6/30/2014.
@@ -42,5 +42,5 @@ case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = t
  *
  */
 
-case class GameTournamentType(gameId: Int = 0, tournamentTypeId: Int = 0, id: Option[Int] = None)
+case class GameTournamentType(gameId: Int = 0, tournamentTypeId: Int = 0, id: Option[Int] = None) extends DomainEntity[GameTournamentType]
 case class GuildGame(guildId: Option[Int] = None, gameId: Int, id: Option[Int] = None)

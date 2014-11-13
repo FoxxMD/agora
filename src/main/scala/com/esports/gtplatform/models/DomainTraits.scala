@@ -1,10 +1,13 @@
 package com.esports.gtplatform.models
 
-import models.{Game, Tournament, Guild, User}
+import models.{Guild, Tournament, User}
 
 /**
  * Created by Matthew on 8/26/2014.
  */
+trait DomainEntity[T <: DomainEntity[T]] {
+    def id: Option[Int]
+}
 trait GroupT[T] {
   def addUser(u: User): T
   def removeUser(u: User): T

@@ -1,6 +1,7 @@
 package models
 
 import com.esports.gtplatform.business._
+import com.esports.gtplatform.models.DomainEntity
 import io.strongtyped.active.slick.models.Identifiable
 import org.joda.time.DateTime
 
@@ -8,10 +9,7 @@ import org.joda.time.DateTime
  * Created by Matthew on 6/30/2014.
  */
 
-case class User(email: String, createdDate: DateTime = DateTime.now(), firstName: Option[String] = None, lastName: Option[String] = None, globalHandle: String, role: String = "User", id: Option[Int] = None) extends Identifiable[User] {
-
-    override type Id = Int
-    override def withId(id: Id): User = copy(id = Some(id))
+case class User(email: String, createdDate: DateTime = DateTime.now(), firstName: Option[String] = None, lastName: Option[String] = None, globalHandle: String, role: String = "User", id: Option[Int] = None) extends DomainEntity[User] {
 
     var guilds: List[GuildUser] = List()
     var gameProfiles: List[UserPlatformProfile] = List()
@@ -37,7 +35,7 @@ def getAssociatedTournaments(repo: TournamentUserRepo, trepo: TeamUserRepo, tour
 }
 
 
-case class UserIdentity(userId: Int, userIdentifier: String, providerId: String, email: Option[String] = None, password: Option[String] = None, firstName: Option[String] = None, lastName: Option[String] = None, id: Option[Int] = None)
+case class UserIdentity(userId: Int, userIdentifier: String, providerId: String, email: Option[String] = None, password: Option[String] = None, firstName: Option[String] = None, lastName: Option[String] = None, id: Option[Int] = None) extends DomainEntity[UserIdentity]
 case class UserPlatformProfile(userId: Int, platform: String, identifier: String, id: Option[Int] = None) {
     var user: User = null
 }

@@ -5,6 +5,9 @@ import java.util.Properties
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import org.apache.commons.dbcp.BasicDataSourceFactory
 import org.slf4j.LoggerFactory
+import org.squeryl.{Session, SessionFactory}
+import org.squeryl.adapters.MySQLAdapter
+
 /*Not using this right, IGNORE ME
 *
 *
@@ -42,6 +45,12 @@ trait DatabaseInit {
     cpds.setMinPoolSize(1)
     cpds.setAcquireIncrement(1)
     cpds.setMaxPoolSize(50)
+
+      SessionFactory.concreteFactory = Some(() => connection)
+
+      def connection = {
+          Session.create(cpds.getConnection, new MySQLAdapter)
+      }
 
   }
 
