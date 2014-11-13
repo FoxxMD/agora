@@ -70,9 +70,11 @@ trait TournamentDetailsRepo extends GenericRepo[TournamentDetail] {
 }
 trait EventUserRepo extends GenericUserLinkRepo[EventUser] {
     def getByEvent(id: Int): List[EventUser]
+    def getByEventAndUser(eventId: Int, userId: Int): Option[EventUser]
 }
 trait EventPaymentRepo extends GenericRepo[EventPayment]{
     def getByEvent(id: Int): List[EventPayment]
+    def getBySecret(key: String): List[EventPayment]
 }
 trait TeamUserRepo extends GenericUserLinkRepo[TeamUser] {
     def getByTournament(id: Int): List[TeamUser]

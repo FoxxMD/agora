@@ -1,12 +1,15 @@
 package com.esports.gtplatform.controllers
 
+import javax.smartcardio.CardException
+
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services._
+import com.stripe.exception.{AuthenticationException, InvalidRequestException}
 import models._
 import org.json4s
 import org.json4s.JsonDSL._
 import org.json4s.{Extraction, _}
-import org.scalatra.{NotImplemented, Ok}
+import org.scalatra.Ok
 import scaldi.Injector
 
 /**
@@ -17,9 +20,9 @@ class EventController(val eventRepo: EventRepo,
                       val tournamentRepo: TournamentRepo,
                       override val userRepo: UserRepo,
                       val ttRepo: TournamentTypeRepo,
-                         val eventService: EventServiceT,
-                         val eventDetailRepo: EventDetailRepo,
-                         val eventPaymentRepo: EventPaymentRepo)(implicit val inj: Injector) extends BaseController with APIController with EventControllerT{
+                      val eventService: EventServiceT,
+                      val eventDetailRepo: EventDetailRepo,
+                      val eventPaymentRepo: EventPaymentRepo)(implicit val inj: Injector) extends BaseController with APIController with EventControllerT {
 
     get("/") {
         val events = eventRepo.getPaginated(params.getOrElse("page", "1").toInt)
@@ -31,10 +34,10 @@ class EventController(val eventRepo: EventRepo,
         if (eventService.isUnique(extractedEvent))
             halt(400, "Event with this name already exists.")
 
-            //TODO transaction
-            val insertedEvent = eventRepo.create(extractedEvent)
-            eventDetailRepo.create(extractDetails(parsedBody.\("details")).copy(eventId = insertedEvent.id))
-            eventUserRepo.create(EventUser(eventId = insertedEvent.id.get,userId = user.id.get, isPresent = false, isAdmin = true, isModerator = true, hasPaid = false))
+        //TODO transaction
+        val insertedEvent = eventRepo.create(extractedEvent)
+        eventDetailRepo.create(extractDetails(parsedBody.\("details")).copy(eventId = insertedEvent.id))
+        eventUserRepo.create(EventUser(eventId = insertedEvent.id.get, userId = user.id.get, isPresent = false, isAdmin = true, isModerator = true, hasPaid = false))
 
         Ok(insertedEvent.id.get)
     }
@@ -93,48 +96,44 @@ class EventController(val eventRepo: EventRepo,
         if (!eventService.canJoin(user))
             halt(403, "This event is invite only. In order to join a moderator must invite you or accept your join request.")
         val extractedEventUser = parsedBody.extract[EventUser]
-        if(extractedEventUser.userId != user.id.get && !eventService.hasAdminPermissions(user,requestEvent.get.id.get))
-        {
-            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to add User " + extractedEventUser.userId + " without permission.")
+        if (extractedEventUser.userId != user.id.get && !eventService.hasAdminPermissions(user, requestEvent.get.id.get)) {
+            logger.warn("[Event](" + requestEvent.get.id.get + ") User " + user.id.get + " attempted to add User " + extractedEventUser.userId + " without permission.")
             halt(403, "You do not have permission to add users to this event.")
         }
         eventUserRepo.create(extractedEventUser)
-        if(extractedEventUser.userId != user.id.get)
+        if (extractedEventUser.userId != user.id.get)
             logger.info("[Admin] (" + user.id + ") Added User " + extractedEventUser.userId + " to Event " + requestEvent.get.id.get)
         else
-            logger.info("[Event] ("+ requestEvent.get.id +")User " + user.id + " joined Event ")
+            logger.info("[Event] (" + requestEvent.get.id + ")User " + user.id + " joined Event ")
         Ok()
     }
     //Delete a user from an event
     delete("/:id/users/:userId") {
         auth()
-        if(requestEventUser.get.userId != user.id.get && !eventService.hasAdminPermissions(user,requestEvent.get.id.get))
-        {
-            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to delete User " + requestEventUser.get.userId + " without permission.")
+        if (requestEventUser.get.userId != user.id.get && !eventService.hasAdminPermissions(user, requestEvent.get.id.get)) {
+            logger.warn("[Event](" + requestEvent.get.id.get + ") User " + user.id.get + " attempted to delete User " + requestEventUser.get.userId + " without permission.")
             halt(403, "You do not have permission to delete users to this event.")
         }
 
         eventUserRepo.delete(requestEventUser.get)
 
-        if(requestEventUser.get.userId != user.id.get)
+        if (requestEventUser.get.userId != user.id.get)
             logger.info("[Admin] (" + user.id + ") Deleted User " + requestEventUser.get.userId + " to Event " + requestEvent.get.id.get)
         else
-            logger.info("[Event] ("+ requestEvent.get.id +")User " + user.id + " left Event ")
+            logger.info("[Event] (" + requestEvent.get.id + ")User " + user.id + " left Event ")
         Ok()
     }
     patch("/:id/users/:userId") {
         auth()
-        if (!eventService.hasModeratorPermissions(user, requestEvent.get.id.get))
-        {
+        if (!eventService.hasModeratorPermissions(user, requestEvent.get.id.get)) {
             halt(403, "You do not have permission to edit users at this event.")
-            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to modify User " + requestEventUser.get.userId + " without permission.")
+            logger.warn("[Event](" + requestEvent.get.id.get + ") User " + user.id.get + " attempted to modify User " + requestEventUser.get.userId + " without permission.")
         }
 
 
         val extractedEU = parsedBody.extract[EventUser]
-        if((extractedEU.isAdmin != requestEventUser.get.isAdmin || extractedEU.isModerator != requestEventUser.get.isModerator) && !eventService.hasAdminPermissions(user, requestEvent.get.id.get))
-        {
-            logger.warn("[Event]("+requestEvent.get.id.get+") User " + user.id.get + " attempted to modify User " + requestEventUser.get.userId + " without admin permission.")
+        if ((extractedEU.isAdmin != requestEventUser.get.isAdmin || extractedEU.isModerator != requestEventUser.get.isModerator || extractedEU.hasPaid != requestEventUser.get.hasPaid) && !eventService.hasAdminPermissions(user, requestEvent.get.id.get)) {
+            logger.warn("[Event](" + requestEvent.get.id.get + ") User " + user.id.get + " attempted to modify User " + requestEventUser.get.userId + " without admin permission.")
             halt(403, "You do not have permission to edit users at this event.")
         }
 
@@ -143,81 +142,43 @@ class EventController(val eventRepo: EventRepo,
     }
     //get a list of tournaments for an event
     get("/:id/tournaments") {
-     Ok(tournamentRepo.getByEvent(paramId.get))
+        Ok(tournamentRepo.getByEvent(paramId.get))
+    }
+
+    get("/:id/users/:userId/pay") {
+        auth()
+        val paymentService = new StripePayment(event = requestEvent.get, eventUserRepo = eventUserRepo, eventPaymentRepo = eventPaymentRepo)
+        Ok(paymentService.getExistingCustomer(user))
     }
 
 
     //A user paying for registration
-    post("/:id/users/:userId/payRegistration") {
-        NotImplemented()
-/*        import scala.collection.mutable
+    post("/:id/users/:userId/pay/stripe") {
+        import scala.collection.mutable
         auth()
-        if (params("userId").toInt != user.id && (user.role == "admin" || requestEvent.get.isAdmin(user))) {
-            val paid = parsedBody.\("paid").extractOrElse[Boolean](halt(400, "Missing payment status"))
-            val receipt = parsedBody.\("receipt").extractOpt[String]
-            val theuser = requestEventUser.get.userId //userRepo.get(params("userId").toInt).getOrElse(halt(400, "User with that Id does not exist."))
-            eventRepo.update(requestEvent.get)
-            val atype = if (user.role == "admin") "Admin" else "Event Admin"
-            logger.info("[" + atype + "] (" + user.id + ") Setting payment for User " + theuser.id + " on Event " + requestEvent.get.id + " to " + paid.toString.toUpperCase)
-            Ok()
-        }
-        else {
-            parsedBody.\("type").extractOpt[String] match {
-                case None =>
-                    halt(400, "No payment type was specified.")
-                case Some("Stripe") =>
-                    val card = parsedBody.\("card").extract[String]
-                    val paymentService: PaymentService = new StripePayment(requestEvent.get)
-                    paymentService.checkForExistingUser(user) match {
-                        case None =>
-                            logger.info("No user with customer or payment Id found.")
-                            val eventUserRepo = inject[EventUserRepo]
-                            val payingUser = eventUserRepo.getByUser(user).headOption.getOrElse(halt(500,"Could not find you in our system! Contact an admin to sort this out."))
+        val paymentService = new StripePayment(event = requestEvent.get, eventUserRepo = eventUserRepo, eventPaymentRepo = eventPaymentRepo)
+        val eventUser = eventUserRepo.getByEventAndUser(requestEvent.get.id.get, user.id.get).get
 
-                           val evWithCustomer = try {
-                                paymentService.createCustomer(payingUser,mutable.Map("card" -> card))
-                            }
-                            catch {
-                                case cust: CustomerException =>
-                                    halt(500,
-                                      s"""There was a problem with stripe. Your card has NOT been charged. Please check your payment details and try again.
-                                         | The problem: ${cust.getMessage} .
-                                         | The error: ${cust.getCause.getMessage}""".stripMargin)
-                                case e: Exception =>
-                                   val json = render(("message" -> "We had a problem storing your payment Id. Your card has NOT been charged. DO NOT attempt to pay again, please contact an admin or send us a ticket.") ~
-                                                    ("customerId" -> e.getMessage))
-                                    halt(500, json)
-                            }
-
-                            try {
-                                paymentService.makePayment(evWithCustomer)
-                            }
-                            catch {
-                                case p: PaymentException =>
-                                    val msg =
-                                      s"""There was a problem with stripe. Your card has NOT been charged. DO NOT attempt to pay again, please contact an admin or send us a ticket.
-                                         |The problem: ${p.getMessage} .
-                                         |The error: ${p.getCause.getMessage} """.stripMargin
-                                    val json = render(("message" -> msg) ~
-                                        ("customerId" -> evWithCustomer.customerId))
-                                    halt(500, json)
-                                case e: Exception =>
-                                    val msg = "We had a problem storing your payment receipt. Your card HAS been charged. Please contact an admin or send us a ticket."
-                                    val json = render(("message" -> msg) ~
-                                        ("customerId" -> evWithCustomer.customerId))
-                                    halt(500, json)
-                            }
-                            Ok("Payment successful!")
-
-                        case _ =>
-                            logger.warn("User with customer or payment Id found!")
-                            halt(500, "You already have already payment information in our system! Please contact an admin or send us a ticket letting us know the problem.")
-                    }
-                case Some(s: String) =>
-                    NotImplemented
-                //TODO more payment types?
+        try {
+            if (paymentService.getExistingCustomer(user).isEmpty) {
+                val card = parsedBody.\("card").extract[String]
+                val evWithCustomer = paymentService.createCustomer(eventUser, mutable.Map("card" -> card))
+                paymentService.makePayment(evWithCustomer)
             }
-        }*/
+            else
+                paymentService.makePayment(eventUser)
+        }
+        catch {
+            case ce: CardException =>
+                halt(500, "There was a problem with your card. Make sure it is valid and your information is entered correctly. Error: " + ce.getMessage)
+            case ir: InvalidRequestException =>
+                halt(500, "Something was missing from our Stripe call! Double check your payment information and if this error persists contact the admins. Error: " + ir.getMessage)
+            case auth: AuthenticationException =>
+                halt(500, "We couldn't authenticate with Stripe! this could be a problem with Stripe, or the payment information for this event is not setup correctly. Error: " + auth.getMessage)
+            case e: Exception =>
+                halt(500, "There was a problem with processing your payment. Please contact an admin. Error: " + e.getMessage)
+        }
+        Ok("Payment successful!")
     }
     //add new payment option
     post("/:id/payments") {
@@ -267,22 +228,22 @@ class EventController(val eventRepo: EventRepo,
     * Tournament URL Support
     * */
 
-/*    post("/tournaments"){
-        redirect(url("tournaments"))
-    }
-    get("/tournaments/:id"){
-        redirect(url("tournaments/"+params("tid")))
-    }
-    patch("/tournaments/:id"){
-        redirect(url("tournaments/"+params("tid")))
-    }
-    delete("/tournaments/:id"){
-        redirect(url("tournaments/"+params("tid")))
-    }
-    get("/tournaments/:id/details"){
-        redirect(url("tournaments/"+params("tid")))
-    }
-    patch("/tournaments/:tid/details"){
-        redirect(url("tournaments/"+params("tid")+"/details"))
-    }*/
+    /*    post("/tournaments"){
+            redirect(url("tournaments"))
+        }
+        get("/tournaments/:id"){
+            redirect(url("tournaments/"+params("tid")))
+        }
+        patch("/tournaments/:id"){
+            redirect(url("tournaments/"+params("tid")))
+        }
+        delete("/tournaments/:id"){
+            redirect(url("tournaments/"+params("tid")))
+        }
+        get("/tournaments/:id/details"){
+            redirect(url("tournaments/"+params("tid")))
+        }
+        patch("/tournaments/:tid/details"){
+            redirect(url("tournaments/"+params("tid")+"/details"))
+        }*/
 }
