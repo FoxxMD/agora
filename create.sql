@@ -14,7 +14,7 @@ CREATE TABLE confirmationtokens
 );
 CREATE TABLE event_details
 (
-    events_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    events_id INT PRIMARY KEY NOT NULL,
     location VARCHAR(45),
     address VARCHAR(45),
     city VARCHAR(45),
@@ -60,6 +60,7 @@ CREATE TABLE events_users
     isAdmin BIT DEFAULT b'0' NOT NULL,
     isModerator BIT DEFAULT b'0' NOT NULL,
     hasPaid BIT DEFAULT b'0' NOT NULL,
+    paymentType VARCHAR(45),
     receiptId VARCHAR(45),
     customerId VARCHAR(45),
     FOREIGN KEY (events_id) REFERENCES events (id) ON DELETE CASCADE,

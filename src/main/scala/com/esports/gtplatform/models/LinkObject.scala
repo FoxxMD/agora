@@ -22,7 +22,7 @@ case class GuildUser(guildId: Option[Int], userId: Int, isCaptain: Boolean = fal
     var user: User = null
 }
 
-case class EventUser(eventId: Int, userId: Int, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, receiptId: Option[String] = None, customerId: Option[String] = None, id: Option[Int] = None) {
+case class EventUser(eventId: Int, userId: Int, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, hasPaid: Boolean = false, paymentType: Option[String] = None, receiptId: Option[String] = None, customerId: Option[String] = None, id: Option[Int] = None) {
     //For hydration
     var event: Option[Event] = None
     var user: Option[User] = None
