@@ -25,4 +25,7 @@ case class Guild(name: String, description: Option[String] = None, maxPlayers: O
                 teamRepo.getByGuild(this.id.get).map(x => x.tournament)
         }
     }
+
+    //needed for squeryl table initialization. See "Nullable columns are mapped with Option[] fields http://squeryl.org/schema-definition.html
+    def this() = this(name = "", description = Some(""), maxPlayers = Some(0), joinType = "", createdDate = DateTime.now, id = Some(0))
 }

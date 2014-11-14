@@ -15,4 +15,6 @@ case class Team(name: String, joinType: String, tournamentId: Int, createdDate: 
 
 
   def getCaptain = this.teamPlayers.find(u => u.isCaptain).get.user
+
+    def this() = this(name = "", joinType = "", tournamentId = 0, createdDate = DateTime.now, isPresent = false, guildOnly = false, guildId = Some(0), id = Some(0))
 }

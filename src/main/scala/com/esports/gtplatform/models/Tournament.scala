@@ -19,6 +19,9 @@ case class Tournament(tournamentTypeId: Int, registrationType: String = "Public"
     //def setDetails(e: TournamentDetail): Tournament = this applyLens DetailsLens set Option(e)
     //def isAdmin(u: User) = this.users.exists(x => x.userId.id == u.id && x.isAdmin)
     //def isModerator(u: User) = this.users.exists(x => x.userId.id == u.id && (x.isModerator || x.isAdmin))
+
+    //needed for squeryl table initialization. See "Nullable columns are mapped with Option[] fields http://squeryl.org/schema-definition.html
+    def this() = this(tournamentTypeId = 0, registrationType = "", gameId = 0, eventId = 0, id = Some(0))
 }
 
 case class TournamentDetail(tournamentId: Option[Int] = None,
@@ -39,4 +42,6 @@ case class TournamentDetail(tournamentId: Option[Int] = None,
                             playerMaxSize: Option[Int] = None) {
 
     var tournament: Tournament = null
+
+    def this() = this(tournamentId = Some(0), name = Some(""), gamePlayed = Some(""), location = Some(""), locationsub = Some(""), description = Some(""), rules = Some(""), prizes = Some(""), streams = Some(""), servers = Some(""), timeStart = Some(DateTime.now), timeEnd = Some(DateTime.now), teamMaxSize = Some(0), teamMinSize = Some(0), playerMaxSize = Some(0), playerMinSize = Some(0))
 }
