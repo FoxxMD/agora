@@ -5,7 +5,6 @@ import com.esports.gtplatform.business.{PasswordTokenRepo, UserIdentityRepo, Web
 import com.esports.gtplatform.models.{PasswordToken}
 import models.{User, UserIdentity}
 import org.slf4j.LoggerFactory
-import org.springframework.jdbc.BadSqlGrammarException
 
 /**
  * Created by Matthew on 11/12/2014.
@@ -18,7 +17,7 @@ class AccountService(val passwordTokenRepo: PasswordTokenRepo,val userIdentRepo:
         val salted = PasswordSecurity.createHash(password)
 
         if(token.isDefined){
-            ident = userIdentRepo.getByUser(token.get.id).headOption
+            ident = userIdentRepo.getByUser(token.get.userId).headOption
         }
         else if(user.isDefined){
             userIdentRepo.getByUser(user.get)

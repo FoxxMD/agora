@@ -8,9 +8,10 @@ CREATE UNIQUE INDEX apiToken_UNIQUE ON apikeys (apiToken);
 CREATE UNIQUE INDEX id_UNIQUE ON apikeys (id);
 CREATE TABLE confirmationtokens
 (
-    userIdentId INT PRIMARY KEY NOT NULL,
+    userIdentId INT NOT NULL,
     token VARCHAR(50) NOT NULL,
-    eventId INT
+    eventId INT,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT
 );
 CREATE TABLE event_details
 (
@@ -172,10 +173,12 @@ CREATE TABLE nonactiveusers
 CREATE UNIQUE INDEX id_UNIQUE ON nonactiveusers (id);
 CREATE TABLE passwordtokens
 (
-    id INT PRIMARY KEY NOT NULL,
-    token VARCHAR(70) NOT NULL
+    userId INT NOT NULL,
+    token VARCHAR(70) NOT NULL,
+    id INT UNSIGNED PRIMARY KEY NOT NULL
 );
-CREATE UNIQUE INDEX unique_Id ON passwordtokens (id);
+CREATE UNIQUE INDEX id_UNIQUE ON passwordtokens (id);
+CREATE UNIQUE INDEX unique_Id ON passwordtokens (userId);
 CREATE UNIQUE INDEX unique_token ON passwordtokens (token);
 CREATE TABLE teams
 (
@@ -204,12 +207,14 @@ CREATE INDEX team_id_idx ON teams_users (teams_id);
 CREATE INDEX user_id_idx ON teams_users (users_id);
 CREATE TABLE tokens
 (
-    id INT PRIMARY KEY NOT NULL,
+    userId INT NOT NULL,
     token VARCHAR(100) NOT NULL,
     issuedOn INT,
-    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX token_UNIQUE ON tokens (token);
+CREATE UNIQUE INDEX userId_UNIQUE ON tokens (userId);
 CREATE TABLE tournaments
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
