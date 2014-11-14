@@ -69,3 +69,14 @@ class UserIdentityRepository extends GenericSquerylRepository[UserIdentity](user
     override def getByUserPass(email: String): Option[UserIdentity] = inTransaction (userIdents.where(u => u.email === email).singleOption)
 }
 class UserPlatformRepository extends GenericSquerylRepository[UserPlatformProfile](userPlatformProfiles) with UserPlatformRepo
+
+class GuildRepository extends GenericSquerylRepository[Guild](guilds) with GuildRepo {
+
+    override def getByName(name: String): Option[Guild] = inTransaction (guilds.where(x => x.name === name).singleOption)
+}
+
+class GuildUserRepository extends GenericSquerylRepository[GuildUser](guildUsers) with GuildUserRepo {
+
+    override def getByGuild(id: Int): List[GuildUser] = inTransaction (guildUsers.where(x => x.guildId === id).toList)
+}
+class GuildGameRepository extends GenericSquerylRepository[GuildGame](guildGames) with GuildGameLinkRepo

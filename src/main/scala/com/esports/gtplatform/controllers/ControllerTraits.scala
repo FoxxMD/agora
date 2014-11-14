@@ -327,7 +327,7 @@ trait TeamT extends StandardController {
     def teamUserRepo: TeamUserRepo
     def teamService: TeamServiceT
     def rosterService: RosterServiceT
-    def possibleTeam: Option[Team] = None
+    var possibleTeam: Option[Team] = None
     def requestTeam: Team = possibleTeam.get
 
     before("/:id/?*") {
@@ -339,7 +339,7 @@ trait TeamT extends StandardController {
         if (paramId.isDefined)
             teamRepo.get(paramId.get) match {
                 case Some(t: Team) =>
-                    val possibleTeam = Some(t)
+                    possibleTeam = Some(t)
                 case None =>
                     halt(400, "No "+idType+" exists with the Id " + paramId.get)
             }

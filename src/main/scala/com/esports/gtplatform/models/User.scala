@@ -9,9 +9,9 @@ import org.joda.time.DateTime
  */
 
 case class User(email: String, createdDate: DateTime = DateTime.now(), firstName: Option[String] = None, lastName: Option[String] = None, globalHandle: String, role: String = "User", id: Option[Int] = None) extends DomainEntity[User] {
-
-    var guilds: List[GuildUser] = List()
-    var gameProfiles: List[UserPlatformProfile] = List()
+    import com.esports.gtplatform.dao.SquerylDao._
+    lazy val guilds: List[GuildUser] = List()
+    lazy val gameProfiles: List[UserPlatformProfile] = userToPlatforms.left(this).iterator.toList
 
   def getTournaments: List[Tournament] = ???
 
@@ -42,7 +42,6 @@ case class UserIdentity(userId: Int, userIdentifier: String, providerId: String,
     def this() = this(userId = 0, userIdentifier = "", providerId = "", email = Some(""), password = Some(""), firstName = Some(""), lastName = Some(""), id = Some(0))
 }
 case class UserPlatformProfile(userId: Int, platform: String, identifier: String, id: Option[Int] = None) extends DomainEntity[UserPlatformProfile] {
-    var user: User = null
 
     def this() = this(userId = 0, platform = "", identifier = "", id = Some(0))
 }

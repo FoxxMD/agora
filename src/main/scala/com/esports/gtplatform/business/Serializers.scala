@@ -10,9 +10,7 @@ import org.json4s.jackson.JsonMethods._
 /**
  * Created by Matthew on 7/31/2014.
  */
-/*
-* This is all magic.
-* */
+
 
 class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Class[T]](formats => ( {
     PartialFunction.empty
@@ -157,7 +155,8 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
         )*/
     case t: Guild =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new EntityDetailsSerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
-        Extraction.decompose(t)/* merge
+        Extraction.decompose(t) merge
+        render("members" -> Extraction.decompose(t.members))/* merge
             render(("captain" -> t.getCaptain.globalHandle) ~
                 ("tournaments" ->
                     t.getTournaments(new TeamRepository).map(x =>
@@ -175,10 +174,9 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
       render("events" -> Extraction.decompose(teamRepo.getByTeam(t).map(x => x.tournament.event).distinct.map(u => ("name" -> u.name) ~ ("id" -> u.id))))*/
     case g: Game =>
         import com.esports.gtplatform.dao.Squreyl._
-        import com.esports.gtplatform.dao.SquerylDao._
         implicit val formats: Formats = DefaultFormats
         Extraction.decompose(g) merge
-        render("tournamentTypes" -> inTransaction { Extraction.decompose(g.tournamentTypes.iterator.toList) })
+        render("tournamentTypes" -> inTransaction { Extraction.decompose(g.tournamentTypes) })
     case e: Event =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
         (Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge

@@ -82,16 +82,16 @@ CREATE TABLE games
     logoFilename VARCHAR(30)
 );
 CREATE UNIQUE INDEX id_UNIQUE ON games (id);
-CREATE TABLE games_tournaments_types
+CREATE TABLE gametournamenttype
 (
-    games_id INT NOT NULL,
-    tournamenttypes_id INT NOT NULL,
+    gameId INT NOT NULL,
+    tournamenttypeId INT NOT NULL,
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    FOREIGN KEY (games_id) REFERENCES games (id) ON DELETE CASCADE,
-    FOREIGN KEY (tournamenttypes_id) REFERENCES tournaments_types (Id) ON DELETE CASCADE
+    FOREIGN KEY (gameId) REFERENCES games (id) ON DELETE CASCADE,
+    FOREIGN KEY (tournamenttypeId) REFERENCES tournaments_types (Id) ON DELETE CASCADE
 );
-CREATE INDEX game_tt_id_idx ON games_tournaments_types (games_id);
-CREATE INDEX tt_id_idx ON games_tournaments_types (tournamenttypes_id);
+CREATE INDEX game_tt_id_idx ON gametournamenttype (gameId);
+CREATE INDEX tt_id_idx ON gametournamenttype (tournamenttypeId);
 CREATE TABLE guilds
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -104,25 +104,25 @@ CREATE TABLE guilds
 CREATE TABLE guilds_games
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    guilds_id INT NOT NULL,
-    games_id INT NOT NULL,
-    FOREIGN KEY (games_id) REFERENCES games (id) ON DELETE CASCADE,
-    FOREIGN KEY (guilds_id) REFERENCES guilds (id) ON DELETE CASCADE
+    guildId INT NOT NULL,
+    gameId INT NOT NULL,
+    FOREIGN KEY (gameId) REFERENCES games (id) ON DELETE CASCADE,
+    FOREIGN KEY (guildId) REFERENCES guilds (id) ON DELETE CASCADE
 );
-CREATE INDEX guild_game_id_idx ON guilds_games (games_id);
-CREATE INDEX guild_guild_id_idx ON guilds_games (guilds_id);
-CREATE TABLE guilds_users
+CREATE INDEX guild_game_id_idx ON guilds_games (gameId);
+CREATE INDEX guild_guild_id_idx ON guilds_games (guildId);
+CREATE TABLE guilduser
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    guilds_id INT NOT NULL,
-    users_id INT NOT NULL,
+    guildId INT NOT NULL,
+    userId INT NOT NULL,
     isCaptain BIT DEFAULT b'0' NOT NULL,
-    FOREIGN KEY (guilds_id) REFERENCES guilds (id) ON DELETE CASCADE,
-    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (guildId) REFERENCES guilds (id) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX id_UNIQUE ON guilds_users (id);
-CREATE INDEX guild_id_idx ON guilds_users (guilds_id);
-CREATE INDEX user_id_idx ON guilds_users (users_id);
+CREATE UNIQUE INDEX id_UNIQUE ON guilduser (id);
+CREATE INDEX guild_id_idx ON guilduser (guildId);
+CREATE INDEX user_id_idx ON guilduser (userId);
 CREATE TABLE invites
 (
     id INT PRIMARY KEY NOT NULL,
@@ -185,14 +185,14 @@ CREATE TABLE teams
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name VARCHAR(45) NOT NULL,
     joinType VARCHAR(45) NOT NULL,
-    tournament_id INT NOT NULL,
+    tournamentId INT NOT NULL,
     createdDate INT NOT NULL,
     isPresent BIT DEFAULT b'0' NOT NULL,
     guildOnly BIT DEFAULT b'0' NOT NULL,
     guildId INT,
-    FOREIGN KEY (tournament_id) REFERENCES tournaments (id) ON DELETE CASCADE
+    FOREIGN KEY (tournamentId) REFERENCES tournaments (id) ON DELETE CASCADE
 );
-CREATE INDEX team_tournament_id_idx ON teams (tournament_id);
+CREATE INDEX team_tournament_id_idx ON teams (tournamentId);
 CREATE TABLE teams_users
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -232,7 +232,7 @@ CREATE INDEX tournament_game_id ON tournaments (events_id);
 CREATE INDEX tournament_type_id_idx1 ON tournaments (tournamenttypes_id);
 CREATE TABLE tournaments_details
 (
-    tournament_id INT PRIMARY KEY NOT NULL,
+    tournamentId INT NOT NULL,
     name VARCHAR(45),
     gamePlayed VARCHAR(45),
     description LONGTEXT,
@@ -248,9 +248,12 @@ CREATE TABLE tournaments_details
     teamMaxSize INT,
     playerMinSize INT,
     playerMaxSize INT,
-    FOREIGN KEY (tournament_id) REFERENCES tournaments (id) ON DELETE CASCADE
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    FOREIGN KEY (tournamentId) REFERENCES tournaments (id) ON DELETE CASCADE
 );
-CREATE INDEX tournament_details_id_idx ON tournaments_details (tournament_id);
+CREATE UNIQUE INDEX id_UNIQUE ON tournaments_details (id);
+CREATE UNIQUE INDEX tournamentId_UNIQUE ON tournaments_details (tournamentId);
+CREATE INDEX tournament_details_id_idx ON tournaments_details (tournamentId);
 CREATE TABLE tournaments_types
 (
     Id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -260,17 +263,17 @@ CREATE TABLE tournaments_types
 CREATE TABLE tournaments_users
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    users_id INT NOT NULL,
-    tournament_id INT NOT NULL,
+    userId INT NOT NULL,
+    tournamentId INT NOT NULL,
     isPresent BIT DEFAULT b'0' NOT NULL,
     isAdmin BIT DEFAULT b'0' NOT NULL,
     isModerator BIT DEFAULT b'0' NOT NULL,
-    FOREIGN KEY (tournament_id) REFERENCES tournaments (id) ON DELETE CASCADE,
-    FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (tournamentId) REFERENCES tournaments (id) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX id_UNIQUE ON tournaments_users (id);
-CREATE INDEX tournament_user_id_idx ON tournaments_users (tournament_id);
-CREATE INDEX user_tournament_id_idx ON tournaments_users (users_id);
+CREATE INDEX tournament_user_id_idx ON tournaments_users (tournamentId);
+CREATE INDEX user_tournament_id_idx ON tournaments_users (userId);
 CREATE TABLE users
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

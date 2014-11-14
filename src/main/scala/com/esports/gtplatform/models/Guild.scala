@@ -1,17 +1,21 @@
 package models
 
 import com.esports.gtplatform.business.TeamRepo
+import com.esports.gtplatform.models.DomainEntity
 import org.joda.time.DateTime
+import com.esports.gtplatform.dao.Squreyl._
+import com.esports.gtplatform.dao.SquerylDao._
 
 /**
  * Created by Matthew on 6/30/2014.
  */
 
-case class Guild(name: String, description: Option[String] = None, maxPlayers: Option[Int], joinType: String = "Public", createdDate: DateTime = DateTime.now(), id: Option[Int] = None) {
+case class Guild(name: String, description: Option[String] = None, maxPlayers: Option[Int], joinType: String = "Public", createdDate: DateTime = DateTime.now(), id: Option[Int] = None) extends DomainEntity[Guild] {
+
 
     var games: List[Game] = List()
     var gamesLink: List[GuildGame] = List()
-    var members: List[GuildUser] = List()
+    lazy val members: List[GuildUser] = inTransaction {guildToUsers.left(this).associations.toList}
 
   def getCaptain = this.members.find(u => u.isCaptain).get.user
 

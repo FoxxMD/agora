@@ -12,7 +12,7 @@ case class Game(name: String = "A Game",
 
     import com.esports.gtplatform.dao.SquerylDao._
 
-    lazy val tournamentTypes = gameTournamentRelation.left(this)
+    lazy val tournamentTypes = gameTournamentRelation.left(this).iterator.toList
 
     def this() = this("",Some(""),Some(""),"",true,true,Some(""),Some(0))
 }

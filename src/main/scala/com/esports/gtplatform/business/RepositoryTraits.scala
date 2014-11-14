@@ -58,7 +58,7 @@ trait TeamRepo extends GenericEntityRepo[Team]
 
 trait GuildRepo extends GenericEntityRepo[Guild]
 trait GuildGameLinkRepo extends GenericRepo[GuildGame]
-trait GuildUserRepo extends GenericEntityRepo[GuildUser] {
+trait GuildUserRepo extends GenericRepo[GuildUser] {
     def getByGuild(id: Int): List[GuildUser]
 }
 trait GameRepo extends GenericEntityRepo[Game]
@@ -89,8 +89,16 @@ trait TournamentUserRepo extends GenericUserLinkRepo[TournamentUser] {
     def getByTournament(tournament: Tournament): List[TournamentUser]
 }
 trait TournamentTypeRepo extends GenericRepo[TournamentType]
-trait NonActiveUserIdentityRepo extends UserIdentityRepo
-trait NonActiveUserRepo extends UserRepo
+
+trait NonActiveUserRepo extends GenericRepo[User] {
+    def getByEmail(email: String): Option[User]
+    def getByHandle(handle: String): Option[User]
+}
+trait NonActiveUserIdentityRepo extends GenericRepo[UserIdentity] {
+    def getByUser(user: User): List[UserIdentity]
+    def getByUser(id: Int): List[UserIdentity]
+    def getByUserPass(email: String): Option[UserIdentity]
+}
 
 trait ApiKeyRepo extends GenericRepo[ApiKey]
 trait ConfirmationTokenRepo extends GenericRepo[ConfirmationToken] {
