@@ -9,8 +9,10 @@ case class Game(name: String = "A Game",
                 userPlay: Boolean = true,
                 teamPlay: Boolean = true,
                 logoFilename: Option[String] = None, id: Option[Int] = None) extends DomainEntity[Game] {
-    var tournamentTypes: Set[TournamentType] = Set()
-    var ttLink: Set[GameTournamentType] = Set()
+
+    import com.esports.gtplatform.dao.SquerylDao._
+
+    lazy val tournamentTypes = gameTournamentRelation.left(this)
 
     def this() = this("",Some(""),Some(""),"",true,true,Some(""),Some(0))
 }

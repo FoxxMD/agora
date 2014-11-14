@@ -17,7 +17,7 @@ case class TeamUser(teamId: Option[Int], userId: Int, isCaptain: Boolean = false
     var user: User = null
 
     //needed for squeryl table initialization. See "Nullable columns are mapped with Option[] fields http://squeryl.org/schema-definition.html
-    def this() = this(teamId = Some(0), userId = Some(0), isCaptain = false, id = Some(0))
+    def this() = this(teamId = Some(0), userId = 0, isCaptain = false, id = Some(0))
 
 }
 case class GuildUser(guildId: Option[Int], userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) {
@@ -43,7 +43,7 @@ case class TournamentUser(userId: Int, tournamentId: Int, isPresent: Boolean = f
     def this() = this(userId = 0, tournamentId = 0, isPresent = false, isAdmin = false, isModerator = false, id = Some(0))
 }
 
-case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Option[Int] = None) {
+case class TournamentType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Option[Int] = None) extends DomainEntity[TournamentType] {
     def this() = this(name = "", teamPlay = true, id = Some(0))
 }
 

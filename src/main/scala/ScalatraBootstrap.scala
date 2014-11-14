@@ -4,7 +4,6 @@ import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.controllers._
 import com.esports.gtplatform.data.DatabaseInit
-import com.googlecode.mapperdao.jdbc.Transaction
 import org.scalatra.LifeCycle
 
 /* This is where we bootstrap the back-end service -- it's basically a "Global" file in any other context. Not much
@@ -53,6 +52,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[GameTTLinkRepo] to new GameTTLinkRepository
     bind[SqlAccess] to None
     bind[UserIdentityRepo] to new UserIdentityRepository
+    bind[UserPlatformRepo] to new UserPlatformRepository
     bind[GuildRepo] to None
     bind[GuildUserRepo] to None
     bind[GuildGameLinkRepo] to None
@@ -107,13 +107,14 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
         guildService = inject[GuildServiceT],
         guildGameRepo = inject[GuildGameLinkRepo]
         ), "/api/guilds")
+        */
 
         context.mount(new UserController(
             userRepo = inject[UserRepo],
             userIdentRepo = inject[UserIdentityRepo],
         userPlatformRepo = inject[UserPlatformRepo]
             ), "/api/users")
-
+/*
         val tourController = new TournamentController(
             tournamentRepo = inject[TournamentRepo],
             tournamentUserRepo = inject[TournamentUserRepo],

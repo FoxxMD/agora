@@ -2,7 +2,6 @@ package models
 
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.DomainEntity
-import io.strongtyped.active.slick.models.Identifiable
 import org.joda.time.DateTime
 
 /**
@@ -42,7 +41,7 @@ case class UserIdentity(userId: Int, userIdentifier: String, providerId: String,
 {
     def this() = this(userId = 0, userIdentifier = "", providerId = "", email = Some(""), password = Some(""), firstName = Some(""), lastName = Some(""), id = Some(0))
 }
-case class UserPlatformProfile(userId: Int, platform: String, identifier: String, id: Option[Int] = None) {
+case class UserPlatformProfile(userId: Int, platform: String, identifier: String, id: Option[Int] = None) extends DomainEntity[UserPlatformProfile] {
     var user: User = null
 
     def this() = this(userId = 0, platform = "", identifier = "", id = Some(0))

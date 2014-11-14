@@ -4,14 +4,11 @@ import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services.{EventServiceT, GuildServiceT, RosterServiceT, TeamServiceT}
 import com.esports.gtplatform.models.Team
 import com.fasterxml.jackson.core.JsonParseException
-import com.googlecode.mapperdao.Persisted
-import com.googlecode.mapperdao.exceptions.QueryException
 import models._
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 import org.slf4j.LoggerFactory
-import org.springframework.jdbc.BadSqlGrammarException
 
 /**
  * Created by Matthew on 7/24/2014.
@@ -44,12 +41,12 @@ trait BasicServletWithLogging extends ScalatraServlet {
         case n: NotImplementedError =>
             logger.error(n.getMessage, n)
             halt(500, "We forgot to implement something...")
-        case q: QueryException =>
+/*        case q: QueryException =>
             logger.error(q.getMessage, q)
             halt(500, "Database problems...")
         case my: BadSqlGrammarException =>
             logger.error(my.getMessage, my)
-            halt(500, "Database problems...")
+            halt(500, "Database problems...")*/
         case np: NullPointerException =>
             logger.error(np.getMessage, np)
             halt(500, "Something went wrong!")
@@ -69,7 +66,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
     //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
     //Eventually will have to add support for all Enumeration types used.
-    protected implicit val jsonFormats: Formats = DefaultFormats + new com.esports.gtplatform.json.DateSerializer //++ GTSerializers.mapperSerializers + new EntityDetailsSerializer + new EntitySerializer
+    protected implicit val jsonFormats: Formats = DefaultFormats + new com.esports.gtplatform.json.DateSerializer ++ GTSerializers.mapperSerializers + new EntityDetailsSerializer + new EntitySerializer
     before() {
 
         //Lets the controller know to format the response in json so we don't have to specify on each action.
@@ -265,7 +262,7 @@ trait UserControllerT extends StandardController {
     def userIdentRepo: UserIdentityRepo
     def userPlatformRepo: UserPlatformRepo
     def requestUser: User = possibleUser.get
-    def possibleUser: Option[User] = None
+    var possibleUser: Option[User] = None
     before("/:id/?*") {
         val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
         if (p == "me")
@@ -279,7 +276,7 @@ trait UserControllerT extends StandardController {
         if (paramId.isDefined)
             userRepo.get(paramId.get) match {
                 case Some(t: User) =>
-                    val possibleUser = Some(t)
+                    possibleUser = Some(t)
                 case None =>
                     halt(400, "No user exists with the Id " + paramId.get)
             }

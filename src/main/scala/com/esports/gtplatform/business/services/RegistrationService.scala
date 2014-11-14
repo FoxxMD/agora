@@ -7,10 +7,8 @@ package com.esports.gtplatform.business.services
 import com.esports.gtplatform.Utilities.PasswordSecurity
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.ConfirmationToken
-import com.googlecode.mapperdao.Persisted
 import models.{EventUser, User, UserIdentity, Event}
 import org.slf4j.LoggerFactory
-import com.googlecode.mapperdao.jdbc.Transaction
 class ConfirmationException(message: String = null, cause: Throwable = null) extends RuntimeException(message, cause)
 class RegistrationService(val eventUserRepo: EventUserRepo, val inactiveUserRepo: NonActiveUserRepo, val inactiveIdentRepo: NonActiveUserIdentityRepo, val userRepo: UserRepo, val userIdentRepo: UserIdentityRepo, val confirmTokenRepo: ConfirmationTokenRepo) extends RegistrationServiceT {
 

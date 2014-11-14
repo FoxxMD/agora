@@ -102,5 +102,6 @@ trait PasswordTokenRepo extends GenericRepo[PasswordToken]{
 }
 trait WebTokenRepo extends GenericRepo[WebToken] {
     def getByToken(token: String): Option[WebToken]
+    def getByUser(id: Int): Option[WebToken]
 }
 
