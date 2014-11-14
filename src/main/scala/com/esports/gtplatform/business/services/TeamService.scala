@@ -1,6 +1,5 @@
 package com.esports.gtplatform.business.services
 
-import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.Team
 import models._

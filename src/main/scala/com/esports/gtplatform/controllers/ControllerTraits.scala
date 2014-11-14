@@ -22,7 +22,7 @@ import org.springframework.jdbc.BadSqlGrammarException
 *
 * In this file we are building the characteristics that we will make up a controller. */
 
-trait BasicServletWithLogging extends ScalatraFilter {
+trait BasicServletWithLogging extends ScalatraServlet {
 
     def toInt(s: String): Option[Int] = {
         try {

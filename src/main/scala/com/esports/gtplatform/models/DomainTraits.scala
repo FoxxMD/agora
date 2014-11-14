@@ -1,11 +1,12 @@
 package com.esports.gtplatform.models
 
 import models.{Guild, Tournament, User}
+import org.squeryl.KeyedEntityDef
 
 /**
  * Created by Matthew on 8/26/2014.
  */
-trait DomainEntity[T <: DomainEntity[T]] {
+trait DomainEntity[T] {
     def id: Option[Int]
 }
 trait GroupT[T] {

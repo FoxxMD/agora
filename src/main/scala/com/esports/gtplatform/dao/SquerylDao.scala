@@ -26,13 +26,23 @@ object Squreyl extends PrimitiveTypeMode {
         def isPersisted(g: DomainEntity[_]) = g.id.isDefined
         def idPropertyName = "id"
     }
+/*    implicit object gameKED extends KeyedEntityDef[Game, Int] {
+        def getId(g: Game) = g.id.get
+        def isPersisted(g: Game) = g.id.isDefined
+        def idPropertyName = "id"
+    }
+    implicit object gameTTKED extends KeyedEntityDef[GameTournamentType, Int] {
+        def getId(g: GameTournamentType) = g.id.get
+        def isPersisted(g: GameTournamentType) = g.id.isDefined
+        def idPropertyName = "id"
+    }*/
 
 }
 import com.esports.gtplatform.dao.Squreyl._
 object SquerylDao extends Schema {
 
 
-    val games = table[Game]
+    val games = table[Game]("games")
     on(games)(g => declare(
     g.id is (unique,autoIncremented,indexed)
     ))

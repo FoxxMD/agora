@@ -4,7 +4,6 @@ package com.esports.gtplatform.business.services
  * Created by Matthew on 8/20/2014.
  */
 
-import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import com.esports.gtplatform.Utilities.PasswordSecurity
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.ConfirmationToken

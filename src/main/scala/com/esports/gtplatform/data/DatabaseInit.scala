@@ -27,7 +27,7 @@ trait DatabaseInit {
 
   val databaseUsername = "gtgamefest"
   val databasePassword = "testing"
-  val databaseConnection = "jdbc:mysql://localhost/gtgamefest_new"
+  val databaseConnection = "jdbc:mysql://localhost/gtgamefest_scal"
 
   var cpds = new ComboPooledDataSource
     logger.info("creating connection")

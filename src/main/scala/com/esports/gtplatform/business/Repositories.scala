@@ -21,6 +21,7 @@ class SquerylTransaction extends TransactionSupport {
 
 class GenericSquerylRepository[T <: DomainEntity[T]](theTable: Table[T]) extends GenericRepo[T] {
     import com.esports.gtplatform.dao.Squreyl._
+    import com.esports.gtplatform.dao.SquerylDao._
     def table = theTable
 
     def create(entity: T) = table.insert(entity)
@@ -30,7 +31,11 @@ class GenericSquerylRepository[T <: DomainEntity[T]](theTable: Table[T]) extends
         entity
     }
 
-    def getAll: List[T] = from(table)(a => select(a) orderBy(a.id.get asc)).toList
+    def getAll: List[T] = {
+        inTransaction{
+            table.allRows.toList
+        }
+    }
 
     def delete(entity: T) = table.delete(entity.id.get)
 
@@ -42,7 +47,10 @@ class GenericSquerylRepository[T <: DomainEntity[T]](theTable: Table[T]) extends
         }
     }
 
-    override def get(id: Int): Option[T] = table.lookup(id)
+    override def get(id: Int): Option[T] = inTransaction {
+        val t = table
+        table.lookup(id)
+    }
 
     override def delete(id: Int): Unit = table.delete(id)
 

@@ -44,6 +44,8 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             Transaction.default(Transaction.transactionManager(jdbc))
         }
     })*/
+
+    bind[UserRepo] to new UserRepository
     bind[WebTokenRepo] to new WebTokenRepository
     bind[ApiKeyRepo] to new ApiKeyRepository
     bind[TransactionSupport] to new SquerylTransaction
@@ -54,11 +56,11 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[GuildRepo] to None
     bind[GuildUserRepo] to None
     bind[GuildGameLinkRepo] to None
-    bind[UserRepo] to new UserRepository
+
     bind[TournamentRepo] to None
     //Created a separate set of tables/repositories for non-confirmed users.
-    bind[NonActiveUserIdentityRepo] to None
-    bind[NonActiveUserRepo] to None
+    //bind[NonActiveUserIdentityRepo] to None
+    //bind[NonActiveUserRepo] to None
     bind[EventRepo] to None
     bind[EventUserRepo] to None
     bind[TournamentUserRepo] to None
@@ -66,7 +68,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[TournamentTypeRepo] to None
     bind[TeamRepo] to None
     bind[TeamUserRepo] to None
-    bind[Transaction] to None
+
 
 
     override def init(context: ServletContext) {

@@ -12,11 +12,11 @@ import scaldi.{Injectable, Injector}
  * Created by Matthew on 8/6/2014.
  */
 
-abstract class BaseController(implicit inj: Injector) extends Injectable {
+abstract class BaseController(implicit inj: Injector) extends BasicServletWithLogging with Injectable {
     val webTokenRepo = inject [WebTokenRepo]
     val apiKeyRepo = inject [ApiKeyRepo]
-    val userRepo = inject [UserRepo]
     val userIdentRepo = inject [UserIdentityRepo]
+    val userRepo = inject [UserRepo]
 }
 
 class UserController(override val userRepo: UserRepo, override val userIdentRepo: UserIdentityRepo, val userPlatformRepo: UserPlatformRepo)(implicit val inj: Injector) extends BaseController with UserControllerT {
