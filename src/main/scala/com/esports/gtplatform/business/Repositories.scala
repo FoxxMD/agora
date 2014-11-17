@@ -122,6 +122,19 @@ class EventUserRepository extends GenericSquerylRepository[EventUser](eventUsers
 
     override def getByEvent(id: Int): List[EventUser] = inTransaction (eventUsers.where(x => x.eventId === id).toList)
 
+    def getByEventHydrated(id: Int): List[EventUser] = {
+        val data = inTransaction{
+            join(eventUsers, users.leftOuter, events.leftOuter)((eu, u, e) =>
+            where(eu.eventId === id)
+            select(eu,u,e)
+            on(eu.userId === u.map(x => x.id.get),eu.eventId === e.map(x => x.id.get))).toList
+        }
+       for(d <- data)yield{
+
+            d._1.copy(_event = d._3, _user = d._2)
+        }
+    }
+
     override def getByEventAndUser(eventId: Int, userId: Int): Option[EventUser] = inTransaction (eventUsers.where(x => x.eventId === eventId and x.userId === userId).singleOption)
 
     override def getByUser(u: User): List[EventUser] = inTransaction (eventUsers.where(x => x.userId === u.id).toList)

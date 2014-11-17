@@ -45,7 +45,11 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Class[T]](
     case t: Team =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer
         Extraction.decompose(t) merge
-            render("teamPlayers" -> Extraction.decompose(t.teamPlayers))
+            render("teamPlayers" -> Extraction.decompose(t.teamPlayers)) removeField{
+            case ("email", _) => true
+            case ("team", _) => true
+            case _ => false
+        }
     /*    Extraction.decompose(t.copy()) merge
           render(("userPlay" -> t.tournament.tournamentType.userPlay) ~
                  ("teamPlay" -> t.tournament.tournamentType.teamPlay))*/
@@ -75,29 +79,21 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Class[T]]
                         ("id" -> tu.userId.id) ~
                         ("resource" -> "/user/") ~
                         ("isCaptain" -> tu.isCaptain))*/
-    case eu: EventUser =>
-        implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntitySerializer
+/*    case eu: EventUser =>
+        implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer //+ new EntitySerializer
         Extraction.decompose(eu) removeField {
             case ("customerId", _) => true
             case ("recieptId", _) => true
             case _ => false
         } merge
             render(("event" -> Extraction.decompose(eu.event)) ~
-                ("user" -> Extraction.decompose(eu.user)))
-    /*        ("event" ->
-                ("name" -> eu.eventId.name) ~
-                ("id" -> eu.eventId.id)) ~
-                //("date" -> Extraction.decompose(eu.event.details.timeStart)) ~
-                ("isPresent" -> eu.isPresent) ~
-                ("isAdmin" -> eu.isAdmin) ~
-                ("isModerator" -> eu.isModerator) ~
-                ("hasPaid" -> eu.hasPaid) ~
-                ("globalHandle" -> eu.userId.globalHandle) ~
-                ("id" -> eu.userId.id) ~
-                ("platforms" -> Extraction.decompose(eu.userId.gameProfiles)) ~
-                ("guilds" -> Extraction.decompose(eu.userId.guilds)) ~
-                ("tournaments" -> eu.userId.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository, new TournamentRepository, Option(eu.eventId)).size)//TODO clean this shit up
-                */
+                ("user" -> Extraction.decompose(eu.user))) removeField {
+            case ("admins", _) => true
+        case("moderators", _) => true
+        case("payments", _) => true
+        case("games", _) => true
+            case _ => false
+        }*/
     case tu: TournamentUser =>
         implicit val formats: Formats = DefaultFormats + new EntityDetailsSerializer + new EntityAuxillarySerializer
         Extraction.decompose(tu) merge
@@ -132,7 +128,7 @@ class GuildSerializer extends CustomSerializer[Guild](formats => ( {
             case ("email", _) => true
             //case ("guildId", _) => true
             //case ("userId", _) => true
-            case("details", _) => true
+            case ("details", _) => true
             //case("gameId", _) => true
             case _ => false
         }
@@ -142,6 +138,21 @@ class GuildSerializer extends CustomSerializer[Guild](formats => ( {
 class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats => ( {
     PartialFunction.empty
 }, {
+    case eu: EventUser =>
+        implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer //+ new EntitySerializer
+        Extraction.decompose(eu) merge
+            render(
+                ("event" -> Extraction.decompose(eu.event)) ~
+                ("user" -> Extraction.decompose(eu.user))) removeField {
+            case ("customerId", _) => true
+            case ("recieptId", _) => true
+            case ("admins", _) => true
+            case("moderators", _) => true
+            case("payments", _) => true
+            case("games", _) => true
+            case("email", _) => true
+            case _ => false
+        }
     case u: User =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new GuildSerializer
         Extraction.decompose(u) removeField {
@@ -202,32 +213,38 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
             })
     case e: Event =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
-        (Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge
-            render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))) merge
-            render("moderators" -> e.getModerators.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))))
-            .replace(List("payments"), Extraction.decompose(e.payments.filter(x => x.isEnabled))) //TODO learn json4s and remove non enabled events from JSON rather than re-rendering filtered list
-            .replace(List("tournaments"), e.tournaments.size) merge
-            /*           render("games" -> e.tournaments.map(x => x.gameId).groupBy(m => m)
-                           .map(y => ("name" -> y._1.name) ~
-                           ("id" -> y._1.id) ~
-                           ("gameType" -> Extraction.decompose(y._1.gameType)) ~
-                           ("filename" -> y._1.logoFilename) ~
-                           ("count" -> y._2.size)
-                           )
-                       ) merge*/
-            render("teams" -> e.tournaments.foldLeft(0)((b, a) => b + a.teams.size))
+        Extraction.decompose(e) merge
+            render(
+                ("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))) ~
+                    ("moderators" -> e.getModerators.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))) ~
+                    ("teams" -> e.tournaments.foldLeft(0)((b, a) => b + a.teams.size)) ~
+                    ("users" -> e.users.size) ~
+                    ("tournaments" -> e.tournaments.size) ~
+                    ("payments" -> Extraction.decompose(e.payments.filter(x => x.isEnabled))) ~
+                    ("games" -> e.tournaments.map(x => x.game).groupBy(m => m)
+                        .map(y => ("name" -> y._1.name) ~
+                        ("id" -> y._1.id) ~
+                        ("gameType" -> Extraction.decompose(y._1.gameType)) ~
+                        ("filename" -> y._1.logoFilename) ~
+                        ("count" -> y._2.size)
+                        )))
     case t: Tournament =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
-        val tour = Extraction.decompose(t) merge
+        var tour = Extraction.decompose(t) merge
             render(("users" -> t.users.size) ~
                 ("teams" -> t.teams.size) ~
                 ("tournamentType" -> Extraction.decompose(t.tournamentType)) ~
                 ("game" -> Extraction.decompose(t.game)) ~
                 ("details" -> Extraction.decompose(t.details)))
-            tour
+        if(t.details.isDefined)
+        {
+            if(t.details.get.prizes.isDefined)
+                tour = tour.replace(List("prizes"),parse(t.details.get.prizes.get))
         }
+        tour
+}
     ))
 
 object GTSerializers {
-    val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer, new EntityAuxillarySerializer, new GuildSerializer)
+    val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer, new EntityAuxillarySerializer, new GuildSerializer, new EntitySerializer)
 }

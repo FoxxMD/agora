@@ -45,11 +45,11 @@ class TournamentController(val tournamentRepo: TournamentRepo,
     * Top-level Object
     * */
     get("/:id") {
-        val jsonTour = Extraction.decompose(requestTournament)
+        /*val jsonTour = Extraction.decompose(requestTournament)
             .replace(List("users"), Extraction.decompose(requestTournament.users))
             .replace(List("teams"), Extraction.decompose(requestTournament.teams))
-        Ok(jsonTour)
-        //Ok(requestTournament)
+        Ok(jsonTour)*/
+        Ok(requestTournament)
     }
     patch("/:id") {
         auth()
@@ -83,7 +83,7 @@ class TournamentController(val tournamentRepo: TournamentRepo,
         Ok()
     }
 
-    get("/:id/teams/") {
+    get("/:id/teams") {
         Ok(requestTournament.teams)
     }
 

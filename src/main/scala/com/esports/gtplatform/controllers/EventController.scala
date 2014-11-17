@@ -82,9 +82,11 @@ class EventController(val eventRepo: EventRepo,
     get("/:id/users") {
         params.get("page") match {
             case Some(p: String) =>
-                Ok(eventUserRepo.getByEvent(requestEvent.get.id.get).drop(pageSize * (p.toInt - 1)).take(pageSize))
+                Ok(eventUserRepo.getByEventHydrated(requestEvent.get.id.get).drop(pageSize * (p.toInt - 1)).take(pageSize))
             case None =>
-                Ok(eventUserRepo.getByEvent(requestEvent.get.id.get).take(pageSize))
+                val e = eventUserRepo.getByEventHydrated(requestEvent.get.id.get)
+                val a = e.take(pageSize)
+                Ok(a)
         }
     }
     get("/:id/users/:userId") {

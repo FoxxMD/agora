@@ -66,7 +66,7 @@ trait RESTController extends BasicServletWithLogging with JacksonJsonSupport wit
 
     //Providing conversion between primitives and JSON, with added support for serializing the GameType enumeration.
     //Eventually will have to add support for all Enumeration types used.
-    protected implicit val jsonFormats: Formats = DefaultFormats + new com.esports.gtplatform.json.DateSerializer ++ GTSerializers.mapperSerializers + new EntityDetailsSerializer + new EntitySerializer
+    protected implicit val jsonFormats: Formats = DefaultFormats + new com.esports.gtplatform.json.DateSerializer ++ GTSerializers.mapperSerializers
     before() {
 
         //Lets the controller know to format the response in json so we don't have to specify on each action.
@@ -288,7 +288,7 @@ trait TournamentT extends StandardController {
     def tournamentRepo: TournamentRepo
     def tournamentUserRepo: TournamentUserRepo
     def tournamentDetailsRepo: TournamentDetailsRepo
-    def possibleTournament: Option[Tournament] = None
+    var possibleTournament: Option[Tournament] = None
     def requestTournament: Tournament = possibleTournament.get
     var requestTournamentUser: Option[TournamentUser] = None
 
@@ -302,7 +302,7 @@ trait TournamentT extends StandardController {
         if (paramId.isDefined)
             tournamentRepo.get(paramId.get) match {
                 case Some(t: Tournament) =>
-                    val possibleTournament = Some(t)
+                    possibleTournament = Some(t)
                 case None =>
                     halt(400, "No "+idType+" exists with the Id " + paramId.get)
             }

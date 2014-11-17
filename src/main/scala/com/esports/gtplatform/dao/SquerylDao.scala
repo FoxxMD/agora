@@ -111,7 +111,7 @@ object SquerylDao extends Schema {
 
     val tournamentDetails = table[TournamentDetail]("tournaments_details")
 
-    val tournamentUsers = table[TournamentUser]("tournaments_users")
+    val tournamentUsers = table[TournamentUser]("tournamentuser")
     on(tournamentUsers)(tu => declare(
     tu.id is (unique, autoIncremented, indexed)
     ))
@@ -148,7 +148,7 @@ object SquerylDao extends Schema {
     t.id is (unique, autoIncremented, indexed)
     ))
 
-    val teamUsers = table[TeamUser]("teams_users")
+    val teamUsers = table[TeamUser]("teamuser")
     on(teamUsers)(tu => declare(
     tu.id is (unique, autoIncremented, indexed)
     ))
@@ -177,7 +177,7 @@ object SquerylDao extends Schema {
     ep.id is (unique, autoIncremented, indexed)
     ))
 
-    val eventUsers = table[EventUser]("events_users")
+    val eventUsers = table[EventUser]("eventuser")
     on(eventUsers)(eu => declare(
     eu.id is (unique, autoIncremented, indexed)
     ))

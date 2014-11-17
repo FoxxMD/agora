@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 /**
  * Created by Matthew on 6/30/2014.
  */
-case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, id: Option[Int] = None) extends DomainEntity[Tournament] {
+case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, id: Option[Int] = None, private var _users: Option[List[TournamentUser]] = None, private var _teams: Option[List[Team]] = None) extends DomainEntity[Tournament] {
 
     import com.esports.gtplatform.dao.Squreyl._
     import com.esports.gtplatform.dao.SquerylDao._
@@ -20,8 +20,14 @@ case class Tournament(tournamentTypeId: Int, registrationType: String = "Public"
     lazy val game: Game = gameRepo.get(gameId).get
     lazy val event: Event = eventRepo.get(eventId).get
     def details: Option[TournamentDetail] = tourDetailRepo.getByTournament(id.get)
-    lazy val users: List[TournamentUser] = inTransaction (tournamentToTournamentUsers.left(this).associations.iterator.toList)
-    lazy val teams: List[Team] = inTransaction (tournamentToTeams.left(this).iterator.toList)
+    def users: List[TournamentUser] = if(this._users.isDefined) this._users.get else inTransaction {
+        _users = Option(tournamentToTournamentUsers.left(this).associations.toList)
+        _users.get
+    }
+    def teams: List[Team] = if (this._teams.isDefined) this._teams.get else inTransaction {
+        _teams = Option(tournamentToTeams.left(this).toList)
+        _teams.get
+    }
     lazy val tournamentType: TournamentType = tourTypeRepo.get(tournamentTypeId).get
 
 

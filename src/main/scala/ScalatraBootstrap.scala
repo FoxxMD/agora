@@ -54,6 +54,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[AccountServiceT] to injected[AccountService]
     bind[TournamentServiceT] to injected[TournamentService]
     bind[RosterServiceT] to injected[RosterService]
+    bind[TeamServiceT] to injected[TeamService]
 
 
     override def init(context: ServletContext) {
@@ -112,6 +113,13 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
         eventDetailRepo = inject[EventDetailRepo],
         eventPaymentRepo = inject[EventPaymentRepo]
         ), "/api/events")
+
+        context.mount(new TeamController(
+        teamRepo = inject[TeamRepo],
+        teamUserRepo = inject[TeamUserRepo],
+        teamService = inject[TeamServiceT],
+        rosterService = inject[RosterServiceT]
+        ), "/api/teams")
 
     }
 

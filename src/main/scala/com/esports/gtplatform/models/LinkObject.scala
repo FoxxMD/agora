@@ -49,11 +49,24 @@ case class EventUser(
                         paymentType: Option[String] = None,
                         receiptId: Option[String] = None,
                         customerId: Option[String] = None,
-                        id: Option[Int] = None) extends DomainEntity[EventUser] {
+                        id: Option[Int] = None,
+                        private var _event: Option[Event] = None,
+                        private var _user: Option[User] = None) extends DomainEntity[EventUser] {
     //For hydration
-    def event: Option[Event] = inTransaction ( events.lookup(this.eventId).headOption)
-    def user: Option[User] = inTransaction (users.lookup(this.userId).headOption)
-
+    def event: Option[Event] = if(this._event.isDefined)
+    {
+        _event
+    } else inTransaction {
+        _event = events.lookup(this.eventId).headOption
+        _event
+    }
+    //def event_=(e: Option[Event]) { _event = e }
+    def user: Option[User] = if(this._user.isDefined) {
+        _user
+    } else inTransaction {
+        _user = users.lookup(this.userId).headOption
+        _user
+    }
     def this() = this(
         eventId = 0,
         userId = 0,
