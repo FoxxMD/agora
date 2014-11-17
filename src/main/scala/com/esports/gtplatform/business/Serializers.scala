@@ -23,6 +23,13 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Class[T]](fo
         }
         else
             f
+    case td: TournamentDetail =>
+        implicit val formats: Formats = DefaultFormats + new DateSerializer
+        var f = Extraction.decompose(td)
+        if (td.rules.isDefined) {
+            f = f.replace(List("rules"), parseOpt(td.rules.get))
+        }
+        f
 }
     ))
 
@@ -53,18 +60,6 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Class[T]]
         Extraction.decompose(tu) merge
             render(("user" -> Extraction.decompose(tu.user)) ~
                 ("guild" -> Extraction.decompose(tu.guild)))
-
-    /*        ("Guild" ->
-                ("name" -> tu.guildId.name) ~
-                ("id" -> tu.guildId.id) ~
-                ("isCaptain" -> tu.isCaptain) ~
-                ("createdDate" -> Extraction.decompose(tu.guildId.createdDate)) ~
-                ("members" -> tu.guildId.members.size) ~
-                ("games" -> tu.guildId.games.size)) ~
-                ("User" ->
-                    ("name" -> tu.userId.globalHandle) ~
-                        ("id" -> tu.userId.id) ~
-                        ("isCaptain" -> tu.isCaptain))*/
     case tu: TeamUser =>
         implicit val formats: Formats = DefaultFormats
         Extraction.decompose(tu) merge
@@ -124,12 +119,31 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Class[T]]
 }
     ))
 
+class GuildSerializer extends CustomSerializer[Guild](formats => ( {
+    PartialFunction.empty
+}, {
+    case t: Guild => implicit val formats: Formats = DefaultFormats + new EntitySerializer
+        Extraction.decompose(t) merge
+            render(("members" -> Extraction.decompose(t.members)) ~
+                ("tournaments" -> Extraction.decompose(t.getTournaments()))) removeField {
+            //Don't need to include guild info since it'd be recursive
+            case ("guild", _) => true
+            //Don't reveal the users email!
+            case ("email", _) => true
+            //case ("guildId", _) => true
+            //case ("userId", _) => true
+            case("details", _) => true
+            //case("gameId", _) => true
+            case _ => false
+        }
+}))
+
 //[T](mt: Manifest[T](implicit val bindingModule: BindingModule) https://github.com/dickwall/subcut/blob/master/GettingStarted.md#creating-an-injectable-class ?
 class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats => ( {
     PartialFunction.empty
 }, {
     case u: User =>
-        implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer
+        implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new GuildSerializer
         Extraction.decompose(u) removeField {
             case ("User", _) => true
             case ("email", _) => true
@@ -153,22 +167,29 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
                             ("teams" -> x.teams.size))
                 })
         )*/
-    case t: Guild =>
-        implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new EntityDetailsSerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
-        Extraction.decompose(t) merge
-        render("members" -> Extraction.decompose(t.members))/* merge
-            render(("captain" -> t.getCaptain.globalHandle) ~
-                ("tournaments" ->
-                    t.getTournaments(new TeamRepository).map(x =>
-                        ("id" -> x.id) ~
-                            ("name" -> x.details.flatMap(u => u.name)) ~
-                            ("game" -> x.gameId.name) ~
-                            ("tournamentType" -> x.tournamentTypeId.name) ~
-                            ("eventId" -> x.eventId.id) ~
-                            ("teams" -> x.teams.size)))) removeField {
-            case ("Team", _) => true
-            case _ => false
-        }*/
+    /*    case t: Guild =>
+            implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new EntityDetailsSerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
+            Extraction.decompose(t) merge
+                render(("members" -> Extraction.decompose(t.members)) ~
+                    ("tournaments" -> Extraction.decompose(t.getTournaments()))) removeField {
+                case ("guild", _) => true
+                case ("email", _) => true
+                case ("guildId", _) => true
+                case ("userId", _) => true
+                case _ => false
+            } *//* merge
+                render(("captain" -> t.getCaptain.globalHandle) ~
+                    ("tournaments" ->
+                        t.getTournaments(new TeamRepository).map(x =>
+                            ("id" -> x.id) ~
+                                ("name" -> x.details.flatMap(u => u.name)) ~
+                                ("game" -> x.gameId.name) ~
+                                ("tournamentType" -> x.tournamentTypeId.name) ~
+                                ("eventId" -> x.eventId.id) ~
+                                ("teams" -> x.teams.size)))) removeField {
+                case ("Team", _) => true
+                case _ => false
+            }*/
     /* merge
       render("tournaments" -> Extraction.decompose(teamRepo.getByTeam(t))) merge
       render("events" -> Extraction.decompose(teamRepo.getByTeam(t).map(x => x.tournament.event).distinct.map(u => ("name" -> u.name) ~ ("id" -> u.id))))*/
@@ -176,36 +197,37 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
         import com.esports.gtplatform.dao.Squreyl._
         implicit val formats: Formats = DefaultFormats
         Extraction.decompose(g) merge
-        render("tournamentTypes" -> inTransaction { Extraction.decompose(g.tournamentTypes) })
+            render("tournamentTypes" -> inTransaction {
+                Extraction.decompose(g.tournamentTypes)
+            })
     case e: Event =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
         (Extraction.decompose(e.copy()).replace(List("users"), e.users.size) merge
             render("admins" -> e.getAdmins.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))) merge
             render("moderators" -> e.getModerators.map(x => ("Name" -> x.globalHandle) ~ ("id" -> x.id))))
             .replace(List("payments"), Extraction.decompose(e.payments.filter(x => x.isEnabled))) //TODO learn json4s and remove non enabled events from JSON rather than re-rendering filtered list
-            .replace(List("tournaments"), e.tournaments.size)  merge
- /*           render("games" -> e.tournaments.map(x => x.gameId).groupBy(m => m)
-                .map(y => ("name" -> y._1.name) ~
-                ("id" -> y._1.id) ~
-                ("gameType" -> Extraction.decompose(y._1.gameType)) ~
-                ("filename" -> y._1.logoFilename) ~
-                ("count" -> y._2.size)
-                )
-            ) merge*/
+            .replace(List("tournaments"), e.tournaments.size) merge
+            /*           render("games" -> e.tournaments.map(x => x.gameId).groupBy(m => m)
+                           .map(y => ("name" -> y._1.name) ~
+                           ("id" -> y._1.id) ~
+                           ("gameType" -> Extraction.decompose(y._1.gameType)) ~
+                           ("filename" -> y._1.logoFilename) ~
+                           ("count" -> y._2.size)
+                           )
+                       ) merge*/
             render("teams" -> e.tournaments.foldLeft(0)((b, a) => b + a.teams.size))
     case t: Tournament =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
-        val tour = Extraction.decompose(t.copy())
-            .replace(List("users"), t.users.size)
-            .replace(List("teams"), t.teams.size)
-            .removeField {
-            case ("Tournament", _) => true
-            case _ => false
+        val tour = Extraction.decompose(t) merge
+            render(("users" -> t.users.size) ~
+                ("teams" -> t.teams.size) ~
+                ("tournamentType" -> Extraction.decompose(t.tournamentType)) ~
+                ("game" -> Extraction.decompose(t.game)) ~
+                ("details" -> Extraction.decompose(t.details)))
+            tour
         }
-        tour
-}
     ))
 
 object GTSerializers {
-    val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer, new EntityAuxillarySerializer)
+    val mapperSerializers = List(new LinkObjectEntitySerializer, new EntityDetailsSerializer, new com.esports.gtplatform.json.DateSerializer, new EntityAuxillarySerializer, new GuildSerializer)
 }

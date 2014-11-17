@@ -1,5 +1,6 @@
 package models
 
+import com.esports.gtplatform.business.{EventDetailRepo, EventDetailsRepository}
 import com.esports.gtplatform.models.DomainEntity
 import org.joda.time.DateTime
 
@@ -9,10 +10,12 @@ case class Event(name: String = "A New Event", joinType: String = "Public", id: 
     import com.esports.gtplatform.dao.Squreyl._
     import com.esports.gtplatform.dao.SquerylDao._
 
-    def details: Option[EventDetail] = eventDetails.where(x => x.eventId === this.id.get).singleOption
-    lazy val payments: List[EventPayment] = eventToPayments.left(this).iterator.toList
-    lazy val users: List[EventUser] = eventToUsers.left(this).associations.iterator.toList
-    lazy val tournaments: List[Tournament] = eventToTournaments.left(this).iterator.toList
+    private[this] val eventDetailsRepo: EventDetailRepo = new EventDetailsRepository
+
+    def details: Option[EventDetail] = eventDetailsRepo.get(id.get)
+    lazy val payments: List[EventPayment] = inTransaction (eventToPayments.left(this).iterator.toList)
+    lazy val users: List[EventUser] = inTransaction (eventToUsers.left(this).associations.iterator.toList)
+    lazy val tournaments: List[Tournament] = inTransaction (eventToTournaments.left(this).iterator.toList)
 
 
   def getModerators: List[User] = this.users.filter(x => x.isModerator).map(u => u.user.get)
@@ -27,7 +30,8 @@ case class Event(name: String = "A New Event", joinType: String = "Public", id: 
 }
 
 
-case class EventDetail(locationName: Option[String] = None, address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None, streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None, scheduledEvents: Option[String] = None, credits: Option[String] = None, faq: Option[String] = None, eventId: Option[Int] = None){
+case class EventDetail(locationName: Option[String] = None, address: Option[String] = None, city: Option[String] = None, state: Option[String] = None, description: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None, streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None, scheduledEvents: Option[String] = None, credits: Option[String] = None, faq: Option[String] = None, eventId: Option[Int] = None) extends DomainEntity[EventDetail]{
+    def id = eventId
     def this() = this(locationName = Some(""), address = Some(""), city = Some(""), state = Some(""), description = Some(""), rules = Some(""), prizes = Some(""), streams = Some(""), servers = Some(""), timeStart = Some(DateTime.now), timeEnd = Some(DateTime.now), scheduledEvents = Some(""), credits = Some(""), faq = Some(""), eventId = Some(0))
 }
 case class EventPayment(eventsId: Int, payType: String, secretKey: Option[String], publicKey: Option[String], address: Option[String], amount: Double, isEnabled: Boolean = true, id: Option[Int] = None) extends DomainEntity[EventPayment]{

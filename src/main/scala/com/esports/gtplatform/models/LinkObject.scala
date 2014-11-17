@@ -1,5 +1,6 @@
 package models
 
+import com.esports.gtplatform.business.{UserRepository, GuildRepository}
 import com.esports.gtplatform.models.{DomainEntity, Team}
 import org.squeryl.KeyedEntityDef
 
@@ -25,13 +26,15 @@ case class TeamUser(teamId: Option[Int], userId: Int, isCaptain: Boolean = false
 
 }
 case class GuildUser(guildId: Option[Int], userId: Int, isCaptain: Boolean = false, id: Option[Int] = None) extends DomainEntity[GuildUser] {
-    implicit object guildKED extends KeyedEntityDef[Guild, Option[Int]] {
+/*    implicit object guildKED extends KeyedEntityDef[Guild, Option[Int]] {
         def getId(g: Guild) = g.id
         def isPersisted(g: Guild) = g.id.isDefined && g.id.get != 0
         def idPropertyName = "id"
-    }
-   lazy val guild: Guild = inTransaction (guilds.lookup(guildId).head)
-    lazy val user: User = inTransaction (users.lookup(userId).head)
+    }*/
+    private[this] val guildRepo = new GuildRepository
+    private[this] val userRepo = new UserRepository
+   lazy val guild: Guild = guildRepo.get(guildId.get).get
+    lazy val user: User = userRepo.get(userId).get
 
     def this() = this(guildId = Some(0), userId = 0, isCaptain = false, id = Some(0))
 }

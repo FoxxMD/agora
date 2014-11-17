@@ -25,17 +25,19 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[GuildUserRepo] to new GuildUserRepository
     bind[GuildGameLinkRepo] to new GuildGameRepository
 
-    bind[TournamentRepo] to None
+    bind[TournamentRepo] to new TournamentRepository
     //Created a separate set of tables/repositories for non-confirmed users.
-    bind[NonActiveUserIdentityRepo] to None
-    bind[NonActiveUserRepo] to None
-    bind[EventRepo] to None
-    bind[EventUserRepo] to None
-    bind[TournamentUserRepo] to None
-    bind[TournamentUserRepo] to None
-    bind[TournamentTypeRepo] to None
-    bind[TeamRepo] to None
-    bind[TeamUserRepo] to None
+    bind[NonActiveUserIdentityRepo] to new NonActiveUserIdentityRepository
+    bind[NonActiveUserRepo] to new NonActiveUserRepository
+    bind[EventRepo] to new EventRepository
+    bind[EventUserRepo] to new EventUserRepository
+    bind[EventPaymentRepo] to new EventPaymentRepository
+    bind[EventDetailRepo] to new EventDetailsRepository
+    bind[TournamentUserRepo] to new TournamentUserRepository
+    bind[TournamentTypeRepo] to new TournamentTypesRepository
+    bind[TournamentDetailsRepo] to new TournamentDetailRepository
+    bind[TeamRepo] to new TeamRepository
+    bind[TeamUserRepo] to new TeamUserRepository
 
     bind[GuildServiceT] to new GuildService
 

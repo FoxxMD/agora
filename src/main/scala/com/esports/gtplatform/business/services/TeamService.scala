@@ -18,7 +18,7 @@ class TeamService(val teamRepo: TeamRepo,
   val logger = LoggerFactory.getLogger(getClass)
 
     private def isCaptain(user: User, obj: Team): Boolean = {
-        teamUserRepo.getByTournament(obj.tournamentId).exists(x => x.userId == user.id.get && x.isCaptain)
+        teamUserRepo.getByTeam(obj.id.get).exists(x => x.userId == user.id.get && x.isCaptain)
     }
 
     override def canDelete(user: User, obj: Team): Boolean = {

@@ -1,5 +1,6 @@
 package models
 
+import com.esports.gtplatform.business._
 import com.esports.gtplatform.models._
 import org.joda.time.DateTime
 
@@ -11,12 +12,17 @@ case class Tournament(tournamentTypeId: Int, registrationType: String = "Public"
     import com.esports.gtplatform.dao.Squreyl._
     import com.esports.gtplatform.dao.SquerylDao._
 
-    lazy val game: Game = inTransaction { games.lookup(this.gameId).get }
-    lazy val event: Event = inTransaction { events.lookup(this.eventId).get}
-    def details: Option[TournamentDetail] = inTransaction{ from(tournamentDetails)(t => where(t.tournamentId === id.get) select(t)) /*tournamentDetails.where(x => x.tournamentId.get === this.id.get).singleOption*/ }.headOption
-    lazy val users: List[TournamentUser] = tournamentToTournamentUsers.left(this).associations.iterator.toList
-    lazy val teams: List[Team] = tournamentToTeams.left(this).iterator.toList
-    lazy val tournamentType = inTransaction {tournamentTypes.lookup(this.tournamentTypeId).get}
+    private[this] val tourDetailRepo: TournamentDetailsRepo = new TournamentDetailRepository
+    private[this] val tourTypeRepo: TournamentTypeRepo = new TournamentTypesRepository
+    private[this] val eventRepo: EventRepo = new EventRepository
+    private[this] val gameRepo: GameRepo = new GameRepository
+
+    lazy val game: Game = gameRepo.get(gameId).get
+    lazy val event: Event = eventRepo.get(eventId).get
+    def details: Option[TournamentDetail] = tourDetailRepo.getByTournament(id.get)
+    lazy val users: List[TournamentUser] = inTransaction (tournamentToTournamentUsers.left(this).associations.iterator.toList)
+    lazy val teams: List[Team] = inTransaction (tournamentToTeams.left(this).iterator.toList)
+    lazy val tournamentType: TournamentType = tourTypeRepo.get(tournamentTypeId).get
 
 
     //needed for squeryl table initialization. See "Nullable columns are mapped with Option[] fields http://squeryl.org/schema-definition.html
