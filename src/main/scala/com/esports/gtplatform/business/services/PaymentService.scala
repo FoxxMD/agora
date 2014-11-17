@@ -65,7 +65,7 @@ class StripePayment(event: Event, eventUserRepo: EventUserRepo, eventPaymentRepo
         //Find any instances of this stripe account used in any other events
         val existingEventUser = eventPaymentRepo.getBySecret(currentPaymentInfo.secretKey.get).flatMap {
             //find EventUsers for each event that match our paying user
-            x => eventUserRepo.getByEventAndUser(x.eventsId, u.id.get)
+            x => eventUserRepo.getByEventAndUser(x.eventId, u.id.get)
             //Find the first one where the user has paid.
         }.find(x => x.paymentType.isDefined && x.paymentType.get == "stripe" && x.customerId.isDefined)
 

@@ -82,6 +82,7 @@ trait EventPaymentRepo extends GenericRepo[EventPayment]{
 trait TeamUserRepo extends GenericUserLinkRepo[TeamUser] {
     def getByTeam(id: Int): List[TeamUser]
     def getByEvent(id: Int): List[TeamUser]
+    def getByTournament(id: Int): List[TeamUser]
 }
 trait TournamentUserRepo extends GenericUserLinkRepo[TournamentUser] {
     def getByTournament(id: Int): List[TournamentUser]
@@ -102,7 +103,7 @@ trait NonActiveUserIdentityRepo extends GenericRepo[UserIdentity] {
 trait ApiKeyRepo extends GenericRepo[ApiKey]
 trait ConfirmationTokenRepo extends GenericRepo[ConfirmationToken] {
     def getByToken(token: String): Option[ConfirmationToken]
-    def getByUser(user: User): Option[ConfirmationToken]
+    //def getByUser(user: User): Option[ConfirmationToken]
 }
 trait PasswordTokenRepo extends GenericRepo[PasswordToken]{
     def getByToken(token: String): Option[PasswordToken]

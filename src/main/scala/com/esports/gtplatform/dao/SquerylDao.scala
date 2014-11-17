@@ -172,7 +172,7 @@ object SquerylDao extends Schema {
 
     val eventDetails = table[EventDetail]("events_details")
 
-    val eventPayments = table[EventPayment]("events_payments")
+    val eventPayments = table[EventPayment]("event_payments")
     on(eventPayments)(ep => declare(
     ep.id is (unique, autoIncremented, indexed)
     ))
@@ -184,7 +184,7 @@ object SquerylDao extends Schema {
 
     val eventToPayments =
     oneToManyRelation(events, eventPayments).
-    via((e,ep) => e.id === ep.eventsId)
+    via((e,ep) => e.id === ep.eventId)
 
     val eventToTournaments =
     oneToManyRelation(events, tournaments).

@@ -54,6 +54,15 @@ class WebTokenRepository extends GenericSquerylRepository[WebToken](webTokens) w
     override def getByUser(id: Int): Option[WebToken] = inTransaction (webTokens.where(w => w.userId === id).singleOption)
 }
 class ApiKeyRepository extends GenericSquerylRepository[ApiKey](apiKeys) with ApiKeyRepo
+class ConfirmationTokenRepository extends GenericSquerylRepository[ConfirmationToken](confirmationTokens) with ConfirmationTokenRepo {
+
+    override def getByToken(token: String): Option[ConfirmationToken] = inTransaction (confirmationTokens.where(x => x.token === token).singleOption)
+
+    //override def getByUser(user: User): Option[ConfirmationToken] = confirmationTokens.where(x => x.userIdentId === user.)
+}
+class PasswordTokenRepository extends GenericSquerylRepository[PasswordToken](passwordTokens) with PasswordTokenRepo {
+    override def getByToken(token: String): Option[PasswordToken] = inTransaction (passwordTokens.where(x => x.token === token).singleOption)
+}
 class UserRepository extends GenericSquerylRepository[User](users) with UserRepo{
 
     override def getByEmail(email: String): Option[User] = inTransaction (users.where(u => u.email === email).singleOption)
@@ -118,7 +127,7 @@ class EventUserRepository extends GenericSquerylRepository[EventUser](eventUsers
     override def getByUser(u: User): List[EventUser] = inTransaction (eventUsers.where(x => x.userId === u.id).toList)
 }
 class EventPaymentRepository extends GenericSquerylRepository[EventPayment](eventPayments) with EventPaymentRepo {
-    override def getByEvent(id: Int): List[EventPayment] = inTransaction (eventPayments.where(x => x.eventsId === id).toList)
+    override def getByEvent(id: Int): List[EventPayment] = inTransaction (eventPayments.where(x => x.eventId === id).toList)
 
     override def getBySecret(key: String): List[EventPayment] = inTransaction (eventPayments.where(x => x.secretKey === key).toList)
 }
@@ -135,11 +144,15 @@ class TeamRepository extends GenericSquerylRepository[Team](teams) with TeamRepo
 
 class TeamUserRepository extends GenericSquerylRepository[TeamUser](teamUsers) with TeamUserRepo {
 
+    private[this] val teamRepo: TeamRepo = new TeamRepository
+
     override def getByTeam(id: Int): List[TeamUser] = inTransaction (teamUsers.where(x => x.id === id).toList)
 
     override def getByEvent(id: Int): List[TeamUser] = ???
 
     override def getByUser(u: User): List[TeamUser] = inTransaction (teamUsers.where(x => x.userId === u.id).toList)
+
+    override def getByTournament(id: Int): List[TeamUser] = teamRepo.getByTournament(id).flatMap(x => x.teamPlayers)
 }
 
 //non-active repository

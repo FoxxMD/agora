@@ -1,23 +1,25 @@
 package com.esports.gtplatform.business.services
 
+import com.esports.gtplatform.business.{GuildUserRepo, GuildRepo}
 import models.{GuildUser, Guild, User}
 
 /**
  * Created by Matthew on 11/14/2014.
  */
-class GuildService extends GuildServiceT {
-    override def canJoin(gu: GuildUser): Boolean = ???
+class GuildService(val guildRepo: GuildRepo, val guildUserRepo: GuildUserRepo, val userService: UserServiceT) extends GuildServiceT {
 
-    override def isUnique(obj: Guild): Boolean = ???
+    override def canJoin(gu: GuildUser): Boolean = {
+        val guild = guildRepo.get(gu.guildId.get).get
+            guild.joinType != "invite" && (guild.maxPlayers.isEmpty || (guild.maxPlayers.isDefined && guild.members.size < guild.maxPlayers.get))
+    }
 
-    //def canCreate(user: User, id: Int): Boolean
-    override def canDelete(user: User, obj: Guild): Boolean = ???
+    override def isUnique(obj: Guild): Boolean = guildRepo.getByName(obj.name).isEmpty
 
-    override def canRead(user: User, obj: Guild): Boolean = ???
+    override def canDelete(user: User, obj: Guild): Boolean = obj.getCaptain == user || userService.hasAdminPermissions(user)
 
-    //def canModify(user: User, id: Int): Boolean
-    override def canCreate(user: User, obj: Guild): Boolean = ???
+    override def canRead(user: User, obj: Guild): Boolean = true
 
-    //def canRead(user: User, id: Int): Boolean
-    override def canModify(user: User, obj: Guild): Boolean = ???
+    override def canCreate(user: User, obj: Guild): Boolean = true
+
+    override def canModify(user: User, obj: Guild): Boolean = obj.getCaptain == user || userService.hasAdminPermissions(user)
 }

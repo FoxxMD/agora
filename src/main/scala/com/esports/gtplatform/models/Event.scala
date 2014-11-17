@@ -34,6 +34,6 @@ case class EventDetail(locationName: Option[String] = None, address: Option[Stri
     def id = eventId
     def this() = this(locationName = Some(""), address = Some(""), city = Some(""), state = Some(""), description = Some(""), rules = Some(""), prizes = Some(""), streams = Some(""), servers = Some(""), timeStart = Some(DateTime.now), timeEnd = Some(DateTime.now), scheduledEvents = Some(""), credits = Some(""), faq = Some(""), eventId = Some(0))
 }
-case class EventPayment(eventsId: Int, payType: String, secretKey: Option[String], publicKey: Option[String], address: Option[String], amount: Double, isEnabled: Boolean = true, id: Option[Int] = None) extends DomainEntity[EventPayment]{
-    def this() = this(eventsId = 0, payType = "", secretKey = Some(""), publicKey = Some(""), address = Some(""), amount = 0.0, isEnabled = true, id = Some(0))
+case class EventPayment(eventId: Int, payType: String, secretKey: Option[String], publicKey: Option[String], address: Option[String], amount: Double, isEnabled: Boolean = true, id: Option[Int] = None) extends DomainEntity[EventPayment]{
+    def this() = this(eventId = 0, payType = "", secretKey = Some(""), publicKey = Some(""), address = Some(""), amount = 0.0, isEnabled = true, id = Some(0))
 }

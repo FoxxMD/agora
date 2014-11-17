@@ -66,6 +66,7 @@ trait RosterServiceT {
     protected def teamRepo: TeamRepo
     protected def teamUserRepo: TeamUserRepo
     protected def tournamentUserRepo: TournamentUserRepo
+    protected def tournamentRepo: TournamentRepo
 
     def canJoin(tu: TeamUser): Boolean
     def canJoin(teamUsers: List[TeamUser]): Boolean
@@ -73,15 +74,27 @@ trait RosterServiceT {
 }
 
 trait EventServiceT extends GenericService[Event] with AuthorizationSupport[Event] with RoleSupport[Event] {
+    protected def eventRepo: EventRepo
+    protected def eventUserRepo: EventUserRepo
+    protected def teamRepo: TeamRepo
+    protected def tournamentRepo: TournamentRepo
+    protected def userService: UserServiceT
+
     def hasPaid(user: User, event: Event): Boolean
     def getGroups(event: Event): List[Team]
     def canJoin(user: User) = true
 }
 trait GuildServiceT extends GenericService[Guild] with AuthorizationSupport[Guild] {
+    protected def guildRepo: GuildRepo
+    protected def guildUserRepo: GuildUserRepo
+    protected def userService: UserServiceT
+
     def canJoin(gu: GuildUser): Boolean
 }
 
 trait UserServiceT extends GenericService[User] {
+    protected def userRepo: UserRepo
+
     def hasAdminPermissions(user: User): Boolean
     def hasModeratorPermissions(user: User): Boolean
 }
