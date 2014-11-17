@@ -161,6 +161,10 @@ object SquerylDao extends Schema {
     manyToManyRelation(teams, users).
     via[TeamUser]((t,u,link) => (link.teamId === t.id, u.id === link.userId))
 
+    val guildToTeams =
+    oneToManyRelation(guilds, teams).
+    via((g,t) => g.id === t.guildId)
+
     val events = table[Event]("events")
     on(events)(e => declare(
     e.id is (unique, autoIncremented, indexed)
@@ -210,5 +214,10 @@ object SquerylDao extends Schema {
     p.id is (unique, autoIncremented, indexed)
     ))
 
+    val nonActiveUsers = table[User]("nonactiveusers")
+    on(nonActiveUsers)(nu => declare(
+    nu.id is (unique, autoIncremented, indexed)
+    ))
+    val nonActiveUserIdents = table[UserIdentity]("nonactiveuseridentity")
 
 }

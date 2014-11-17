@@ -80,3 +80,80 @@ class GuildUserRepository extends GenericSquerylRepository[GuildUser](guildUsers
     override def getByGuild(id: Int): List[GuildUser] = inTransaction (guildUsers.where(x => x.guildId === id).toList)
 }
 class GuildGameRepository extends GenericSquerylRepository[GuildGame](guildGames) with GuildGameLinkRepo
+
+class TournamentRepository extends GenericSquerylRepository[Tournament](tournaments) with TournamentRepo {
+
+    override def getByEvent(id: Int): List[Tournament] = inTransaction(tournaments.where(x => x.eventId === id).toList)
+
+    override def getByName(name: String): Option[Tournament] = ???
+}
+
+class TournamentDetailRepository extends GenericSquerylRepository[TournamentDetail](tournamentDetails) with TournamentDetailsRepo {
+    override def getByTournament(id: Int): Option[TournamentDetail] = inTransaction (tournamentDetails.where(x => x.tournamentId === id).singleOption)
+}
+
+class TournamentUserRepository extends GenericSquerylRepository[TournamentUser](tournamentUsers) with TournamentUserRepo {
+
+    override def getByTournament(id: Int): List[TournamentUser] = inTransaction (tournamentUsers.where(x => x.tournamentId === id).toList)
+
+    override def getByTournament(tournament: Tournament): List[TournamentUser] = getByTournament(tournament.id.get)
+
+    override def getByUser(u: User): List[TournamentUser] = inTransaction (tournamentUsers.where(x => x.userId === u.id).toList)
+}
+
+class TournamentTypesRepository extends GenericSquerylRepository[TournamentType](tournamentTypes) with TournamentTypeRepo
+
+class EventRepository extends GenericSquerylRepository[Event](events) with EventRepo {
+    override def getByName(name: String): Option[Event] = inTransaction(events.where(x => x.name === name).singleOption)
+}
+
+class EventDetailsRepository extends GenericSquerylRepository[EventDetail](eventDetails) with EventDetailRepo
+
+class EventUserRepository extends GenericSquerylRepository[EventUser](eventUsers) with EventUserRepo {
+
+    override def getByEvent(id: Int): List[EventUser] = inTransaction (eventUsers.where(x => x.eventId === id).toList)
+
+    override def getByEventAndUser(eventId: Int, userId: Int): Option[EventUser] = inTransaction (eventUsers.where(x => x.eventId === eventId and x.userId === userId).singleOption)
+
+    override def getByUser(u: User): List[EventUser] = inTransaction (eventUsers.where(x => x.userId === u.id).toList)
+}
+class EventPaymentRepository extends GenericSquerylRepository[EventPayment](eventPayments) with EventPaymentRepo {
+    override def getByEvent(id: Int): List[EventPayment] = inTransaction (eventPayments.where(x => x.eventsId === id).toList)
+
+    override def getBySecret(key: String): List[EventPayment] = inTransaction (eventPayments.where(x => x.secretKey === key).toList)
+}
+
+class TeamRepository extends GenericSquerylRepository[Team](teams) with TeamRepo {
+
+    //def getByEvent: List[Team]
+    override def getByGuild(id: Int): List[Team] = inTransaction (teams.where(x => x.guildOnly === true and x.guildId === id).toList)
+
+    override def getByTournament(id: Int): List[Team] = inTransaction (teams.where(x => x.tournamentId === id).toList)
+
+    override def getByName(name: String): Option[Team] = inTransaction (teams.where(x => x.name === name).singleOption)
+}
+
+class TeamUserRepository extends GenericSquerylRepository[TeamUser](teamUsers) with TeamUserRepo {
+
+    override def getByTeam(id: Int): List[TeamUser] = inTransaction (teamUsers.where(x => x.id === id).toList)
+
+    override def getByEvent(id: Int): List[TeamUser] = ???
+
+    override def getByUser(u: User): List[TeamUser] = inTransaction (teamUsers.where(x => x.userId === u.id).toList)
+}
+
+//non-active repository
+class NonActiveUserRepository extends GenericSquerylRepository[User](nonActiveUsers) with NonActiveUserRepo{
+
+    override def getByEmail(email: String): Option[User] = inTransaction (users.where(u => u.email === email).singleOption)
+
+    override def getByHandle(handle: String): Option[User] = inTransaction (users.where(u => u.globalHandle === handle).singleOption)
+}
+class NonActiveUserIdentityRepository extends GenericSquerylRepository[UserIdentity](nonActiveUserIdents) with NonActiveUserIdentityRepo{
+
+    override def getByUser(user: User): List[UserIdentity] = inTransaction (getByUser(user.id.get))
+
+    override def getByUser(id: Int): List[UserIdentity] = inTransaction (userIdents.where(u => u.userId === id).toList)
+
+    override def getByUserPass(email: String): Option[UserIdentity] = inTransaction (userIdents.where(u => u.email === email).singleOption)
+}
