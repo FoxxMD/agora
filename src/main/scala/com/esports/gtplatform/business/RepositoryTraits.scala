@@ -64,7 +64,9 @@ trait GuildUserRepo extends GenericRepo[GuildUser] {
 }
 trait GameRepo extends GenericEntityRepo[Game]
 trait GameTTLinkRepo extends GenericRepo[GameTournamentType]
-trait EventRepo extends GenericEntityRepo[Event]
+trait EventRepo extends GenericEntityRepo[Event] {
+    def getHydrated(id: Int): Option[Event]
+}
 trait EventDetailRepo extends GenericRepo[EventDetail]
 trait TournamentRepo extends GenericEntityRepo[Tournament] {
     def getByEvent(id: Int): List[Tournament]

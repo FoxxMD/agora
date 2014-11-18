@@ -9,6 +9,7 @@ import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json._
 import org.slf4j.LoggerFactory
+import org.squeryl.SquerylSQLException
 
 /**
  * Created by Matthew on 7/24/2014.
@@ -50,6 +51,9 @@ trait BasicServletWithLogging extends ScalatraServlet {
         case np: NullPointerException =>
             logger.error(np.getMessage, np)
             halt(500, "Something went wrong!")
+        case sqle: SquerylSQLException =>
+            logger.error("Squreyl Error", sqle)
+            halt(500, "Our database is being Squerylly :(")
         case e: Error =>
             logger.error(e.getMessage, e)
             halt(500, "Something went wrong!")

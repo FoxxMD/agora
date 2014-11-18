@@ -144,17 +144,31 @@ class TournamentUserRepository extends GenericSquerylRepository[TournamentUser](
 class TournamentTypesRepository extends GenericSquerylRepository[TournamentType](tournamentTypes) with TournamentTypeRepo
 
 class EventRepository extends GenericSquerylRepository[Event](events) with EventRepo {
+    private[this] val eventDetailRepo: EventDetailRepo = new EventDetailsRepository
+
     override def getByName(name: String): Option[Event] = inTransaction(events.where(x => x.name === name).singleOption)
+
+    override def getHydrated(id: Int): Option[Event] = {
+        val data = inTransaction{
+         join(events, eventUsers.leftOuter, tournaments.leftOuter)((e, eu, t) =>
+         where(e.id.get === id)
+            select(e,eu,t)
+         on(e.id.get === eu.map(x => x.eventId), e.id.get === t.map(x => x.eventId))).toList
+        }
+        if(data.isEmpty)
+            return None
+        val event = data.head._1
+        val unzipped = data.unzip3
+        event.users(unzipped._2.flatMap(x => x))
+        event.tournaments(unzipped._3.flatMap(x => x))
+        //event.details(eventDetailRepo.get(event.id.get).get)
+        Option(event)
+    }
 }
 
 class EventDetailsRepository extends GenericSquerylRepository[EventDetail](eventDetails) with EventDetailRepo
 
 class EventUserRepository extends GenericSquerylRepository[EventUser](eventUsers) with EventUserRepo {
-
-/*    private val hydrator =
-        join(eventUsers, users.leftOuter, events.leftOuter)((eu, u, e) =>
-        select(eu, u, e)
-            on(eu.userId === u.map(x => x.id.get), eu.eventId === e.map(x => x.id.get)))*/
 
     override def getByEvent(id: Int): List[EventUser] = inTransaction(eventUsers.where(x => x.eventId === id).toList)
 

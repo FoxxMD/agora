@@ -170,7 +170,7 @@ object SquerylDao extends Schema {
     e.id is (unique, autoIncremented, indexed)
     ))
 
-    val eventDetails = table[EventDetail]("events_details")
+    val eventDetails = table[EventDetail]("eventdetails")
 
     val eventPayments = table[EventPayment]("event_payments")
     on(eventPayments)(ep => declare(

@@ -12,10 +12,40 @@ case class Event(name: String = "A New Event", joinType: String = "Public", id: 
 
     private[this] val eventDetailsRepo: EventDetailRepo = new EventDetailsRepository
 
-    def details: Option[EventDetail] = eventDetailsRepo.get(id.get)
-    lazy val payments: List[EventPayment] = inTransaction (eventToPayments.left(this).iterator.toList)
-    lazy val users: List[EventUser] = inTransaction (eventToUsers.left(this).associations.iterator.toList)
-    lazy val tournaments: List[Tournament] = inTransaction (eventToTournaments.left(this).iterator.toList)
+    //private[this] var _details: Option[EventDetail] = None
+    //private[this] var _detailInit: Boolean = false
+    private[this] var _users: Option[List[EventUser]] = None
+    private[this] var _tournaments: Option[List[Tournament]] = None
+
+def details: Option[EventDetail] =  eventDetailsRepo.get(id.get)
+/*    def details: Option[EventDetail] = {
+        if(_detailInit)
+             _details
+        else{
+           this._details = eventDetailsRepo.get(id.get)
+            this._detailInit = true
+            this._details
+        }
+    }
+    def details(e: EventDetail) = {
+        this._details = Option(e)
+        this._detailInit = true
+    }*/
+    def payments: List[EventPayment] = inTransaction (eventToPayments.left(this).iterator.toList)
+    def users: List[EventUser] = _users.getOrElse[List[EventUser]]{
+        this._users = Option(inTransaction (eventToUsers.left(this).associations.iterator.toList))
+        this._users.get
+    }
+    def users(eu: List[EventUser]) = {
+        this._users = Option(eu)
+    }
+    def tournaments: List[Tournament] = _tournaments.getOrElse[List[Tournament]]{
+        this._tournaments = Option(inTransaction (eventToTournaments.left(this).iterator.toList))
+        this._tournaments.get
+    }
+    def tournaments(t: List[Tournament]) ={
+        this._tournaments = Option(t)
+    }
 
 
   def getModerators: List[User] = this.users.filter(x => x.isModerator).map(u => u.user.get)

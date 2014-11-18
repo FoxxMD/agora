@@ -17,17 +17,26 @@ class EntityDetailsSerializer[T: Manifest] extends CustomSerializer[Class[T]](fo
 }, {
     case ed: EventDetail =>
         implicit val formats: Formats = DefaultFormats + new DateSerializer
-        val f = Extraction.decompose(ed)
+        var f = Extraction.decompose(ed)
         if (ed.scheduledEvents.isDefined) {
-            f.replace(List("scheduledEvents"), parseOpt(ed.scheduledEvents.get))
+           f = f.replace(List("scheduledEvents"), parseOpt(ed.scheduledEvents.get))
         }
-        else
-            f
+        if(ed.credits.isDefined){
+            f = f.replace(List("credits"), parseOpt(ed.credits.get))
+        }
+        if(ed.faq.isDefined){
+            f = f.replace(List("faq"), parseOpt(ed.faq.get))
+        }
+
+        f
     case td: TournamentDetail =>
         implicit val formats: Formats = DefaultFormats + new DateSerializer
         var f = Extraction.decompose(td)
         if (td.rules.isDefined) {
             f = f.replace(List("rules"), parseOpt(td.rules.get))
+        }
+        if (td.rules.isDefined) {
+            f = f.replace(List("prizes"), parseOpt(td.prizes.get))
         }
         f
 }
@@ -169,7 +178,8 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
                         ("gameType" -> Extraction.decompose(y._1.gameType)) ~
                         ("filename" -> y._1.logoFilename) ~
                         ("count" -> y._2.size)
-                        )))
+                        )) ~
+                    ("details" -> Extraction.decompose(e.details)))
     case t: Tournament =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
         var tour = Extraction.decompose(t) merge
