@@ -42,6 +42,7 @@ trait GenericUserLinkRepo[T] extends GenericRepo[T]{
 trait UserRepo extends GenericRepo[User] {
     def getByEmail(email: String): Option[User]
     def getByHandle(handle: String): Option[User]
+    def getHydrated(id: Int): Option[User]
 }
 trait UserIdentityRepo extends GenericRepo[UserIdentity] {
     def getByUser(user: User): List[UserIdentity]
@@ -74,6 +75,7 @@ trait TournamentDetailsRepo extends GenericRepo[TournamentDetail] {
 trait EventUserRepo extends GenericUserLinkRepo[EventUser] {
     def getByEvent(id: Int): List[EventUser]
     def getByEventHydrated(id: Int): List[EventUser]
+    def getByUserHydrated(id: Int): List[EventUser]
     def getByEventAndUser(eventId: Int, userId: Int): Option[EventUser]
 }
 trait EventPaymentRepo extends GenericRepo[EventPayment]{

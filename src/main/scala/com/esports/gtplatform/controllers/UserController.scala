@@ -22,14 +22,27 @@ abstract class BaseController(implicit inj: Injector) extends BasicServletWithLo
 class UserController(override val userRepo: UserRepo, override val userIdentRepo: UserIdentityRepo, val userPlatformRepo: UserPlatformRepo)(implicit val inj: Injector) extends BaseController with UserControllerT {
 
   get("/:id") {
+      var userToGet: User = null
     if (params("id") == "me") {
       auth()
-        val jsonUser = Extraction.decompose(user) merge render("email" -> user.email)
-        Ok(jsonUser)
+        userToGet = userRepo.getHydrated(user.id.get).get
     }
     else {
-      Ok(requestUser)
+        userToGet = userRepo.getHydrated(requestUser.id.get).get
     }
+      val jsonUser = Extraction.decompose(userToGet) merge render(
+          //("email" -> userToGet.email) ~
+              ("events" -> Extraction.decompose(userToGet.events)) ~
+              ("tournaments" -> Extraction.decompose(userToGet.tournaments(event = None))) ~
+              ("gameProfiles" -> Extraction.decompose(userToGet.gameProfiles)) ~
+              ("guilds" -> Extraction.decompose(userToGet.guilds))) removeField {
+
+          case("user", _) => true
+          case _ => false
+      }
+      if(isAuthenticated && paramId.get == user.id.get)
+          jsonUser merge render("email" -> userToGet.email)
+      Ok(jsonUser)
   }
   get("/") {
     Ok(userRepo.getPaginated(params.getOrElse("page", "1").toInt))

@@ -45,7 +45,7 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Class[T]](
     case t: Team =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer
         Extraction.decompose(t) merge
-            render("teamPlayers" -> Extraction.decompose(t.teamPlayers)) removeField{
+            render("teamPlayers" -> Extraction.decompose(t.teamPlayers)) removeField {
             case ("email", _) => true
             case ("team", _) => true
             case _ => false
@@ -69,49 +69,11 @@ class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Class[T]]
         Extraction.decompose(tu) merge
             render(("user" -> Extraction.decompose(tu.user)) ~
                 ("team" -> Extraction.decompose(tu.team)))
-    /*        ("Team" ->
-                ("name" -> tu.teamId.name) ~
-                    ("id" -> tu.teamId.id) ~
-                    ("resource" -> "/team/") ~
-                    ("isCaptain" -> tu.isCaptain)) ~
-                ("User" ->
-                    ("name" -> tu.userId.globalHandle) ~
-                        ("id" -> tu.userId.id) ~
-                        ("resource" -> "/user/") ~
-                        ("isCaptain" -> tu.isCaptain))*/
-/*    case eu: EventUser =>
-        implicit val formats: Formats = DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer //+ new EntitySerializer
-        Extraction.decompose(eu) removeField {
-            case ("customerId", _) => true
-            case ("recieptId", _) => true
-            case _ => false
-        } merge
-            render(("event" -> Extraction.decompose(eu.event)) ~
-                ("user" -> Extraction.decompose(eu.user))) removeField {
-            case ("admins", _) => true
-        case("moderators", _) => true
-        case("payments", _) => true
-        case("games", _) => true
-            case _ => false
-        }*/
     case tu: TournamentUser =>
         implicit val formats: Formats = DefaultFormats + new EntityDetailsSerializer + new EntityAuxillarySerializer
         Extraction.decompose(tu) merge
             render(("tournament" -> Extraction.decompose(tu.tournament)) ~
                 ("user" -> Extraction.decompose(tu.user)))
-    /*        ("name" -> tu.userId.globalHandle) ~
-                ("id" -> tu.userId.id) ~
-                ("isPresent" -> tu.isPresent) ~
-                ("isModerator" -> tu.isModerator) ~
-                ("isAdmin" -> tu.isAdmin) ~
-                ("resource" -> "/user/") ~
-                ("Tournament" ->
-                    ("name" -> tu.tournamentId.details.flatMap(x => x.name)) ~
-                        ("tournamentType" -> Extraction.decompose(tu.tournamentId.tournamentTypeId)) ~
-                        ("id" -> tu.tournamentId.id) ~
-                        ("game" -> Extraction.decompose(tu.tournamentId.gameId)*/
-    /*            ("name" -> tu.tournament.game.name) ~
-                    ("id" -> tu.tournament.game.id) ) )*/
 }
     ))
 
@@ -126,10 +88,7 @@ class GuildSerializer extends CustomSerializer[Guild](formats => ( {
             case ("guild", _) => true
             //Don't reveal the users email!
             case ("email", _) => true
-            //case ("guildId", _) => true
-            //case ("userId", _) => true
             case ("details", _) => true
-            //case("gameId", _) => true
             case _ => false
         }
 }))
@@ -143,14 +102,15 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
         Extraction.decompose(eu) merge
             render(
                 ("event" -> Extraction.decompose(eu.event)) ~
-                ("user" -> Extraction.decompose(eu.user))) removeField {
+                    ("user" -> Extraction.decompose(eu.user))) removeField {
             case ("customerId", _) => true
-            case ("recieptId", _) => true
+            case ("paymentType", _) => true
+            case ("receiptId", _) => true
             case ("admins", _) => true
-            case("moderators", _) => true
-            case("payments", _) => true
-            case("games", _) => true
-            case("email", _) => true
+            case ("moderators", _) => true
+            case ("payments", _) => true
+            case ("games", _) => true
+            case ("email", _) => true
             case _ => false
         }
     case u: User =>
@@ -159,25 +119,7 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
             case ("User", _) => true
             case ("email", _) => true
             case _ => false
-        } /*merge render(
-            //TODO Get rid of nasty coupling to repository implementation. How to mix in Injectable?
-            ("events" -> Extraction.decompose(u.getAssociatedEvents(new EventUserRepository))) ~
-                ("tournaments" -> {
-                    val tRepo = new TeamRepository
-                    /*Extraction.decompose(u.getAssociatedTournaments(new TournamentUserRepository))*/
-                    val utour = u.getAssociatedTournaments(new TournamentUserRepository, new TeamUserRepository, new TournamentRepository)
-
-                    utour.map(x =>
-                        ("id" -> x.id) ~
-                            ("name" -> x.details.flatMap(u => u.name)) ~
-                            ("game" -> x.gameId.name) ~
-                            ("tournamentType" -> x.tournamentTypeId.name) ~
-                            ("eventId" -> x.eventId.id) ~
-                            ("teamPlay" -> x.tournamentTypeId.teamPlay) ~
-                            ("users" -> x.users.size) ~
-                            ("teams" -> x.teams.size))
-                })
-        )*/
+        }
     /*    case t: Guild =>
             implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer + new EntityDetailsSerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityAuxillarySerializer
             Extraction.decompose(t) merge
@@ -236,10 +178,9 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
                 ("tournamentType" -> Extraction.decompose(t.tournamentType)) ~
                 ("game" -> Extraction.decompose(t.game)) ~
                 ("details" -> Extraction.decompose(t.details)))
-        if(t.details.isDefined)
-        {
-            if(t.details.get.prizes.isDefined)
-                tour = tour.replace(List("prizes"),parse(t.details.get.prizes.get))
+        if (t.details.isDefined) {
+            if (t.details.get.prizes.isDefined)
+                tour = tour.replace(List("prizes"), parse(t.details.get.prizes.get))
         }
         tour
 }
