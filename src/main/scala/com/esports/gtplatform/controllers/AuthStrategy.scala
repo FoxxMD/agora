@@ -53,11 +53,12 @@ trait AuthenticationSupport extends ScentrySupport[User] {
     def apiKeyRepo: ApiKeyRepo
 
   protected def fromSession = {
-    case id: String => userRepo.get(id.toInt).get
+    case id: String =>
+        userRepo.get(id.toInt).get
   }
 
   protected def toSession = {
-    case usr: User => usr.id.toString
+    case usr: User => usr.id.get.toString
   }
 
   val realm = "Token Authentication"
@@ -125,8 +126,8 @@ class TokenStrategy(protected override val app: ScalatraBase,val webTokenRepo: W
          case Some(w: WebToken) =>
              userRepo.get(w.userId) match {
                  case Some(u: User) =>
-                     val newToken = java.util.UUID.randomUUID.toString
-                     webTokenRepo.update(w.copy(token = newToken))
+                     //val newToken = java.util.UUID.randomUUID.toString
+                     //webTokenRepo.update(w.copy(token = newToken))
                      Option(u)
                  case None =>
                      logger.error("[Authentication] Could not find user associated with token " + token)

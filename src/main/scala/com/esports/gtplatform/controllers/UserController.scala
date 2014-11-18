@@ -40,7 +40,7 @@ class UserController(override val userRepo: UserRepo, override val userIdentRepo
           case("user", _) => true
           case _ => false
       }
-      if(isAuthenticated && paramId.get == user.id.get)
+      if(isAuthenticated && (paramId.isDefined && paramId.get == user.id.get) || (params("id") == "me"))
           jsonUser merge render("email" -> userToGet.email)
       Ok(jsonUser)
   }
