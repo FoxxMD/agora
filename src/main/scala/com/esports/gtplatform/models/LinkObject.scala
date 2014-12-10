@@ -1,15 +1,14 @@
 package models
 
-import com.esports.gtplatform.business.{UserRepository, GuildRepository}
+import com.esports.gtplatform.business.{GuildRepository, UserRepository}
 import com.esports.gtplatform.models.{DomainEntity, Team}
-import org.squeryl.KeyedEntityDef
 
 /**
  * Created by Matthew on 6/30/2014.
  */
 
-import com.esports.gtplatform.dao.Squreyl._
 import com.esports.gtplatform.dao.SquerylDao._
+import com.esports.gtplatform.dao.Squreyl._
 
 /* Link objects exist to provide extra information about a relationship between two domain objects. Currently it's only
  * simple things like isPresent for Teams at a Tournament, or Users at an Event -- but I'm sure eventually the relationship will
@@ -83,7 +82,7 @@ case class EventUser(
 
 case class TournamentUser(userId: Int, tournamentId: Int, isPresent: Boolean = false, isAdmin: Boolean = false, isModerator: Boolean = false, id: Option[Int] = None) extends DomainEntity[TournamentUser] {
     var tournament: Tournament = null
-    var user: User = null
+    lazy val user: User = inTransaction { users.lookup(userId).get }
 
     def this() = this(userId = 0, tournamentId = 0, isPresent = false, isAdmin = false, isModerator = false, id = Some(0))
 }

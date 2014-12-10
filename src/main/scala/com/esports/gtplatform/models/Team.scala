@@ -1,9 +1,7 @@
 package com.esports.gtplatform.models
 
-import com.esports.gtplatform.business.{TeamUserRepository, TeamUserRepo}
+import com.esports.gtplatform.business.{TeamUserRepo, TeamUserRepository}
 import models._
-import monocle.SimpleLens
-import monocle.syntax._
 import org.joda.time.DateTime
 
 /**
@@ -12,8 +10,8 @@ import org.joda.time.DateTime
 
 case class Team(name: String, joinType: String, tournamentId: Int, createdDate: DateTime = DateTime.now(), isPresent: Boolean = false, guildOnly: Boolean = false, guildId: Option[Int] = None, id: Option[Int] = None) extends DomainEntity[Team] {
 
-    import com.esports.gtplatform.dao.Squreyl._
     import com.esports.gtplatform.dao.SquerylDao._
+    import com.esports.gtplatform.dao.Squreyl._
 
     private[this] val teamUserRepo: TeamUserRepo = new TeamUserRepository
 
