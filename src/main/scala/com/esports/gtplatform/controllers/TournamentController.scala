@@ -1,11 +1,13 @@
 package com.esports.gtplatform.controllers
 
+import ScalaBrackets.{Participant, SingleElimination}
 import com.esports.gtplatform.business.services.{RosterServiceT, TournamentServiceT}
 import com.esports.gtplatform.business.{TournamentDetailsRepo, TournamentRepo, TournamentUserRepo}
 import models.{Tournament, TournamentDetail, TournamentUser}
 import org.json4s
 import org.json4s.Extraction
-import org.scalatra.Ok
+import org.json4s.JsonAST.JObject
+import org.scalatra.{NotImplemented, Ok}
 import scaldi.Injector
 
 /**
@@ -50,6 +52,24 @@ class TournamentController(val tournamentRepo: TournamentRepo,
             .replace(List("teams"), Extraction.decompose(requestTournament.teams))
         Ok(jsonTour)*/
         Ok(requestTournament)
+    }
+    get("/:id/bracket") {
+
+        if(requestTournament.tournamentType.name.toLowerCase.contains("elimination") && !requestTournament.tournamentType.name.toLowerCase.contains("swiss"))
+        {
+            val players = if(requestTournament.tournamentType.teamPlay){
+                for(x <- requestTournament.teams.take(8)) yield { Participant(x.id.get, Option(JObject(("name", Extraction.decompose(x.name)))))}
+            }
+            else{
+                for(x <- requestTournament.users.take(8)) yield {
+                    Participant(x.id.get, Option(JObject(("name", Extraction.decompose(x.user.globalHandle)))))}
+            }
+            val tour = SingleElimination.generate8.seed(Option(players.toSet))
+            Ok(tour.outputToJBracket)
+        }
+        else
+            NotImplemented()
+
     }
     patch("/:id") {
         auth()
