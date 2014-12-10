@@ -54,5 +54,12 @@ object ScalatraBuild extends Build {
                 "com.stripe" % "stripe-java" % "1.18.0"
             )
         )
-    )
+    ).dependsOn(Projects.depProject)
+    object V {
+        val depProject = "master"
+        // Other library versions
+    }
+    object Projects {
+        lazy val depProject = RootProject(uri("https://github.com/FoxxMD/Scala-Brackets.git#%s".format(V.depProject)))
+    }
 }
