@@ -9,6 +9,7 @@ import models._
 import org.scalatra.auth.{ScentryConfig, ScentryStrategy, ScentrySupport}
 import org.scalatra.{ScalatraBase, Unauthorized}
 import org.slf4j.LoggerFactory
+import scala.language.implicitConversions
 
 
 /**

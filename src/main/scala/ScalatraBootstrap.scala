@@ -1,5 +1,6 @@
 import javax.servlet.ServletContext
 
+import ScalaBrackets.Bracket.ElimTour
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.controllers._
@@ -43,6 +44,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[TeamUserRepo] to new TeamUserRepository
     bind[ConfirmationTokenRepo] to new ConfirmationTokenRepository
     bind[PasswordTokenRepo] to new PasswordTokenRepository
+    bind[GenericRepo[ElimTour, String]] to new BracketRepository
 
     /*
     * Service Bindings
@@ -97,6 +99,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             tournamentRepo = inject[TournamentRepo],
             tournamentUserRepo = inject[TournamentUserRepo],
             tournamentDetailsRepo = inject[TournamentDetailsRepo],
+        bracketRepo = inject[GenericRepo[ElimTour, String]],
             tournamentService = inject[TournamentServiceT],
         rosterService = inject[RosterServiceT]
         )

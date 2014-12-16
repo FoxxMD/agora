@@ -23,7 +23,13 @@ trait GenericRepo[T, U] {
     def getAll : List[T]
     def update(obj: T): T
     def create(obj: T) : T
-    def delete(id: U): Unit
+    /*
+    This one little trick will amaze you. Developer hate it, architects love it!
+    The compiler was complaining about type erasure with both delete methods
+    but stackoverflow to the rescue
+    http://stackoverflow.com/a/3309490/1469797
+    */
+    def delete(id: => U): Unit
     def delete(obj: T): Unit
 
 }

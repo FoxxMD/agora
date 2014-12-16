@@ -53,7 +53,7 @@ object ScalatraBuild extends Build {
                 "commons-dbcp" % "commons-dbcp" % "1.4",
                 "com.stripe" % "stripe-java" % "1.18.0",
                 "com.novus" %% "salat" % "1.9.9",
-                "org.mongodb" %% "casbah" % "2.7.5-SNAPSHOT"
+                "org.mongodb" %% "casbah" % "2.7.4"
             )
         )
     ).dependsOn(Projects.depProject)

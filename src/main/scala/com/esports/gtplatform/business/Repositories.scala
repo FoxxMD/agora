@@ -42,7 +42,7 @@ class GenericSquerylRepository[T <: DomainEntity[T]](theTable: Table[T]) extends
         table.lookup(id)
     }
 
-    override def delete(id: Int): Unit = inTransaction(table.delete(id))
+    override def delete(id: => Int): Unit = inTransaction(table.delete(id))
 
     override def getPaginated(pageNo: Int, pageSize: Int): List[T] = inTransaction(from(table)(a => select(a) orderBy (a.id asc)).page(pageNo, pageSize).toList)
 }
@@ -255,6 +255,8 @@ class BracketRepository extends GenericRepo[ElimTour, String] {
     import com.novus.salat._
     import com.novus.salat.global._
 
+    com.mongodb.casbah.commons.conversions.scala.RegisterConversionHelpers()
+
     val mongoClient = MongoClient("localhost", 27017)
     val db = mongoClient("bracketDB")
     val coll = db("brackets")
@@ -272,7 +274,7 @@ class BracketRepository extends GenericRepo[ElimTour, String] {
          obj//findOneByID(MongoDBObject("_id" -> obj._id)).head.up //.fold[Option[ElimTour]](None){x => Option(grater[ElimTour].asObject(x))}
     }
 
-    override def delete(id: String): Unit = {
+    override def delete(id: => String): Unit = {
         BracketDAO.removeById(id)
         //coll.findAndRemove(MongoDBObject("_id" -> id))
     }
@@ -285,6 +287,7 @@ class BracketRepository extends GenericRepo[ElimTour, String] {
     override def getPaginated(pageNo: Int, pageSize: Int): List[ElimTour] = ???
 
     override def create(obj: ElimTour): ElimTour = {
+        val dbo = grater[ElimTour].asDBObject(obj)
         val insertedId = BracketDAO.insert(obj)
         obj.copy(id = insertedId.get)
        //coll.insert(grater[ElimTour].asDBObject(obj.copy(_id = BSONObjectId.generate)))

@@ -5,6 +5,7 @@ import org.squeryl.dsl._
 import org.joda.time._
 import models._
 import org.squeryl.{KeyedEntityDef, PrimitiveTypeMode, Schema}
+import scala.language.implicitConversions
 
 
 
@@ -53,6 +54,7 @@ object Squreyl extends PrimitiveTypeMode {
     /**
      * the following are necessary for the AST lifting
      */
+
     implicit def jodaTimeToTE(s: DateTime) = jodaTimeTEF.create(s)
 
     implicit def optionJodaTimeToTE(s: Option[DateTime]) = optionJodaTimeTEF.create(s)
