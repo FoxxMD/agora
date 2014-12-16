@@ -1,11 +1,12 @@
 package com.esports.gtplatform.business
 
-import com.esports.gtplatform.dao.SquerylDao
+import ScalaBrackets.Bracket.ElimTour
 import com.esports.gtplatform.dao.SquerylDao._
 import com.esports.gtplatform.models._
+import com.novus.salat.dao.SalatDAO
 import models._
 import org.squeryl.PrimitiveTypeMode._
-import org.squeryl.{KeyedEntityDef, Table}
+import org.squeryl.Table
 
 
 /**
@@ -18,7 +19,7 @@ class SquerylTransaction extends TransactionSupport {
     }
 }
 
-class GenericSquerylRepository[T <: DomainEntity[T]](theTable: Table[T]) extends GenericRepo[T] {
+class GenericSquerylRepository[T <: DomainEntity[T]](theTable: Table[T]) extends GenericRepoIntId[T] {
 
     import com.esports.gtplatform.dao.Squreyl._
 
@@ -247,4 +248,47 @@ class NonActiveUserIdentityRepository extends GenericSquerylRepository[UserIdent
     override def getByUser(id: Int): List[UserIdentity] = inTransaction(userIdents.where(u => u.userId === id).toList)
 
     override def getByUserPass(email: String): Option[UserIdentity] = inTransaction(userIdents.where(u => u.email === email).singleOption)
+}
+
+class BracketRepository extends GenericRepo[ElimTour, String] {
+    import com.mongodb.casbah.Imports._
+    import com.novus.salat._
+    import com.novus.salat.global._
+
+    val mongoClient = MongoClient("localhost", 27017)
+    val db = mongoClient("bracketDB")
+    val coll = db("brackets")
+    object BracketDAO extends SalatDAO[ElimTour, String](collection = MongoConnection()("bracket_db")("bracket_coll"))
+
+    override def get(id: String): Option[ElimTour] = {
+
+        //coll.findOneByID(MongoDBObject("_id" -> id)).headOption.fold[Option[ElimTour]](None){x => Option(grater[ElimTour].asObject(x))}
+        BracketDAO.findOneById(id = id)
+    }
+
+    override def update(obj: ElimTour): ElimTour = {
+
+        coll.findAndModify(MongoDBObject("_id" -> obj.id), grater[ElimTour].asDBObject(obj))
+         obj//findOneByID(MongoDBObject("_id" -> obj._id)).head.up //.fold[Option[ElimTour]](None){x => Option(grater[ElimTour].asObject(x))}
+    }
+
+    override def delete(id: String): Unit = {
+        BracketDAO.removeById(id)
+        //coll.findAndRemove(MongoDBObject("_id" -> id))
+    }
+
+    override def delete(obj: ElimTour): Unit = {
+        BracketDAO.removeById(obj.id)
+        //coll.findAndRemove(MongoDBObject("_id" -> obj._id))
+    }
+
+    override def getPaginated(pageNo: Int, pageSize: Int): List[ElimTour] = ???
+
+    override def create(obj: ElimTour): ElimTour = {
+        val insertedId = BracketDAO.insert(obj)
+        obj.copy(id = insertedId.get)
+       //coll.insert(grater[ElimTour].asDBObject(obj.copy(_id = BSONObjectId.generate)))
+    }
+
+    override def getAll: List[ElimTour] = ???
 }

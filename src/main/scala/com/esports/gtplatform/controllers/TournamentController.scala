@@ -71,6 +71,9 @@ class TournamentController(val tournamentRepo: TournamentRepo,
             NotImplemented()
 
     }
+    post("/:id/bracket") {
+
+    }
     patch("/:id") {
         auth()
         if (!tournamentService.canModify(user, requestTournament)) {

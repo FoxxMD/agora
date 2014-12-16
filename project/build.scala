@@ -51,11 +51,14 @@ object ScalatraBuild extends Build {
                 "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "compile;container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar")),
                 "mysql" % "mysql-connector-java" % "5.1.33",
                 "commons-dbcp" % "commons-dbcp" % "1.4",
-                "com.stripe" % "stripe-java" % "1.18.0"
+                "com.stripe" % "stripe-java" % "1.18.0",
+                "com.novus" %% "salat" % "1.9.9",
+                "org.mongodb" %% "casbah" % "2.7.5-SNAPSHOT"
             )
         )
     ).dependsOn(Projects.depProject)
     object V {
+
         val depProject = "master"
         // Other library versions
     }
