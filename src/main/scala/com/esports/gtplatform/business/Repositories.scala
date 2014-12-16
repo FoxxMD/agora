@@ -5,6 +5,7 @@ import com.esports.gtplatform.dao.SquerylDao._
 import com.esports.gtplatform.models._
 import com.novus.salat.dao.SalatDAO
 import models._
+import org.bson.types.ObjectId
 import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Table
 
@@ -287,8 +288,9 @@ class BracketRepository extends GenericRepo[ElimTour, String] {
     override def getPaginated(pageNo: Int, pageSize: Int): List[ElimTour] = ???
 
     override def create(obj: ElimTour): ElimTour = {
-        val dbo = grater[ElimTour].asDBObject(obj)
-        val insertedId = BracketDAO.insert(obj)
+val a= ObjectId.get().toString
+        //val dbo = grater[ElimTour].asDBObject(obj)
+        val insertedId = BracketDAO.insert(obj.copy(id = a))
         obj.copy(id = insertedId.get)
        //coll.insert(grater[ElimTour].asDBObject(obj.copy(_id = BSONObjectId.generate)))
     }
