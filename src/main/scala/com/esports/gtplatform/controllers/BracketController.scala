@@ -1,17 +1,42 @@
 package com.esports.gtplatform.controllers
 
 import ScalaBrackets.Bracket.ElimTour
-import ScalaBrackets.{BracketException, Participant}
-import com.esports.gtplatform.business.services.BracketServiceT
-import com.esports.gtplatform.business.{BracketRepo, MongoBracketRepo}
+import ScalaBrackets.{DoubleElimination, SingleElimination, BracketException, Participant}
+import com.esports.gtplatform.business.services.{TournamentServiceT, BracketServiceT}
+import com.esports.gtplatform.business.{BracketTypeRepo, BracketRepo, MongoBracketRepo}
+import com.esports.gtplatform.models.Bracket
 import org.scalatra.{NotImplemented, NoContent, Ok}
 import scaldi.Injector
 
-class BracketController(val bracketRepo: BracketRepo, val mongoBracketRepo: MongoBracketRepo, val bracketService: BracketServiceT)(implicit val inj: Injector) extends BaseController with StandardController with BracketControllerT {
+class BracketController(val bracketRepo: BracketRepo, val mongoBracketRepo: MongoBracketRepo, val bracketService: BracketServiceT, val tournamentService: TournamentServiceT, val bracketTypeRepo: BracketTypeRepo)(implicit val inj: Injector) extends BaseController with StandardController with BracketControllerT {
 
     get("/:id") {
         auth()
         Ok(requestBracket)
+    }
+    post("/"){
+        auth()
+
+        val bracket = parsedBody.extract[Bracket]
+        val seedSize = parsedBody.\("seedSize").extractOrElse[Int](halt(400, "Missing seed size!"))
+
+        if(bracket.tournamentId.isEmpty)
+            halt(501, "Bracket creation must be made in the context of a tournament! (For now...)")
+        if(!tournamentService.hasModeratorPermissions(user, bracket.tournamentId.get))
+            halt(401, "You do not have permission to add brackets to this tournament")
+
+        var bid: Option[String] = None
+        val bracketType = bracketTypeRepo.get(bracket.bracketTypeId).getOrElse(halt(400, "Not a valid bracket type id!"))
+        val order = bracketRepo.getByTournament(bracket.tournamentId.get).size
+        if (bracketType.name.toLowerCase.contains("elimination"))
+        {
+            if(bracketType.name.toLowerCase.contains("single"))
+                bid = Option(mongoBracketRepo.create(SingleElimination.generate(seedSize)).id)
+            else if(bracketType.name.toLowerCase.contains("double"))
+                bid = Option(mongoBracketRepo.create(DoubleElimination.generate(seedSize)).id)
+        }
+        bracketRepo.create(bracket.copy(bracketId = bid))
+        Ok()
     }
     get("/:id/participants") {
         auth()

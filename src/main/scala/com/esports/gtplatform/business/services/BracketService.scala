@@ -1,7 +1,7 @@
 package com.esports.gtplatform.business.services
 
 import ScalaBrackets.Participant
-import com.esports.gtplatform.business.{TeamRepo, UserRepo}
+import com.esports.gtplatform.business.{MongoBracketRepo, TeamRepo, UserRepo}
 import com.esports.gtplatform.models.Bracket
 import models.User
 import org.json4s.Extraction
@@ -10,7 +10,7 @@ import org.json4s.JsonAST.JObject
 /**
  * Created by Matthew on 12/17/2014.
  */
-class BracketService(val userRepo: UserRepo, val teamRepo: TeamRepo, val tournamentService: TournamentServiceT, val userService: UserServiceT) extends BracketServiceT {
+class BracketService(val userRepo: UserRepo, val teamRepo: TeamRepo, val tournamentService: TournamentServiceT, val userService: UserServiceT, val mongoBracketRepo: MongoBracketRepo) extends BracketServiceT {
 
 
     //def canCreate(user: User, id: Int): Boolean
@@ -47,6 +47,4 @@ class BracketService(val userRepo: UserRepo, val teamRepo: TeamRepo, val tournam
         (bracket.ownerId.isDefined && user.id == bracket.ownerId || userService.hasAdminPermissions(user)) ||
             bracket.tournamentId.isDefined && hasAdminPermissions(user, bracket.tournamentId.get)
     }
-
-
 }

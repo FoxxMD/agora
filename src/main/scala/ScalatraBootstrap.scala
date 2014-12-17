@@ -101,6 +101,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             tournamentUserRepo = inject[TournamentUserRepo],
             tournamentDetailsRepo = inject[TournamentDetailsRepo],
         mongoBracketRepo = inject[MongoBracketRepo],
+        bracketRepo = inject[BracketRepo],
             tournamentService = inject[TournamentServiceT],
         rosterService = inject[RosterServiceT]
         )
@@ -128,7 +129,9 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
         context.mount(new BracketController(
         bracketRepo = inject[BracketRepo],
         mongoBracketRepo = inject[MongoBracketRepo],
-        bracketService = inject[BracketServiceT]
+        bracketService = inject[BracketServiceT],
+        tournamentService = inject[TournamentServiceT],
+        val bracketTypeRepo = inject[BracketTypeRepo]
         ), "/api/brackets")
 
     }

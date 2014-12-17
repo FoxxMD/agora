@@ -1,14 +1,12 @@
 package com.esports.gtplatform.controllers
 
-import ScalaBrackets.Bracket.ElimTour
-import ScalaBrackets.{Participant, SingleElimination}
-import com.esports.gtplatform.business.services.{RosterServiceT, TournamentServiceT}
+import ScalaBrackets.{DoubleElimination, SingleElimination, GeneratorException}
 import com.esports.gtplatform.business._
-import models.{Tournament, TournamentDetail, TournamentUser}
+import com.esports.gtplatform.business.services.{RosterServiceT, TournamentServiceT}
+import com.esports.gtplatform.models.Bracket
+import models.{BracketType, Tournament, TournamentDetail, TournamentUser}
 import org.json4s
-import org.json4s.Extraction
-import org.json4s.JsonAST.JObject
-import org.scalatra.{NotImplemented, Ok}
+import org.scalatra.Ok
 import scaldi.Injector
 
 /**
@@ -17,7 +15,8 @@ import scaldi.Injector
 class TournamentController(val tournamentRepo: TournamentRepo,
                            val tournamentUserRepo: TournamentUserRepo,
                            val tournamentDetailsRepo: TournamentDetailsRepo,
-                            val mongoBracketRepo: MongoBracketRepo,
+                           val mongoBracketRepo: MongoBracketRepo,
+                            val bracketRepo: BracketRepo,
                            val tournamentService: TournamentServiceT,
                            val rosterService: RosterServiceT)(implicit val inj: Injector) extends BaseController with TournamentT {
 
@@ -37,9 +36,34 @@ class TournamentController(val tournamentRepo: TournamentRepo,
         if (!tournamentService.canCreate(user, requestTournament))
             halt(403, "You do not have permission to create tournaments for this event.")
 
+        val seedSize = parsedBody.\("seedSize").extractOrElse[Int](halt(400, "Missing seed size!"))
+
         val newTournament = tournamentRepo.create(parsedBody.extract[Tournament])
         if (parsedBody.\("details").extractOpt[TournamentDetail].isDefined)
             tournamentDetailsRepo.create(extractDetails(parsedBody.\("details")).copy(tournamentId = newTournament.id))
+        parsedBody.\("bracketTypes").extractOpt[List[BracketType]].fold(){bracketList =>
+            var orderIndex = 1
+            try {
+                for (x <- bracketList) {
+                    var bid: Option[String] = None
+                    if (x.name.toLowerCase.contains("elimination"))
+                    {
+                        if(x.name.toLowerCase.contains("single"))
+                            bid = Option(mongoBracketRepo.create(SingleElimination.generate(seedSize)).id)
+                        else if(x.name.toLowerCase.contains("double"))
+                            bid = Option(mongoBracketRepo.create(DoubleElimination.generate(seedSize)).id)
+                    }
+                    bracketRepo.create(Bracket(bracketTypeId = x.id.get,orderIndex, tournamentId = newTournament.id, bracketId = bid))
+                    orderIndex = orderIndex + 1
+                }
+            }
+          catch{
+              case e: GeneratorException =>
+                logger.warn("Didn't use a power of 2 for the generator!")
+          }
+
+        }
+
 
         logger.info("[Tournament] (" + newTournament.id.get + ") New Tournament created for Event " + newTournament.eventId)
         Ok(newTournament)
@@ -55,9 +79,10 @@ class TournamentController(val tournamentRepo: TournamentRepo,
         Ok(jsonTour)*/
         Ok(requestTournament)
     }
-    get("/:id/bracket") {
+    get("/:id/brackets") {
 
-        if(requestTournament.tournamentType.name.toLowerCase.contains("elimination") && !requestTournament.tournamentType.name.toLowerCase.contains("swiss"))
+        Ok(requestTournament.brackets)
+/*        if(requestTournament.tournamentType.name.toLowerCase.contains("elimination") && !requestTournament.tournamentType.name.toLowerCase.contains("swiss"))
         {
             val players = if(requestTournament.tournamentType.teamPlay){
                 for(x <- requestTournament.teams.take(8)) yield { Participant(x.id.get, Option(JObject(("name", Extraction.decompose(x.name)))))}
@@ -71,7 +96,7 @@ class TournamentController(val tournamentRepo: TournamentRepo,
             Ok(tour.outputToJBracket)
         }
         else
-            NotImplemented()
+            NotImplemented()*/
 
     }
     patch("/:id") {

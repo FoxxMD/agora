@@ -115,6 +115,7 @@ trait BracketServiceT extends AuthorizationSupport[Bracket] with RoleSupport[Bra
     protected def userRepo: UserRepo
     protected def teamRepo: TeamRepo
     protected def tournamentService: TournamentServiceT
+    protected def mongoBracketRepo: MongoBracketRepo
     protected def userService: UserServiceT
 
     def canRead(user: User, obj: Bracket): Boolean = true
