@@ -7,13 +7,13 @@ import org.joda.time.DateTime
 /**
  * Created by Matthew on 6/30/2014.
  */
-case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _users: Option[List[TournamentUser]] = None, private var _teams: Option[List[Team]] = None) extends DomainEntity[Tournament] {
+case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _users: Option[List[TournamentUser]] = None, private var _teams: Option[List[Team]] = None, private var _brackets: Option[List[TournamentBracket]]) extends DomainEntity[Tournament] {
 
     import com.esports.gtplatform.dao.Squreyl._
     import com.esports.gtplatform.dao.SquerylDao._
 
     private[this] val tourDetailRepo: TournamentDetailsRepo = new TournamentDetailRepository
-    private[this] val tourTypeRepo: TournamentTypeRepo = new TournamentTypesRepository
+    private[this] val tourTypeRepo: BracketTypeRepo = new BracketTypesRepository
     private[this] val eventRepo: EventRepo = new EventRepository
     private[this] val gameRepo: GameRepo = new GameRepository
 

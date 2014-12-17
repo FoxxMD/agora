@@ -91,8 +91,13 @@ case class BracketType(name: String = "A Tourney Type", teamPlay: Boolean = true
     def this() = this(name = "", teamPlay = true, id = Some(0))
 }
 
-case class TournamentBracket(tournamentId: Int, bracketTypeId: Int, order: Int, bracketId: Option[Int] = None, id: Option[String] = None) {
-    def this() = this(tournamentId = 0, bracketTypeId = 0, order = 0, bracketId = Some(0), id = Some(""))
+case class TournamentBracket(tournamentId: Int, bracketTypeId: Int, order: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _bracketTypes: Option[List[BracketType]] = None) {
+
+    def bracketType: List[BracketType] = this._bracketTypes.getOrElse{
+        inTransaction(bracketTypeToTournamentBrackets.right(this).toList)
+    }
+
+    def this() = this(tournamentId = 0, bracketTypeId = 0, order = 0, bracketId = Some(""), id = Some(0))
 }
 
 case class GameBracketType(gameId: Int = 0, bracketTypeId: Int = 0, id: Option[Int] = None) extends DomainEntity[GameBracketType] {

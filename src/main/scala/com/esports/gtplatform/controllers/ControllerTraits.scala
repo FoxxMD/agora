@@ -218,7 +218,7 @@ trait EventControllerT extends StandardController {
     def eventUserRepo: EventUserRepo
     def tournamentRepo: TournamentRepo
     def userRepo: UserRepo
-    def ttRepo: TournamentTypeRepo
+    def ttRepo: BracketTypeRepo
     def eventPaymentRepo: EventPaymentRepo
     def eventService: EventServiceT
 

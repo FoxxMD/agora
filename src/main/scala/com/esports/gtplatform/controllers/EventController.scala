@@ -19,7 +19,7 @@ class EventController(val eventRepo: EventRepo,
                       val eventUserRepo: EventUserRepo,
                       val tournamentRepo: TournamentRepo,
                       override val userRepo: UserRepo,
-                      val ttRepo: TournamentTypeRepo,
+                      val ttRepo: BracketTypeRepo,
                       val eventService: EventServiceT,
                       val eventDetailRepo: EventDetailRepo,
                       val eventPaymentRepo: EventPaymentRepo)(implicit val inj: Injector) extends BaseController with APIController with EventControllerT {

@@ -38,7 +38,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[EventPaymentRepo] to new EventPaymentRepository
     bind[EventDetailRepo] to new EventDetailsRepository
     bind[TournamentUserRepo] to new TournamentUserRepository
-    bind[TournamentTypeRepo] to new TournamentTypesRepository
+    bind[BracketTypeRepo] to new BracketTypesRepository
     bind[TournamentDetailsRepo] to new TournamentDetailRepository
     bind[TeamRepo] to new TeamRepository
     bind[TeamUserRepo] to new TeamUserRepository
@@ -111,7 +111,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             eventUserRepo = inject[EventUserRepo],
             tournamentRepo = inject[TournamentRepo],
             userRepo = inject[UserRepo],
-            ttRepo = inject[TournamentTypeRepo],
+            ttRepo = inject[BracketTypeRepo],
         eventService = inject[EventServiceT],
         eventDetailRepo = inject[EventDetailRepo],
         eventPaymentRepo = inject[EventPaymentRepo]

@@ -168,6 +168,10 @@ object SquerylDao extends Schema {
         oneToManyRelation(tournaments, tournamentBrackets).
             via((t,tb) => t.id === tb.tournamentId)
 
+    val bracketTypeToTournamentBrackets =
+        oneToManyRelation(bracketTypes, tournamentBrackets).
+            via((bt,tb) => bt.id === tb.bracketTypeId)
+
     val teamToUsers =
     manyToManyRelation(teams, users).
     via[TeamUser]((t,u,link) => (link.teamId === t.id, u.id === link.userId))
