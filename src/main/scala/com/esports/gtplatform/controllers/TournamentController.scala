@@ -3,7 +3,7 @@ package com.esports.gtplatform.controllers
 import ScalaBrackets.Bracket.ElimTour
 import ScalaBrackets.{Participant, SingleElimination}
 import com.esports.gtplatform.business.services.{RosterServiceT, TournamentServiceT}
-import com.esports.gtplatform.business.{GenericRepo, TournamentDetailsRepo, TournamentRepo, TournamentUserRepo}
+import com.esports.gtplatform.business._
 import models.{Tournament, TournamentDetail, TournamentUser}
 import org.json4s
 import org.json4s.Extraction
@@ -17,7 +17,7 @@ import scaldi.Injector
 class TournamentController(val tournamentRepo: TournamentRepo,
                            val tournamentUserRepo: TournamentUserRepo,
                            val tournamentDetailsRepo: TournamentDetailsRepo,
-                            val bracketRepo: GenericRepo[ElimTour, String],
+                            val mongoBracketRepo: MongoBracketRepo,
                            val tournamentService: TournamentServiceT,
                            val rosterService: RosterServiceT)(implicit val inj: Injector) extends BaseController with TournamentT {
 
@@ -67,7 +67,7 @@ class TournamentController(val tournamentRepo: TournamentRepo,
                     Participant(x.id.get, Option(JObject(("name", Extraction.decompose(x.user.globalHandle)))))}
             }
             val tour = SingleElimination.generate8.seed(Option(players.toSet))
-            val id = bracketRepo.create(tour)
+            val id = mongoBracketRepo.create(tour)
             Ok(tour.outputToJBracket)
         }
         else

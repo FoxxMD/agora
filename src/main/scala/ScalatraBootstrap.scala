@@ -1,6 +1,5 @@
 import javax.servlet.ServletContext
 
-import ScalaBrackets.Bracket.ElimTour
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services._
 import com.esports.gtplatform.controllers._
@@ -44,7 +43,8 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[TeamUserRepo] to new TeamUserRepository
     bind[ConfirmationTokenRepo] to new ConfirmationTokenRepository
     bind[PasswordTokenRepo] to new PasswordTokenRepository
-    bind[GenericRepo[ElimTour, String]] to new BracketRepository
+    bind[MongoBracketRepo] to new MongoBracketRepository
+    bind[BracketRepo] to new BracketRepository
 
     /*
     * Service Bindings
@@ -57,6 +57,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
     bind[TournamentServiceT] to injected[TournamentService]
     bind[RosterServiceT] to injected[RosterService]
     bind[TeamServiceT] to injected[TeamService]
+    bind[BracketServiceT] to inject[BracketService]
 
 
     override def init(context: ServletContext) {
@@ -99,7 +100,7 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
             tournamentRepo = inject[TournamentRepo],
             tournamentUserRepo = inject[TournamentUserRepo],
             tournamentDetailsRepo = inject[TournamentDetailsRepo],
-        bracketRepo = inject[GenericRepo[ElimTour, String]],
+        mongoBracketRepo = inject[MongoBracketRepo],
             tournamentService = inject[TournamentServiceT],
         rosterService = inject[RosterServiceT]
         )
@@ -123,6 +124,12 @@ class ScalatraBootstrap extends LifeCycle with DatabaseInit with scaldi.Module {
         teamService = inject[TeamServiceT],
         rosterService = inject[RosterServiceT]
         ), "/api/teams")
+
+        context.mount(new BracketController(
+        bracketRepo = inject[BracketRepo],
+        mongoBracketRepo = inject[MongoBracketRepo],
+        bracketService = inject[BracketServiceT]
+        ), "/api/brackets")
 
     }
 

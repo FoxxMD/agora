@@ -1,6 +1,6 @@
 package models
 
-import com.esports.gtplatform.business.{GuildRepository, UserRepository}
+import com.esports.gtplatform.business._
 import com.esports.gtplatform.models.{DomainEntity, Team}
 
 /**
@@ -89,15 +89,6 @@ case class TournamentUser(userId: Int, tournamentId: Int, isPresent: Boolean = f
 
 case class BracketType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Option[Int] = None) extends DomainEntity[BracketType] {
     def this() = this(name = "", teamPlay = true, id = Some(0))
-}
-
-case class Bracket(bracketTypeId: Int, order: Int, tournamentId: Option[Int], bracketId: Option[String] = None, ownerId: Option[Int] = None, id: Option[Int] = None, private var _bracketType: Option[BracketType] = None) {
-
-    def bracketType: BracketType = this._bracketType.getOrElse{
-        inTransaction(bracketTypes.lookup(bracketTypeId).get)
-    }
-
-    def this() = this(tournamentId = 0, bracketTypeId = 0, order = 0, bracketId = Some(""), id = Some(0))
 }
 
 case class GameBracketType(gameId: Int = 0, bracketTypeId: Int = 0, id: Option[Int] = None) extends DomainEntity[GameBracketType] {

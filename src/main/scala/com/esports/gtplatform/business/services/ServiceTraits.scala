@@ -1,7 +1,8 @@
 package com.esports.gtplatform.business.services
 
+import ScalaBrackets.Participant
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.models.{PasswordToken, Team}
+import com.esports.gtplatform.models.{Bracket, PasswordToken, Team}
 import models._
 
 /**
@@ -108,4 +109,15 @@ trait AccountServiceT {
     def resetPassword(password: String, token: Option[PasswordToken] = None, user: Option[User] = None)
 
     def generateWebToken(ident: UserIdentity): String
+}
+
+trait BracketServiceT extends AuthorizationSupport[Bracket] with RoleSupport[Bracket] {
+    protected def userRepo: UserRepo
+    protected def teamRepo: TeamRepo
+    protected def tournamentService: TournamentServiceT
+    protected def userService: UserServiceT
+
+    def canRead(user: User, obj: Bracket): Boolean = true
+    def isTeamPlay(obj: Bracket): Boolean
+    def createParticipant(obj: Bracket, id: Int): Participant
 }

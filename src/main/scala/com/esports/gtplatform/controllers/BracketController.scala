@@ -1,38 +1,96 @@
 package com.esports.gtplatform.controllers
 
-import com.esports.gtplatform.business.{GameRepo, GameTTLinkRepo}
-import models.{Game, GameBracketType, BracketType}
-import org.scalatra.Ok
+import ScalaBrackets.Bracket.ElimTour
+import ScalaBrackets.{BracketException, Participant}
+import com.esports.gtplatform.business.services.BracketServiceT
+import com.esports.gtplatform.business.{BracketRepo, MongoBracketRepo}
+import org.scalatra.{NotImplemented, NoContent, Ok}
 import scaldi.Injector
 
-class BracketController(val gameRepo: GameRepo, val gameTTLinkRepo: GameTTLinkRepo)(implicit val inj: Injector) extends BaseController with StandardController with GameControllerT {
-    get("/") {
-        //Full path is "/games/" because of relative mounting
-        Ok(gameRepo.getAll)
-    }
+class BracketController(val bracketRepo: BracketRepo, val mongoBracketRepo: MongoBracketRepo, val bracketService: BracketServiceT)(implicit val inj: Injector) extends BaseController with StandardController with BracketControllerT {
 
-    post("/") {
-        auth()
-        if(user.role != "admin")
-            halt(403, "You don not have permissions to create new Games.")
-
-        //TODO Game Creation - Validate uniqueness
-        //TODO Game Creation - transaction support
-        val newGame = gameRepo.create(parsedBody.extract[Game])
-        val tourTypes = parsedBody.\("tournamentTypes").extract[List[BracketType]]
-        for(t <- tourTypes){
-            gameTTLinkRepo.create(GameBracketType(gameId = newGame.id.get, bracketTypeId = t.id.get))
-        }
-        Ok(newGame.id.get)
-    }
     get("/:id") {
-        Ok(gameRepo.get(paramId.get))
-    }
-    post("/:id") {
         auth()
-        if(user.role != "admin")
-            halt(403, "You don not have permissions to create new Games.")
-        gameRepo.update(requestGame.get)
+        Ok(requestBracket)
+    }
+    get("/:id/participants") {
+        auth()
+        if(hasBracketData)
+            Ok(requestBracket.data.get.participants)
+        else
+            NoContent()
+    }
+    post("/:id/participants"){
+        auth()
+        if(!bracketService.canModify(user, requestBracket))
+            halt(403, "You don't have permission to edit this Bracket")
+
+        if(requestBracket.bracketId.isEmpty)
+            halt(400, "Brackets have not been implemented for this type of tournament yet!")
+        val origScalaBracket = requestBracket.data.getOrElse[ElimTour](throw new Exception("Can't add a participant to a non-existent bracket!"))
+
+        requestBracket.tournamentId.fold{
+            val iParticipant = parsedBody.extract[Participant]
+            mongoBracketRepo.update(origScalaBracket.addParticipant(iParticipant))
+        }{ t =>
+            val participant = bracketService.createParticipant(requestBracket, parsedBody.\("id").extract[Int])
+            mongoBracketRepo.update(origScalaBracket.addParticipant(participant))
+        }
         Ok()
     }
+    patch("/:id/participants/:participantId") {
+        auth()
+        if(!bracketService.canModify(user, requestBracket))
+            halt(403, "You don't have permission to edit this Bracket")
+
+        val origScalaBracket = requestBracket.data.getOrElse[ElimTour](throw new Exception("Can't add a participant to a non-existent bracket!"))
+
+        requestBracket.tournamentId.fold{
+            val iParticipant = parsedBody.extract[Participant]
+            mongoBracketRepo.update(origScalaBracket.updateParticipant(requestParId,iParticipant))
+        }{ t =>
+            val participant = bracketService.createParticipant(requestBracket, parsedBody.\("id").extract[Int])
+            mongoBracketRepo.update(origScalaBracket.updateParticipant(requestParId, participant))
+        }
+        Ok()
+    }
+    delete("/:id/participants/:participantId"){
+        auth()
+        if(!bracketService.canDelete(user, requestBracket))
+            halt(403, "You don't have permission to delete this Bracket")
+
+        val origScalaBracket = requestBracket.data.getOrElse[ElimTour](throw new Exception("Can't add a participant to a non-existent bracket!"))
+
+        try{
+            mongoBracketRepo.update(origScalaBracket.removeParticipant(requestParId))
+        }
+        catch{
+            case e: BracketException =>
+                halt(400, e.getMessage)
+        }
+    }
+    get("/:id/matches"){
+        auth()
+        if(hasBracketData)
+            Ok(requestBracket.data.get.matches.sortBy(x => x.id))
+        else
+            NoContent()
+    }
+    //Updating one score at a time ATM
+    patch("/:id/matches/:matchId"){
+        auth()
+        if(!bracketService.canModify(user, requestBracket))
+            halt(403, "You don't have permission to edit this Bracket")
+
+        val origScalaBracket = requestBracket.data.getOrElse[ElimTour](throw new Exception("Can't add a participant to a non-existent bracket!"))
+        val participantId = parsedBody.\("participantId").extract[Int]
+        val score = parsedBody.\("score").extract[Int]
+
+        mongoBracketRepo.update(origScalaBracket.setScore(requestMatchId, participantId, score))
+        Ok()
+    }
+    get("/:id/winner"){
+        NotImplemented()
+    }
+
 }

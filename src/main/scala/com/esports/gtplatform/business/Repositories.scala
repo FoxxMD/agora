@@ -260,7 +260,7 @@ class NonActiveUserIdentityRepository extends GenericSquerylRepository[UserIdent
     override def getByUserPass(email: String): Option[UserIdentity] = inTransaction(userIdents.where(u => u.email === email).singleOption)
 }
 
-class BracketRepository extends GenericRepo[ElimTour, String] {
+class MongoBracketRepository extends MongoBracketRepo {
     import com.mongodb.casbah.Imports._
     import com.novus.salat._
     import com.novus.salat.global._

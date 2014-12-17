@@ -1,8 +1,8 @@
 package com.esports.gtplatform.controllers
 
 import com.esports.gtplatform.business._
-import com.esports.gtplatform.business.services.{EventServiceT, GuildServiceT, RosterServiceT, TeamServiceT}
-import com.esports.gtplatform.models.Team
+import com.esports.gtplatform.business.services._
+import com.esports.gtplatform.models.{Bracket, Team}
 import com.fasterxml.jackson.core.JsonParseException
 import models._
 import org.json4s.{DefaultFormats, Formats}
@@ -321,6 +321,47 @@ trait TournamentT extends StandardController {
                 halt(400, "No Tournament User with that Id exists.")
         }
 
+    }
+
+}
+
+trait BracketControllerT extends StandardController {
+    idType = "Bracket"
+    def bracketRepo: BracketRepo
+    def mongoBracketRepo: MongoBracketRepo
+    def bracketService: BracketService
+    var possibleBracket: Option[Bracket] = None
+    def requestBracket: Bracket = possibleBracket.getOrElse(throw new Exception("No bracket defined during request pre-processing!"))
+    var possibleParId: Option[Int] = None
+    def requestParId: Int = possibleParId.getOrElse(throw new Exception("No participant Id defined during request pre-processing!"))
+    var possibleMatchId: Option[Int] = None
+    def requestMatchId: Int = possibleMatchId.getOrElse(throw new Exception("No match Id defined during request pre-processing!"))
+
+    def hasBracketData: Boolean = requestBracket.bracketId.isDefined
+
+    before("/:id/?*") {
+        val p = params.getOrElse("id", halt(400, idType + " Id parameter is missing"))
+        val i = toInt(p).getOrElse(halt(400, idType + " Id was not a valid integer"))
+        paramId = Some(i)
+    }
+    before("/:id/?*") {
+        if(paramId.isDefined)
+            bracketRepo.get(paramId.get) match {
+                case Some(b: Bracket) =>
+                    possibleBracket = Some(b)
+                case None =>
+                    halt(400, "No "+idType+" exists with the Id " + paramId.get)
+            }
+    }
+    before("/:id/participant/:participantId/?*") {
+        val p = params.getOrElse("participantId", halt(400, idType + " participant Id parameter is missing"))
+        val i = toInt(p).getOrElse(halt(400, idType + " participant Id was not a valid integer"))
+        possibleParId = Some(i)
+    }
+    before("/:id/matches/:matchId/?*") {
+        val p = params.getOrElse("participantId", halt(400, idType + " match Id parameter is missing"))
+        val i = toInt(p).getOrElse(halt(400, idType + " match Id was not a valid integer"))
+        possibleMatchId = Some(i)
     }
 
 }

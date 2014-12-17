@@ -1,5 +1,6 @@
 package com.esports.gtplatform.business
 
+import ScalaBrackets.Bracket.ElimTour
 import com.esports.gtplatform.models._
 import models._
 
@@ -108,6 +109,8 @@ trait BracketRepo extends GenericRepoIntId[Bracket] {
     def getByTournament(tournament: Tournament): List[Bracket]
     def getByOwner(id: Int): List[Bracket]
 }
+
+trait MongoBracketRepo extends GenericRepo[ElimTour, String]
 
 trait NonActiveUserRepo extends GenericRepoIntId[User] {
     def getByEmail(email: String): Option[User]
