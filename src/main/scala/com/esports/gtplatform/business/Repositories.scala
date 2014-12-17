@@ -53,7 +53,7 @@ class GameRepository extends GenericSquerylRepository[Game](games) with GameRepo
     override def getByName(name: String) = inTransaction(from(games)(g => where(g.name === name) select g).singleOption)
 }
 
-class GameTTLinkRepository extends GenericSquerylRepository[GameTournamentType](gamettLink) with GameTTLinkRepo
+class GameTTLinkRepository extends GenericSquerylRepository[GameBracketType](gamettLink) with GameTTLinkRepo
 
 class WebTokenRepository extends GenericSquerylRepository[WebToken](webTokens) with WebTokenRepo {
     override def getByToken(token: String): Option[WebToken] = inTransaction(webTokens.where(w => w.token === token).singleOption)
@@ -143,7 +143,7 @@ class TournamentUserRepository extends GenericSquerylRepository[TournamentUser](
     override def getByUser(u: User): List[TournamentUser] = inTransaction(tournamentUsers.where(x => x.userId === u.id).toList)
 }
 
-class TournamentTypesRepository extends GenericSquerylRepository[TournamentType](tournamentTypes) with TournamentTypeRepo
+class TournamentTypesRepository extends GenericSquerylRepository[BracketType](bracketTypes) with TournamentTypeRepo
 
 class EventRepository extends GenericSquerylRepository[Event](events) with EventRepo {
     private[this] val eventDetailRepo: EventDetailRepo = new EventDetailsRepository

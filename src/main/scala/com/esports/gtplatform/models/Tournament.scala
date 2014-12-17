@@ -28,7 +28,7 @@ case class Tournament(tournamentTypeId: Int, registrationType: String = "Public"
         _teams = Option(tournamentToTeams.left(this).toList)
         _teams.get
     }
-    lazy val tournamentType: TournamentType = tourTypeRepo.get(tournamentTypeId).get
+    lazy val tournamentType: BracketType = tourTypeRepo.get(tournamentTypeId).get
 
 
     //needed for squeryl table initialization. See "Nullable columns are mapped with Option[] fields http://squeryl.org/schema-definition.html

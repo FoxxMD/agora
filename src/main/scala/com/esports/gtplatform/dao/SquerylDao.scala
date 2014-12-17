@@ -69,19 +69,19 @@ object SquerylDao extends Schema {
     g.id is (unique,autoIncremented,indexed)
     ))
 
-    val gamettLink = table[GameTournamentType]("games_tournaments_types")
+    val gamettLink = table[GameBracketType]("games_tournaments_types")
     on(gamettLink)(g => declare(
     g.id is autoIncremented
     ))
 
-    val tournamentTypes = table[TournamentType]("tournaments_types")
-    on(tournamentTypes)(t => declare(
+    val bracketTypes = table[BracketType]("bracket_types")
+    on(bracketTypes)(t => declare(
     t.id is autoIncremented
     ))
 
-    val gameTournamentRelation =
-    manyToManyRelation(games, tournamentTypes).
-    via[GameTournamentType]((g,tt,link) => (link.gameId === g.id, tt.id === link.tournamentTypeId))
+    val gameBracketRelation =
+    manyToManyRelation(games, bracketTypes).
+    via[GameBracketType]((g,tt,link) => (link.gameId === g.id, tt.id === link.bracketTypeId))
 
     val users = table[User]("users")
     on(users)(u => declare(
@@ -116,6 +116,11 @@ object SquerylDao extends Schema {
     val tournamentUsers = table[TournamentUser]("tournamentuser")
     on(tournamentUsers)(tu => declare(
     tu.id is (unique, autoIncremented, indexed)
+    ))
+
+    val tournamentBrackets = table[TournamentBracket]("tournamentbracket")
+    on(tournamentBrackets)(tb => declare(
+    tb.id is (unique, autoIncremented, indexed)
     ))
 
     val tournamentToTournamentUsers =
@@ -158,6 +163,10 @@ object SquerylDao extends Schema {
     val tournamentToTeams =
     oneToManyRelation(tournaments, teams).
     via((tu,te) => tu.id === te.tournamentId)
+
+    val tournamentToBrackets =
+        oneToManyRelation(tournaments, tournamentBrackets).
+            via((t,tb) => t.id === tb.tournamentId)
 
     val teamToUsers =
     manyToManyRelation(teams, users).

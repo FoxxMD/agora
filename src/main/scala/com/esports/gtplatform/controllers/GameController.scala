@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import com.esports.gtplatform.business.{GameRepo, GameTTLinkRepo}
-import models.{Game, GameTournamentType, TournamentType}
+import models.{Game, GameBracketType, BracketType}
 import org.scalatra.Ok
 import scaldi.Injector
 
@@ -19,9 +19,9 @@ class GameController(val gameRepo: GameRepo, val gameTTLinkRepo: GameTTLinkRepo)
       //TODO Game Creation - Validate uniqueness
       //TODO Game Creation - transaction support
       val newGame = gameRepo.create(parsedBody.extract[Game])
-      val tourTypes = parsedBody.\("tournamentTypes").extract[List[TournamentType]]
+      val tourTypes = parsedBody.\("tournamentTypes").extract[List[BracketType]]
       for(t <- tourTypes){
-          gameTTLinkRepo.create(GameTournamentType(gameId = newGame.id.get,tournamentTypeId = t.id.get))
+          gameTTLinkRepo.create(GameBracketType(gameId = newGame.id.get, bracketTypeId = t.id.get))
       }
     Ok(newGame.id.get)
   }

@@ -71,7 +71,7 @@ trait GuildUserRepo extends GenericRepoIntId[GuildUser] {
     def getByGuild(id: Int): List[GuildUser]
 }
 trait GameRepo extends GenericEntityRepo[Game]
-trait GameTTLinkRepo extends GenericRepoIntId[GameTournamentType]
+trait GameTTLinkRepo extends GenericRepoIntId[GameBracketType]
 trait EventRepo extends GenericEntityRepo[Event] {
     def getHydrated(id: Int): Option[Event]
 }
@@ -101,7 +101,7 @@ trait TournamentUserRepo extends GenericUserLinkRepo[TournamentUser] {
     def getByTournament(id: Int): List[TournamentUser]
     def getByTournament(tournament: Tournament): List[TournamentUser]
 }
-trait TournamentTypeRepo extends GenericRepoIntId[TournamentType]
+trait TournamentTypeRepo extends GenericRepoIntId[BracketType]
 
 trait NonActiveUserRepo extends GenericRepoIntId[User] {
     def getByEmail(email: String): Option[User]
