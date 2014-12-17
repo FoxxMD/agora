@@ -185,7 +185,7 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
         var tour = Extraction.decompose(t) merge
             render(("users" -> t.users.size) ~
                 ("teams" -> t.teams.size) ~
-                ("tournamentType" -> Extraction.decompose(t.tournamentType)) ~
+                ("brackets" -> Extraction.decompose(t.brackets)) ~
                 ("game" -> Extraction.decompose(t.game)) ~
                 ("details" -> Extraction.decompose(t.details)))
         if (t.details.isDefined) {

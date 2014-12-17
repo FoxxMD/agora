@@ -91,10 +91,10 @@ case class BracketType(name: String = "A Tourney Type", teamPlay: Boolean = true
     def this() = this(name = "", teamPlay = true, id = Some(0))
 }
 
-case class TournamentBracket(tournamentId: Int, bracketTypeId: Int, order: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _bracketTypes: Option[List[BracketType]] = None) {
+case class Bracket(bracketTypeId: Int, order: Int, tournamentId: Option[Int], bracketId: Option[String] = None, ownerId: Option[Int] = None, id: Option[Int] = None, private var _bracketType: Option[BracketType] = None) {
 
-    def bracketType: List[BracketType] = this._bracketTypes.getOrElse{
-        inTransaction(bracketTypeToTournamentBrackets.right(this).toList)
+    def bracketType: BracketType = this._bracketType.getOrElse{
+        inTransaction(bracketTypes.lookup(bracketTypeId).get)
     }
 
     def this() = this(tournamentId = 0, bracketTypeId = 0, order = 0, bracketId = Some(""), id = Some(0))

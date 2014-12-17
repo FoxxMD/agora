@@ -118,8 +118,8 @@ object SquerylDao extends Schema {
     tu.id is (unique, autoIncremented, indexed)
     ))
 
-    val tournamentBrackets = table[TournamentBracket]("tournamentbracket")
-    on(tournamentBrackets)(tb => declare(
+    val Brackets = table[Bracket]("brackets")
+    on(Brackets)(tb => declare(
     tb.id is (unique, autoIncremented, indexed)
     ))
 
@@ -165,12 +165,12 @@ object SquerylDao extends Schema {
     via((tu,te) => tu.id === te.tournamentId)
 
     val tournamentToBrackets =
-        oneToManyRelation(tournaments, tournamentBrackets).
+        oneToManyRelation(tournaments, Brackets).
             via((t,tb) => t.id === tb.tournamentId)
 
-    val bracketTypeToTournamentBrackets =
+/*    val bracketTypeToTournamentBrackets =
         oneToManyRelation(bracketTypes, tournamentBrackets).
-            via((bt,tb) => bt.id === tb.bracketTypeId)
+            via((bt,tb) => bt.id === tb.bracketTypeId)*/
 
     val teamToUsers =
     manyToManyRelation(teams, users).

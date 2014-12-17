@@ -130,11 +130,13 @@ class TournamentRepository extends GenericSquerylRepository[Tournament](tourname
     override def getByName(name: String): Option[Tournament] = ???
 }
 
-class TournamentBracketRepository extends GenericSquerylRepository[TournamentBracket](tournamentBrackets) with TournamentBracketRepo {
+class BracketRepository extends GenericSquerylRepository[Bracket](Brackets) with BracketRepo {
 
-    override def getByTournament(id: Int): List[TournamentBracket] = inTransaction(tournamentBrackets.where(x => x.tournamentId === id).toList)
+    override def getByTournament(id: Int): List[Bracket] = inTransaction(Brackets.where(x => x.tournamentId === id).toList)
 
-    override def getByTournament(tournament: Tournament): List[TournamentBracket] = getByTournament(tournament.id.get)
+    override def getByTournament(tournament: Tournament): List[Bracket] = getByTournament(tournament.id.get)
+
+    override def getByOwner(id: Int): List[Bracket] = inTransaction(Brackets.where(x => x.ownerId === id).toList)
 }
 
 class TournamentDetailRepository extends GenericSquerylRepository[TournamentDetail](tournamentDetails) with TournamentDetailsRepo {

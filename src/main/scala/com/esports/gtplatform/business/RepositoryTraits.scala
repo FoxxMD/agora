@@ -103,9 +103,10 @@ trait TournamentUserRepo extends GenericUserLinkRepo[TournamentUser] {
 }
 trait BracketTypeRepo extends GenericRepoIntId[BracketType]
 
-trait TournamentBracketRepo extends GenericRepoIntId[TournamentBracket] {
-    def getByTournament(id: Int): List[TournamentBracket]
-    def getByTournament(tournament: Tournament): List[TournamentBracket]
+trait BracketRepo extends GenericRepoIntId[Bracket] {
+    def getByTournament(id: Int): List[Bracket]
+    def getByTournament(tournament: Tournament): List[Bracket]
+    def getByOwner(id: Int): List[Bracket]
 }
 
 trait NonActiveUserRepo extends GenericRepoIntId[User] {
