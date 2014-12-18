@@ -1,7 +1,7 @@
 package com.esports.gtplatform.controllers
 
 import ScalaBrackets.Bracket.ElimTour
-import ScalaBrackets.{DoubleElimination, SingleElimination, BracketException, Participant}
+import ScalaBrackets._
 import com.esports.gtplatform.business.services.{TournamentServiceT, BracketServiceT}
 import com.esports.gtplatform.business.{BracketTypeRepo, BracketRepo, MongoBracketRepo}
 import com.esports.gtplatform.models.Bracket
@@ -30,10 +30,17 @@ class BracketController(val bracketRepo: BracketRepo, val mongoBracketRepo: Mong
         val order = bracketRepo.getByTournament(bracket.tournamentId.get).size
         if (bracketType.name.toLowerCase.contains("elimination"))
         {
-            if(bracketType.name.toLowerCase.contains("single"))
-                bid = Option(mongoBracketRepo.create(SingleElimination.generate(seedSize)).id)
-            else if(bracketType.name.toLowerCase.contains("double"))
-                bid = Option(mongoBracketRepo.create(DoubleElimination.generate(seedSize)).id)
+            try {
+                if (bracketType.name.toLowerCase.contains("single"))
+                    bid = Option(mongoBracketRepo.create(SingleElimination.generate(seedSize)).id)
+                else if (bracketType.name.toLowerCase.contains("double"))
+                    bid = Option(mongoBracketRepo.create(DoubleElimination.generate(seedSize)).id)
+            }
+            catch{
+                case e: GeneratorException =>
+                    logger.error("Didn't use a power of 2 for the generator!")
+                    halt(400, "Seed size must be a power of 2")
+            }
         }
         bracketRepo.create(bracket.copy(bracketId = bid))
         Ok()
