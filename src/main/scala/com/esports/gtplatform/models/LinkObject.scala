@@ -87,8 +87,8 @@ case class TournamentUser(userId: Int, tournamentId: Int, isPresent: Boolean = f
     def this() = this(userId = 0, tournamentId = 0, isPresent = false, isAdmin = false, isModerator = false, id = Some(0))
 }
 
-case class BracketType(name: String = "A Tourney Type", teamPlay: Boolean = true, id: Option[Int] = None) extends DomainEntity[BracketType] {
-    def this() = this(name = "", teamPlay = true, id = Some(0))
+case class BracketType(name: String = "A Tourney Type", id: Option[Int] = None) extends DomainEntity[BracketType] {
+    def this() = this(name = "", id = Some(0))
 }
 
 case class GameBracketType(gameId: Int = 0, bracketTypeId: Int = 0, id: Option[Int] = None) extends DomainEntity[GameBracketType] {

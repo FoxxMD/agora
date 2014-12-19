@@ -1,10 +1,10 @@
 package com.esports.gtplatform.business.services
 
 import ScalaBrackets.Participant
-import com.esports.gtplatform.business.{MongoBracketRepo, TeamRepo, UserRepo}
+import com.esports.gtplatform.business.{GTSerializers, MongoBracketRepo, TeamRepo, UserRepo}
 import com.esports.gtplatform.models.Bracket
 import models.User
-import org.json4s.Extraction
+import org.json4s.{DefaultFormats, Formats, Extraction}
 import org.json4s.JsonAST.JObject
 
 /**
@@ -26,9 +26,10 @@ class BracketService(val userRepo: UserRepo, val teamRepo: TeamRepo, val tournam
 
     override def hasModeratorPermissions(user: User, id: Int): Boolean = tournamentService.hasModeratorPermissions(user, id)
 
-    override def isTeamPlay(obj: Bracket): Boolean = obj.bracketType.teamPlay
+    override def isTeamPlay(obj: Bracket): Boolean = obj.teamPlay
 
     override def createParticipant(obj: Bracket, id: Int): Participant = {
+        implicit val jsonFormats: Formats = DefaultFormats + new com.esports.gtplatform.json.DateSerializer ++ GTSerializers.mapperSerializers
         if(isTeamPlay(obj)){
             val team = teamRepo.get(id).getOrElse(throw new Exception("No team with the Id " + id + " exists"))
             Participant(id, Option(JObject(("name", Extraction.decompose(team.name)))))

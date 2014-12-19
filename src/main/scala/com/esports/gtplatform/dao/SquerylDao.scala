@@ -69,7 +69,7 @@ object SquerylDao extends Schema {
     g.id is (unique,autoIncremented,indexed)
     ))
 
-    val gamettLink = table[GameBracketType]("games_tournaments_types")
+    val gamettLink = table[GameBracketType]
     on(gamettLink)(g => declare(
     g.id is autoIncremented
     ))

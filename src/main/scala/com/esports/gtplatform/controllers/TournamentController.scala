@@ -1,10 +1,10 @@
 package com.esports.gtplatform.controllers
 
-import ScalaBrackets.{DoubleElimination, SingleElimination, GeneratorException}
+import ScalaBrackets.{DoubleElimination, GeneratorException, SingleElimination}
 import com.esports.gtplatform.business._
 import com.esports.gtplatform.business.services.{RosterServiceT, TournamentServiceT}
 import com.esports.gtplatform.models.Bracket
-import models.{BracketType, Tournament, TournamentDetail, TournamentUser}
+import models.{Tournament, TournamentDetail, TournamentUser}
 import org.json4s
 import org.scalatra.Ok
 import scaldi.Injector
@@ -17,6 +17,7 @@ class TournamentController(val tournamentRepo: TournamentRepo,
                            val tournamentDetailsRepo: TournamentDetailsRepo,
                            val mongoBracketRepo: MongoBracketRepo,
                             val bracketRepo: BracketRepo,
+                            val bracketTypeRepo: BracketTypeRepo,
                            val tournamentService: TournamentServiceT,
                            val rosterService: RosterServiceT)(implicit val inj: Injector) extends BaseController with TournamentT {
 
@@ -36,24 +37,23 @@ class TournamentController(val tournamentRepo: TournamentRepo,
         if (!tournamentService.canCreate(user, requestTournament))
             halt(403, "You do not have permission to create tournaments for this event.")
 
-        val seedSize = parsedBody.\("seedSize").extractOrElse[Int](halt(400, "Missing seed size!"))
-
         val newTournament = tournamentRepo.create(parsedBody.extract[Tournament])
         if (parsedBody.\("details").extractOpt[TournamentDetail].isDefined)
             tournamentDetailsRepo.create(extractDetails(parsedBody.\("details")).copy(tournamentId = newTournament.id))
-        parsedBody.\("bracketTypes").extractOpt[List[BracketType]].fold(){bracketList =>
+        parsedBody.\("bracketTypes").extractOpt[List[Bracket]].fold(){bracketList =>
             var orderIndex = 1
             try {
                 for (x <- bracketList) {
                     var bid: Option[String] = None
-                    if (x.name.toLowerCase.contains("elimination"))
+                    val bracketType = bracketTypeRepo.get(x.bracketTypeId).getOrElse(throw new Exception("Bracket type with the Id " + x.bracketTypeId + " does not exist!"))
+                    if (bracketType.name.toLowerCase.contains("elimination"))
                     {
-                        if(x.name.toLowerCase.contains("single"))
-                            bid = Option(mongoBracketRepo.create(SingleElimination.generate(seedSize)).id)
-                        else if(x.name.toLowerCase.contains("double"))
-                            bid = Option(mongoBracketRepo.create(DoubleElimination.generate(seedSize)).id)
+                        if(bracketType.name.toLowerCase.contains("single"))
+                            bid = Option(mongoBracketRepo.create(SingleElimination.generate(x.seedSize)).id)
+                        else if(bracketType.name.toLowerCase.contains("double"))
+                            bid = Option(mongoBracketRepo.create(DoubleElimination.generate(x.seedSize)).id)
                     }
-                    bracketRepo.create(Bracket(bracketTypeId = x.id.get,orderIndex, tournamentId = newTournament.id, bracketId = bid))
+                    bracketRepo.create(x.copy(bracketId = bid))
                     orderIndex = orderIndex + 1
                 }
             }

@@ -9,7 +9,7 @@ import models.{BracketType, Tournament, User}
 /**
  * Created by Matthew on 12/17/2014.
  */
-case class Bracket(bracketTypeId: Int, order: Int, tournamentId: Option[Int], bracketId: Option[String] = None, ownerId: Option[Int] = None, id: Option[Int] = None, private var _bracketType: Option[BracketType] = None) {
+case class Bracket(bracketTypeId: Int, order: Int, seedSize: Int, teamPlay: Boolean = false, tournamentId: Option[Int], bracketId: Option[String] = None, ownerId: Option[Int] = None, id: Option[Int] = None, private var _bracketType: Option[BracketType] = None) extends DomainEntity[Bracket] {
 
     private[this] val userRepo: UserRepo = new UserRepository
     private[this] val tournamentRepo: TournamentRepo = new TournamentRepository
@@ -22,5 +22,5 @@ case class Bracket(bracketTypeId: Int, order: Int, tournamentId: Option[Int], br
     def owner: Option[User] = ownerId.fold[Option[User]](None)(userRepo.get)
     def tournament: Option[Tournament] = tournamentId.fold[Option[Tournament]](None)(tournamentRepo.get)
 
-    def this() = this(tournamentId = 0, bracketTypeId = 0, order = 0, bracketId = Some(""), id = Some(0))
+    def this() = this(tournamentId = Some(0), bracketTypeId = 0, order = 0, seedSize = 0, teamPlay = false, bracketId = Some(""), ownerId = Some(0), id = Some(0))
 }

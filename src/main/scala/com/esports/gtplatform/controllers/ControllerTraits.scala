@@ -329,7 +329,7 @@ trait BracketControllerT extends StandardController {
     idType = "Bracket"
     def bracketRepo: BracketRepo
     def mongoBracketRepo: MongoBracketRepo
-    def bracketService: BracketService
+    def bracketService: BracketServiceT
     var possibleBracket: Option[Bracket] = None
     def requestBracket: Bracket = possibleBracket.getOrElse(throw new Exception("No bracket defined during request pre-processing!"))
     var possibleParId: Option[Int] = None

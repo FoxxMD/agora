@@ -62,7 +62,15 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Class[T]](
     /*    Extraction.decompose(t.copy()) merge
           render(("userPlay" -> t.tournament.tournamentType.userPlay) ~
                  ("teamPlay" -> t.tournament.tournamentType.teamPlay))*/
+    case g: Game =>
+        import com.esports.gtplatform.dao.Squreyl._
+        implicit val formats: Formats = DefaultFormats
+        Extraction.decompose(g) merge
+            render("bracketTypes" -> inTransaction {
+                Extraction.decompose(g.bracketTypes)
+            })
 }
+
     ))
 
 class LinkObjectEntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats => ( {
@@ -155,13 +163,13 @@ class EntitySerializer[T: Manifest] extends CustomSerializer[Class[T]](formats =
     /* merge
       render("tournaments" -> Extraction.decompose(teamRepo.getByTeam(t))) merge
       render("events" -> Extraction.decompose(teamRepo.getByTeam(t).map(x => x.tournament.event).distinct.map(u => ("name" -> u.name) ~ ("id" -> u.id))))*/
-    case g: Game =>
+/*    case g: Game =>
         import com.esports.gtplatform.dao.Squreyl._
         implicit val formats: Formats = DefaultFormats
         Extraction.decompose(g) merge
-            render("tournamentTypes" -> inTransaction {
-                Extraction.decompose(g.tournamentTypes)
-            })
+            render("bracketTypes" -> inTransaction {
+                Extraction.decompose(g.bracketTypes)
+            })*/
     case e: Event =>
         implicit val formats: Formats = DefaultFormats + new LinkObjectEntitySerializer ++ org.json4s.ext.JodaTimeSerializers.all + new EntityDetailsSerializer + new EntityAuxillarySerializer
         Extraction.decompose(e) merge

@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 /**
  * Created by Matthew on 6/30/2014.
  */
-case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _users: Option[List[TournamentUser]] = None, private var _teams: Option[List[Team]] = None, private[this] var _brackets: Option[List[Bracket]] = None) extends DomainEntity[Tournament] {
+case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _users: Option[List[TournamentUser]] = None, private var _teams: Option[List[Team]] = None, private var _brackets: Option[List[Bracket]] = None) extends DomainEntity[Tournament] {
 
     import com.esports.gtplatform.dao.Squreyl._
     import com.esports.gtplatform.dao.SquerylDao._

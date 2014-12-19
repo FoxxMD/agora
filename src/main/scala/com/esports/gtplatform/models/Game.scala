@@ -12,7 +12,7 @@ case class Game(name: String = "A Game",
 
     import com.esports.gtplatform.dao.SquerylDao._
 
-    lazy val tournamentTypes = gameBracketRelation.left(this).iterator.toList
+    lazy val bracketTypes = gameBracketRelation.left(this).iterator.toList
 
     def this() = this("",Some(""),Some(""),"",true,true,Some(""),Some(0))
 }
