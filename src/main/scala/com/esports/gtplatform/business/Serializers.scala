@@ -1,7 +1,7 @@
 package com.esports.gtplatform.business
 
 import com.esports.gtplatform.json.DateSerializer
-import com.esports.gtplatform.models.Team
+import com.esports.gtplatform.models.{Bracket, Team}
 import models._
 import org.json4s.JsonDSL._
 import org.json4s._
@@ -69,6 +69,10 @@ class EntityAuxillarySerializer[T: Manifest] extends CustomSerializer[Class[T]](
             render("bracketTypes" -> inTransaction {
                 Extraction.decompose(g.bracketTypes)
             })
+    case b: Bracket =>
+        implicit val formats: Formats = DefaultFormats
+        Extraction.decompose(b) merge
+            render("bracketType" -> Extraction.decompose(b.bracketType))
 }
 
     ))
