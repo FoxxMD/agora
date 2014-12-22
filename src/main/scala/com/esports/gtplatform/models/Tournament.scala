@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 /**
  * Created by Matthew on 6/30/2014.
  */
-case class Tournament(tournamentTypeId: Int, registrationType: String = "Public", gameId: Int, eventId: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _users: Option[List[TournamentUser]] = None, private var _teams: Option[List[Team]] = None, private var _brackets: Option[List[Bracket]] = None) extends DomainEntity[Tournament] {
+case class Tournament(registrationType: String = "Public", gameId: Int, eventId: Int, bracketId: Option[String] = None, id: Option[Int] = None, private var _users: Option[List[TournamentUser]] = None, private var _teams: Option[List[Team]] = None, private var _brackets: Option[List[Bracket]] = None) extends DomainEntity[Tournament] {
 
     import com.esports.gtplatform.dao.Squreyl._
     import com.esports.gtplatform.dao.SquerylDao._
@@ -33,7 +33,7 @@ case class Tournament(tournamentTypeId: Int, registrationType: String = "Public"
 
 
     //needed for squeryl table initialization. See "Nullable columns are mapped with Option[] fields http://squeryl.org/schema-definition.html
-    def this() = this(tournamentTypeId = 0, registrationType = "", gameId = 0, eventId = 0, id = Some(0))
+    def this() = this(registrationType = "", gameId = 0, eventId = 0, id = Some(0))
 }
 
 case class TournamentDetail(tournamentId: Option[Int] = None, name: Option[String] = None, gamePlayed: Option[String] = None, description: Option[String] = None, location: Option[String] = None, locationsub: Option[String] = None, rules: Option[String] = None, prizes: Option[String] = None, streams: Option[String] = None, servers: Option[String] = None, timeStart: Option[DateTime] = None, timeEnd: Option[DateTime] = None, teamMinSize: Option[Int] = None, teamMaxSize: Option[Int] = None, playerMinSize: Option[Int] = None, playerMaxSize: Option[Int] = None, id: Option[Int] = None) extends DomainEntity[TournamentDetail] {

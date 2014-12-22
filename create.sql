@@ -9,8 +9,18 @@ CREATE UNIQUE INDEX id_UNIQUE ON apikeys (id);
 CREATE TABLE bracket_types
 (
     Id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
-    teamPlay BIT DEFAULT b'0' NOT NULL
+    name VARCHAR(50) NOT NULL
+);
+CREATE TABLE brackets
+(
+    bracketTypeId INT NOT NULL,
+    `order` INT DEFAULT 1 NOT NULL,
+    seedSize INT NOT NULL,
+    teamPlay BIT DEFAULT b'0' NOT NULL,
+    tournamentId INT,
+    bracketId VARCHAR(100),
+    ownerId INT,
+    id INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT
 );
 CREATE TABLE confirmationtokens
 (
@@ -76,6 +86,16 @@ CREATE TABLE eventuser
 CREATE UNIQUE INDEX id_UNIQUE ON eventuser (id);
 CREATE INDEX event_user_id_idx ON eventuser (eventId);
 CREATE INDEX user_event_id_idx ON eventuser (userId);
+CREATE TABLE gamebrackettype
+(
+    gameId INT NOT NULL,
+    bracketTypeId INT NOT NULL,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    FOREIGN KEY (bracketTypeId) REFERENCES bracket_types (Id) ON DELETE CASCADE,
+    FOREIGN KEY (gameId) REFERENCES games (id) ON DELETE CASCADE
+);
+CREATE INDEX game_tt_id_idx ON gamebrackettype (gameId);
+CREATE INDEX tt_id_idx ON gamebrackettype (bracketTypeId);
 CREATE TABLE games
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -88,16 +108,6 @@ CREATE TABLE games
     logoFilename VARCHAR(30)
 );
 CREATE UNIQUE INDEX id_UNIQUE ON games (id);
-CREATE TABLE gametournamenttype
-(
-    gameId INT NOT NULL,
-    tournamenttypeId INT NOT NULL,
-    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    FOREIGN KEY (gameId) REFERENCES games (id) ON DELETE CASCADE,
-    FOREIGN KEY (tournamenttypeId) REFERENCES bracket_types (Id) ON DELETE CASCADE
-);
-CREATE INDEX game_tt_id_idx ON gametournamenttype (gameId);
-CREATE INDEX tt_id_idx ON gametournamenttype (tournamenttypeId);
 CREATE TABLE guilds
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -221,30 +231,19 @@ CREATE TABLE tokens
 );
 CREATE UNIQUE INDEX token_UNIQUE ON tokens (token);
 CREATE UNIQUE INDEX userId_UNIQUE ON tokens (userId);
-CREATE TABLE tournamentbracket
-(
-    tournamentId INT NOT NULL,
-    bracketTypeId INT NOT NULL,
-    `order` INT DEFAULT 1 NOT NULL,
-    bracketId VARCHAR(100),
-    id INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT
-);
 CREATE TABLE tournaments
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    tournamentTypeId INT NOT NULL,
     registrationType VARCHAR(15) NOT NULL,
     gameId INT NOT NULL,
     eventId INT NOT NULL,
     bracketId VARCHAR(100),
-    FOREIGN KEY (tournamentTypeId) REFERENCES bracket_types (Id),
     FOREIGN KEY (gameId) REFERENCES games (id),
     FOREIGN KEY (eventId) REFERENCES events (id)
 );
 CREATE UNIQUE INDEX id_UNIQUE ON tournaments (id);
 CREATE INDEX tournament_event_id ON tournaments (gameId);
 CREATE INDEX tournament_game_id ON tournaments (eventId);
-CREATE INDEX tournament_type_id_idx1 ON tournaments (tournamentTypeId);
 CREATE TABLE tournaments_details
 (
     tournamentId INT NOT NULL,
